@@ -196,7 +196,9 @@ class OverdriveLibbyDialog(QDialog):
                 self.download_loan(row.data(Qt.UserRole))
 
     def download_loan(self, loan):
-        format_id = LibbyClient.get_loan_format(loan)
+        format_id = LibbyClient.get_loan_format(
+            loan, prefer_open_format=PREFS[KEY.PREFER_OPEN_FORMATS]
+        )
         if LibbyClient.is_downloadable_ebook_loan(loan):
             show_download_info(loan["title"], self)
             if format_id in (LibbyFormats.EBookEPubOpen, LibbyFormats.EBookPDFOpen):
@@ -415,5 +417,7 @@ class LibbyLoansModel(QAbstractTableModel):
         if col == 3:
             return loan.get("type", {}).get("id", "")
         if col == 4:
-            return str(LibbyClient.get_loan_format(loan))
+            return str(
+                LibbyClient.get_loan_format(loan, PREFS[KEY.PREFER_OPEN_FORMATS])
+            )
         return None

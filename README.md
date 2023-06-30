@@ -18,15 +18,23 @@ Down the latest plugin zip file from Releases and [install in calibre](https://w
 
 To configure this plugin, you must already be using Libby on a [compatible](https://help.libbyapp.com/en-us/6105.htm) device.
 
-![settings](https://github.com/ping/libby-calibre-plugin/assets/104607/9b4e4133-17f5-47d1-b0fe-29bd46623fa4)
+![settings](images/settings.png)
 
 You will need to get a Libby setup code by following the instructions [here](https://help.libbyapp.com/en-us/6070.htm). Enter the code into the plugin settings and click "OK". If you encounter an error, the code may have expired. Get a new one and try again.
 
 You should only need to do this setup once. Then add the plugin to the toolbar/menubar as you wish.
 
+### Help
+
+- Hide Magazines - Don't list magazine loans
+- Hide Ebooks - Don't list ebook loans
+- Prefer Open Formats - Choose DRM-free formats if available
+- Hide books already in library - Hide loans that are alread in your library
+- Verbose Logs - Enable more verbose logging for debugging
+
 ## Usage
 
-![main](https://github.com/ping/libby-calibre-plugin/assets/104607/cdc1d065-58b5-4c2e-bee5-e8ffeed579fa)
+![main](images/main.png)
 
 Launch the OverDrive Libby plugin UI and select the loans you wish to download. Then click on the Download button.
 

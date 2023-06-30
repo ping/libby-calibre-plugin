@@ -28,6 +28,7 @@ class KEY:
     HIDE_EBOOKS = "hide_ebooks"
     HIDE_BOOKS_ALREADY_IN_LIB = "hide_books_in_already_lib"
     VERBOSE_LOGS = "verbose_logs"
+    PREFER_OPEN_FORMATS = "prefer_open_formats"
 
 
 class TEXT:
@@ -37,6 +38,7 @@ class TEXT:
     HIDE_EBOOKS = _("Hide Ebooks")
     HIDE_BOOKS_ALREADY_IN_LIB = _("Hide books already in library")
     VERBOSE_LOGS = _("Verbose Logs")
+    PREFER_OPEN_FORMATS = _("Prefer Open Formats")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -47,6 +49,7 @@ PREFS.defaults[KEY.HIDE_MAGAZINES] = False
 PREFS.defaults[KEY.HIDE_EBOOKS] = False
 PREFS.defaults[KEY.HIDE_BOOKS_ALREADY_IN_LIB] = False
 PREFS.defaults[KEY.VERBOSE_LOGS] = False
+PREFS.defaults[KEY.PREFER_OPEN_FORMATS] = True
 
 
 class ConfigWidget(QWidget):
@@ -71,7 +74,7 @@ class ConfigWidget(QWidget):
         self.libby_setup_code_txt = QLineEdit(self)
         self.libby_setup_code_txt.setPlaceholderText(TEXT.LIBBY_SETUP_CODE_DESC)
         self.libby_setup_code_txt.setText(PREFS[KEY.LIBBY_SETUP_CODE])
-        self.layout.addWidget(self.libby_setup_code_txt, 1, 1)
+        self.layout.addWidget(self.libby_setup_code_txt, 1, 1, 1, 1)
         self.libby_setup_code_lbl.setBuddy(self.libby_setup_code_txt)
 
         self.hide_magazines_checkbox = QCheckBox(TEXT.HIDE_MAGAZINES, self)
@@ -84,19 +87,24 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.hide_ebooks_checkbox, 3, 0)
         label_column_widths.append(self.layout.itemAtPosition(3, 0).sizeHint().width())
 
+        self.prefer_open_formats_checkbox = QCheckBox(TEXT.PREFER_OPEN_FORMATS, self)
+        self.prefer_open_formats_checkbox.setChecked(PREFS[KEY.PREFER_OPEN_FORMATS])
+        self.layout.addWidget(self.prefer_open_formats_checkbox, 4, 0)
+        label_column_widths.append(self.layout.itemAtPosition(4, 0).sizeHint().width())
+
         self.hide_books_already_in_lib_checkbox = QCheckBox(
             TEXT.HIDE_BOOKS_ALREADY_IN_LIB, self
         )
         self.hide_books_already_in_lib_checkbox.setChecked(
             PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB]
         )
-        self.layout.addWidget(self.hide_books_already_in_lib_checkbox, 4, 0)
-        label_column_widths.append(self.layout.itemAtPosition(4, 0).sizeHint().width())
+        self.layout.addWidget(self.hide_books_already_in_lib_checkbox, 5, 0)
+        label_column_widths.append(self.layout.itemAtPosition(5, 0).sizeHint().width())
 
         self.verbose_logs_checkbox = QCheckBox(TEXT.VERBOSE_LOGS, self)
         self.verbose_logs_checkbox.setChecked(PREFS[KEY.VERBOSE_LOGS])
-        self.layout.addWidget(self.verbose_logs_checkbox, 5, 0)
-        label_column_widths.append(self.layout.itemAtPosition(5, 0).sizeHint().width())
+        self.layout.addWidget(self.verbose_logs_checkbox, 6, 0)
+        label_column_widths.append(self.layout.itemAtPosition(6, 0).sizeHint().width())
 
         label_column_width = max(label_column_widths)
         self.layout.setColumnMinimumWidth(1, label_column_width * 2)
@@ -104,6 +112,7 @@ class ConfigWidget(QWidget):
     def save_settings(self):
         PREFS[KEY.HIDE_MAGAZINES] = self.hide_magazines_checkbox.isChecked()
         PREFS[KEY.HIDE_EBOOKS] = self.hide_ebooks_checkbox.isChecked()
+        PREFS[KEY.PREFER_OPEN_FORMATS] = self.prefer_open_formats_checkbox.isChecked()
         PREFS[
             KEY.HIDE_BOOKS_ALREADY_IN_LIB
         ] = self.hide_books_already_in_lib_checkbox.isChecked()

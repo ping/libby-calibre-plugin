@@ -11,9 +11,9 @@
 import os
 from pathlib import Path
 
+from libby import LibbyClient, LibbyFormats
 from libby.errors import ClientNotFoundError, ClientForbiddenError
 
-from libby import LibbyClient
 from .base import BaseTests
 
 
@@ -102,3 +102,128 @@ class LibbyClientTests(BaseTests):
                     self.logger.info('Downloaded "%s"', loan_file_path)
             if tested_magazine and tested_epub:
                 break
+
+    def test_get_loan_format(self):
+        with self.assertRaises(ValueError) as context:
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookKindle, "isLockedIn": True},
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubAdobe, "isLockedIn": False},
+                    ]
+                }
+            )
+        self.assertEqual(
+            str(context.exception),
+            f'Loan is locked to a non-downloadable format "{LibbyFormats.EBookKindle}"',
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookKindle, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubAdobe, "isLockedIn": True},
+                        {"id": LibbyFormats.EBookEPubOpen, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.EBookEPubAdobe,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookKindle, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubAdobe, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.EBookEPubAdobe,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookKindle, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubAdobe, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubOpen, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.EBookEPubOpen,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookKindle, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubAdobe, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubOpen, "isLockedIn": False},
+                    ]
+                },
+                prefer_open_format=False,
+            ),
+            LibbyFormats.EBookEPubAdobe,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookPDFAdobe, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookPDFOpen, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.EBookPDFOpen,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookPDFAdobe, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookPDFOpen, "isLockedIn": False},
+                    ]
+                },
+                prefer_open_format=False,
+            ),
+            LibbyFormats.EBookPDFAdobe,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookPDFAdobe, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.EBookPDFAdobe,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.AudioBookMP3, "isLockedIn": False},
+                        {"id": LibbyFormats.AudioBookOverDrive, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.AudioBookMP3,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.MagazineOverDrive, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.MagazineOverDrive,
+        )

@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-06-30 20:05+0800\n"
-"PO-Revision-Date: 2023-06-30 20:07+0800\n"
+"POT-Creation-Date: 2023-07-01 07:01+0800\n"
+"PO-Revision-Date: 2023-07-01 07:03+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -16,74 +16,78 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 3.3.2\n"
 
-#: __init__.py:46
+#: calibre-plugin/__init__.py:48
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libbyアカウントからローンをインポート"
 
-#: action.py:54
+#: calibre-plugin/action.py:54
 msgid "Run the OverDrive Libby client UI"
 msgstr "OverDrive LibbyクライアントUIを実行します"
 
-#: action.py:125
-msgid "OverDrive Libby"
+#: calibre-plugin/action.py:126
+msgid "OverDrive Libby v%s"
 msgstr ""
 
-#: action.py:154
+#: calibre-plugin/action.py:156
 msgid "Download selected loans"
 msgstr "選択した書籍ローンをダウンロードする"
 
-#: action.py:248 action.py:294
+#: calibre-plugin/action.py:252 calibre-plugin/action.py:298
 msgid "Downloading %s"
 msgstr "%s をダウンロード中"
 
-#: action.py:325
+#: calibre-plugin/action.py:329
 msgid "Title"
 msgstr "タイトル"
 
-#: action.py:326
+#: calibre-plugin/action.py:330
 msgid "Author"
 msgstr "著者"
 
-#: action.py:327
+#: calibre-plugin/action.py:331
 msgid "Checkout Date"
 msgstr ""
 
-#: action.py:328
+#: calibre-plugin/action.py:332
 msgid "Type"
 msgstr "タイプ"
 
-#: action.py:329
+#: calibre-plugin/action.py:333
 msgid "Format"
 msgstr "形式"
 
-#: config.py:34
+#: calibre-plugin/config.py:35
 msgid "Libby Setup Code:"
 msgstr "Libby セットアップコード："
 
-#: config.py:35
+#: calibre-plugin/config.py:36
 msgid "8-digit setup code"
 msgstr "8桁のコード"
 
-#: config.py:36
+#: calibre-plugin/config.py:37
 msgid "Hide Magazines"
 msgstr "雑誌を隠す"
 
-#: config.py:37
+#: calibre-plugin/config.py:38
 msgid "Hide Ebooks"
 msgstr "電子書籍を隠す"
 
-#: config.py:38
+#: calibre-plugin/config.py:39
 msgid "Hide books already in library"
 msgstr ""
 
-#: config.py:39
+#: calibre-plugin/config.py:40
 msgid "Verbose Logs"
 msgstr ""
 
-#: config.py:60
+#: calibre-plugin/config.py:41
+msgid "Prefer Open Formats"
+msgstr ""
+
+#: calibre-plugin/config.py:63
 msgid "Libby is configured."
 msgstr ""
 
-#: config.py:62
+#: calibre-plugin/config.py:65
 msgid "Libby is not configured yet."
 msgstr ""

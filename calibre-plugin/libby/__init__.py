@@ -10,4 +10,4 @@
 
 # noqa
 
-from .client import LibbyClient
+from .client import LibbyClient, LibbyFormats, LibbyMediaTypes

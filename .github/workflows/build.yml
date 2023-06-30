@@ -21,10 +21,11 @@ jobs:
         with:
           submodules: true
           fetch-depth: 1
+      - name: Shorten GITHUB_SHA
+        run: echo "github_short_sha=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Upload plugin
         uses: actions/upload-artifact@v3
         with:
-          name: overdrive-libby-plugin-${{ github.sha }}
+          name: overdrive-libby-plugin-${{ env.github_short_sha }}
           path: |
             calibre-plugin/
-            !calibre-plugin/translations/*.po

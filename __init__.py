@@ -14,11 +14,9 @@ import sys
 
 from calibre.customize import InterfaceActionBase
 
-try:
-    load_translations()
-except NameError:
-    pass  # load_translations() added in calibre 1.9
+load_translations()
 
+__version__ = (0, 1, 0)
 PLUGIN_NAME = "overdrive_libby"
 PLUGIN_ICON = "images/plugin.png"
 
@@ -46,7 +44,7 @@ class ActionLibby(InterfaceActionBase):
     description = _("Import loans from your OverDrive Libby account")
     supported_platforms = ["windows", "osx", "linux"]
     author = "ping"
-    version = (0, 1, 0)
+    version = __version__
     minimum_calibre_version = (6, 0, 0)
 
     actual_plugin = f"calibre_plugins.{PLUGIN_NAME}.action:OverdriveLibbyAction"

@@ -491,7 +491,6 @@ class CustomMagazineDownload(EbookDownload):
         title_content_entries = sorted(
             title_content_entries, key=cmp_to_key(_sort_title_contents)  # type: ignore[misc]
         )
-        # progress_bar = tqdm(title_content_entries, disable=args.hide_progress)
         has_ncx = False
         has_nav = False
 

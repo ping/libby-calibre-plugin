@@ -41,3 +41,7 @@ Launch the OverDrive Libby plugin UI and select the loans you wish to download. 
 Each selected loan will then be downloaded in its own calibre job. When the job completes, the loan book file should be in your library.
 
 Only downloadable loans will be listed. If the loan does not have a downloadable format, or has previously been sent to your Kindle, it will not be displayed.
+
+## Disclaimer
+
+This is not affliated, endorsed or certified by OverDrive. To use thie plugin, you must already have access to OverDrive services via a valid library account. Use at your own risk.

@@ -26,11 +26,11 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 
 ### Help
 
-- Hide Magazines - Don't list magazine loans
-- Hide Ebooks - Don't list ebook loans
-- Prefer Open Formats - Choose DRM-free formats if available
-- Hide books already in library - Hide loans that are alread in your library
-- Verbose Logs - Enable more verbose logging for debugging
+- Hide Magazines: Don't list magazine loans
+- Hide Ebooks: Don't list ebook loans
+- Prefer Open Formats: Choose DRM-free formats if available
+- Hide books already in library: Hide loans that are already in your library
+- Verbose Logs: Enable more verbose logging for debugging
 
 ## Usage
 

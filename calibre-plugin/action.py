@@ -201,7 +201,7 @@ class OverdriveLibbyDialog(QDialog):
             show_download_info(loan["title"], self)
             if format_id in (LibbyFormats.EBookEPubOpen, LibbyFormats.EBookPDFOpen):
                 # special handling required for these formats
-                self.download_open_ebook(
+                self.download_ebook(
                     loan,
                     format_id,
                     filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',

@@ -18,7 +18,7 @@ Down the latest plugin zip file from Releases and [install in calibre](https://w
 
 To configure this plugin, you must already be using Libby on a [compatible](https://help.libbyapp.com/en-us/6105.htm) device.
 
-![settings](https://github.com/ping/libby-calibre-plugin/assets/104607/230dd02f-f057-4332-a285-cdc7e2330c91)
+![settings](https://github.com/ping/libby-calibre-plugin/assets/104607/9b4e4133-17f5-47d1-b0fe-29bd46623fa4)
 
 You will need to get a Libby setup code by following the instructions [here](https://help.libbyapp.com/en-us/6070.htm). Enter the code into the plugin settings and click "OK". If you encounter an error, the code may have expired. Get a new one and try again.
 
@@ -26,7 +26,7 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 
 ## Usage
 
-![main](https://github.com/ping/libby-calibre-plugin/assets/104607/6a10fdc9-7e99-4103-adae-db3e1823eb17)
+![main](https://github.com/ping/libby-calibre-plugin/assets/104607/cdc1d065-58b5-4c2e-bee5-e8ffeed579fa)
 
 Launch the OverDrive Libby plugin UI and select the loans you wish to download. Then click on the Download button.
 

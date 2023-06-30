@@ -32,7 +32,7 @@ from qt.core import (
     QAbstractTableModel,
 )
 
-from . import logger, PLUGIN_NAME, PLUGIN_ICON
+from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
 from .config import PREFS, KEY, TEXT
 from .ebook_download import CustomEbookDownload
 from .libby import LibbyClient
@@ -122,7 +122,9 @@ class OverdriveLibbyDialog(QDialog):
 
         self.layout = QGridLayout()
         self.setLayout(self.layout)
-        self.setWindowTitle(_("OverDrive Libby"))
+        self.setWindowTitle(
+            _("OverDrive Libby v%s") % ".".join([str(d) for d in __version__])
+        )
         self.setWindowIcon(icon)
 
         # The main book list

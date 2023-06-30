@@ -24,7 +24,11 @@ PLUGIN_ICON = "images/plugin.png"
 logger = logging.getLogger(__name__)
 ch = logging.StreamHandler(io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8"))
 ch.setLevel(logging.DEBUG)
-ch.setFormatter(logging.Formatter(f"[{PLUGIN_NAME}] %(message)s"))
+ch.setFormatter(
+    logging.Formatter(
+        f'[{PLUGIN_NAME}/{".".join([str(d) for d in __version__])}] %(message)s'
+    )
+)
 logger.addHandler(ch)
 logger.setLevel(logging.INFO)
 

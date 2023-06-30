@@ -1,6 +1,6 @@
 # OverDrive Libby Plugin for calibre
 
-OverDrive Libby is a plugin that allows you to directly import your Libby loans to [calibre](https://calibre-ebook.com/).
+OverDrive Libby is a plugin that allows you to directly import your Libby loans into [calibre](https://calibre-ebook.com/).
 
 ## Main Features
 

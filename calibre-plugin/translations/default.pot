@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2023-06-30 20:05+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: __init__.py:46
+msgid "Import loans from your OverDrive Libby account"
+msgstr ""
+
+#: action.py:54
+msgid "Run the OverDrive Libby client UI"
+msgstr ""
+
+#: action.py:125
+msgid "OverDrive Libby"
+msgstr ""
+
+#: action.py:154
+msgid "Download selected loans"
+msgstr ""
+
+#: action.py:248 action.py:294
+msgid "Downloading %s"
+msgstr ""
+
+#: action.py:325
+msgid "Title"
+msgstr ""
+
+#: action.py:326
+msgid "Author"
+msgstr ""
+
+#: action.py:327
+msgid "Checkout Date"
+msgstr ""
+
+#: action.py:328
+msgid "Type"
+msgstr ""
+
+#: action.py:329
+msgid "Format"
+msgstr ""
+
+#: config.py:34
+msgid "Libby Setup Code:"
+msgstr ""
+
+#: config.py:35
+msgid "8-digit setup code"
+msgstr ""
+
+#: config.py:36
+msgid "Hide Magazines"
+msgstr ""
+
+#: config.py:37
+msgid "Hide Ebooks"
+msgstr ""
+
+#: config.py:38
+msgid "Hide books already in library"
+msgstr ""
+
+#: config.py:39
+msgid "Verbose Logs"
+msgstr ""
+
+#: config.py:60
+msgid "Libby is configured."
+msgstr ""
+
+#: config.py:62
+msgid "Libby is not configured yet."
+msgstr ""
+

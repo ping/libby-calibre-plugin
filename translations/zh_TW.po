@@ -1,0 +1,89 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2023-06-30 20:05+0800\n"
+"PO-Revision-Date: 2023-06-30 20:06+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 3.3.2\n"
+
+#: __init__.py:46
+msgid "Import loans from your OverDrive Libby account"
+msgstr "從您的 OverDrive Libby 帳戶導入已借閱的圖書"
+
+#: action.py:54
+msgid "Run the OverDrive Libby client UI"
+msgstr "運行 OverDrive Libby 客戶端 UI"
+
+#: action.py:125
+msgid "OverDrive Libby"
+msgstr ""
+
+#: action.py:154
+msgid "Download selected loans"
+msgstr "下載選定的圖書借閱"
+
+#: action.py:248 action.py:294
+msgid "Downloading %s"
+msgstr "正在下載 %s"
+
+#: action.py:325
+msgid "Title"
+msgstr "書名"
+
+#: action.py:326
+msgid "Author"
+msgstr "作者"
+
+#: action.py:327
+msgid "Checkout Date"
+msgstr ""
+
+#: action.py:328
+msgid "Type"
+msgstr "書籍類型"
+
+#: action.py:329
+msgid "Format"
+msgstr "格式"
+
+#: config.py:34
+msgid "Libby Setup Code:"
+msgstr "Libby設定代碼："
+
+#: config.py:35
+msgid "8-digit setup code"
+msgstr "8 位數字代碼"
+
+#: config.py:36
+msgid "Hide Magazines"
+msgstr "隱藏雜誌"
+
+#: config.py:37
+msgid "Hide Ebooks"
+msgstr "隱藏電子書"
+
+#: config.py:38
+msgid "Hide books already in library"
+msgstr ""
+
+#: config.py:39
+msgid "Verbose Logs"
+msgstr ""
+
+#: config.py:60
+msgid "Libby is configured."
+msgstr "Libby已配置。"
+
+#: config.py:62
+msgid "Libby is not configured yet."
+msgstr "Libby未配置。"

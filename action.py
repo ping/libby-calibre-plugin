@@ -357,16 +357,19 @@ class LibbyLoansModel(QAbstractTableModel):
             if not self.filter_hide_books_already_in_library:
                 self.filtered_loans.append(loan)
                 continue
-
-            title = loan["title"]
-            if loan["type"]["id"] == LibbyMediaTypes.Magazine:
-                title = f'{loan["title"]} - {loan.get("edition", "")}'
+            title = self.get_loan_title(loan)
             authors = []
             if loan.get("firstCreatorName", ""):
                 authors = [loan.get("firstCreatorName", "")]
             if not self.db.has_book(Metadata(title=title, authors=authors)):
                 self.filtered_loans.append(loan)
         self.endResetModel()
+
+    def get_loan_title(self, loan: Dict) -> str:
+        title = loan["title"]
+        if loan["type"]["id"] == LibbyMediaTypes.Magazine:
+            title = f'{loan["title"]} - {loan.get("edition", "")}'
+        return title
 
     def set_filter_hide_books_already_in_library(self, value: bool):
         if value != self.filter_hide_books_already_in_library:
@@ -400,7 +403,7 @@ class LibbyLoansModel(QAbstractTableModel):
         if col >= self.column_count:
             return None
         if col == 0:
-            return loan.get("title", "")
+            return self.get_loan_title(loan)
         if col == 1:
             return loan.get("firstCreatorName", "")
         if col == 2:

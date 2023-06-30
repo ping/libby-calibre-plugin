@@ -135,7 +135,7 @@ class OverdriveLibbyDialog(QDialog):
             0, QHeaderView.ResizeMode.Stretch
         )
         self.loans_view.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeMode.Stretch
+            1, QHeaderView.ResizeMode.ResizeToContents
         )
         self.loans_view.horizontalHeader().setSectionResizeMode(
             2, QHeaderView.ResizeMode.ResizeToContents
@@ -398,6 +398,8 @@ class LibbyLoansModel(QAbstractTableModel):
         loan = self.filtered_loans[row]
         if role == Qt.UserRole:
             return loan
+        if role == Qt.TextAlignmentRole and col in (2, 3, 4):
+            return Qt.AlignCenter
         if role != Qt.DisplayRole:
             return None
         if col >= self.column_count:

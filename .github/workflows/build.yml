@@ -1,0 +1,25 @@
+name: Build Zip
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'calibre-plugin/**'
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'calibre-plugin/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload plugin
+        uses: actions/upload-artifact@v3
+        with:
+          name: overdrive-libby-plugin-${{ github.sha }}
+          path: |
+            calibre-plugin/
+            !calibre-plugin/translations/*.po

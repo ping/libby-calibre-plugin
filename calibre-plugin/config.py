@@ -64,6 +64,10 @@ class ConfigWidget(QWidget):
             if PREFS[PreferenceKeys.LIBBY_TOKEN]
             else _("Libby is not configured yet.")
         )
+        self.libby_setup_status_lbl.setStyleSheet(
+            "font-weight: bold; "
+            f'color: {"#00D228" if PREFS[PreferenceKeys.LIBBY_TOKEN] else "#FF0F00"};'
+        )
         self.layout.addWidget(self.libby_setup_status_lbl, 0, 0)
         label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
@@ -75,6 +79,7 @@ class ConfigWidget(QWidget):
         self.libby_setup_code_txt.setPlaceholderText(
             PreferenceTexts.LIBBY_SETUP_CODE_DESC
         )
+        self.libby_setup_code_txt.setInputMask("99999999")
         self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
         self.layout.addWidget(self.libby_setup_code_txt, 1, 1, 1, 1)
         self.libby_setup_code_lbl.setBuddy(self.libby_setup_code_txt)
@@ -113,7 +118,7 @@ class ConfigWidget(QWidget):
         label_column_widths.append(self.layout.itemAtPosition(6, 0).sizeHint().width())
 
         label_column_width = max(label_column_widths)
-        self.layout.setColumnMinimumWidth(1, label_column_width * 2)
+        self.layout.setColumnMinimumWidth(1, label_column_width)
 
     def save_settings(self):
         PREFS[PreferenceKeys.HIDE_MAGAZINES] = self.hide_magazines_checkbox.isChecked()

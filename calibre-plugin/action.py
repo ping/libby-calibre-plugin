@@ -137,7 +137,6 @@ class OverdriveLibbyDialog(QDialog):
                 identity_token=libby_token, max_retries=1, timeout=30, logger=logger
             )
 
-        label_column_widths = []
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         self.setWindowTitle(
@@ -165,6 +164,7 @@ class OverdriveLibbyDialog(QDialog):
         self.loans_view = QTableView(self)
         self.loans_view.setSortingEnabled(True)
         self.loans_view.setAlternatingRowColors(True)
+        self.loans_view.setMinimumWidth(720)
         self.loans_view.setModel(self.search_proxy_model)
         self.loans_view.horizontalHeader().setSectionResizeMode(
             0, QHeaderView.ResizeMode.Stretch
@@ -184,16 +184,12 @@ class OverdriveLibbyDialog(QDialog):
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
         self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
-        label_column_widths.append(self.layout.itemAtPosition(1, 0).sizeHint().width())
 
         self.download_btn = QPushButton("\u2913 " + _("Download selected loans"), self)
         self.download_btn.setAutoDefault(False)
         self.download_btn.setStyleSheet("padding: 4px 8px")
         self.download_btn.clicked.connect(self.download_selected_loans)
         self.layout.addWidget(self.download_btn, 5, loan_view_span - 1)
-        label_column_widths.append(
-            self.layout.itemAtPosition(5, loan_view_span - 1).sizeHint().width()
-        )
 
         self.hide_book_already_in_lib_checkbox = QCheckBox(
             PreferenceTexts.HIDE_BOOKS_ALREADY_IN_LIB, self
@@ -205,9 +201,6 @@ class OverdriveLibbyDialog(QDialog):
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
         self.layout.addWidget(self.hide_book_already_in_lib_checkbox, 5, 0, 1, 3)
-
-        label_column_width = max(label_column_widths)
-        self.layout.setColumnMinimumWidth(1, label_column_width * 2)
 
         self.resize(self.sizeHint())
         self.fetch_loans()

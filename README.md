@@ -10,9 +10,11 @@ Requires calibre 6.
 - Import the `.epub` file for EPUB (open) book loans
 - Import the `.epub` file for Magazines loans \[EXPERIMENTAL\]
 
+This plugin also works with the [ACSM Input plugin](https://github.com/Leseratte10/acsm-calibre-plugin/) to convert `.acsm` files into `.epub`.
+
 ## Known Issues
 
-- `.acsm` files imported into calibre results in epubs that do not have calibre metadata ([calibre bug#2025355](https://bugs.launchpad.net/calibre/+bug/2025355)). A [simple workaround](https://github.com/ping/libby-calibre-plugin/issues/1) is available.
+- `.acsm` files imported into calibre results in epubs (via the [ACSM Input plugin](https://github.com/Leseratte10/acsm-calibre-plugin/issues/56)) that do not have calibre metadata [calibrebug#2025355](https://bugs.launchpad.net/calibre/+bug/2025355). A [simple workaround](https://github.com/ping/libby-calibre-plugin/issues/1) is available.
 
 ## Setup
 

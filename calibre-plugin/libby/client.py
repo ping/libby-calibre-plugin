@@ -377,7 +377,7 @@ class LibbyClient(object):
                 HTTPException,
                 ConnectionError,
             ) as connection_error:
-                if attempt < self.retry:
+                if attempt < self.max_retries:
                     # do nothing, try
                     continue
                 raise ClientConnectionError(

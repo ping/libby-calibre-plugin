@@ -10,7 +10,7 @@
 
 import logging
 from timeit import default_timer as timer
-from typing import Dict, List
+from typing import Dict
 
 from calibre import browser
 from calibre.ebooks.metadata.book.base import Metadata
@@ -31,6 +31,10 @@ from qt.core import (
     QHeaderView,
     QSortFilterProxyModel,
     QAbstractTableModel,
+    QThread,
+    QObject,
+    pyqtSignal,
+    QStatusBar,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -95,6 +99,26 @@ gui_ebook_download = CustomEbookDownload()
 gui_magazine_download = CustomMagazineDownload()
 
 
+class DataWorker(QObject):
+    finished = pyqtSignal(list)
+
+    def __int__(self):
+        super().__init__()
+
+    def run(self):
+        libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
+        if not libby_token:
+            self.finished.emit([])
+
+        start = timer()
+        client = LibbyClient(
+            identity_token=libby_token, max_retries=1, timeout=30, logger=logger
+        )
+        loans = client.get_loans()
+        logger.info("Request took %f seconds" % (timer() - start))
+        self.finished.emit(loans)
+
+
 class OverdriveLibbyDialog(QDialog):
     def __init__(self, gui, icon, do_user_config):
         super().__init__(gui)
@@ -102,9 +126,16 @@ class OverdriveLibbyDialog(QDialog):
         self.do_user_config = do_user_config
         self.db = gui.current_db.new_api
         self.client = None
+        self.__thread = QThread()
 
         if PREFS[PreferenceKeys.VERBOSE_LOGS]:
             logger.setLevel(logging.DEBUG)
+
+        libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
+        if libby_token:
+            self.client = LibbyClient(
+                identity_token=libby_token, max_retries=1, timeout=30, logger=logger
+            )
 
         label_column_widths = []
         self.layout = QGridLayout()
@@ -117,17 +148,14 @@ class OverdriveLibbyDialog(QDialog):
 
         self.refresh_btn = QPushButton("\u21BB " + _("Refresh"), self)
         self.refresh_btn.setAutoDefault(False)
-        self.refresh_btn.setStyleSheet(
-            """
-            QPushButton { padding: 4px 8px }
-            QPushButton:pressed {  color: gray }
-        """
-        )
         self.refresh_btn.clicked.connect(self.do_refresh)
         self.layout.addWidget(self.refresh_btn, 0, 0)
-        # label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
-        self.model = LibbyLoansModel(None, self.fetch_loans(), self.db)
+        self.status_bar = QStatusBar(self)
+        self.status_bar.setSizeGripEnabled(False)
+        self.layout.addWidget(self.status_bar, 0, 1, 1, 3)
+
+        self.model = LibbyLoansModel(None, [], self.db)
         self.search_proxy_model = QSortFilterProxyModel(self)
         self.search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.search_proxy_model.setFilterKeyColumn(-1)
@@ -182,24 +210,33 @@ class OverdriveLibbyDialog(QDialog):
         self.layout.setColumnMinimumWidth(1, label_column_width * 2)
 
         self.resize(self.sizeHint())
+        self.fetch_loans()
 
     def do_refresh(self):
-        self.model.refresh_loans(self.fetch_loans())
+        self.model.refresh_loans([])
+        self.fetch_loans()
 
-    def fetch_loans(self) -> List[Dict]:
-        if not self.client:
-            libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
-            if libby_token:
-                self.client = LibbyClient(
-                    identity_token=libby_token, max_retries=1, timeout=30, logger=logger
-                )
-        if not self.client:
-            return []
+    def fetch_loans(self):
+        if not self.__thread.isRunning():
+            self.status_bar.showMessage("Fetching loans...")
+            self.__thread = self.__get_thread()
+            self.__thread.start()
 
-        start = timer()
-        loans = self.client.get_loans()
-        logger.info("Request took %f seconds" % (timer() - start))
-        return loans
+    def __get_thread(self):
+        thread = QThread()
+        worker = DataWorker()
+        worker.moveToThread(thread)
+        thread.worker = worker
+        thread.started.connect(worker.run)
+
+        def loaded(value):
+            self.model.refresh_loans(value)
+            self.status_bar.clearMessage()
+            thread.quit()
+
+        worker.finished.connect(lambda value: loaded(value))
+
+        return thread
 
     def set_hide_books_already_in_library(self, checked):
         PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked

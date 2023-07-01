@@ -2,6 +2,8 @@
 
 OverDrive Libby is a plugin that allows you to directly import your Libby loans into [calibre](https://calibre-ebook.com/).
 
+Requires calibre 6.
+
 ## Main Features
 
 - Import the `.acsm` file for EPUB/PDF(DRM) book loans (see issue below)

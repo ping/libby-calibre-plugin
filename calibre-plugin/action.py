@@ -10,6 +10,7 @@
 
 import logging
 from typing import Dict
+from timeit import default_timer as timer
 
 from calibre import browser
 from calibre.ebooks.metadata.book.base import Metadata
@@ -110,7 +111,9 @@ class OverdriveLibbyDialog(QDialog):
             self.client = LibbyClient(
                 identity_token=libby_token, max_retries=1, timeout=30, logger=logger
             )
+            start = timer()
             loans = self.client.get_loans()
+            logger.info("Request took %f seconds" % (timer() - start))
 
         self.model = LibbyLoansModel(None, loans, self.db)
         self.search_proxy_model = QSortFilterProxyModel(self)
@@ -127,7 +130,7 @@ class OverdriveLibbyDialog(QDialog):
         )
         self.setWindowIcon(icon)
 
-        # The main book list
+        # The main loan list
         loan_view_span = 8
         self.loans_view = QTableView(self)
         self.loans_view.setSortingEnabled(True)

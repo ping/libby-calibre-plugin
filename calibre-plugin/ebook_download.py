@@ -17,6 +17,7 @@ from calibre.ptempfile import PersistentTemporaryDirectory
 from .libby import LibbyClient
 
 
+# Ref: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L77-L122
 class CustomEbookDownload(EbookDownload):
     def __call__(
         self,

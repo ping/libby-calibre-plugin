@@ -349,6 +349,7 @@ def _filter_content(entry: Dict, media_info: Dict, toc_pages: List[str]):
     return True
 
 
+# Ref: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L77-L122
 class CustomMagazineDownload(EbookDownload):
     def __call__(
         self,

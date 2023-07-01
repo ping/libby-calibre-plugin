@@ -15,10 +15,7 @@ from qt.core import QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
 from . import logger, PLUGIN_NAME
 
-try:
-    load_translations()
-except NameError:
-    pass  # load_translations() added in calibre 1.9
+load_translations()
 
 
 class PreferenceKeys:
@@ -29,6 +26,8 @@ class PreferenceKeys:
     HIDE_BOOKS_ALREADY_IN_LIB = "hide_books_in_already_lib"
     VERBOSE_LOGS = "verbose_logs"
     PREFER_OPEN_FORMATS = "prefer_open_formats"
+    MAIN_UI_WIDTH = "main_ui_width"
+    MAIN_UI_HEIGHT = "main_ui_height"
 
 
 class PreferenceTexts:
@@ -50,6 +49,8 @@ PREFS.defaults[PreferenceKeys.HIDE_EBOOKS] = False
 PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
 PREFS.defaults[PreferenceKeys.VERBOSE_LOGS] = False
 PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
+PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
+PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 
 
 class ConfigWidget(QWidget):

@@ -35,6 +35,7 @@ from qt.core import (
     QObject,
     pyqtSignal,
     QStatusBar,
+    QSize,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -45,10 +46,7 @@ from .libby.client import LibbyFormats, LibbyMediaTypes
 from .magazine_download import CustomMagazineDownload
 from .magazine_download_utils import parse_datetime
 
-try:
-    load_translations()
-except NameError:
-    pass  # load_translations() added in calibre 1.9
+load_translations()
 
 
 class OverdriveLibbyAction(InterfaceAction):
@@ -127,6 +125,8 @@ class OverdriveLibbyDialog(QDialog):
         self.db = gui.current_db.new_api
         self.client = None
         self.__thread = QThread()
+        self.__curr_width = 0
+        self.__curr_height = 0
 
         if PREFS[PreferenceKeys.VERBOSE_LOGS]:
             logger.setLevel(logging.DEBUG)
@@ -202,8 +202,60 @@ class OverdriveLibbyDialog(QDialog):
         )
         self.layout.addWidget(self.hide_book_already_in_lib_checkbox, 5, 0, 1, 3)
 
-        self.resize(self.sizeHint())
+        if (
+            PREFS[PreferenceKeys.MAIN_UI_WIDTH]
+            and PREFS[PreferenceKeys.MAIN_UI_WIDTH] > 0
+            and PREFS[PreferenceKeys.MAIN_UI_HEIGHT]
+            and PREFS[PreferenceKeys.MAIN_UI_HEIGHT] > 0
+        ):
+            logger.debug(
+                "Resizing window using saved preferences: (%d, %d)",
+                PREFS[PreferenceKeys.MAIN_UI_WIDTH],
+                PREFS[PreferenceKeys.MAIN_UI_HEIGHT],
+            )
+            self.resize(
+                QSize(
+                    PREFS[PreferenceKeys.MAIN_UI_WIDTH],
+                    PREFS[PreferenceKeys.MAIN_UI_HEIGHT],
+                )
+            )
+        else:
+            self.resize(self.sizeHint())
+
+        # for pseudo-debouncing resizeEvent
+        self.__curr_width = self.size().width()
+        self.__curr_height = self.size().height()
+
         self.fetch_loans()
+
+    def resizeEvent(self, e):
+        # Because resizeEvent is called *multiple* times during a resize,
+        # we will save the new window size only when the differential is
+        # greater than min_diff.
+        # This does not completely debounce the saves, but it does reduce
+        # it reasonably imo.
+        new_size = e.size()
+        new_width = new_size.width()
+        new_height = new_size.height()
+        min_diff = 5
+        if (
+            new_width
+            and new_width > 0
+            and abs(new_width - self.__curr_width) >= min_diff
+            and new_width != PREFS[PreferenceKeys.MAIN_UI_WIDTH]
+        ):
+            PREFS[PreferenceKeys.MAIN_UI_WIDTH] = new_width
+            self.__curr_width = new_width
+            logger.debug("Saved new UI width preference: %d", new_width)
+        if (
+            new_height
+            and new_height > 0
+            and abs(new_height - self.__curr_height) >= min_diff
+            and new_height != PREFS[PreferenceKeys.MAIN_UI_HEIGHT]
+        ):
+            PREFS[PreferenceKeys.MAIN_UI_HEIGHT] = new_height
+            self.__curr_height = new_height
+            logger.debug("Saved new UI height preference: %d", new_height)
 
     def do_refresh(self):
         self.model.refresh_loans([])

@@ -12,7 +12,7 @@ Requires calibre 6.
 
 ## Known Issues
 
-- `.acsm` files imported into calibre results in epubs that do not have calibre metadata. See [bug#2025355](https://bugs.launchpad.net/calibre/+bug/2025355).
+- `.acsm` files imported into calibre results in epubs that do not have calibre metadata ([calibre bug#2025355](https://bugs.launchpad.net/calibre/+bug/2025355)). A [simple workaround](https://github.com/ping/libby-calibre-plugin/issues/1) is available.
 
 ## Setup
 

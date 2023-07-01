@@ -9,8 +9,8 @@
 #
 
 import logging
-from typing import Dict
 from timeit import default_timer as timer
+from typing import Dict, List
 
 from calibre import browser
 from calibre.ebooks.metadata.book.base import Metadata
@@ -101,37 +101,39 @@ class OverdriveLibbyDialog(QDialog):
         self.gui = gui
         self.do_user_config = do_user_config
         self.db = gui.current_db.new_api
+        self.client = None
 
-        loans = []
-        libby_token = PREFS[KEY.LIBBY_TOKEN]
         if PREFS[KEY.VERBOSE_LOGS]:
             logger.setLevel(logging.DEBUG)
 
-        if libby_token:
-            self.client = LibbyClient(
-                identity_token=libby_token, max_retries=1, timeout=30, logger=logger
-            )
-            start = timer()
-            loans = self.client.get_loans()
-            logger.info("Request took %f seconds" % (timer() - start))
-
-        self.model = LibbyLoansModel(None, loans, self.db)
-        self.search_proxy_model = QSortFilterProxyModel(self)
-        self.search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.search_proxy_model.setFilterKeyColumn(-1)
-        self.search_proxy_model.setSourceModel(self.model)
-
         label_column_widths = []
-
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         self.setWindowTitle(
             _("OverDrive Libby v%s") % ".".join([str(d) for d in __version__])
         )
         self.setWindowIcon(icon)
+        loan_view_span = 8
+
+        self.refresh_btn = QPushButton("\u21BB " + _("Refresh"), self)
+        self.refresh_btn.setAutoDefault(False)
+        self.refresh_btn.setStyleSheet(
+            """
+            QPushButton { padding: 4px 8px }
+            QPushButton:pressed {  color: gray }
+        """
+        )
+        self.refresh_btn.clicked.connect(self.do_refresh)
+        self.layout.addWidget(self.refresh_btn, 0, 0)
+        # label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
+
+        self.model = LibbyLoansModel(None, self.fetch_loans(), self.db)
+        self.search_proxy_model = QSortFilterProxyModel(self)
+        self.search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.search_proxy_model.setFilterKeyColumn(-1)
+        self.search_proxy_model.setSourceModel(self.model)
 
         # The main loan list
-        loan_view_span = 8
         self.loans_view = QTableView(self)
         self.loans_view.setSortingEnabled(True)
         self.loans_view.setAlternatingRowColors(True)
@@ -153,16 +155,16 @@ class OverdriveLibbyDialog(QDialog):
         )
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
-        self.layout.addWidget(self.loans_view, 0, 0, 3, loan_view_span)
-        label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
+        self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
+        label_column_widths.append(self.layout.itemAtPosition(1, 0).sizeHint().width())
 
-        self.download_btn = QPushButton(_("Download selected loans"), self)
+        self.download_btn = QPushButton("\u2913 " + _("Download selected loans"), self)
         self.download_btn.setAutoDefault(False)
         self.download_btn.setStyleSheet("padding: 4px 8px")
         self.download_btn.clicked.connect(self.download_selected_loans)
-        self.layout.addWidget(self.download_btn, 4, loan_view_span - 1)
+        self.layout.addWidget(self.download_btn, 5, loan_view_span - 1)
         label_column_widths.append(
-            self.layout.itemAtPosition(4, loan_view_span - 1).sizeHint().width()
+            self.layout.itemAtPosition(5, loan_view_span - 1).sizeHint().width()
         )
 
         self.hide_book_already_in_lib_checkbox = QCheckBox(
@@ -174,12 +176,30 @@ class OverdriveLibbyDialog(QDialog):
         self.hide_book_already_in_lib_checkbox.setChecked(
             PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB]
         )
-        self.layout.addWidget(self.hide_book_already_in_lib_checkbox, 4, 0, 1, 3)
+        self.layout.addWidget(self.hide_book_already_in_lib_checkbox, 5, 0, 1, 3)
 
         label_column_width = max(label_column_widths)
         self.layout.setColumnMinimumWidth(1, label_column_width * 2)
 
         self.resize(self.sizeHint())
+
+    def do_refresh(self):
+        self.model.refresh_loans(self.fetch_loans())
+
+    def fetch_loans(self) -> List[Dict]:
+        if not self.client:
+            libby_token = PREFS[KEY.LIBBY_TOKEN]
+            if libby_token:
+                self.client = LibbyClient(
+                    identity_token=libby_token, max_retries=1, timeout=30, logger=logger
+                )
+        if not self.client:
+            return []
+
+        start = timer()
+        loans = self.client.get_loans()
+        logger.info("Request took %f seconds" % (timer() - start))
+        return loans
 
     def set_hide_books_already_in_library(self, checked):
         PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB] = checked
@@ -339,6 +359,10 @@ class LibbyLoansModel(QAbstractTableModel):
         self._loans = sorted(loans, key=lambda ln: ln["checkoutDate"], reverse=True)
         self.filtered_loans = []
         self.filter_hide_books_already_in_library = PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB]
+        self.filter_loans()
+
+    def refresh_loans(self, loans=[]):
+        self._loans = sorted(loans, key=lambda ln: ln["checkoutDate"], reverse=True)
         self.filter_loans()
 
     def filter_loans(self):

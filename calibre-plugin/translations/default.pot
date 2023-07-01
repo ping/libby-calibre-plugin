@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-07-01 07:01+0800\n"
+"POT-Creation-Date: 2023-07-01 11:57+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,39 +19,43 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:54
+#: calibre-plugin/action.py:56
 msgid "Run the OverDrive Libby client UI"
 msgstr ""
 
-#: calibre-plugin/action.py:126
+#: calibre-plugin/action.py:114
 msgid "OverDrive Libby v%s"
 msgstr ""
 
-#: calibre-plugin/action.py:156
+#: calibre-plugin/action.py:119
+msgid "Refresh"
+msgstr ""
+
+#: calibre-plugin/action.py:162
 msgid "Download selected loans"
 msgstr ""
 
-#: calibre-plugin/action.py:252 calibre-plugin/action.py:298
+#: calibre-plugin/action.py:270 calibre-plugin/action.py:316
 msgid "Downloading %s"
 msgstr ""
 
-#: calibre-plugin/action.py:329
+#: calibre-plugin/action.py:347
 msgid "Title"
 msgstr ""
 
-#: calibre-plugin/action.py:330
+#: calibre-plugin/action.py:348
 msgid "Author"
 msgstr ""
 
-#: calibre-plugin/action.py:331
+#: calibre-plugin/action.py:349
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:332
+#: calibre-plugin/action.py:350
 msgid "Type"
 msgstr ""
 
-#: calibre-plugin/action.py:333
+#: calibre-plugin/action.py:351
 msgid "Format"
 msgstr ""
 

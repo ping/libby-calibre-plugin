@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-01 07:01+0800\n"
-"PO-Revision-Date: 2023-07-01 07:03+0800\n"
+"POT-Creation-Date: 2023-07-01 11:57+0800\n"
+"PO-Revision-Date: 2023-07-01 12:07+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -20,39 +20,43 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "从您的OverDrive Libby账户导入已借作品"
 
-#: calibre-plugin/action.py:54
+#: calibre-plugin/action.py:56
 msgid "Run the OverDrive Libby client UI"
 msgstr "运行OverDrive Libby客户端用户界面"
 
-#: calibre-plugin/action.py:126
+#: calibre-plugin/action.py:114
 msgid "OverDrive Libby v%s"
 msgstr ""
 
-#: calibre-plugin/action.py:156
+#: calibre-plugin/action.py:119
+msgid "Refresh"
+msgstr "刷新"
+
+#: calibre-plugin/action.py:162
 msgid "Download selected loans"
 msgstr "下载选定的图书借阅"
 
-#: calibre-plugin/action.py:252 calibre-plugin/action.py:298
+#: calibre-plugin/action.py:270 calibre-plugin/action.py:316
 msgid "Downloading %s"
 msgstr "正在下载 %s"
 
-#: calibre-plugin/action.py:329
+#: calibre-plugin/action.py:347
 msgid "Title"
 msgstr "书名"
 
-#: calibre-plugin/action.py:330
+#: calibre-plugin/action.py:348
 msgid "Author"
 msgstr "作者"
 
-#: calibre-plugin/action.py:331
+#: calibre-plugin/action.py:349
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:332
+#: calibre-plugin/action.py:350
 msgid "Type"
 msgstr "书籍类型"
 
-#: calibre-plugin/action.py:333
+#: calibre-plugin/action.py:351
 msgid "Format"
 msgstr "格式"
 

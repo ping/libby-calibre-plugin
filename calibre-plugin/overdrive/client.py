@@ -175,13 +175,15 @@ class OverDriveClient(object):
                         "\n".join(["{}: {}".format(k, v) for k, v in e.info().items()])
                     )
                 )
-                error_response = self._read_response(e)
                 if (
                     attempt < self.max_retries and e.code >= 500
                 ):  # retry for server 5XX errors
                     # do nothing, try
+                    self.logger.warning(
+                        "Retrying due to {}: {}".format(e.__class__.__name__, str(e))
+                    )
+                    self.logger.debug(self._read_response(e))
                     continue
-                # ErrorHandler.process(e, error_response)
                 raise
 
             except (
@@ -194,6 +196,11 @@ class OverDriveClient(object):
             ) as connection_error:
                 if attempt < self.max_retries:
                     # do nothing, try
+                    self.logger.warning(
+                        "Retrying due to {}: {}".format(
+                            connection_error.__class__.__name__, str(connection_error)
+                        )
+                    )
                     continue
                 raise ClientConnectionError(
                     "{} {}".format(

@@ -366,6 +366,12 @@ class LibbyClient(object):
                         attempt < self.max_retries and e.code >= 500
                     ):  # retry for server 5XX errors
                         # do nothing, try
+                        self.logger.warning(
+                            "Retrying due to {}: {}".format(
+                                e.__class__.__name__, str(e)
+                            )
+                        )
+                        self.logger.debug(error_response)
                         continue
                     ErrorHandler.process(e, error_response)
 
@@ -378,6 +384,11 @@ class LibbyClient(object):
                 ConnectionError,
             ) as connection_error:
                 if attempt < self.max_retries:
+                    self.logger.warning(
+                        "Retrying due to {}: {}".format(
+                            connection_error.__class__.__name__, str(connection_error)
+                        )
+                    )
                     # do nothing, try
                     continue
                 raise ClientConnectionError(

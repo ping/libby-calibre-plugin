@@ -218,7 +218,7 @@ class OverdriveLibbyDialog(QDialog):
 
     def fetch_loans(self):
         if not self.__thread.isRunning():
-            self.status_bar.showMessage("Fetching loans...")
+            self.status_bar.showMessage(_("Fetching loans..."))
             self.__thread = self.__get_thread()
             self.__thread.start()
 

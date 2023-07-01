@@ -108,7 +108,7 @@ class OverdriveLibbyDialog(QDialog):
 
         if libby_token:
             self.client = LibbyClient(
-                identity_token=libby_token, max_retries=1, timeout=60, logger=logger
+                identity_token=libby_token, max_retries=1, timeout=30, logger=logger
             )
             loans = self.client.get_loans()
 
@@ -149,12 +149,13 @@ class OverdriveLibbyDialog(QDialog):
             4, QHeaderView.ResizeMode.ResizeToContents
         )
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.resize_row_height()
+        self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
         self.layout.addWidget(self.loans_view, 0, 0, 3, loan_view_span)
         label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
         self.download_btn = QPushButton(_("Download selected loans"), self)
         self.download_btn.setAutoDefault(False)
+        self.download_btn.setStyleSheet("padding: 4px 8px")
         self.download_btn.clicked.connect(self.download_selected_loans)
         self.layout.addWidget(self.download_btn, 4, loan_view_span - 1)
         label_column_widths.append(
@@ -177,16 +178,10 @@ class OverdriveLibbyDialog(QDialog):
 
         self.resize(self.sizeHint())
 
-    def resize_row_height(self):
-        row_height = self.loans_view.horizontalHeader().height()
-        for row_number in range(0, self.loans_view.model().rowCount()):
-            self.loans_view.setRowHeight(row_number, row_height)
-        self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
-
     def set_hide_books_already_in_library(self, checked):
         PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB] = checked
         self.model.set_filter_hide_books_already_in_library(checked)
-        self.resize_row_height()
+        self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
 
     def download_selected_loans(self):
         selection_model = self.loans_view.selectionModel()

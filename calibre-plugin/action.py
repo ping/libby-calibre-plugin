@@ -34,7 +34,7 @@ from qt.core import (
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
-from .config import PREFS, KEY, TEXT
+from .config import PREFS, PreferenceKeys, PreferenceTexts
 from .ebook_download import CustomEbookDownload
 from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
@@ -103,7 +103,7 @@ class OverdriveLibbyDialog(QDialog):
         self.db = gui.current_db.new_api
         self.client = None
 
-        if PREFS[KEY.VERBOSE_LOGS]:
+        if PREFS[PreferenceKeys.VERBOSE_LOGS]:
             logger.setLevel(logging.DEBUG)
 
         label_column_widths = []
@@ -168,13 +168,13 @@ class OverdriveLibbyDialog(QDialog):
         )
 
         self.hide_book_already_in_lib_checkbox = QCheckBox(
-            TEXT.HIDE_BOOKS_ALREADY_IN_LIB, self
+            PreferenceTexts.HIDE_BOOKS_ALREADY_IN_LIB, self
         )
         self.hide_book_already_in_lib_checkbox.clicked.connect(
             self.set_hide_books_already_in_library
         )
         self.hide_book_already_in_lib_checkbox.setChecked(
-            PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB]
+            PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
         self.layout.addWidget(self.hide_book_already_in_lib_checkbox, 5, 0, 1, 3)
 
@@ -188,7 +188,7 @@ class OverdriveLibbyDialog(QDialog):
 
     def fetch_loans(self) -> List[Dict]:
         if not self.client:
-            libby_token = PREFS[KEY.LIBBY_TOKEN]
+            libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
             if libby_token:
                 self.client = LibbyClient(
                     identity_token=libby_token, max_retries=1, timeout=30, logger=logger
@@ -202,7 +202,7 @@ class OverdriveLibbyDialog(QDialog):
         return loans
 
     def set_hide_books_already_in_library(self, checked):
-        PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB] = checked
+        PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
         self.model.set_filter_hide_books_already_in_library(checked)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
 
@@ -215,7 +215,7 @@ class OverdriveLibbyDialog(QDialog):
 
     def download_loan(self, loan):
         format_id = LibbyClient.get_loan_format(
-            loan, prefer_open_format=PREFS[KEY.PREFER_OPEN_FORMATS]
+            loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
         if LibbyClient.is_downloadable_ebook_loan(loan):
             show_download_info(loan["title"], self)
@@ -358,7 +358,9 @@ class LibbyLoansModel(QAbstractTableModel):
         self.db = db
         self._loans = sorted(loans, key=lambda ln: ln["checkoutDate"], reverse=True)
         self.filtered_loans = []
-        self.filter_hide_books_already_in_library = PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB]
+        self.filter_hide_books_already_in_library = PREFS[
+            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
+        ]
         self.filter_loans()
 
     def refresh_loans(self, loans=[]):
@@ -372,11 +374,11 @@ class LibbyLoansModel(QAbstractTableModel):
             loan
             for loan in self._loans
             if (
-                not PREFS[KEY.HIDE_EBOOKS]
+                not PREFS[PreferenceKeys.HIDE_EBOOKS]
                 and LibbyClient.is_downloadable_ebook_loan(loan)
             )
             or (
-                not PREFS[KEY.HIDE_MAGAZINES]
+                not PREFS[PreferenceKeys.HIDE_MAGAZINES]
                 and LibbyClient.is_downloadable_magazine_loan(loan)
             )
         ]:
@@ -440,6 +442,8 @@ class LibbyLoansModel(QAbstractTableModel):
             return loan.get("type", {}).get("id", "")
         if col == 4:
             return str(
-                LibbyClient.get_loan_format(loan, PREFS[KEY.PREFER_OPEN_FORMATS])
+                LibbyClient.get_loan_format(
+                    loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+                )
             )
         return None

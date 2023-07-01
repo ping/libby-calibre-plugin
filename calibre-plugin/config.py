@@ -21,7 +21,7 @@ except NameError:
     pass  # load_translations() added in calibre 1.9
 
 
-class KEY:
+class PreferenceKeys:
     LIBBY_SETUP_CODE = "libby_setup_code"
     LIBBY_TOKEN = "libby_token"
     HIDE_MAGAZINES = "hide_magazines"
@@ -31,7 +31,7 @@ class KEY:
     PREFER_OPEN_FORMATS = "prefer_open_formats"
 
 
-class TEXT:
+class PreferenceTexts:
     LIBBY_SETUP_CODE = _("Libby Setup Code:")
     LIBBY_SETUP_CODE_DESC = _("8-digit setup code")
     HIDE_MAGAZINES = _("Hide Magazines")
@@ -43,13 +43,13 @@ class TEXT:
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
 
-PREFS.defaults[KEY.LIBBY_SETUP_CODE] = ""
-PREFS.defaults[KEY.LIBBY_TOKEN] = ""
-PREFS.defaults[KEY.HIDE_MAGAZINES] = False
-PREFS.defaults[KEY.HIDE_EBOOKS] = False
-PREFS.defaults[KEY.HIDE_BOOKS_ALREADY_IN_LIB] = False
-PREFS.defaults[KEY.VERBOSE_LOGS] = False
-PREFS.defaults[KEY.PREFER_OPEN_FORMATS] = True
+PREFS.defaults[PreferenceKeys.LIBBY_SETUP_CODE] = ""
+PREFS.defaults[PreferenceKeys.LIBBY_TOKEN] = ""
+PREFS.defaults[PreferenceKeys.HIDE_MAGAZINES] = False
+PREFS.defaults[PreferenceKeys.HIDE_EBOOKS] = False
+PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
+PREFS.defaults[PreferenceKeys.VERBOSE_LOGS] = False
+PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
 
 
 class ConfigWidget(QWidget):
@@ -61,48 +61,54 @@ class ConfigWidget(QWidget):
 
         self.libby_setup_status_lbl = QLabel(
             _("Libby is configured.")
-            if PREFS[KEY.LIBBY_TOKEN]
+            if PREFS[PreferenceKeys.LIBBY_TOKEN]
             else _("Libby is not configured yet.")
         )
         self.layout.addWidget(self.libby_setup_status_lbl, 0, 0)
         label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
-        self.libby_setup_code_lbl = QLabel(TEXT.LIBBY_SETUP_CODE)
+        self.libby_setup_code_lbl = QLabel(PreferenceTexts.LIBBY_SETUP_CODE)
         self.layout.addWidget(self.libby_setup_code_lbl, 1, 0)
         label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
         self.libby_setup_code_txt = QLineEdit(self)
-        self.libby_setup_code_txt.setPlaceholderText(TEXT.LIBBY_SETUP_CODE_DESC)
-        self.libby_setup_code_txt.setText(PREFS[KEY.LIBBY_SETUP_CODE])
+        self.libby_setup_code_txt.setPlaceholderText(
+            PreferenceTexts.LIBBY_SETUP_CODE_DESC
+        )
+        self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
         self.layout.addWidget(self.libby_setup_code_txt, 1, 1, 1, 1)
         self.libby_setup_code_lbl.setBuddy(self.libby_setup_code_txt)
 
-        self.hide_magazines_checkbox = QCheckBox(TEXT.HIDE_MAGAZINES, self)
-        self.hide_magazines_checkbox.setChecked(PREFS[KEY.HIDE_MAGAZINES])
+        self.hide_magazines_checkbox = QCheckBox(PreferenceTexts.HIDE_MAGAZINES, self)
+        self.hide_magazines_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_MAGAZINES])
         self.layout.addWidget(self.hide_magazines_checkbox, 2, 0)
         label_column_widths.append(self.layout.itemAtPosition(2, 0).sizeHint().width())
 
-        self.hide_ebooks_checkbox = QCheckBox(TEXT.HIDE_EBOOKS, self)
-        self.hide_ebooks_checkbox.setChecked(PREFS[KEY.HIDE_EBOOKS])
+        self.hide_ebooks_checkbox = QCheckBox(PreferenceTexts.HIDE_EBOOKS, self)
+        self.hide_ebooks_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_EBOOKS])
         self.layout.addWidget(self.hide_ebooks_checkbox, 3, 0)
         label_column_widths.append(self.layout.itemAtPosition(3, 0).sizeHint().width())
 
-        self.prefer_open_formats_checkbox = QCheckBox(TEXT.PREFER_OPEN_FORMATS, self)
-        self.prefer_open_formats_checkbox.setChecked(PREFS[KEY.PREFER_OPEN_FORMATS])
+        self.prefer_open_formats_checkbox = QCheckBox(
+            PreferenceTexts.PREFER_OPEN_FORMATS, self
+        )
+        self.prefer_open_formats_checkbox.setChecked(
+            PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+        )
         self.layout.addWidget(self.prefer_open_formats_checkbox, 4, 0)
         label_column_widths.append(self.layout.itemAtPosition(4, 0).sizeHint().width())
 
         self.hide_books_already_in_lib_checkbox = QCheckBox(
-            TEXT.HIDE_BOOKS_ALREADY_IN_LIB, self
+            PreferenceTexts.HIDE_BOOKS_ALREADY_IN_LIB, self
         )
         self.hide_books_already_in_lib_checkbox.setChecked(
-            PREFS[KEY.HIDE_BOOKS_ALREADY_IN_LIB]
+            PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
         self.layout.addWidget(self.hide_books_already_in_lib_checkbox, 5, 0)
         label_column_widths.append(self.layout.itemAtPosition(5, 0).sizeHint().width())
 
-        self.verbose_logs_checkbox = QCheckBox(TEXT.VERBOSE_LOGS, self)
-        self.verbose_logs_checkbox.setChecked(PREFS[KEY.VERBOSE_LOGS])
+        self.verbose_logs_checkbox = QCheckBox(PreferenceTexts.VERBOSE_LOGS, self)
+        self.verbose_logs_checkbox.setChecked(PREFS[PreferenceKeys.VERBOSE_LOGS])
         self.layout.addWidget(self.verbose_logs_checkbox, 6, 0)
         label_column_widths.append(self.layout.itemAtPosition(6, 0).sizeHint().width())
 
@@ -110,17 +116,19 @@ class ConfigWidget(QWidget):
         self.layout.setColumnMinimumWidth(1, label_column_width * 2)
 
     def save_settings(self):
-        PREFS[KEY.HIDE_MAGAZINES] = self.hide_magazines_checkbox.isChecked()
-        PREFS[KEY.HIDE_EBOOKS] = self.hide_ebooks_checkbox.isChecked()
-        PREFS[KEY.PREFER_OPEN_FORMATS] = self.prefer_open_formats_checkbox.isChecked()
+        PREFS[PreferenceKeys.HIDE_MAGAZINES] = self.hide_magazines_checkbox.isChecked()
+        PREFS[PreferenceKeys.HIDE_EBOOKS] = self.hide_ebooks_checkbox.isChecked()
         PREFS[
-            KEY.HIDE_BOOKS_ALREADY_IN_LIB
+            PreferenceKeys.PREFER_OPEN_FORMATS
+        ] = self.prefer_open_formats_checkbox.isChecked()
+        PREFS[
+            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ] = self.hide_books_already_in_lib_checkbox.isChecked()
-        PREFS[KEY.VERBOSE_LOGS] = self.verbose_logs_checkbox.isChecked()
+        PREFS[PreferenceKeys.VERBOSE_LOGS] = self.verbose_logs_checkbox.isChecked()
         setup_code = self.libby_setup_code_txt.text().strip()
-        if PREFS[KEY.VERBOSE_LOGS]:
+        if PREFS[PreferenceKeys.VERBOSE_LOGS]:
             logger.setLevel(logging.DEBUG)
-        if setup_code != PREFS[KEY.LIBBY_SETUP_CODE]:
+        if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:
             # if libby sync code has changed, do sync and save token
             from .libby import LibbyClient
 
@@ -128,5 +136,5 @@ class ConfigWidget(QWidget):
             chip_res = libby_client.get_chip()
             libby_client.clone_by_code(setup_code)
             if libby_client.is_logged_in():
-                PREFS[KEY.LIBBY_SETUP_CODE] = setup_code
-                PREFS[KEY.LIBBY_TOKEN] = chip_res["identity"]
+                PREFS[PreferenceKeys.LIBBY_SETUP_CODE] = setup_code
+                PREFS[PreferenceKeys.LIBBY_TOKEN] = chip_res["identity"]

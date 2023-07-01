@@ -44,4 +44,4 @@ Only downloadable loans will be listed. If the loan does not have a downloadable
 
 ## Disclaimer
 
-This is not affliated, endorsed or certified by OverDrive. To use thie plugin, you must already have access to OverDrive services via a valid library account. Use at your own risk.
+This is not affliated, endorsed or certified by OverDrive. To use this plugin, you must already have access to OverDrive services via a valid library account. Use at your own risk.

@@ -21,6 +21,8 @@ jobs:
         with:
           submodules: true
           fetch-depth: 1
+      - name: Install gtext
+        run: sudo apt-get -y install gettext
       - name: Build .mo files
         run: |
           cd .github/workflows

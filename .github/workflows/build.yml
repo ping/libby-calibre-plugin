@@ -35,3 +35,5 @@ jobs:
           name: overdrive-libby-plugin-${{ env.github_short_sha }}
           path: |
             calibre-plugin/
+            !calibre-plugin/translations/*.po
+            !calibre-plugin/translations/*.pot

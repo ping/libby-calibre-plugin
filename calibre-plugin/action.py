@@ -259,6 +259,7 @@ class OverdriveLibbyDialog(QDialog):
 
     def fetch_loans(self):
         if not self.__thread.isRunning():
+            self.refresh_btn.setEnabled(False)
             self.status_bar.showMessage(_("Fetching loans..."))
             self.__thread = self.__get_thread()
             self.__thread.start()
@@ -272,6 +273,7 @@ class OverdriveLibbyDialog(QDialog):
 
         def loaded(value):
             self.model.refresh_loans(value)
+            self.refresh_btn.setEnabled(True)
             self.status_bar.clearMessage()
             thread.quit()
 

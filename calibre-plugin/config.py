@@ -132,7 +132,7 @@ class ConfigWidget(QWidget):
 
             if not LibbyClient.is_valid_sync_code(setup_code):
                 # save a http request for get_chip()
-                raise Exception(_("Invalid setup code: %s") % setup_code)
+                raise Exception(_("Invalid setup code format: %s") % setup_code)
 
             libby_client = LibbyClient(logger=logger)
             chip_res = libby_client.get_chip()

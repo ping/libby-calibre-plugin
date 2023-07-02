@@ -9,7 +9,7 @@
 #
 
 from calibre.utils.config import JSONConfig
-from qt.core import QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
+from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
 from . import logger, PLUGIN_NAME
 
@@ -28,7 +28,7 @@ class PreferenceKeys:
 
 
 class PreferenceTexts:
-    LIBBY_SETUP_CODE = _("Libby Setup Code:")
+    LIBBY_SETUP_CODE = _("Libby Setup Code")
     LIBBY_SETUP_CODE_DESC = _("8-digit setup code")
     HIDE_MAGAZINES = _("Hide Magazines")
     HIDE_EBOOKS = _("Hide Ebooks")
@@ -67,7 +67,12 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.libby_setup_status_lbl, 0, 0)
         label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
-        self.libby_setup_code_lbl = QLabel(PreferenceTexts.LIBBY_SETUP_CODE)
+        self.libby_setup_code_lbl = QLabel(
+            PreferenceTexts.LIBBY_SETUP_CODE
+            + ' [<a style="padding: 0 4px;" href="https://help.libbyapp.com/en-us/6070.htm"> ? </a>]:'
+        )
+        self.libby_setup_code_lbl.setTextFormat(Qt.RichText)
+        self.libby_setup_code_lbl.setOpenExternalLinks(True)
         self.layout.addWidget(self.libby_setup_code_lbl, 1, 0)
         label_column_widths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 

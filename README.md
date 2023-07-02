@@ -24,13 +24,13 @@ You may also download the latest plugin zip file from Releases and install the p
 
 ## Setup
 
-Open the plugin customisation settings (from calibre Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
-
 To configure this plugin, you must already be using Libby on a [compatible](https://help.libbyapp.com/en-us/6105.htm) device.
+
+Open the plugin customisation settings (Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
 
 ![settings](images/settings.png)
 
-You will need to get a Libby setup code by following the instructions [here](https://help.libbyapp.com/en-us/6070.htm). Enter the code into the plugin settings and click "OK". If you encounter an error, the code may have expired. Get a new one and try again.
+Get a Libby setup code by following the instructions [here](https://help.libbyapp.com/en-us/6070.htm). Enter the 8-digit code into the plugin settings and click "OK". If you encounter an error, the code may have expired. Get a new one and try again.
 
 You should only need to do this setup once. Then add the plugin to the toolbar/menubar as you wish.
 

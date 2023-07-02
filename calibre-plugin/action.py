@@ -35,6 +35,7 @@ from qt.core import (
     pyqtSignal,
     QStatusBar,
     QSize,
+    QMessageBox,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -182,10 +183,10 @@ class OverdriveLibbyDialog(QDialog):
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
         self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
 
-        self.download_btn = QPushButton("\u2913 " + _("Download selected loans"), self)
+        self.download_btn = QPushButton("\u2913 " + _("Download"), self)
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
-        self.download_btn.setStyleSheet("padding: 4px 8px")
+        self.download_btn.setStyleSheet("padding: 4px 16px")
         self.download_btn.clicked.connect(self.download_selected_loans)
         self.layout.addWidget(self.download_btn, 5, loan_view_span - 1)
 
@@ -294,6 +295,8 @@ class OverdriveLibbyDialog(QDialog):
             rows = selection_model.selectedRows()
             for row in reversed(rows):
                 self.download_loan(row.data(Qt.UserRole))
+        else:
+            QMessageBox.information(self, "", _("Please select at least 1 loan."))
 
     def download_loan(self, loan):
         format_id = LibbyClient.get_loan_format(

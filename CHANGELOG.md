@@ -1,6 +1,7 @@
 # Changelog
 
 Unreleased
+- Add feature to auto tag books downloaded by the plugin
 - Remove Verbose Logs option from config
 - Improve implementation for Download, Refresh buttons
 - Detect invalid Libby setup code format early

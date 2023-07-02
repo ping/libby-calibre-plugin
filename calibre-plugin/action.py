@@ -305,12 +305,14 @@ class OverdriveLibbyDialog(QDialog):
         )
         if LibbyClient.is_downloadable_ebook_loan(loan):
             show_download_info(loan["title"], self)
+            tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_EBOOKS].split(",")]
             if format_id in (LibbyFormats.EBookEPubOpen, LibbyFormats.EBookPDFOpen):
                 # special handling required for these formats
                 self.download_ebook(
                     loan,
                     format_id,
                     filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',
+                    tags=tags,
                 )
             else:
                 endpoint_url, headers = self.client.get_loan_fulfilment_details(
@@ -324,15 +326,19 @@ class OverdriveLibbyDialog(QDialog):
                     return br
 
                 self.gui.download_ebook(
-                    url=endpoint_url, create_browser=create_custom_browser
+                    url=endpoint_url,
+                    create_browser=create_custom_browser,
+                    tags=tags,
                 )
 
         if LibbyClient.is_downloadable_magazine_loan(loan):
             show_download_info(loan["title"], self)
+            tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_MAGAZINES].split(",")]
             self.download_magazine(
                 loan,
                 format_id,
                 filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',
+                tags=tags,
             )
 
     def download_ebook(

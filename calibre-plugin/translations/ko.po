@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-02 19:30+0800\n"
-"PO-Revision-Date: 2023-07-02 19:31+0800\n"
+"POT-Creation-Date: 2023-07-02 22:05+0800\n"
+"PO-Revision-Date: 2023-07-02 22:06+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ko\n"
@@ -52,62 +52,78 @@ msgstr ""
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:356 calibre-plugin/action.py:402
+#: calibre-plugin/action.py:360 calibre-plugin/action.py:406
 msgid "Downloading %s"
 msgstr "다운로드중 %s"
 
-#: calibre-plugin/action.py:433
+#: calibre-plugin/action.py:437
 msgid "Title"
 msgstr "제목"
 
-#: calibre-plugin/action.py:434
+#: calibre-plugin/action.py:438
 msgid "Author"
 msgstr "작가"
 
-#: calibre-plugin/action.py:435
+#: calibre-plugin/action.py:439
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:436
+#: calibre-plugin/action.py:440
 msgid "Type"
 msgstr "항목"
 
-#: calibre-plugin/action.py:437
+#: calibre-plugin/action.py:441
 msgid "Format"
 msgstr "형식"
 
-#: calibre-plugin/config.py:31
+#: calibre-plugin/config.py:33
 msgid "Libby Setup Code"
 msgstr "Libby설정 코드"
 
-#: calibre-plugin/config.py:32
+#: calibre-plugin/config.py:34
 msgid "8-digit setup code"
 msgstr "8자리 코드"
 
-#: calibre-plugin/config.py:33
+#: calibre-plugin/config.py:35
 msgid "Hide Magazines"
 msgstr "매거진 숨기기"
 
-#: calibre-plugin/config.py:34
+#: calibre-plugin/config.py:36
 msgid "Hide Ebooks"
 msgstr "eBook 숨기기"
 
-#: calibre-plugin/config.py:35
+#: calibre-plugin/config.py:37
 msgid "Hide books already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:36
+#: calibre-plugin/config.py:38
 msgid "Prefer Open Formats"
 msgstr ""
 
-#: calibre-plugin/config.py:59
+#: calibre-plugin/config.py:39
+msgid "Tag downloaded ebooks with"
+msgstr ""
+
+#: calibre-plugin/config.py:40
+msgid "Example: library,books"
+msgstr ""
+
+#: calibre-plugin/config.py:41
+msgid "Tag downloaded magazines with"
+msgstr ""
+
+#: calibre-plugin/config.py:42
+msgid "Example: library,magazines"
+msgstr ""
+
+#: calibre-plugin/config.py:69
 msgid "Libby is configured."
 msgstr "Libby가 구성되었습니다."
 
-#: calibre-plugin/config.py:61
+#: calibre-plugin/config.py:71
 msgid "Libby is not configured yet."
 msgstr "Libby가 구성되지 않았습니다."
 
-#: calibre-plugin/config.py:135
+#: calibre-plugin/config.py:200
 msgid "Invalid setup code format: %s"
 msgstr ""

@@ -18,7 +18,7 @@ This plugin also works with the [ACSM Input plugin](https://github.com/Leseratte
 
 ## Setup
 
-Down the latest plugin zip file from Releases and [install in calibre](https://www.mobileread.com/forums/showthread.php?t=118680), then open the plugin settings.
+Down the latest plugin zip file from Releases and [install in calibre](https://www.mobileread.com/forums/showthread.php?t=118680), then open the plugin customisation settings (from calibre Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
 
 To configure this plugin, you must already be using Libby on a [compatible](https://help.libbyapp.com/en-us/6105.htm) device.
 

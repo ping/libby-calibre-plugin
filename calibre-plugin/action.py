@@ -143,6 +143,7 @@ class OverdriveLibbyDialog(QDialog):
 
         self.refresh_btn = QPushButton("\u21BB " + _("Refresh"), self)
         self.refresh_btn.setAutoDefault(False)
+        self.refresh_btn.setToolTip(_("Get latest loans"))
         self.refresh_btn.clicked.connect(self.do_refresh)
         self.layout.addWidget(self.refresh_btn, 0, 0)
 
@@ -183,6 +184,7 @@ class OverdriveLibbyDialog(QDialog):
 
         self.download_btn = QPushButton("\u2913 " + _("Download selected loans"), self)
         self.download_btn.setAutoDefault(False)
+        self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 8px")
         self.download_btn.clicked.connect(self.download_selected_loans)
         self.layout.addWidget(self.download_btn, 5, loan_view_span - 1)

@@ -21,6 +21,10 @@ jobs:
         with:
           submodules: true
           fetch-depth: 1
+      - name: Build .mo files
+        run: |
+          cd .github/workflows
+          sh build_translations.sh
       - name: Shorten GITHUB_SHA
         run: echo "github_short_sha=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Upload plugin

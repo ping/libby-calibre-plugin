@@ -35,7 +35,7 @@ from qt.core import (
     pyqtSignal,
     QStatusBar,
     QSize,
-    QMessageBox,
+    QErrorMessage,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -296,7 +296,8 @@ class OverdriveLibbyDialog(QDialog):
             for row in reversed(rows):
                 self.download_loan(row.data(Qt.UserRole))
         else:
-            QMessageBox.information(self, "", _("Please select at least 1 loan."))
+            d = QErrorMessage(self)
+            d.showMessage(_("Please select at least 1 loan."), "select_at_least_1_loan")
 
     def download_loan(self, loan):
         format_id = LibbyClient.get_loan_format(

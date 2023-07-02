@@ -1,6 +1,7 @@
 # Changelog
 
 Unreleased
+- Remove Verbose Logs option from config
 - Improve implementation for Download, Refresh buttons
 - Detect invalid Libby setup code format early
 - Reduce zip file size by removing unneeded translation files

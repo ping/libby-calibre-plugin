@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-01 15:42+0800\n"
-"PO-Revision-Date: 2023-07-01 15:43+0800\n"
+"POT-Creation-Date: 2023-07-02 11:18+0800\n"
+"PO-Revision-Date: 2023-07-02 11:24+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -16,86 +16,94 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 3.3.2\n"
 
-#: calibre-plugin/__init__.py:48
+#: calibre-plugin/__init__.py:49
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libbyアカウントからローンをインポート"
 
-#: calibre-plugin/action.py:59
+#: calibre-plugin/action.py:57
 msgid "Run the OverDrive Libby client UI"
 msgstr "OverDrive LibbyクライアントUIを実行します"
 
-#: calibre-plugin/action.py:144
+#: calibre-plugin/action.py:140
 msgid "OverDrive Libby v%s"
 msgstr ""
 
-#: calibre-plugin/action.py:149
+#: calibre-plugin/action.py:145
 msgid "Refresh"
 msgstr "更新"
 
-#: calibre-plugin/action.py:189
+#: calibre-plugin/action.py:147
+msgid "Get latest loans"
+msgstr ""
+
+#: calibre-plugin/action.py:186
+msgid "Download"
+msgstr "ダウンロード"
+
+#: calibre-plugin/action.py:188
 msgid "Download selected loans"
 msgstr "選択した書籍ローンをダウンロードする"
 
-#: calibre-plugin/action.py:221
+#: calibre-plugin/action.py:266
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:307 calibre-plugin/action.py:353
+#: calibre-plugin/action.py:299
+msgid "Please select at least 1 loan."
+msgstr ""
+
+#: calibre-plugin/action.py:355 calibre-plugin/action.py:401
 msgid "Downloading %s"
 msgstr "%s をダウンロード中"
 
-#: calibre-plugin/action.py:384
+#: calibre-plugin/action.py:432
 msgid "Title"
 msgstr "タイトル"
 
-#: calibre-plugin/action.py:385
+#: calibre-plugin/action.py:433
 msgid "Author"
 msgstr "著者"
 
-#: calibre-plugin/action.py:386
+#: calibre-plugin/action.py:434
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:387
+#: calibre-plugin/action.py:435
 msgid "Type"
 msgstr "タイプ"
 
-#: calibre-plugin/action.py:388
+#: calibre-plugin/action.py:436
 msgid "Format"
 msgstr "形式"
 
-#: calibre-plugin/config.py:35
-msgid "Libby Setup Code:"
-msgstr "Libby セットアップコード："
+#: calibre-plugin/config.py:31
+msgid "Libby Setup Code"
+msgstr "Libby セットアップコード"
 
-#: calibre-plugin/config.py:36
+#: calibre-plugin/config.py:32
 msgid "8-digit setup code"
 msgstr "8桁のコード"
 
-#: calibre-plugin/config.py:37
+#: calibre-plugin/config.py:33
 msgid "Hide Magazines"
 msgstr "雑誌を隠す"
 
-#: calibre-plugin/config.py:38
+#: calibre-plugin/config.py:34
 msgid "Hide Ebooks"
 msgstr "電子書籍を隠す"
 
-#: calibre-plugin/config.py:39
+#: calibre-plugin/config.py:35
 msgid "Hide books already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:40
-msgid "Verbose Logs"
-msgstr ""
-
-#: calibre-plugin/config.py:41
+#: calibre-plugin/config.py:36
 msgid "Prefer Open Formats"
 msgstr ""
 
-#: calibre-plugin/config.py:63
+#: calibre-plugin/config.py:59
 msgid "Libby is configured."
 msgstr ""
 
-#: calibre-plugin/config.py:65
+#: calibre-plugin/config.py:61
 msgid "Libby is not configured yet."
 msgstr ""

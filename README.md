@@ -16,9 +16,15 @@ This plugin also works with the [ACSM Input plugin](https://github.com/Leseratte
 
 - `.acsm` files imported into calibre results in epubs (via the [ACSM Input plugin](https://github.com/Leseratte10/acsm-calibre-plugin/issues/56)) that do not have calibre metadata [calibrebug#2025355](https://bugs.launchpad.net/calibre/+bug/2025355). A [simple workaround](https://github.com/ping/libby-calibre-plugin/issues/1) is available.
 
+## Install
+
+Open Preferences > Plugins > Get new plugins, and install the "OverDrive Libby" User interface action plugin.
+
+You may also download the latest plugin zip file from Releases and install the plugin manually, then restart calibre as described in the [Introduction to Plugins](https://www.mobileread.com/forums/showthread.php?t=118680) thread. 
+
 ## Setup
 
-Down the latest plugin zip file from Releases and [install in calibre](https://www.mobileread.com/forums/showthread.php?t=118680), then open the plugin customisation settings (from calibre Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
+Open the plugin customisation settings (from calibre Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
 
 To configure this plugin, you must already be using Libby on a [compatible](https://help.libbyapp.com/en-us/6105.htm) device.
 

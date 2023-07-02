@@ -12,6 +12,7 @@ import io
 import logging
 import sys
 
+from calibre.constants import is_debugging
 from calibre.customize import InterfaceActionBase
 
 load_translations()
@@ -30,7 +31,7 @@ ch.setFormatter(
     )
 )
 logger.addHandler(ch)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.INFO if not is_debugging() else logging.DEBUG)
 
 
 class ActionLibby(InterfaceActionBase):

@@ -8,7 +8,6 @@
 # information
 #
 
-import logging
 from timeit import default_timer as timer
 from typing import Dict
 
@@ -127,9 +126,6 @@ class OverdriveLibbyDialog(QDialog):
         self.__thread = QThread()
         self.__curr_width = 0
         self.__curr_height = 0
-
-        if PREFS[PreferenceKeys.VERBOSE_LOGS]:
-            logger.setLevel(logging.DEBUG)
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:

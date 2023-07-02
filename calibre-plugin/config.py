@@ -8,8 +8,6 @@
 # information
 #
 
-import logging
-
 from calibre.utils.config import JSONConfig
 from qt.core import QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
@@ -24,7 +22,6 @@ class PreferenceKeys:
     HIDE_MAGAZINES = "hide_magazines"
     HIDE_EBOOKS = "hide_ebooks"
     HIDE_BOOKS_ALREADY_IN_LIB = "hide_books_in_already_lib"
-    VERBOSE_LOGS = "verbose_logs"
     PREFER_OPEN_FORMATS = "prefer_open_formats"
     MAIN_UI_WIDTH = "main_ui_width"
     MAIN_UI_HEIGHT = "main_ui_height"
@@ -36,7 +33,6 @@ class PreferenceTexts:
     HIDE_MAGAZINES = _("Hide Magazines")
     HIDE_EBOOKS = _("Hide Ebooks")
     HIDE_BOOKS_ALREADY_IN_LIB = _("Hide books already in library")
-    VERBOSE_LOGS = _("Verbose Logs")
     PREFER_OPEN_FORMATS = _("Prefer Open Formats")
 
 
@@ -47,7 +43,6 @@ PREFS.defaults[PreferenceKeys.LIBBY_TOKEN] = ""
 PREFS.defaults[PreferenceKeys.HIDE_MAGAZINES] = False
 PREFS.defaults[PreferenceKeys.HIDE_EBOOKS] = False
 PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
-PREFS.defaults[PreferenceKeys.VERBOSE_LOGS] = False
 PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
@@ -113,11 +108,6 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.hide_books_already_in_lib_checkbox, 5, 0)
         label_column_widths.append(self.layout.itemAtPosition(5, 0).sizeHint().width())
 
-        self.verbose_logs_checkbox = QCheckBox(PreferenceTexts.VERBOSE_LOGS, self)
-        self.verbose_logs_checkbox.setChecked(PREFS[PreferenceKeys.VERBOSE_LOGS])
-        self.layout.addWidget(self.verbose_logs_checkbox, 6, 0)
-        label_column_widths.append(self.layout.itemAtPosition(6, 0).sizeHint().width())
-
         label_column_width = max(label_column_widths)
         self.layout.setColumnMinimumWidth(1, label_column_width)
 
@@ -130,10 +120,7 @@ class ConfigWidget(QWidget):
         PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ] = self.hide_books_already_in_lib_checkbox.isChecked()
-        PREFS[PreferenceKeys.VERBOSE_LOGS] = self.verbose_logs_checkbox.isChecked()
         setup_code = self.libby_setup_code_txt.text().strip()
-        if PREFS[PreferenceKeys.VERBOSE_LOGS]:
-            logger.setLevel(logging.DEBUG)
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:
             # if libby sync code has changed, do sync and save token
             from .libby import LibbyClient

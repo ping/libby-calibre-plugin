@@ -34,7 +34,6 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 - Hide Ebooks: Don't list ebook loans
 - Prefer Open Formats: Choose DRM-free formats if available
 - Hide books already in library: Hide loans that are already in your library
-- Verbose Logs: Enable more verbose logging for debugging
 
 ## Usage
 

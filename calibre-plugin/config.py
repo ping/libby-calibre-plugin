@@ -130,6 +130,10 @@ class ConfigWidget(QWidget):
             # if libby sync code has changed, do sync and save token
             from .libby import LibbyClient
 
+            if not LibbyClient.is_valid_sync_code(setup_code):
+                # save a http request for get_chip()
+                raise Exception(_("Invalid setup code: %s") % setup_code)
+
             libby_client = LibbyClient(logger=logger)
             chip_res = libby_client.get_chip()
             libby_client.clone_by_code(setup_code)

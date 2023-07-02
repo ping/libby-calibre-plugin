@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-02 11:18+0800\n"
-"PO-Revision-Date: 2023-07-02 11:20+0800\n"
+"POT-Creation-Date: 2023-07-02 18:45+0800\n"
+"PO-Revision-Date: 2023-07-02 18:46+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -48,31 +48,31 @@ msgstr "下载选定的图书借阅"
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:299
+#: calibre-plugin/action.py:300
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:355 calibre-plugin/action.py:401
+#: calibre-plugin/action.py:356 calibre-plugin/action.py:402
 msgid "Downloading %s"
 msgstr "正在下载 %s"
 
-#: calibre-plugin/action.py:432
+#: calibre-plugin/action.py:433
 msgid "Title"
 msgstr "书名"
 
-#: calibre-plugin/action.py:433
+#: calibre-plugin/action.py:434
 msgid "Author"
 msgstr "作者"
 
-#: calibre-plugin/action.py:434
+#: calibre-plugin/action.py:435
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:435
+#: calibre-plugin/action.py:436
 msgid "Type"
 msgstr "书籍类型"
 
-#: calibre-plugin/action.py:436
+#: calibre-plugin/action.py:437
 msgid "Format"
 msgstr "格式"
 
@@ -107,3 +107,7 @@ msgstr "Libby已配置。"
 #: calibre-plugin/config.py:61
 msgid "Libby is not configured yet."
 msgstr "Libby未配置。"
+
+#: calibre-plugin/config.py:135
+msgid "Invalid setup code: %s"
+msgstr ""

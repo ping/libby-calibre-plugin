@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-07-02 11:18+0800\n"
+"POT-Creation-Date: 2023-07-02 18:45+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,31 +47,31 @@ msgstr ""
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:299
+#: calibre-plugin/action.py:300
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:355 calibre-plugin/action.py:401
+#: calibre-plugin/action.py:356 calibre-plugin/action.py:402
 msgid "Downloading %s"
 msgstr ""
 
-#: calibre-plugin/action.py:432
+#: calibre-plugin/action.py:433
 msgid "Title"
 msgstr ""
 
-#: calibre-plugin/action.py:433
+#: calibre-plugin/action.py:434
 msgid "Author"
 msgstr ""
 
-#: calibre-plugin/action.py:434
+#: calibre-plugin/action.py:435
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:435
+#: calibre-plugin/action.py:436
 msgid "Type"
 msgstr ""
 
-#: calibre-plugin/action.py:436
+#: calibre-plugin/action.py:437
 msgid "Format"
 msgstr ""
 
@@ -105,5 +105,9 @@ msgstr ""
 
 #: calibre-plugin/config.py:61
 msgid "Libby is not configured yet."
+msgstr ""
+
+#: calibre-plugin/config.py:135
+msgid "Invalid setup code: %s"
 msgstr ""
 

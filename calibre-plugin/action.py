@@ -67,23 +67,7 @@ class OverdriveLibbyAction(InterfaceAction):
 
     def genesis(self):
         # This method is called once per plugin, do initial setup here
-
-        # Set the icon for this interface action
-        # The get_icons function is a builtin function defined for all your
-        # plugin code. It loads icons from the plugin zip file. It returns
-        # QIcon objects, if you want the actual data, use the analogous
-        # get_resources builtin function.
-        #
-        # Note that if you are loading more than one icon, for performance, you
-        # should pass a list of names to get_icons. In this case, get_icons
-        # will return a dictionary mapping names to QIcons. Names that
-        # are not found in the zip file will result in null QIcons.
         icon = get_icons(PLUGIN_ICON, "OverDrive Libby Plugin")
-        # icon.actualSize(QSize(48, 48))
-        # icon.pixmap(QSize(48, 48))
-
-        # The qaction is automatically created from the action_spec defined
-        # above
         self.qaction.setIcon(icon)
         self.qaction.triggered.connect(self.show_dialog)
 

@@ -442,7 +442,9 @@ class OverdriveLibbyDialog(QDialog):
         view_action = menu.addAction(_("View in Libby"))
         view_action.triggered.connect(lambda: self.open_loan_in_libby(indices))
         return_action = menu.addAction(
-            _("Return {n} selected loan(s)").format(n=len(indices))
+            ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
+                n=len(indices)
+            )
         )
         return_action.triggered.connect(lambda: self.return_selection(indices))
         menu.exec(QCursor.pos())

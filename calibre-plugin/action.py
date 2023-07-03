@@ -36,6 +36,9 @@ from qt.core import (
     QStatusBar,
     QSize,
     QErrorMessage,
+    QMenu,
+    QCursor,
+    QModelIndex,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -43,6 +46,7 @@ from .config import PREFS, PreferenceKeys, PreferenceTexts
 from .ebook_download import CustomEbookDownload
 from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
+from .loan_return import LibbyLoanReturn
 from .magazine_download import CustomMagazineDownload
 from .magazine_download_utils import parse_datetime
 
@@ -95,6 +99,7 @@ class OverdriveLibbyAction(InterfaceAction):
 
 gui_ebook_download = CustomEbookDownload()
 gui_magazine_download = CustomMagazineDownload()
+guid_libby_return = LibbyLoanReturn()
 
 
 class DataWorker(QObject):
@@ -115,6 +120,13 @@ class DataWorker(QObject):
         loans = client.get_loans()
         logger.info("Request took %f seconds" % (timer() - start))
         self.finished.emit(loans)
+
+
+def get_loan_title(loan: Dict) -> str:
+    title = loan["title"]
+    if loan["type"]["id"] == LibbyMediaTypes.Magazine:
+        title = f'{loan["title"]} - {loan.get("edition", "")}'
+    return title
 
 
 class OverdriveLibbyDialog(QDialog):
@@ -175,6 +187,9 @@ class OverdriveLibbyDialog(QDialog):
             horizontal_header.setSectionResizeMode(col_index, mode)
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
+        # add context menu
+        self.loans_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.loans_view.customContextMenuRequested.connect(self.loan_view_context_menu)
         self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
 
         self.download_btn = QPushButton("\u2913 " + _("Download"), self)
@@ -298,7 +313,7 @@ class OverdriveLibbyDialog(QDialog):
             loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
         if LibbyClient.is_downloadable_ebook_loan(loan):
-            show_download_info(loan["title"], self)
+            show_download_info(get_loan_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_EBOOKS].split(",")]
             if format_id in (LibbyFormats.EBookEPubOpen, LibbyFormats.EBookPDFOpen):
                 # special handling required for these formats
@@ -326,7 +341,7 @@ class OverdriveLibbyDialog(QDialog):
                 )
 
         if LibbyClient.is_downloadable_magazine_loan(loan):
-            show_download_info(loan["title"], self)
+            show_download_info(get_loan_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_MAGAZINES].split(",")]
             self.download_magazine(
                 loan,
@@ -354,7 +369,7 @@ class OverdriveLibbyDialog(QDialog):
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
         description = _("Downloading %s") % as_unicode(
-            f'"{loan["title"]}"', errors="replace"
+            f'"{get_loan_title(loan)}"', errors="replace"
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -380,6 +395,7 @@ class OverdriveLibbyDialog(QDialog):
             killable=False,
         )
         self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
 
     def download_magazine(
         self,
@@ -400,7 +416,7 @@ class OverdriveLibbyDialog(QDialog):
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
         description = _("Downloading %s") % as_unicode(
-            f'"{loan["title"]}"', errors="replace"
+            f'"{get_loan_title(loan)}"', errors="replace"
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -426,6 +442,50 @@ class OverdriveLibbyDialog(QDialog):
             killable=True,
         )
         self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+
+    def loan_view_context_menu(self, pos):
+        selection_model = self.loans_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        menu = QMenu()
+        menu.addSection("Actions")
+        return_action = menu.addAction(_("Return %d selected loan(s)") % len(indices))
+        return_action.triggered.connect(lambda: self.return_selection(indices))
+        menu.exec(QCursor.pos())
+
+    def return_selection(self, indices):
+        for index in reversed(indices):
+            loan = index.data(Qt.UserRole)
+            # logger.debug('Selected "%s" for return', loan["title"])
+            self.return_loan(loan)
+            self.model.removeRow(self.search_proxy_model.mapToSource(index).row())
+
+    def return_loan(self, loan: Dict):
+        description = _("Returning %s") % as_unicode(
+            f'"{get_loan_title(loan)}"', errors="replace"
+        )
+        callback = Dispatcher(self.returned_loan)
+        job = ThreadedJob(
+            "overdrive_libby_return",
+            description,
+            guid_libby_return,
+            (self.gui, self.client, loan),
+            {},
+            callback,
+            max_concurrent_count=2,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+
+    def returned_loan(self, job):
+        if job.failed:
+            self.gui.job_exception(job, dialog_title=_("Failed to return loan"))
+            return
+
+        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
 
 
 class LibbyLoansModel(QAbstractTableModel):
@@ -471,19 +531,13 @@ class LibbyLoansModel(QAbstractTableModel):
             if not self.filter_hide_books_already_in_library:
                 self.filtered_loans.append(loan)
                 continue
-            title = self.get_loan_title(loan)
+            title = get_loan_title(loan)
             authors = []
             if loan.get("firstCreatorName", ""):
                 authors = [loan.get("firstCreatorName", "")]
             if not self.db.has_book(Metadata(title=title, authors=authors)):
                 self.filtered_loans.append(loan)
         self.endResetModel()
-
-    def get_loan_title(self, loan: Dict) -> str:
-        title = loan["title"]
-        if loan["type"]["id"] == LibbyMediaTypes.Magazine:
-            title = f'{loan["title"]} - {loan.get("edition", "")}'
-        return title
 
     def set_filter_hide_books_already_in_library(self, value: bool):
         if value != self.filter_hide_books_already_in_library:
@@ -519,7 +573,7 @@ class LibbyLoansModel(QAbstractTableModel):
         if col >= self.column_count:
             return None
         if col == 0:
-            return self.get_loan_title(loan)
+            return get_loan_title(loan)
         if col == 1:
             return loan.get("firstCreatorName", "")
         if col == 2:
@@ -533,3 +587,11 @@ class LibbyLoansModel(QAbstractTableModel):
                 )
             )
         return None
+
+    def removeRows(self, row, count, _):
+        self.beginRemoveRows(QModelIndex(), row, row + count - 1)
+        self.filtered_loans = (
+            self.filtered_loans[:row] + self.filtered_loans[row + count :]
+        )
+        self.endRemoveRows()
+        return True

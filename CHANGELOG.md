@@ -1,6 +1,7 @@
 # Changelog
 
 Unreleased
+- Add feature to return loans
 - Add feature to auto tag books downloaded by the plugin
 - Remove Verbose Logs option from config
 - Improve implementation for Download, Refresh buttons

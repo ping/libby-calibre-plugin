@@ -650,3 +650,24 @@ class LibbyClient(object):
         openbook = self.send_request(meta["urls"]["openbook"])
         rosters: List[Dict] = self.send_request(meta["urls"]["rosters"])
         return download_base, openbook, rosters
+
+    def return_title(self, title_id: str, card_id: str) -> None:
+        """
+        Return a title.
+
+        :param title_id:
+        :param card_id:
+        :return:
+        """
+        self.send_request(
+            f"card/{card_id}/loan/{title_id}", method="DELETE", return_response=True
+        )
+
+    def return_loan(self, loan: Dict) -> None:
+        """
+        Return a loan.
+
+        :param loan:
+        :return:
+        """
+        self.return_title(loan["id"], loan["cardId"])

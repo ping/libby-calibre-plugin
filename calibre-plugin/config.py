@@ -65,14 +65,14 @@ class ConfigWidget(QWidget):
         widget_row_pos = 0
 
         # Setup Status
+        is_configured = bool(PREFS[PreferenceKeys.LIBBY_TOKEN])
         self.libby_setup_status_lbl = QLabel(
             _("Libby is configured.")
-            if PREFS[PreferenceKeys.LIBBY_TOKEN]
+            if is_configured
             else _("Libby is not configured yet.")
         )
         self.libby_setup_status_lbl.setStyleSheet(
-            "font-weight: bold; "
-            f'color: {"#00D228" if PREFS[PreferenceKeys.LIBBY_TOKEN] else "#FF0F00"};'
+            "font-weight: bold; " f'color: {"#00D228" if is_configured else "#FF0F00"};'
         )
         self.layout.addWidget(self.libby_setup_status_lbl, widget_row_pos, 0)
         label_column_widths.append(

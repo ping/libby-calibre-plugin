@@ -1,12 +1,13 @@
 # Changelog
 
 Unreleased
-- Add feature to return loans
-- Add feature to auto tag books downloaded by the plugin
-- Remove Verbose Logs option from config
-- Improve implementation for Download, Refresh buttons
+- New: View loans in Libby (from context menu)
+- New: Return loans (from context menu)
+- New: Auto tag books downloaded by the plugin
+- Removed Verbose Logs option from config
+- Improved implementation for Download, Refresh buttons
 - Detect invalid Libby setup code format early
-- Reduce zip file size by removing unneeded translation files
+- Reduced zip file size by removing unneeded translation files
 
 Version 0.1.2 - 2023-07-02
 - Plugin now remembers the size of the main loans window

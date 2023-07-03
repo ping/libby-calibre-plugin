@@ -39,6 +39,8 @@ from qt.core import (
     QMenu,
     QCursor,
     QModelIndex,
+    QUrl,
+    QDesktopServices,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -87,7 +89,7 @@ guid_libby_return = LibbyLoanReturn()
 
 
 class DataWorker(QObject):
-    finished = pyqtSignal(list)
+    finished = pyqtSignal(dict)
 
     def __int__(self):
         super().__init__()
@@ -101,9 +103,9 @@ class DataWorker(QObject):
         client = LibbyClient(
             identity_token=libby_token, max_retries=1, timeout=30, logger=logger
         )
-        loans = client.get_loans()
+        synced_state = client.sync()
         logger.info("Request took %f seconds" % (timer() - start))
-        self.finished.emit(loans)
+        self.finished.emit(synced_state)
 
 
 def get_loan_title(loan: Dict) -> str:
@@ -250,7 +252,7 @@ class OverdriveLibbyDialog(QDialog):
             logger.debug("Saved new UI height preference: %d", new_height)
 
     def do_refresh(self):
-        self.model.refresh_loans([])
+        self.model.refresh_loans({})
         self.fetch_loans()
 
     def fetch_loans(self):
@@ -433,11 +435,32 @@ class OverdriveLibbyDialog(QDialog):
         if not selection_model.hasSelection():
             return
         indices = selection_model.selectedRows()
-        menu = QMenu()
+        menu = QMenu(self)
         menu.addSection("Actions")
+        view_action = menu.addAction(_("View in Libby"))
+        view_action.triggered.connect(lambda: self.open_loan_in_libby(indices))
         return_action = menu.addAction(_("Return %d selected loan(s)") % len(indices))
         return_action.triggered.connect(lambda: self.return_selection(indices))
         menu.exec(QCursor.pos())
+
+    def open_loan_in_libby(self, indices):
+        for index in indices:
+            loan = index.data(Qt.UserRole)
+            library_key = next(
+                iter(
+                    [
+                        c["advantageKey"]
+                        for c in self.model._cards
+                        if c["cardId"] == loan["cardId"]
+                    ]
+                ),
+                "",
+            )
+            QDesktopServices.openUrl(
+                QUrl(
+                    f'https://libbyapp.com/library/{library_key}/everything/page-1/{loan["id"]}'
+                )
+            )
 
     def return_selection(self, indices):
         for index in reversed(indices):
@@ -483,18 +506,26 @@ class LibbyLoansModel(QAbstractTableModel):
     column_count = len(column_headers)
     filter_hide_books_already_in_library = False
 
-    def __init__(self, parent, loans=[], db=None):
+    def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent)
         self.db = db
-        self._loans = sorted(loans, key=lambda ln: ln["checkoutDate"], reverse=True)
+        self._cards = []
+        self._loans = []
         self.filtered_loans = []
         self.filter_hide_books_already_in_library = PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ]
-        self.filter_loans()
+        self.refresh_loans(synced_state)
 
-    def refresh_loans(self, loans=[]):
-        self._loans = sorted(loans, key=lambda ln: ln["checkoutDate"], reverse=True)
+    def refresh_loans(self, synced_state=None):
+        if not synced_state:
+            synced_state = {}
+        self._cards = synced_state.get("cards", [])
+        self._loans = sorted(
+            synced_state.get("loans", []),
+            key=lambda ln: ln["checkoutDate"],
+            reverse=True,
+        )
         self.filter_loans()
 
     def filter_loans(self):

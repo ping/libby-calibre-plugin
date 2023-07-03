@@ -3,7 +3,8 @@
 Unreleased
 - New: View loans in Libby (from context menu)
 - New: Return loans (from context menu)
-- New: Auto tag books downloaded by the plugin
+- New: Auto tag downloaded books
+- Increase concurrent loan downloads
 - Removed Verbose Logs option from config
 - Improved implementation for Download, Refresh buttons
 - Detect invalid Libby setup code format early

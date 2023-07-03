@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-03 23:22+0800\n"
-"PO-Revision-Date: 2023-07-03 23:23+0800\n"
+"POT-Creation-Date: 2023-07-04 07:25+0800\n"
+"PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ko\n"
@@ -22,136 +22,150 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libby 계정에서 대출 가져오기"
 
-#: calibre-plugin/action.py:63
+#: calibre-plugin/action.py:64
 msgid "Run the OverDrive Libby client UI"
 msgstr "OverDrive Libby 클라이언트 UI 실행"
 
-#: calibre-plugin/action.py:138
+#: calibre-plugin/action.py:139
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/action.py:145
+#: calibre-plugin/action.py:146
 msgid "Refresh"
 msgstr "새로고침"
 
-#: calibre-plugin/action.py:147
+#: calibre-plugin/action.py:148
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/action.py:183
+#: calibre-plugin/action.py:184
 msgid "Download"
 msgstr "다운로드하다"
 
-#: calibre-plugin/action.py:185
+#: calibre-plugin/action.py:186
 msgid "Download selected loans"
 msgstr "선택한 도서 대출 다운로드"
 
-#: calibre-plugin/action.py:263
+#: calibre-plugin/action.py:264
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:297
+#: calibre-plugin/action.py:298
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:359 calibre-plugin/action.py:406
+#: calibre-plugin/action.py:360 calibre-plugin/action.py:407
 #, python-brace-format
 msgid "Downloading {book}"
 msgstr "다운로드중 {book}"
 
-#: calibre-plugin/action.py:442
+#: calibre-plugin/action.py:443
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:445
+#: calibre-plugin/action.py:446
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] ""
 
-#: calibre-plugin/action.py:479
+#: calibre-plugin/action.py:475
+msgid "Return Loans"
+msgstr ""
+
+#: calibre-plugin/action.py:477
+#, python-brace-format
+msgid "Return this loan?"
+msgid_plural "Return these {n} loans?"
+msgstr[0] ""
+
+#: calibre-plugin/action.py:490
 #, python-brace-format
 msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:498
+#: calibre-plugin/action.py:509
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/action.py:501
+#: calibre-plugin/action.py:512
 msgid "finished"
 msgstr "완료됨"
 
-#: calibre-plugin/action.py:506
+#: calibre-plugin/action.py:517
 msgid "Title"
 msgstr "제목"
 
-#: calibre-plugin/action.py:507
+#: calibre-plugin/action.py:518
 msgid "Author"
 msgstr "작가"
 
-#: calibre-plugin/action.py:508
+#: calibre-plugin/action.py:519
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:509
+#: calibre-plugin/action.py:520
 msgid "Type"
 msgstr "항목"
 
-#: calibre-plugin/action.py:510
+#: calibre-plugin/action.py:521
 msgid "Format"
 msgstr "형식"
 
-#: calibre-plugin/config.py:33
+#: calibre-plugin/config.py:34
 msgid "Libby Setup Code"
 msgstr "Libby설정 코드"
 
-#: calibre-plugin/config.py:34
+#: calibre-plugin/config.py:35
 msgid "8-digit setup code"
 msgstr "8자리 코드"
 
-#: calibre-plugin/config.py:35
+#: calibre-plugin/config.py:36
 msgid "Hide Magazines"
 msgstr "매거진 숨기기"
 
-#: calibre-plugin/config.py:36
+#: calibre-plugin/config.py:37
 msgid "Hide Ebooks"
 msgstr "eBook 숨기기"
 
-#: calibre-plugin/config.py:37
+#: calibre-plugin/config.py:38
 msgid "Hide books already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:38
+#: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
 msgstr ""
 
-#: calibre-plugin/config.py:39
+#: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"
 msgstr ""
 
-#: calibre-plugin/config.py:40
+#: calibre-plugin/config.py:41
 msgid "Example: library,books"
 msgstr ""
 
-#: calibre-plugin/config.py:41
+#: calibre-plugin/config.py:42
 msgid "Tag downloaded magazines with"
 msgstr ""
 
-#: calibre-plugin/config.py:42
+#: calibre-plugin/config.py:43
 msgid "Example: library,magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:70
+#: calibre-plugin/config.py:44
+msgid "Always confirm returns"
+msgstr ""
+
+#: calibre-plugin/config.py:73
 msgid "Libby is configured."
 msgstr "Libby가 구성되었습니다."
 
-#: calibre-plugin/config.py:72
+#: calibre-plugin/config.py:75
 msgid "Libby is not configured yet."
 msgstr "Libby가 구성되지 않았습니다."
 
-#: calibre-plugin/config.py:201
+#: calibre-plugin/config.py:216
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""

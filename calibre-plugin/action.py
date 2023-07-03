@@ -41,6 +41,7 @@ from qt.core import (
     QModelIndex,
     QUrl,
     QDesktopServices,
+    QMessageBox,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -469,11 +470,21 @@ class OverdriveLibbyDialog(QDialog):
             )
 
     def return_selection(self, indices):
-        for index in reversed(indices):
-            loan = index.data(Qt.UserRole)
-            # logger.debug('Selected "%s" for return', loan["title"])
-            self.return_loan(loan)
-            self.model.removeRow(self.search_proxy_model.mapToSource(index).row())
+        if (not PREFS[PreferenceKeys.CONFIRM_RETURNS]) or QMessageBox.question(
+            self,
+            _("Return Loans"),
+            ngettext(
+                "Return this loan?", "Return these {n} loans?", len(indices)
+            ).format(n=len(indices))
+            + "\n- "
+            + "\n- ".join(
+                [get_loan_title(index.data(Qt.UserRole)) for index in indices]
+            ),
+        ) == QMessageBox.Yes:
+            for index in reversed(indices):
+                loan = index.data(Qt.UserRole)
+                self.return_loan(loan)
+                self.model.removeRow(self.search_proxy_model.mapToSource(index).row())
 
     def return_loan(self, loan: Dict):
         description = _("Returning {book}").format(

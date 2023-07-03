@@ -27,6 +27,7 @@ class PreferenceKeys:
     MAIN_UI_HEIGHT = "main_ui_height"
     TAG_EBOOKS = "tag_ebooks"
     TAG_MAGAZINES = "tag_magazines"
+    CONFIRM_RETURNS = "confirm_returns"
 
 
 class PreferenceTexts:
@@ -40,6 +41,7 @@ class PreferenceTexts:
     TAG_EBOOKS_PLACEHOLDER = _("Example: library,books")
     TAG_MAGAZINES = _("Tag downloaded magazines with")
     TAG_MAGAZINES_PLACEHOLDER = _("Example: library,magazines")
+    CONFIRM_RETURNS = _("Always confirm returns")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -54,6 +56,7 @@ PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.TAG_EBOOKS] = ""
 PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
+PREFS.defaults[PreferenceKeys.CONFIRM_RETURNS] = True
 
 
 class ConfigWidget(QWidget):
@@ -175,6 +178,15 @@ class ConfigWidget(QWidget):
         )
         widget_row_pos += 1
 
+        # Always confirm returns
+        self.confirm_returns_checkbox = QCheckBox(PreferenceTexts.CONFIRM_RETURNS, self)
+        self.confirm_returns_checkbox.setChecked(PREFS[PreferenceKeys.CONFIRM_RETURNS])
+        self.layout.addWidget(self.confirm_returns_checkbox, widget_row_pos, 0)
+        label_column_widths.append(
+            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        )
+        widget_row_pos += 1
+
         label_column_width = max(label_column_widths)
         self.layout.setColumnMinimumWidth(1, label_column_width)
 
@@ -189,6 +201,9 @@ class ConfigWidget(QWidget):
         ] = self.hide_books_already_in_lib_checkbox.isChecked()
         PREFS[PreferenceKeys.TAG_EBOOKS] = self.tag_ebooks_txt.text().strip()
         PREFS[PreferenceKeys.TAG_MAGAZINES] = self.tag_magazines_txt.text().strip()
+        PREFS[
+            PreferenceKeys.CONFIRM_RETURNS
+        ] = self.confirm_returns_checkbox.isChecked()
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:

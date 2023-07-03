@@ -36,11 +36,14 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 
 ### Help
 
-- Hide Magazines: Don't list magazine loans
+- Tag downloaded ebooks with: Add specified tags to the ebooks downloaded
+- Tag downloaded magazines with: Add specified tags to the magazines downloaded
 - Hide Ebooks: Don't list ebook loans
+- Hide Magazines: Don't list magazine loans
 - Prefer Open Formats: Choose DRM-free formats if available
 - Hide books already in library: Hide loans that are already in your library
-
+- Always confirm returns: Toggle the confirmation prompt before returning loans
+- 
 ## Usage
 
 ![main](images/main.png)

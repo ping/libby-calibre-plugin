@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-07-03 19:45+0800\n"
-"PO-Revision-Date: 2023-07-03 19:46+0800\n"
+"POT-Creation-Date: 2023-07-03 21:57+0800\n"
+"PO-Revision-Date: 2023-07-03 22:09+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -25,74 +25,74 @@ msgid "Run the OverDrive Libby client UI"
 msgstr "运行OverDrive Libby客户端用户界面"
 
 #: calibre-plugin/action.py:138
-msgid "OverDrive Libby v%s"
+msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/action.py:143
+#: calibre-plugin/action.py:145
 msgid "Refresh"
 msgstr "刷新"
 
-#: calibre-plugin/action.py:145
+#: calibre-plugin/action.py:147
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/action.py:181
+#: calibre-plugin/action.py:183
 msgid "Download"
 msgstr "下载"
 
-#: calibre-plugin/action.py:183
+#: calibre-plugin/action.py:185
 msgid "Download selected loans"
 msgstr "下载选定的图书借阅"
 
-#: calibre-plugin/action.py:261
+#: calibre-plugin/action.py:263
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:295
+#: calibre-plugin/action.py:297
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:357 calibre-plugin/action.py:404
-msgid "Downloading %s"
-msgstr "正在下载 %s"
+#: calibre-plugin/action.py:359 calibre-plugin/action.py:406
+msgid "Downloading {book}"
+msgstr "正在下载 {book}"
 
-#: calibre-plugin/action.py:440
+#: calibre-plugin/action.py:442
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:442
-msgid "Return %d selected loan(s)"
+#: calibre-plugin/action.py:445
+msgid "Return {n} selected loan(s)"
 msgstr ""
 
-#: calibre-plugin/action.py:473
-msgid "Returning %s"
+#: calibre-plugin/action.py:477
+msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:492
+#: calibre-plugin/action.py:496
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/action.py:495
+#: calibre-plugin/action.py:499
 msgid "finished"
 msgstr "完成"
 
-#: calibre-plugin/action.py:500
+#: calibre-plugin/action.py:504
 msgid "Title"
 msgstr "书名"
 
-#: calibre-plugin/action.py:501
+#: calibre-plugin/action.py:505
 msgid "Author"
 msgstr "作者"
 
-#: calibre-plugin/action.py:502
+#: calibre-plugin/action.py:506
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:503
+#: calibre-plugin/action.py:507
 msgid "Type"
 msgstr "书籍类型"
 
-#: calibre-plugin/action.py:504
+#: calibre-plugin/action.py:508
 msgid "Format"
 msgstr "格式"
 
@@ -144,6 +144,6 @@ msgstr "Libby已配置。"
 msgid "Libby is not configured yet."
 msgstr "Libby未配置。"
 
-#: calibre-plugin/config.py:200
-msgid "Invalid setup code format: %s"
+#: calibre-plugin/config.py:201
+msgid "Invalid setup code format: {code}"
 msgstr ""

@@ -135,7 +135,9 @@ class OverdriveLibbyDialog(QDialog):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         self.setWindowTitle(
-            _("OverDrive Libby v%s") % ".".join([str(d) for d in __version__])
+            _("OverDrive Libby v{version}").format(
+                version=".".join([str(d) for d in __version__])
+            )
         )
         self.setWindowIcon(icon)
         loan_view_span = 8
@@ -354,8 +356,8 @@ class OverdriveLibbyDialog(QDialog):
         # Heavily referenced from
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
-        description = _("Downloading %s") % as_unicode(
-            f'"{get_loan_title(loan)}"', errors="replace"
+        description = _("Downloading {book}").format(
+            book=as_unicode(get_loan_title(loan), errors="replace")
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -401,8 +403,8 @@ class OverdriveLibbyDialog(QDialog):
         # Heavily referenced from
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
-        description = _("Downloading %s") % as_unicode(
-            f'"{get_loan_title(loan)}"', errors="replace"
+        description = _("Downloading {book}").format(
+            book=as_unicode(get_loan_title(loan), errors="replace")
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -439,7 +441,9 @@ class OverdriveLibbyDialog(QDialog):
         menu.addSection("Actions")
         view_action = menu.addAction(_("View in Libby"))
         view_action.triggered.connect(lambda: self.open_loan_in_libby(indices))
-        return_action = menu.addAction(_("Return %d selected loan(s)") % len(indices))
+        return_action = menu.addAction(
+            _("Return {n} selected loan(s)").format(n=len(indices))
+        )
         return_action.triggered.connect(lambda: self.return_selection(indices))
         menu.exec(QCursor.pos())
 
@@ -470,8 +474,8 @@ class OverdriveLibbyDialog(QDialog):
             self.model.removeRow(self.search_proxy_model.mapToSource(index).row())
 
     def return_loan(self, loan: Dict):
-        description = _("Returning %s") % as_unicode(
-            f'"{get_loan_title(loan)}"', errors="replace"
+        description = _("Returning {book}").format(
+            book=as_unicode(get_loan_title(loan), errors="replace")
         )
         callback = Dispatcher(self.returned_loan)
         job = ThreadedJob(

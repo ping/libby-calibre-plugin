@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2023-07-03 19:45+0800\n"
+"POT-Creation-Date: 2023-07-03 21:57+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,74 +24,74 @@ msgid "Run the OverDrive Libby client UI"
 msgstr ""
 
 #: calibre-plugin/action.py:138
-msgid "OverDrive Libby v%s"
-msgstr ""
-
-#: calibre-plugin/action.py:143
-msgid "Refresh"
+msgid "OverDrive Libby v{version}"
 msgstr ""
 
 #: calibre-plugin/action.py:145
+msgid "Refresh"
+msgstr ""
+
+#: calibre-plugin/action.py:147
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/action.py:181
+#: calibre-plugin/action.py:183
 msgid "Download"
 msgstr ""
 
-#: calibre-plugin/action.py:183
+#: calibre-plugin/action.py:185
 msgid "Download selected loans"
 msgstr ""
 
-#: calibre-plugin/action.py:261
+#: calibre-plugin/action.py:263
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:295
+#: calibre-plugin/action.py:297
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:357 calibre-plugin/action.py:404
-msgid "Downloading %s"
-msgstr ""
-
-#: calibre-plugin/action.py:440
-msgid "View in Libby"
+#: calibre-plugin/action.py:359 calibre-plugin/action.py:406
+msgid "Downloading {book}"
 msgstr ""
 
 #: calibre-plugin/action.py:442
-msgid "Return %d selected loan(s)"
+msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:473
-msgid "Returning %s"
+#: calibre-plugin/action.py:445
+msgid "Return {n} selected loan(s)"
 msgstr ""
 
-#: calibre-plugin/action.py:492
+#: calibre-plugin/action.py:477
+msgid "Returning {book}"
+msgstr ""
+
+#: calibre-plugin/action.py:496
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/action.py:495
+#: calibre-plugin/action.py:499
 msgid "finished"
 msgstr ""
 
-#: calibre-plugin/action.py:500
+#: calibre-plugin/action.py:504
 msgid "Title"
 msgstr ""
 
-#: calibre-plugin/action.py:501
+#: calibre-plugin/action.py:505
 msgid "Author"
 msgstr ""
 
-#: calibre-plugin/action.py:502
+#: calibre-plugin/action.py:506
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/action.py:503
+#: calibre-plugin/action.py:507
 msgid "Type"
 msgstr ""
 
-#: calibre-plugin/action.py:504
+#: calibre-plugin/action.py:508
 msgid "Format"
 msgstr ""
 
@@ -143,7 +143,7 @@ msgstr ""
 msgid "Libby is not configured yet."
 msgstr ""
 
-#: calibre-plugin/config.py:200
-msgid "Invalid setup code format: %s"
+#: calibre-plugin/config.py:201
+msgid "Invalid setup code format: {code}"
 msgstr ""
 

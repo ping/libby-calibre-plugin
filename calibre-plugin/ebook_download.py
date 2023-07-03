@@ -38,7 +38,15 @@ class CustomEbookDownload(EbookDownload):
     ):
         dfilename = ""
         try:
-            dfilename = self._custom_download(libby_client, loan, format_id, filename)
+            dfilename = self._custom_download(
+                libby_client,
+                loan,
+                format_id,
+                filename,
+                log=log,
+                abort=abort,
+                notifications=notifications,
+            )
             self._add(dfilename, gui, add_to_lib, tags)
             self._save_as(dfilename, save_loc)
         finally:
@@ -59,8 +67,7 @@ class CustomEbookDownload(EbookDownload):
         notifications=None,
     ):
         temp_path = os.path.join(PersistentTemporaryDirectory(), filename)
-        if notifications:
-            notifications.put((0.5, "Downloading"))
+        notifications.put((0.5, "Downloading"))
         res_content = libby_client.fulfill_loan_file(
             loan["id"], loan["cardId"], format_id
         )

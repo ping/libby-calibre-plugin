@@ -379,7 +379,7 @@ class OverdriveLibbyDialog(QDialog):
             ),
             {},
             callback,
-            max_concurrent_count=1,
+            max_concurrent_count=2,
             killable=False,
         )
         self.gui.job_manager.run_threaded_job(job)
@@ -426,7 +426,7 @@ class OverdriveLibbyDialog(QDialog):
             ),
             {},
             callback,
-            max_concurrent_count=1,
+            max_concurrent_count=2,
             killable=True,
         )
         self.gui.job_manager.run_threaded_job(job)

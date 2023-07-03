@@ -419,7 +419,9 @@ class CustomMagazineDownload(EbookDownload):
             )
             with cover_path.open("w+b") as cover_f:
                 cover_f.write(
-                    libby_client.send_request(cover_url, decode_response=False)
+                    libby_client.send_request(
+                        cover_url, authenticated=False, decode_response=False
+                    )
                 )
         except:
             cover_path = None
@@ -562,7 +564,7 @@ class CustomMagazineDownload(EbookDownload):
             # use the libby client session because the required
             # auth cookies are set there
             res: bytes = libby_client.send_request(
-                entry_url, headers=headers, decode_response=False
+                entry_url, headers=headers, authenticated=False, decode_response=False
             )
             # patch magazine css to fix various rendering problems
             if (

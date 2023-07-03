@@ -164,21 +164,15 @@ class OverdriveLibbyDialog(QDialog):
         self.loans_view.setAlternatingRowColors(True)
         self.loans_view.setMinimumWidth(720)
         self.loans_view.setModel(self.search_proxy_model)
-        self.loans_view.horizontalHeader().setSectionResizeMode(
-            0, QHeaderView.ResizeMode.Stretch
-        )
-        self.loans_view.horizontalHeader().setSectionResizeMode(
-            1, QHeaderView.ResizeMode.ResizeToContents
-        )
-        self.loans_view.horizontalHeader().setSectionResizeMode(
-            2, QHeaderView.ResizeMode.ResizeToContents
-        )
-        self.loans_view.horizontalHeader().setSectionResizeMode(
-            3, QHeaderView.ResizeMode.ResizeToContents
-        )
-        self.loans_view.horizontalHeader().setSectionResizeMode(
-            4, QHeaderView.ResizeMode.ResizeToContents
-        )
+        horizontal_header = self.loans_view.horizontalHeader()
+        for col_index, mode in [
+            (0, QHeaderView.ResizeMode.Stretch),
+            (1, QHeaderView.ResizeMode.ResizeToContents),
+            (2, QHeaderView.ResizeMode.ResizeToContents),
+            (3, QHeaderView.ResizeMode.ResizeToContents),
+            (4, QHeaderView.ResizeMode.ResizeToContents),
+        ]:
+            horizontal_header.setSectionResizeMode(col_index, mode)
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
         self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)

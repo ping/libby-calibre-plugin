@@ -8,16 +8,16 @@
 # information
 #
 
-from timeit import default_timer as timer
 from typing import Dict
 
 from calibre import browser
-from calibre.ebooks.metadata.book.base import Metadata
 from calibre.gui2 import Dispatcher
 from calibre.gui2.actions import InterfaceAction
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
+
+# noinspection PyUnresolvedReferences
 from qt.core import (
     Qt,
     QToolButton,
@@ -29,16 +29,12 @@ from qt.core import (
     QTableView,
     QHeaderView,
     QSortFilterProxyModel,
-    QAbstractTableModel,
     QThread,
-    QObject,
-    pyqtSignal,
     QStatusBar,
     QSize,
     QErrorMessage,
     QMenu,
     QCursor,
-    QModelIndex,
     QUrl,
     QDesktopServices,
     QMessageBox,
@@ -48,10 +44,11 @@ from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
 from .config import PREFS, PreferenceKeys, PreferenceTexts
 from .ebook_download import CustomEbookDownload
 from .libby import LibbyClient
-from .libby.client import LibbyFormats, LibbyMediaTypes
+from .libby.client import LibbyFormats
 from .loan_return import LibbyLoanReturn
 from .magazine_download import CustomMagazineDownload
-from .magazine_download_utils import parse_datetime
+from .model import get_loan_title, LibbyLoansModel
+from .worker import LoanDataWorker
 
 load_translations()
 
@@ -89,33 +86,6 @@ gui_magazine_download = CustomMagazineDownload()
 guid_libby_return = LibbyLoanReturn()
 
 
-class DataWorker(QObject):
-    finished = pyqtSignal(dict)
-
-    def __int__(self):
-        super().__init__()
-
-    def run(self):
-        libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
-        if not libby_token:
-            self.finished.emit([])
-
-        start = timer()
-        client = LibbyClient(
-            identity_token=libby_token, max_retries=1, timeout=30, logger=logger
-        )
-        synced_state = client.sync()
-        logger.info("Request took %f seconds" % (timer() - start))
-        self.finished.emit(synced_state)
-
-
-def get_loan_title(loan: Dict) -> str:
-    title = loan["title"]
-    if loan["type"]["id"] == LibbyMediaTypes.Magazine:
-        title = f'{loan["title"]} - {loan.get("edition", "")}'
-    return title
-
-
 class OverdriveLibbyDialog(QDialog):
     def __init__(self, gui, icon, do_user_config):
         super().__init__(gui)
@@ -123,7 +93,7 @@ class OverdriveLibbyDialog(QDialog):
         self.do_user_config = do_user_config
         self.db = gui.current_db.new_api
         self.client = None
-        self.__thread = QThread()
+        self.__loans_thread = QThread()
         self.__curr_width = 0
         self.__curr_height = 0
 
@@ -259,15 +229,15 @@ class OverdriveLibbyDialog(QDialog):
         self.fetch_loans()
 
     def fetch_loans(self):
-        if not self.__thread.isRunning():
+        if not self.__loans_thread.isRunning():
             self.refresh_btn.setEnabled(False)
             self.status_bar.showMessage(_("Fetching loans..."))
-            self.__thread = self.__get_thread()
-            self.__thread.start()
+            self.__loans_thread = self.__get_loans_thread()
+            self.__loans_thread.start()
 
-    def __get_thread(self):
+    def __get_loans_thread(self):
         thread = QThread()
-        worker = DataWorker()
+        worker = LoanDataWorker()
         worker.moveToThread(thread)
         thread.worker = worker
         thread.started.connect(worker.run)
@@ -464,9 +434,7 @@ class OverdriveLibbyDialog(QDialog):
                 "",
             )
             QDesktopServices.openUrl(
-                QUrl(
-                    f'https://libbyapp.com/library/{library_key}/everything/page-1/{loan["id"]}'
-                )
+                QUrl(LibbyClient.libby_title_permalink(library_key, loan["id"]))
             )
 
     def return_selection(self, indices):
@@ -510,120 +478,3 @@ class OverdriveLibbyDialog(QDialog):
             return
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
-
-
-class LibbyLoansModel(QAbstractTableModel):
-    column_headers = [
-        _("Title"),
-        _("Author"),
-        _("Checkout Date"),
-        _("Type"),
-        _("Format"),
-    ]
-    column_count = len(column_headers)
-    filter_hide_books_already_in_library = False
-
-    def __init__(self, parent, synced_state=None, db=None):
-        super().__init__(parent)
-        self.db = db
-        self._cards = []
-        self._loans = []
-        self.filtered_loans = []
-        self.filter_hide_books_already_in_library = PREFS[
-            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
-        ]
-        self.refresh_loans(synced_state)
-
-    def refresh_loans(self, synced_state=None):
-        if not synced_state:
-            synced_state = {}
-        self._cards = synced_state.get("cards", [])
-        self._loans = sorted(
-            synced_state.get("loans", []),
-            key=lambda ln: ln["checkoutDate"],
-            reverse=True,
-        )
-        self.filter_loans()
-
-    def filter_loans(self):
-        self.beginResetModel()
-        self.filtered_loans = []
-        for loan in [
-            loan
-            for loan in self._loans
-            if (
-                not PREFS[PreferenceKeys.HIDE_EBOOKS]
-                and LibbyClient.is_downloadable_ebook_loan(loan)
-            )
-            or (
-                not PREFS[PreferenceKeys.HIDE_MAGAZINES]
-                and LibbyClient.is_downloadable_magazine_loan(loan)
-            )
-        ]:
-            if not self.filter_hide_books_already_in_library:
-                self.filtered_loans.append(loan)
-                continue
-            title = get_loan_title(loan)
-            authors = []
-            if loan.get("firstCreatorName", ""):
-                authors = [loan.get("firstCreatorName", "")]
-            if not self.db.has_book(Metadata(title=title, authors=authors)):
-                self.filtered_loans.append(loan)
-        self.endResetModel()
-
-    def set_filter_hide_books_already_in_library(self, value: bool):
-        if value != self.filter_hide_books_already_in_library:
-            self.filter_hide_books_already_in_library = value
-            self.filter_loans()
-
-    def headerData(self, section, orientation, role):
-        if role != Qt.DisplayRole:
-            return None
-        if orientation == Qt.Vertical:
-            return section + 1
-        if section >= len(self.column_headers):
-            return None
-        return self.column_headers[section]
-
-    def rowCount(self, parent):
-        return len(self.filtered_loans)
-
-    def columnCount(self, parent):
-        return self.column_count
-
-    def data(self, index, role):
-        row, col = index.row(), index.column()
-        if row >= len(self.filtered_loans):
-            return None
-        loan = self.filtered_loans[row]
-        if role == Qt.UserRole:
-            return loan
-        if role == Qt.TextAlignmentRole and col in (2, 3, 4):
-            return Qt.AlignCenter
-        if role != Qt.DisplayRole:
-            return None
-        if col >= self.column_count:
-            return None
-        if col == 0:
-            return get_loan_title(loan)
-        if col == 1:
-            return loan.get("firstCreatorName", "")
-        if col == 2:
-            return parse_datetime(loan["checkoutDate"]).strftime("%Y-%m-%d")
-        if col == 3:
-            return loan.get("type", {}).get("id", "")
-        if col == 4:
-            return str(
-                LibbyClient.get_loan_format(
-                    loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-                )
-            )
-        return None
-
-    def removeRows(self, row, count, _):
-        self.beginRemoveRows(QModelIndex(), row, row + count - 1)
-        self.filtered_loans = (
-            self.filtered_loans[:row] + self.filtered_loans[row + count :]
-        )
-        self.endRemoveRows()
-        return True

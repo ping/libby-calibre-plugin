@@ -249,6 +249,28 @@ class LibbyClient(object):
 
         raise ValueError("Unable to find a downloadable format")
 
+    @staticmethod
+    def libby_title_permalink(library_key: str, title_id: str) -> str:
+        """
+        Generates a Libby library permalink for a title.
+
+        :param title_id:
+        :param library_key:
+        :return:
+        """
+        return (
+            f"https://libbyapp.com/library/{library_key}/everything/page-1/{title_id}"
+        )
+
+    @staticmethod
+    def libby_title_share_link(title_id: str) -> str:
+        """
+        Generates a Libby share link for a title.
+        :param title_id:
+        :return:
+        """
+        return f"https://share.libbyapp.com/title/{title_id}"
+
     def _read_response(self, response, decode: bool = True) -> Union[bytes, str]:
         """
         Extract the response body from a http response.

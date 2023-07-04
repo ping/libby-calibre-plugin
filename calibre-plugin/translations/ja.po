@@ -49,7 +49,7 @@ msgstr "選択した書籍ローンをダウンロードする"
 
 #: calibre-plugin/action.py:264
 msgid "Fetching loans..."
-msgstr ""
+msgstr "本の貸し出しを行っています..."
 
 #: calibre-plugin/action.py:298
 msgid "Please select at least 1 loan."
@@ -131,7 +131,7 @@ msgstr "電子書籍を隠す"
 
 #: calibre-plugin/config.py:38
 msgid "Hide books already in library"
-msgstr ""
+msgstr "ライブラリ内の既存の本を非表示にする"
 
 #: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
@@ -139,31 +139,31 @@ msgstr ""
 
 #: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"
-msgstr ""
+msgstr "ダウンロードした電子書籍にタグ付け"
 
 #: calibre-plugin/config.py:41
 msgid "Example: library,books"
-msgstr ""
+msgstr "例:図書館,本"
 
 #: calibre-plugin/config.py:42
 msgid "Tag downloaded magazines with"
-msgstr ""
+msgstr "ダウンロードした雑誌にタグ付け"
 
 #: calibre-plugin/config.py:43
 msgid "Example: library,magazines"
-msgstr ""
+msgstr "例:図書館,雑誌"
 
 #: calibre-plugin/config.py:44
 msgid "Always confirm returns"
-msgstr ""
+msgstr "常に返品確認"
 
 #: calibre-plugin/config.py:73
 msgid "Libby is configured."
-msgstr ""
+msgstr "Libbyが構成されました。"
 
 #: calibre-plugin/config.py:75
 msgid "Libby is not configured yet."
-msgstr ""
+msgstr "Libbyが構成されていません。"
 
 #: calibre-plugin/config.py:216
 #, python-brace-format

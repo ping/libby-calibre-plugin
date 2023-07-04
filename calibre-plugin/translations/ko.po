@@ -37,7 +37,7 @@ msgstr "새로고침"
 
 #: calibre-plugin/action.py:148
 msgid "Get latest loans"
-msgstr ""
+msgstr "최신 도서 대출 받기"
 
 #: calibre-plugin/action.py:184
 msgid "Download"
@@ -49,11 +49,11 @@ msgstr "선택한 도서 대출 다운로드"
 
 #: calibre-plugin/action.py:264
 msgid "Fetching loans..."
-msgstr ""
+msgstr "최신 도서 대출 가져 오기 ..."
 
 #: calibre-plugin/action.py:298
 msgid "Please select at least 1 loan."
-msgstr ""
+msgstr "도서 대출을 1 개 이상 선택하십시오."
 
 #: calibre-plugin/action.py:360 calibre-plugin/action.py:407
 #, python-brace-format
@@ -62,32 +62,32 @@ msgstr "다운로드중 {book}"
 
 #: calibre-plugin/action.py:443
 msgid "View in Libby"
-msgstr ""
+msgstr "Libby에서 보기"
 
 #: calibre-plugin/action.py:446
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
-msgstr[0] ""
+msgstr[0] "{n} 도서 대출 반환"
 
 #: calibre-plugin/action.py:475
 msgid "Return Loans"
-msgstr ""
+msgstr "도서 대출 반환"
 
 #: calibre-plugin/action.py:477
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
-msgstr[0] ""
+msgstr[0] "이 도서 대출을 반환하시겠습니까?"
 
 #: calibre-plugin/action.py:490
 #, python-brace-format
 msgid "Returning {book}"
-msgstr ""
+msgstr "{book}를 반환하는 중"
 
 #: calibre-plugin/action.py:509
 msgid "Failed to return loan"
-msgstr ""
+msgstr "도서 대출 반환 실패"
 
 #: calibre-plugin/action.py:512
 msgid "finished"
@@ -103,7 +103,7 @@ msgstr "작가"
 
 #: calibre-plugin/action.py:519
 msgid "Checkout Date"
-msgstr ""
+msgstr "체크아웃 날짜"
 
 #: calibre-plugin/action.py:520
 msgid "Type"
@@ -131,7 +131,7 @@ msgstr "eBook 숨기기"
 
 #: calibre-plugin/config.py:38
 msgid "Hide books already in library"
-msgstr ""
+msgstr "서재에서 이미 있는 책 숨기기"
 
 #: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
@@ -139,23 +139,23 @@ msgstr ""
 
 #: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"
-msgstr ""
+msgstr "다운로드한 전자책에 태그 지정"
 
 #: calibre-plugin/config.py:41
 msgid "Example: library,books"
-msgstr ""
+msgstr "예: 도서관,책"
 
 #: calibre-plugin/config.py:42
 msgid "Tag downloaded magazines with"
-msgstr ""
+msgstr "다운로드한 잡지에 태그 지정"
 
 #: calibre-plugin/config.py:43
 msgid "Example: library,magazines"
-msgstr ""
+msgstr "예: 도서관,잡지"
 
 #: calibre-plugin/config.py:44
 msgid "Always confirm returns"
-msgstr ""
+msgstr "항상 반품 확인"
 
 #: calibre-plugin/config.py:73
 msgid "Libby is configured."

@@ -49,11 +49,11 @@ msgstr "下載選定的圖書借閱"
 
 #: calibre-plugin/action.py:264
 msgid "Fetching loans..."
-msgstr ""
+msgstr "正在獲取圖書借閱..."
 
 #: calibre-plugin/action.py:298
 msgid "Please select at least 1 loan."
-msgstr ""
+msgstr "請選擇至少 1 本書借閱。"
 
 #: calibre-plugin/action.py:360 calibre-plugin/action.py:407
 #, python-brace-format
@@ -62,32 +62,32 @@ msgstr "正在下載 {book}"
 
 #: calibre-plugin/action.py:443
 msgid "View in Libby"
-msgstr ""
+msgstr "在Libby中查看"
 
 #: calibre-plugin/action.py:446
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
-msgstr[0] ""
+msgstr[0] "歸還 {n} 本書借閱"
 
 #: calibre-plugin/action.py:475
 msgid "Return Loans"
-msgstr ""
+msgstr "歸還圖書借閱"
 
 #: calibre-plugin/action.py:477
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
-msgstr[0] ""
+msgstr[0] "歸還這 {n} 本書借閱嗎？"
 
 #: calibre-plugin/action.py:490
 #, python-brace-format
 msgid "Returning {book}"
-msgstr ""
+msgstr "歸還 {book}"
 
 #: calibre-plugin/action.py:509
 msgid "Failed to return loan"
-msgstr ""
+msgstr "借阅图书未能归还"
 
 #: calibre-plugin/action.py:512
 msgid "finished"
@@ -131,7 +131,7 @@ msgstr "隱藏電子書"
 
 #: calibre-plugin/config.py:38
 msgid "Hide books already in library"
-msgstr ""
+msgstr "隱藏書庫中已有的書籍"
 
 #: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
@@ -139,23 +139,23 @@ msgstr ""
 
 #: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"
-msgstr ""
+msgstr "將下載的電子書標記為"
 
 #: calibre-plugin/config.py:41
 msgid "Example: library,books"
-msgstr ""
+msgstr "示例：圖書館,書籍"
 
 #: calibre-plugin/config.py:42
 msgid "Tag downloaded magazines with"
-msgstr ""
+msgstr "將下載的雜誌標記為"
 
 #: calibre-plugin/config.py:43
 msgid "Example: library,magazines"
-msgstr ""
+msgstr "示例：圖書館,雜誌"
 
 #: calibre-plugin/config.py:44
 msgid "Always confirm returns"
-msgstr ""
+msgstr "始终确认还书"
 
 #: calibre-plugin/config.py:73
 msgid "Libby is configured."

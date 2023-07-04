@@ -7,12 +7,13 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
+from pathlib import Path
 from typing import Dict
 
 from calibre import browser
-from calibre.gui2 import Dispatcher
+from calibre.gui2 import Dispatcher, error_dialog, is_dark_theme
 from calibre.gui2.actions import InterfaceAction
+from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
@@ -32,12 +33,11 @@ from qt.core import (
     QThread,
     QStatusBar,
     QSize,
-    QErrorMessage,
     QMenu,
+    QIcon,
     QCursor,
     QUrl,
     QDesktopServices,
-    QMessageBox,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
@@ -51,6 +51,13 @@ from .model import get_loan_title, LibbyLoansModel
 from .worker import LoanDataWorker
 
 load_translations()
+
+ICON_MAP = {
+    "return": "arrow-go-back-fill.png",
+    "download": "download-line.png",
+    "ext-link": "external-link-line.png",
+    "refresh": "refresh-line.png",
+}
 
 
 class OverdriveLibbyAction(InterfaceAction):
@@ -98,6 +105,15 @@ class OverdriveLibbyDialog(QDialog):
         self.__loans_thread = QThread()
         self.__curr_width = 0
         self.__curr_height = 0
+        theme_folder = Path("images").joinpath(
+            "dark-theme" if is_dark_theme() else "light-theme"
+        )
+        self.icons = {}
+        for k, v in ICON_MAP.items():
+            self.icons[k] = theme_folder.joinpath(v)
+        icons_resources = get_icons([str(v) for v in self.icons.values()])
+        for k in ICON_MAP.keys():
+            self.icons[k] = icons_resources.pop(str(self.icons[k]))
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:
@@ -115,7 +131,8 @@ class OverdriveLibbyDialog(QDialog):
         self.setWindowIcon(icon)
         loan_view_span = 8
 
-        self.refresh_btn = QPushButton("\u21BB " + _("Refresh"), self)
+        self.refresh_btn = QPushButton(_("Refresh"), self)
+        self.refresh_btn.setIcon(self.icons["refresh"])
         self.refresh_btn.setAutoDefault(False)
         self.refresh_btn.setToolTip(_("Get latest loans"))
         self.refresh_btn.clicked.connect(self.do_refresh)
@@ -153,7 +170,8 @@ class OverdriveLibbyDialog(QDialog):
         self.loans_view.customContextMenuRequested.connect(self.loan_view_context_menu)
         self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
 
-        self.download_btn = QPushButton("\u2913 " + _("Download"), self)
+        self.download_btn = QPushButton(_("Download"), self)
+        self.download_btn.setIcon(self.icons["download"])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
@@ -266,8 +284,9 @@ class OverdriveLibbyDialog(QDialog):
             for row in reversed(rows):
                 self.download_loan(row.data(Qt.UserRole))
         else:
-            d = QErrorMessage(self)
-            d.showMessage(_("Please select at least 1 loan."), "select_at_least_1_loan")
+            return error_dialog(
+                self, _("Download"), _("Please select at least 1 loan."), show=True
+            )
 
     def download_loan(self, loan):
         format_id = LibbyClient.get_loan_format(
@@ -411,14 +430,15 @@ class OverdriveLibbyDialog(QDialog):
             return
         indices = selection_model.selectedRows()
         menu = QMenu(self)
-        menu.addSection("Actions")
         view_action = menu.addAction(_("View in Libby"))
+        view_action.setIcon(self.icons["ext-link"])
         view_action.triggered.connect(lambda: self.open_loan_in_libby(indices))
         return_action = menu.addAction(
             ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
                 n=len(indices)
             )
         )
+        return_action.setIcon(self.icons["return"])
         return_action.triggered.connect(lambda: self.return_selection(indices))
         menu.exec(QCursor.pos())
 
@@ -440,17 +460,23 @@ class OverdriveLibbyDialog(QDialog):
             )
 
     def return_selection(self, indices):
-        if (not PREFS[PreferenceKeys.CONFIRM_RETURNS]) or QMessageBox.question(
-            self,
-            _("Return Loans"),
+        msg = (
             ngettext(
                 "Return this loan?", "Return these {n} loans?", len(indices)
             ).format(n=len(indices))
             + "\n- "
             + "\n- ".join(
                 [get_loan_title(index.data(Qt.UserRole)) for index in indices]
-            ),
-        ) == QMessageBox.Yes:
+            )
+        )
+
+        if confirm(
+            msg,
+            name=PreferenceKeys.CONFIRM_RETURNS,
+            parent=self,
+            title=_("Return Loans"),
+            config_set=PREFS,
+        ):
             for index in reversed(indices):
                 loan = index.data(Qt.UserRole)
                 self.return_loan(loan)

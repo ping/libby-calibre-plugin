@@ -8,6 +8,8 @@
 # information
 #
 
+from calibre import confirm_config_name
+from calibre.gui2 import error_dialog
 from calibre.utils.config import JSONConfig
 from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
@@ -56,7 +58,7 @@ PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.TAG_EBOOKS] = ""
 PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
-PREFS.defaults[PreferenceKeys.CONFIRM_RETURNS] = True
+PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
 
 
 class ConfigWidget(QWidget):
@@ -180,7 +182,9 @@ class ConfigWidget(QWidget):
 
         # Always confirm returns
         self.confirm_returns_checkbox = QCheckBox(PreferenceTexts.CONFIRM_RETURNS, self)
-        self.confirm_returns_checkbox.setChecked(PREFS[PreferenceKeys.CONFIRM_RETURNS])
+        self.confirm_returns_checkbox.setChecked(
+            PREFS[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)]
+        )
         self.layout.addWidget(self.confirm_returns_checkbox, widget_row_pos, 0)
         label_column_widths.append(
             self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
@@ -202,7 +206,7 @@ class ConfigWidget(QWidget):
         PREFS[PreferenceKeys.TAG_EBOOKS] = self.tag_ebooks_txt.text().strip()
         PREFS[PreferenceKeys.TAG_MAGAZINES] = self.tag_magazines_txt.text().strip()
         PREFS[
-            PreferenceKeys.CONFIRM_RETURNS
+            confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)
         ] = self.confirm_returns_checkbox.isChecked()
 
         setup_code = self.libby_setup_code_txt.text().strip()
@@ -212,8 +216,11 @@ class ConfigWidget(QWidget):
 
             if not LibbyClient.is_valid_sync_code(setup_code):
                 # save a http request for get_chip()
-                raise Exception(
-                    _("Invalid setup code format: {code}").format(code=setup_code)
+                return error_dialog(
+                    self,
+                    _("Libby Setup Code"),
+                    _("Invalid setup code format: {code}").format(code=setup_code),
+                    show=True,
                 )
 
             libby_client = LibbyClient(logger=logger)

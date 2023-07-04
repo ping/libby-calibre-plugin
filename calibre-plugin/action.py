@@ -75,6 +75,7 @@ class OverdriveLibbyAction(InterfaceAction):
         base_plugin_object = self.interface_action_base_plugin
         do_user_config = base_plugin_object.do_user_config
         d = OverdriveLibbyDialog(self.gui, self.qaction.icon(), do_user_config)
+        d.setModal(True)
         d.show()
 
     def apply_settings(self):
@@ -89,6 +90,7 @@ guid_libby_return = LibbyLoanReturn()
 class OverdriveLibbyDialog(QDialog):
     def __init__(self, gui, icon, do_user_config):
         super().__init__(gui)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.gui = gui
         self.do_user_config = do_user_config
         self.db = gui.current_db.new_api

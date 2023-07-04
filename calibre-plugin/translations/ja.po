@@ -37,7 +37,7 @@ msgstr "更新"
 
 #: calibre-plugin/action.py:148
 msgid "Get latest loans"
-msgstr ""
+msgstr "最近借りた本を入手する"
 
 #: calibre-plugin/action.py:184
 msgid "Download"
@@ -53,7 +53,7 @@ msgstr "本の貸し出しを行っています..."
 
 #: calibre-plugin/action.py:298
 msgid "Please select at least 1 loan."
-msgstr ""
+msgstr "図書ローンを 1 つ以上選択してください。"
 
 #: calibre-plugin/action.py:360 calibre-plugin/action.py:407
 #, python-brace-format
@@ -62,32 +62,32 @@ msgstr "{book} をダウンロード中"
 
 #: calibre-plugin/action.py:443
 msgid "View in Libby"
-msgstr ""
+msgstr "Libbyで見る"
 
 #: calibre-plugin/action.py:446
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
-msgstr[0] ""
+msgstr[0] "借りた本を{n}冊返却する"
 
 #: calibre-plugin/action.py:475
 msgid "Return Loans"
-msgstr ""
+msgstr "図書貸出返還"
 
 #: calibre-plugin/action.py:477
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
-msgstr[0] ""
+msgstr[0] "この本のローンを返しますか？"
 
 #: calibre-plugin/action.py:490
 #, python-brace-format
 msgid "Returning {book}"
-msgstr ""
+msgstr "{book}を返却中"
 
 #: calibre-plugin/action.py:509
 msgid "Failed to return loan"
-msgstr ""
+msgstr "図書貸出返還失敗"
 
 #: calibre-plugin/action.py:512
 msgid "finished"
@@ -103,7 +103,7 @@ msgstr "著者"
 
 #: calibre-plugin/action.py:519
 msgid "Checkout Date"
-msgstr ""
+msgstr "借入日"
 
 #: calibre-plugin/action.py:520
 msgid "Type"
@@ -135,7 +135,7 @@ msgstr "ライブラリ内の既存の本を非表示にする"
 
 #: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
-msgstr ""
+msgstr "オープンフォーマットを好む"
 
 #: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"

@@ -37,7 +37,7 @@ msgstr "刷新"
 
 #: calibre-plugin/action.py:148
 msgid "Get latest loans"
-msgstr ""
+msgstr "获取最新借阅的书籍"
 
 #: calibre-plugin/action.py:184
 msgid "Download"
@@ -103,7 +103,7 @@ msgstr "作者"
 
 #: calibre-plugin/action.py:519
 msgid "Checkout Date"
-msgstr ""
+msgstr "借阅日期"
 
 #: calibre-plugin/action.py:520
 msgid "Type"
@@ -135,7 +135,7 @@ msgstr "隐藏书库中已有的书籍"
 
 #: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
-msgstr ""
+msgstr "偏好开放格式"
 
 #: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"

@@ -135,7 +135,7 @@ msgstr "서재에서 이미 있는 책 숨기기"
 
 #: calibre-plugin/config.py:39
 msgid "Prefer Open Formats"
-msgstr ""
+msgstr "오픈 포맷 선호"
 
 #: calibre-plugin/config.py:40
 msgid "Tag downloaded ebooks with"

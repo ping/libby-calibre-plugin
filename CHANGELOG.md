@@ -1,6 +1,6 @@
 # Changelog
 
-Unreleased
+Version 0.1.3 - 2023-07-03
 - New: View loans in Libby (from context/right-click menu)
 - New: Return loans (from context/right-click menu)
 - New: Auto tag downloaded books

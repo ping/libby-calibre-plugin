@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 
 from calibre.ebooks.metadata.book.base import Metadata
 
@@ -46,7 +46,7 @@ class LibbyLoansModel(QAbstractTableModel):
         ]
         self.refresh_loans(synced_state)
 
-    def refresh_loans(self, synced_state=None):
+    def refresh_loans(self, synced_state: Optional[Dict] = None):
         if not synced_state:
             synced_state = {}
         self._cards = synced_state.get("cards", [])

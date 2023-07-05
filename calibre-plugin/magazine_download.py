@@ -391,7 +391,7 @@ class CustomMagazineDownload(EbookDownload):
         log=None,
         abort=None,
         notifications=None,
-    ):
+    ) -> str:
         logger = log
         download_progress_fraction = 0.97
         meta_progress_fraction = 1.0 - download_progress_fraction

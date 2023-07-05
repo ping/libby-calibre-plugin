@@ -265,7 +265,7 @@ class OverdriveLibbyDialog(QDialog):
         thread.worker = worker
         thread.started.connect(worker.run)
 
-        def loaded(value):
+        def loaded(value: Dict):
             self.model.refresh_loans(value)
             self.refresh_btn.setEnabled(True)
             self.status_bar.clearMessage()
@@ -275,7 +275,7 @@ class OverdriveLibbyDialog(QDialog):
 
         return thread
 
-    def set_hide_books_already_in_library(self, checked):
+    def set_hide_books_already_in_library(self, checked: bool):
         PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
         self.model.set_filter_hide_books_already_in_library(checked)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
@@ -291,7 +291,7 @@ class OverdriveLibbyDialog(QDialog):
                 self, _("Download"), _("Please select at least 1 loan."), show=True
             )
 
-    def download_loan(self, loan):
+    def download_loan(self, loan: Dict):
         format_id = LibbyClient.get_loan_format(
             loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )

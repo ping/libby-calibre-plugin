@@ -15,7 +15,7 @@ class LoanDataWorker(QObject):
         super().__init__()
 
     def run(self):
-        libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
+        libby_token: str = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if not libby_token:
             self.finished.emit([])
 

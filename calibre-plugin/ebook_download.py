@@ -65,7 +65,7 @@ class CustomEbookDownload(EbookDownload):
         log=None,
         abort=None,
         notifications=None,
-    ):
+    ) -> str:
         temp_path = os.path.join(PersistentTemporaryDirectory(), filename)
         notifications.put((0.5, "Downloading"))
         res_content = libby_client.fulfill_loan_file(

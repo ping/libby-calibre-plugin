@@ -24,6 +24,9 @@ def get_loan_title(loan: Dict) -> str:
     return title
 
 
+LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}
+
+
 class LibbyLoansModel(QAbstractTableModel):
     column_headers = [
         _("Title"),
@@ -107,7 +110,7 @@ class LibbyLoansModel(QAbstractTableModel):
         row, col = index.row(), index.column()
         if row >= len(self.filtered_loans):
             return None
-        loan = self.filtered_loans[row]
+        loan: Dict = self.filtered_loans[row]
         if role == Qt.UserRole:
             return loan
         if role == Qt.TextAlignmentRole and col in (2, 3, 4):
@@ -123,7 +126,8 @@ class LibbyLoansModel(QAbstractTableModel):
         if col == 2:
             return parse_datetime(loan["checkoutDate"]).strftime("%Y-%m-%d")
         if col == 3:
-            return loan.get("type", {}).get("id", "")
+            type_id = loan.get("type", {}).get("id", "")
+            return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id
         if col == 4:
             return str(
                 LibbyClient.get_loan_format(

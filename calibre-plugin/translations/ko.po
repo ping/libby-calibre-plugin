@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: libby-calibre-plugin 0.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-04 22:53+0800\n"
+"POT-Creation-Date: 2023-07-05 12:59+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,74 +22,74 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libby 계정에서 대출 가져오기"
 
-#: calibre-plugin/action.py:68
+#: calibre-plugin/action.py:69
 msgid "Run the OverDrive Libby client UI"
 msgstr "OverDrive Libby 클라이언트 UI 실행"
 
-#: calibre-plugin/action.py:127
+#: calibre-plugin/action.py:130
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/action.py:134
+#: calibre-plugin/action.py:137
 msgid "Refresh"
 msgstr "새로고침"
 
-#: calibre-plugin/action.py:137
+#: calibre-plugin/action.py:140
 msgid "Get latest loans"
 msgstr "최신 도서 대출 받기"
 
-#: calibre-plugin/action.py:173 calibre-plugin/action.py:288
+#: calibre-plugin/action.py:176 calibre-plugin/action.py:311
 msgid "Download"
 msgstr "다운로드하다"
 
-#: calibre-plugin/action.py:176
+#: calibre-plugin/action.py:179
 msgid "Download selected loans"
 msgstr "선택한 도서 대출 다운로드"
 
-#: calibre-plugin/action.py:254
+#: calibre-plugin/action.py:257
 msgid "Fetching loans..."
 msgstr "최신 도서 대출 가져 오기 ..."
 
-#: calibre-plugin/action.py:288
-msgid "Please select at least 1 loan."
-msgstr "도서 대출을 1 개 이상 선택하십시오."
-
-#: calibre-plugin/action.py:351 calibre-plugin/action.py:398
-#, python-brace-format
-msgid "Downloading {book}"
-msgstr "다운로드중 {book}"
-
-#: calibre-plugin/action.py:433
+#: calibre-plugin/action.py:289
 msgid "View in Libby"
 msgstr "Libby에서 보기"
 
-#: calibre-plugin/action.py:437
+#: calibre-plugin/action.py:295
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] "{n} 도서 대출 반환"
 
-#: calibre-plugin/action.py:465
+#: calibre-plugin/action.py:311
+msgid "Please select at least 1 loan."
+msgstr "도서 대출을 1 개 이상 선택하십시오."
+
+#: calibre-plugin/action.py:374 calibre-plugin/action.py:421
+#, python-brace-format
+msgid "Downloading {book}"
+msgstr "다운로드중 {book}"
+
+#: calibre-plugin/action.py:470
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "이 도서 대출을 반환하시겠습니까?"
 
-#: calibre-plugin/action.py:477
+#: calibre-plugin/action.py:482
 msgid "Return Loans"
 msgstr "도서 대출 반환"
 
-#: calibre-plugin/action.py:486
+#: calibre-plugin/action.py:491
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "{book}를 반환하는 중"
 
-#: calibre-plugin/action.py:505
+#: calibre-plugin/action.py:510
 msgid "Failed to return loan"
 msgstr "도서 대출 반환 실패"
 
-#: calibre-plugin/action.py:508
+#: calibre-plugin/action.py:513
 msgid "finished"
 msgstr "완료됨"
 
@@ -150,22 +150,30 @@ msgstr "Libby가 구성되지 않았습니다."
 msgid "Invalid setup code format: {code}"
 msgstr ""
 
-#: calibre-plugin/model.py:29
+#: calibre-plugin/model.py:27
+msgid "ebook"
+msgstr "책"
+
+#: calibre-plugin/model.py:27
+msgid "magazine"
+msgstr "매거진"
+
+#: calibre-plugin/model.py:32
 msgid "Title"
 msgstr "제목"
 
-#: calibre-plugin/model.py:30
+#: calibre-plugin/model.py:33
 msgid "Author"
 msgstr "작가"
 
-#: calibre-plugin/model.py:31
+#: calibre-plugin/model.py:34
 msgid "Checkout Date"
 msgstr "체크아웃 날짜"
 
-#: calibre-plugin/model.py:32
+#: calibre-plugin/model.py:35
 msgid "Type"
 msgstr "항목"
 
-#: calibre-plugin/model.py:33
+#: calibre-plugin/model.py:36
 msgid "Format"
 msgstr "형식"

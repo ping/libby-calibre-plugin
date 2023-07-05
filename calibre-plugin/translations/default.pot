@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-04 22:58+0800\n"
+"POT-Creation-Date: 2023-07-05 13:10+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,76 +22,76 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:68
+#: calibre-plugin/action.py:69
 msgid "Run the OverDrive Libby client UI"
 msgstr ""
 
-#: calibre-plugin/action.py:127
+#: calibre-plugin/action.py:130
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/action.py:134
+#: calibre-plugin/action.py:137
 msgid "Refresh"
 msgstr ""
 
-#: calibre-plugin/action.py:137
+#: calibre-plugin/action.py:140
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/action.py:173 calibre-plugin/action.py:288
+#: calibre-plugin/action.py:176 calibre-plugin/action.py:311
 msgid "Download"
 msgstr ""
 
-#: calibre-plugin/action.py:176
+#: calibre-plugin/action.py:179
 msgid "Download selected loans"
 msgstr ""
 
-#: calibre-plugin/action.py:254
+#: calibre-plugin/action.py:257
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:288
-msgid "Please select at least 1 loan."
-msgstr ""
-
-#: calibre-plugin/action.py:351 calibre-plugin/action.py:398
-#, python-brace-format
-msgid "Downloading {book}"
-msgstr ""
-
-#: calibre-plugin/action.py:433
+#: calibre-plugin/action.py:289
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:437
+#: calibre-plugin/action.py:295
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/action.py:465
+#: calibre-plugin/action.py:311
+msgid "Please select at least 1 loan."
+msgstr ""
+
+#: calibre-plugin/action.py:374 calibre-plugin/action.py:421
+#, python-brace-format
+msgid "Downloading {book}"
+msgstr ""
+
+#: calibre-plugin/action.py:470
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/action.py:477
+#: calibre-plugin/action.py:482
 msgid "Return Loans"
 msgstr ""
 
-#: calibre-plugin/action.py:486
+#: calibre-plugin/action.py:491
 #, python-brace-format
 msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:505
+#: calibre-plugin/action.py:510
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/action.py:508
+#: calibre-plugin/action.py:513
 msgid "finished"
 msgstr ""
 
@@ -152,22 +152,30 @@ msgstr ""
 msgid "Invalid setup code format: {code}"
 msgstr ""
 
-#: calibre-plugin/model.py:29
-msgid "Title"
+#: calibre-plugin/model.py:27
+msgid "ebook"
 msgstr ""
 
-#: calibre-plugin/model.py:30
-msgid "Author"
-msgstr ""
-
-#: calibre-plugin/model.py:31
-msgid "Checkout Date"
+#: calibre-plugin/model.py:27
+msgid "magazine"
 msgstr ""
 
 #: calibre-plugin/model.py:32
-msgid "Type"
+msgid "Title"
 msgstr ""
 
 #: calibre-plugin/model.py:33
+msgid "Author"
+msgstr ""
+
+#: calibre-plugin/model.py:34
+msgid "Checkout Date"
+msgstr ""
+
+#: calibre-plugin/model.py:35
+msgid "Type"
+msgstr ""
+
+#: calibre-plugin/model.py:36
 msgid "Format"
 msgstr ""

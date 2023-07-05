@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: libby-calibre-plugin 0.1.2\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-04 22:53+0800\n"
+"POT-Creation-Date: 2023-07-05 12:59+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,74 +22,74 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "從您的 OverDrive Libby 帳戶導入已借閱的圖書"
 
-#: calibre-plugin/action.py:68
+#: calibre-plugin/action.py:69
 msgid "Run the OverDrive Libby client UI"
 msgstr "運行 OverDrive Libby 客戶端 UI"
 
-#: calibre-plugin/action.py:127
+#: calibre-plugin/action.py:130
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/action.py:134
+#: calibre-plugin/action.py:137
 msgid "Refresh"
 msgstr "刷新"
 
-#: calibre-plugin/action.py:137
+#: calibre-plugin/action.py:140
 msgid "Get latest loans"
 msgstr "獲取最新借閱的書籍"
 
-#: calibre-plugin/action.py:173 calibre-plugin/action.py:288
+#: calibre-plugin/action.py:176 calibre-plugin/action.py:311
 msgid "Download"
 msgstr "下載"
 
-#: calibre-plugin/action.py:176
+#: calibre-plugin/action.py:179
 msgid "Download selected loans"
 msgstr "下載選定的圖書借閱"
 
-#: calibre-plugin/action.py:254
+#: calibre-plugin/action.py:257
 msgid "Fetching loans..."
 msgstr "正在獲取圖書借閱..."
 
-#: calibre-plugin/action.py:288
-msgid "Please select at least 1 loan."
-msgstr "請選擇至少 1 本書借閱。"
-
-#: calibre-plugin/action.py:351 calibre-plugin/action.py:398
-#, python-brace-format
-msgid "Downloading {book}"
-msgstr "正在下載 {book}"
-
-#: calibre-plugin/action.py:433
+#: calibre-plugin/action.py:289
 msgid "View in Libby"
 msgstr "在Libby中查看"
 
-#: calibre-plugin/action.py:437
+#: calibre-plugin/action.py:295
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] "歸還 {n} 本書借閱"
 
-#: calibre-plugin/action.py:465
+#: calibre-plugin/action.py:311
+msgid "Please select at least 1 loan."
+msgstr "請選擇至少 1 本書借閱。"
+
+#: calibre-plugin/action.py:374 calibre-plugin/action.py:421
+#, python-brace-format
+msgid "Downloading {book}"
+msgstr "正在下載 {book}"
+
+#: calibre-plugin/action.py:470
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "歸還這 {n} 本書借閱嗎？"
 
-#: calibre-plugin/action.py:477
+#: calibre-plugin/action.py:482
 msgid "Return Loans"
 msgstr "歸還圖書借閱"
 
-#: calibre-plugin/action.py:486
+#: calibre-plugin/action.py:491
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "歸還 {book}"
 
-#: calibre-plugin/action.py:505
+#: calibre-plugin/action.py:510
 msgid "Failed to return loan"
 msgstr "借阅图书未能归还"
 
-#: calibre-plugin/action.py:508
+#: calibre-plugin/action.py:513
 msgid "finished"
 msgstr "已完成"
 
@@ -150,22 +150,30 @@ msgstr "Libby未配置。"
 msgid "Invalid setup code format: {code}"
 msgstr ""
 
-#: calibre-plugin/model.py:29
+#: calibre-plugin/model.py:27
+msgid "ebook"
+msgstr "電子書"
+
+#: calibre-plugin/model.py:27
+msgid "magazine"
+msgstr "雜誌"
+
+#: calibre-plugin/model.py:32
 msgid "Title"
 msgstr "書名"
 
-#: calibre-plugin/model.py:30
+#: calibre-plugin/model.py:33
 msgid "Author"
 msgstr "作者"
 
-#: calibre-plugin/model.py:31
+#: calibre-plugin/model.py:34
 msgid "Checkout Date"
 msgstr "借閱日期"
 
-#: calibre-plugin/model.py:32
+#: calibre-plugin/model.py:35
 msgid "Type"
 msgstr "書籍類型"
 
-#: calibre-plugin/model.py:33
+#: calibre-plugin/model.py:36
 msgid "Format"
 msgstr "格式"

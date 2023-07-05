@@ -19,10 +19,23 @@ from .magazine_download_utils import parse_datetime
 load_translations()
 
 
-def get_loan_title(loan: Dict) -> str:
-    title = loan["title"]
-    if loan["type"]["id"] == LibbyMediaTypes.Magazine:
-        title = f'{loan["title"]} - {loan.get("edition", "")}'
+def get_loan_title(loan: Dict, for_sorting: bool = False) -> str:
+    """
+    Formats the title for a loan
+
+    :param loan:
+    :param for_sorting: If True, uses the sort attributes instead
+    :return:
+    """
+    title = (
+        loan["sortTitle"] if for_sorting and loan.get("sortTitle") else loan["title"]
+    )
+    if loan["type"]["id"] == LibbyMediaTypes.Magazine and loan.get("edition", ""):
+        if not for_sorting:
+            title = f'{title} - {loan.get("edition", "")}'
+        else:
+            title = f'{title}|{loan["id"]}'
+
     return title
 
 
@@ -123,9 +136,14 @@ class LibbyLoansModel(QAbstractTableModel):
         if col >= self.column_count:
             return None
         if col == 0:
+            if role == LibbyLoansModel.DisplaySortRole:
+                return get_loan_title(loan, for_sorting=True)
             return get_loan_title(loan)
         if col == 1:
-            return loan.get("firstCreatorName", "")
+            creator_name = loan.get("firstCreatorName", "")
+            if role == LibbyLoansModel.DisplaySortRole:
+                return loan.get("firstCreatorSortName", "") or creator_name
+            return creator_name
         if col == 2:
             dt_value = parse_datetime(loan["checkoutDate"])
             if role == LibbyLoansModel.DisplaySortRole:

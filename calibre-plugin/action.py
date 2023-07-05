@@ -34,7 +34,6 @@ from qt.core import (
     QStatusBar,
     QSize,
     QMenu,
-    QIcon,
     QCursor,
     QUrl,
     QDesktopServices,
@@ -118,6 +117,13 @@ class OverdriveLibbyDialog(QDialog):
         self.__curr_width = 0
         self.__curr_height = 0
 
+        self.setWindowTitle(
+            _("OverDrive Libby v{version}").format(
+                version=".".join([str(d) for d in __version__])
+            )
+        )
+        self.setWindowIcon(icon)
+
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:
             self.client = LibbyClient(
@@ -126,24 +132,23 @@ class OverdriveLibbyDialog(QDialog):
 
         self.layout = QGridLayout()
         self.setLayout(self.layout)
-        self.setWindowTitle(
-            _("OverDrive Libby v{version}").format(
-                version=".".join([str(d) for d in __version__])
-            )
-        )
-        self.setWindowIcon(icon)
-        loan_view_span = 8
+        loan_view_hspan = 8
+        loan_view_vspan = 3
+        widget_row_pos = 0
 
+        # Refresh button
         self.refresh_btn = QPushButton(_("Refresh"), self)
         self.refresh_btn.setIcon(_icons["refresh"])
         self.refresh_btn.setAutoDefault(False)
         self.refresh_btn.setToolTip(_("Get latest loans"))
         self.refresh_btn.clicked.connect(self.do_refresh)
-        self.layout.addWidget(self.refresh_btn, 0, 0)
+        self.layout.addWidget(self.refresh_btn, widget_row_pos, 0)
 
+        # Status bar
         self.status_bar = QStatusBar(self)
         self.status_bar.setSizeGripEnabled(False)
-        self.layout.addWidget(self.status_bar, 0, 1, 1, 3)
+        self.layout.addWidget(self.status_bar, widget_row_pos, 1, 1, 3)
+        widget_row_pos += 1
 
         self.model = LibbyLoansModel(None, [], self.db)
         self.search_proxy_model = QSortFilterProxyModel(self)
@@ -172,16 +177,21 @@ class OverdriveLibbyDialog(QDialog):
         # add context menu
         self.loans_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.loans_view.customContextMenuRequested.connect(self.loan_view_context_menu)
-        self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
+        self.layout.addWidget(
+            self.loans_view, widget_row_pos, 0, loan_view_vspan, loan_view_hspan
+        )
+        widget_row_pos += loan_view_vspan
 
+        # Download button
         self.download_btn = QPushButton(_("Download"), self)
         self.download_btn.setIcon(_icons["download"])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
         self.download_btn.clicked.connect(self.download_selected_loans)
-        self.layout.addWidget(self.download_btn, 5, loan_view_span - 1)
+        self.layout.addWidget(self.download_btn, widget_row_pos, loan_view_hspan - 1)
 
+        # Hide books already in lib checkbox
         self.hide_book_already_in_lib_checkbox = QCheckBox(
             PreferenceTexts.HIDE_BOOKS_ALREADY_IN_LIB, self
         )
@@ -191,7 +201,10 @@ class OverdriveLibbyDialog(QDialog):
         self.hide_book_already_in_lib_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
-        self.layout.addWidget(self.hide_book_already_in_lib_checkbox, 5, 0, 1, 3)
+        self.layout.addWidget(
+            self.hide_book_already_in_lib_checkbox, widget_row_pos, 0, 1, 3
+        )
+        widget_row_pos += 1
 
         if (
             PREFS[PreferenceKeys.MAIN_UI_WIDTH]

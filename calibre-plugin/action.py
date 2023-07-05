@@ -280,6 +280,26 @@ class OverdriveLibbyDialog(QDialog):
         self.model.set_filter_hide_books_already_in_library(checked)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
 
+    def loan_view_context_menu(self, pos):
+        selection_model = self.loans_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        menu = QMenu(self)
+        view_action = menu.addAction(_("View in Libby"))
+        view_action.setIcon(_icons["ext-link"])
+        view_action.triggered.connect(
+            lambda: self.open_selected_loans_in_libby(indices)
+        )
+        return_action = menu.addAction(
+            ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
+                n=len(indices)
+            )
+        )
+        return_action.setIcon(_icons["return"])
+        return_action.triggered.connect(lambda: self.return_selected_loans(indices))
+        menu.exec(QCursor.pos())
+
     def download_selected_loans(self):
         selection_model = self.loans_view.selectionModel()
         if selection_model.hasSelection():
@@ -427,25 +447,7 @@ class OverdriveLibbyDialog(QDialog):
         self.gui.job_manager.run_threaded_job(job)
         self.gui.status_bar.show_message(description, 3000)
 
-    def loan_view_context_menu(self, pos):
-        selection_model = self.loans_view.selectionModel()
-        if not selection_model.hasSelection():
-            return
-        indices = selection_model.selectedRows()
-        menu = QMenu(self)
-        view_action = menu.addAction(_("View in Libby"))
-        view_action.setIcon(_icons["ext-link"])
-        view_action.triggered.connect(lambda: self.open_loan_in_libby(indices))
-        return_action = menu.addAction(
-            ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
-                n=len(indices)
-            )
-        )
-        return_action.setIcon(_icons["return"])
-        return_action.triggered.connect(lambda: self.return_selection(indices))
-        menu.exec(QCursor.pos())
-
-    def open_loan_in_libby(self, indices):
+    def open_selected_loans_in_libby(self, indices):
         for index in indices:
             loan = index.data(Qt.UserRole)
             library_key = next(
@@ -462,7 +464,7 @@ class OverdriveLibbyDialog(QDialog):
                 QUrl(LibbyClient.libby_title_permalink(library_key, loan["id"]))
             )
 
-    def return_selection(self, indices):
+    def return_selected_loans(self, indices):
         msg = (
             ngettext(
                 "Return this loan?", "Return these {n} loans?", len(indices)

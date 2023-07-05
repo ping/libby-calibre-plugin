@@ -1,10 +1,12 @@
 # Changelog
 
 Unreleased
-- New: View loans in Libby (from context menu)
-- New: Return loans (from context menu)
+- New: View loans in Libby (from context/right-click menu)
+- New: Return loans (from context/right-click menu)
 - New: Auto tag downloaded books
 - Increase concurrent loan downloads
+- Main loans window is now modal
+- Use icons instead of unicode symbols for buttons
 - Removed Verbose Logs option from config
 - Improved implementation for Download, Refresh buttons
 - Detect invalid Libby setup code format early

@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: libby-calibre-plugin 0.1.2\n"
+"Project-Id-Version: libby-calibre-plugin 0.1.3\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-05 13:10+0800\n"
+"POT-Creation-Date: 2023-07-05 14:49+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,59 +39,59 @@ msgstr ""
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/action.py:176 calibre-plugin/action.py:311
+#: calibre-plugin/action.py:177 calibre-plugin/action.py:312
 msgid "Download"
 msgstr ""
 
-#: calibre-plugin/action.py:179
+#: calibre-plugin/action.py:180
 msgid "Download selected loans"
 msgstr ""
 
-#: calibre-plugin/action.py:257
+#: calibre-plugin/action.py:258
 msgid "Fetching loans..."
 msgstr ""
 
-#: calibre-plugin/action.py:289
+#: calibre-plugin/action.py:290
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:295
+#: calibre-plugin/action.py:296
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/action.py:311
+#: calibre-plugin/action.py:312
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:374 calibre-plugin/action.py:421
+#: calibre-plugin/action.py:375 calibre-plugin/action.py:422
 #, python-brace-format
 msgid "Downloading {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:470
+#: calibre-plugin/action.py:471
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/action.py:482
+#: calibre-plugin/action.py:483
 msgid "Return Loans"
 msgstr ""
 
-#: calibre-plugin/action.py:491
+#: calibre-plugin/action.py:492
 #, python-brace-format
 msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:510
+#: calibre-plugin/action.py:511
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/action.py:513
+#: calibre-plugin/action.py:514
 msgid "finished"
 msgstr ""
 
@@ -152,30 +152,30 @@ msgstr ""
 msgid "Invalid setup code format: {code}"
 msgstr ""
 
-#: calibre-plugin/model.py:27
+#: calibre-plugin/model.py:29
 msgid "ebook"
 msgstr ""
 
-#: calibre-plugin/model.py:27
+#: calibre-plugin/model.py:29
 msgid "magazine"
 msgstr ""
 
-#: calibre-plugin/model.py:32
+#: calibre-plugin/model.py:34
 msgid "Title"
 msgstr ""
 
-#: calibre-plugin/model.py:33
+#: calibre-plugin/model.py:35
 msgid "Author"
 msgstr ""
 
-#: calibre-plugin/model.py:34
+#: calibre-plugin/model.py:36
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/model.py:35
+#: calibre-plugin/model.py:37
 msgid "Type"
 msgstr ""
 
-#: calibre-plugin/model.py:36
+#: calibre-plugin/model.py:38
 msgid "Format"
 msgstr ""

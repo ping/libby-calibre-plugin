@@ -4,6 +4,7 @@ Unreleased
 - New: View loans in Libby (from context/right-click menu)
 - New: Return loans (from context/right-click menu)
 - New: Auto tag downloaded books
+- Properly display Checkout Date according to preferences
 - Increase concurrent loan downloads
 - Main loans window is now modal
 - Use icons instead of unicode symbols for buttons

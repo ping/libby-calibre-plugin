@@ -1,6 +1,8 @@
 from typing import Dict, Optional
 
 from calibre.ebooks.metadata.book.base import Metadata
+from calibre.utils.config import tweaks
+from calibre.utils.date import format_date
 
 # noinspection PyUnresolvedReferences
 from qt.core import (
@@ -37,6 +39,7 @@ class LibbyLoansModel(QAbstractTableModel):
     ]
     column_count = len(column_headers)
     filter_hide_books_already_in_library = False
+    DisplaySortRole = Qt.UserRole + 1000
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent)
@@ -115,7 +118,7 @@ class LibbyLoansModel(QAbstractTableModel):
             return loan
         if role == Qt.TextAlignmentRole and col in (2, 3, 4):
             return Qt.AlignCenter
-        if role != Qt.DisplayRole:
+        if role not in (Qt.DisplayRole, LibbyLoansModel.DisplaySortRole):
             return None
         if col >= self.column_count:
             return None
@@ -124,7 +127,10 @@ class LibbyLoansModel(QAbstractTableModel):
         if col == 1:
             return loan.get("firstCreatorName", "")
         if col == 2:
-            return parse_datetime(loan["checkoutDate"]).strftime("%Y-%m-%d")
+            dt_value = parse_datetime(loan["checkoutDate"])
+            if role == LibbyLoansModel.DisplaySortRole:
+                return dt_value.isoformat()
+            return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
             type_id = loan.get("type", {}).get("id", "")
             return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id

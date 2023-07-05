@@ -150,6 +150,7 @@ class OverdriveLibbyDialog(QDialog):
         self.search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.search_proxy_model.setFilterKeyColumn(-1)
         self.search_proxy_model.setSourceModel(self.model)
+        self.search_proxy_model.setSortRole(LibbyLoansModel.DisplaySortRole)
 
         # The main loan list
         self.loans_view = QTableView(self)

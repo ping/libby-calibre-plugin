@@ -58,6 +58,7 @@ ICON_MAP = {
     "ext-link": "external-link-line.png",
     "refresh": "refresh-line.png",
 }
+_icons = {}
 
 
 class OverdriveLibbyAction(InterfaceAction):
@@ -74,8 +75,19 @@ class OverdriveLibbyAction(InterfaceAction):
 
     def genesis(self):
         # This method is called once per plugin, do initial setup here
-        icon = get_icons(PLUGIN_ICON, "OverDrive Libby Plugin")
-        self.qaction.setIcon(icon)
+
+        # extract icons
+        theme_folder = Path("images").joinpath(
+            "dark-theme" if is_dark_theme() else "light-theme"
+        )
+        icons_resources = get_icons(
+            [str(theme_folder.joinpath(v)) for v in ICON_MAP.values()] + [PLUGIN_ICON]
+        )
+        for k, v in ICON_MAP.items():
+            _icons[k] = icons_resources.pop(str(theme_folder.joinpath(v)))
+
+        # action icon
+        self.qaction.setIcon(icons_resources.pop(PLUGIN_ICON))
         self.qaction.triggered.connect(self.show_dialog)
 
     def show_dialog(self):
@@ -105,15 +117,6 @@ class OverdriveLibbyDialog(QDialog):
         self.__loans_thread = QThread()
         self.__curr_width = 0
         self.__curr_height = 0
-        theme_folder = Path("images").joinpath(
-            "dark-theme" if is_dark_theme() else "light-theme"
-        )
-        self.icons = {}
-        for k, v in ICON_MAP.items():
-            self.icons[k] = theme_folder.joinpath(v)
-        icons_resources = get_icons([str(v) for v in self.icons.values()])
-        for k in ICON_MAP.keys():
-            self.icons[k] = icons_resources.pop(str(self.icons[k]))
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:
@@ -132,7 +135,7 @@ class OverdriveLibbyDialog(QDialog):
         loan_view_span = 8
 
         self.refresh_btn = QPushButton(_("Refresh"), self)
-        self.refresh_btn.setIcon(self.icons["refresh"])
+        self.refresh_btn.setIcon(_icons["refresh"])
         self.refresh_btn.setAutoDefault(False)
         self.refresh_btn.setToolTip(_("Get latest loans"))
         self.refresh_btn.clicked.connect(self.do_refresh)
@@ -171,7 +174,7 @@ class OverdriveLibbyDialog(QDialog):
         self.layout.addWidget(self.loans_view, 1, 0, 3, loan_view_span)
 
         self.download_btn = QPushButton(_("Download"), self)
-        self.download_btn.setIcon(self.icons["download"])
+        self.download_btn.setIcon(_icons["download"])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
@@ -431,14 +434,14 @@ class OverdriveLibbyDialog(QDialog):
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         view_action = menu.addAction(_("View in Libby"))
-        view_action.setIcon(self.icons["ext-link"])
+        view_action.setIcon(_icons["ext-link"])
         view_action.triggered.connect(lambda: self.open_loan_in_libby(indices))
         return_action = menu.addAction(
             ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
                 n=len(indices)
             )
         )
-        return_action.setIcon(self.icons["return"])
+        return_action.setIcon(_icons["return"])
         return_action.triggered.connect(lambda: self.return_selection(indices))
         menu.exec(QCursor.pos())
 

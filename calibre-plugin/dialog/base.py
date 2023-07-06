@@ -23,6 +23,7 @@ from qt.core import (
 from .. import logger, __version__
 from ..config import PREFS, PreferenceKeys
 from ..libby import LibbyClient
+from ..overdrive import OverDriveClient
 from ..worker import SyncDataWorker
 
 load_translations()
@@ -99,6 +100,14 @@ class BaseDialogMixin(QDialog):
             library_key = model.get_card(data["cardId"])["advantageKey"]
             QDesktopServices.openUrl(
                 QUrl(LibbyClient.libby_title_permalink(library_key, data["id"]))
+            )
+
+    def view_in_overdrive_action_triggered(self, indices, model):
+        for index in indices:
+            data = index.data(Qt.UserRole)
+            library_key = model.get_card(data["cardId"])["advantageKey"]
+            QDesktopServices.openUrl(
+                QUrl(OverDriveClient.library_title_permalink(library_key, data["id"]))
             )
 
     def sync(self):

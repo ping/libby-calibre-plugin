@@ -7,3 +7,5 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+
+from .client import OverDriveClient

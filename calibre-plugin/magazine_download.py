@@ -34,7 +34,7 @@ from .magazine_download_utils import (
     is_windows,
     build_opf_package,
 )
-from .overdrive.client import OverDriveClient
+from .overdrive import OverDriveClient
 
 NAV_XHTMLTEMPLATE = """
 <!DOCTYPE html>

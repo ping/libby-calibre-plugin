@@ -164,6 +164,11 @@ class LoansDialogMixin(BaseDialogMixin):
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.loans_model)
         )
+        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
+        view_in_overdrive_action.setIcon(self.icons["ext-link"])
+        view_in_overdrive_action.triggered.connect(
+            lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
+        )
         return_action = menu.addAction(
             ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
                 n=len(indices)

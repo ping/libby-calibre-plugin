@@ -231,6 +231,17 @@ class OverDriveClient(object):
 
             return response_content
 
+    @staticmethod
+    def library_title_permalink(library_key: str, title_id: str) -> str:
+        """
+        Generates an OverDrive library permalink for a title.
+
+        :param title_id:
+        :param library_key:
+        :return:
+        """
+        return f"https://{library_key}.overdrive.com/media/{title_id}"
+
     def media(self, title_id: str, **kwargs) -> Dict:
         """
         Retrieve a title.

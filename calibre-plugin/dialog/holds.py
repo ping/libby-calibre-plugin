@@ -161,6 +161,11 @@ class HoldsDialogMixin(BaseDialogMixin):
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.holds_model)
         )
+        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
+        view_in_overdrive_action.setIcon(self.icons["ext-link"])
+        view_in_overdrive_action.triggered.connect(
+            lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
+        )
         cancel_action = menu.addAction(_("Cancel hold"))
         cancel_action.setIcon(self.icons["cancel_hold"])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))

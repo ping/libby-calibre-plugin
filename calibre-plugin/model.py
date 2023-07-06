@@ -100,6 +100,10 @@ class LibbyModel(QAbstractTableModel):
 
 
 class LibbyLoansModel(LibbyModel):
+    """
+    Underlying data model for the Loans table view
+    """
+
     column_headers = [
         _("Title"),
         _("Author"),
@@ -199,6 +203,10 @@ class LibbyLoansModel(LibbyModel):
 
 
 class LibbyHoldsModel(LibbyModel):
+    """
+    Underlying data model for the Holds table view
+    """
+
     column_headers = [
         _("Title"),
         _("Author"),

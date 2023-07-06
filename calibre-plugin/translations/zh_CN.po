@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.3\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-06 11:33+0800\n"
+"POT-Creation-Date: 2023-07-06 14:18+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,131 +22,9 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "从您的OverDrive Libby账户导入已借作品"
 
-#: calibre-plugin/action.py:73
+#: calibre-plugin/action.py:44
 msgid "Run the OverDrive Libby client UI"
 msgstr "运行OverDrive Libby客户端用户界面"
-
-#: calibre-plugin/action.py:132
-#, python-brace-format
-msgid "OverDrive Libby v{version}"
-msgstr ""
-
-#: calibre-plugin/action.py:159 calibre-plugin/action.py:241
-msgid "Refresh"
-msgstr "刷新"
-
-#: calibre-plugin/action.py:162
-msgid "Get latest loans"
-msgstr "获取最新借阅的书籍"
-
-#: calibre-plugin/action.py:207 calibre-plugin/action.py:472
-msgid "Download"
-msgstr "下载"
-
-#: calibre-plugin/action.py:210
-msgid "Download selected loans"
-msgstr "下载选定的图书借阅"
-
-#: calibre-plugin/action.py:232
-msgid "Loans"
-msgstr ""
-
-#: calibre-plugin/action.py:244
-msgid "Get latest holds"
-msgstr ""
-
-#: calibre-plugin/action.py:294
-msgid "Borrow"
-msgstr ""
-
-#: calibre-plugin/action.py:297
-msgid "Borrow selected hold"
-msgstr ""
-
-#: calibre-plugin/action.py:306
-msgid "Hide unavailable holds"
-msgstr ""
-
-#: calibre-plugin/action.py:317
-msgid "Holds"
-msgstr ""
-
-#: calibre-plugin/action.py:385 calibre-plugin/action.py:386
-msgid "Synchronizing..."
-msgstr ""
-
-#: calibre-plugin/action.py:425 calibre-plugin/action.py:445
-msgid "View in Libby"
-msgstr "在Libby中查看"
-
-#: calibre-plugin/action.py:431
-#, python-brace-format
-msgid "Return {n} loan"
-msgid_plural "Return {n} loans"
-msgstr[0] "归还 {n} 本书借阅"
-
-#: calibre-plugin/action.py:450
-msgid "Cancel hold"
-msgstr ""
-
-#: calibre-plugin/action.py:472
-msgid "Please select at least 1 loan."
-msgstr "请选择至少 1 本书借阅。"
-
-#: calibre-plugin/action.py:477
-msgid "Cancel this hold?"
-msgstr ""
-
-#: calibre-plugin/action.py:487
-msgid "Cancel Holds"
-msgstr ""
-
-#: calibre-plugin/action.py:557 calibre-plugin/action.py:604
-#, python-brace-format
-msgid "Downloading {book}"
-msgstr "正在下载 {book}"
-
-#: calibre-plugin/action.py:644
-#, python-brace-format
-msgid "Return this loan?"
-msgid_plural "Return these {n} loans?"
-msgstr[0] "归还这 {n} 本书借阅吗？"
-
-#: calibre-plugin/action.py:656
-msgid "Return Loans"
-msgstr "归还图书借阅"
-
-#: calibre-plugin/action.py:667
-#, python-brace-format
-msgid "Returning {book}"
-msgstr "归还 {book}"
-
-#: calibre-plugin/action.py:686
-msgid "Failed to return loan"
-msgstr "借书归还失败"
-
-#: calibre-plugin/action.py:689 calibre-plugin/action.py:722
-#: calibre-plugin/action.py:747
-msgid "finished"
-msgstr "完成"
-
-#: calibre-plugin/action.py:700
-#, python-brace-format
-msgid "Borrowing {book}"
-msgstr ""
-
-#: calibre-plugin/action.py:719
-msgid "Failed to borrow book"
-msgstr ""
-
-#: calibre-plugin/action.py:725
-#, python-brace-format
-msgid "Cancelling hold on {book}"
-msgstr ""
-
-#: calibre-plugin/action.py:744
-msgid "Failed to cancel hold"
-msgstr ""
 
 #: calibre-plugin/config.py:37 calibre-plugin/config.py:237
 msgid "Libby Setup Code"
@@ -257,5 +135,128 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#~ msgid "Fetching loans..."
-#~ msgstr "正在获取图书借阅..."
+#: calibre-plugin/dialog/base.py:45
+#, python-brace-format
+msgid "OverDrive Libby v{version}"
+msgstr ""
+
+#: calibre-plugin/dialog/base.py:118
+msgid "Synchronizing..."
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:55 calibre-plugin/dialog/loans.py:62
+msgid "Refresh"
+msgstr "刷新"
+
+#: calibre-plugin/dialog/holds.py:58
+msgid "Get latest holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:114
+msgid "Hide unavailable holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:124
+msgid "Borrow"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:127
+msgid "Borrow selected hold"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:135
+msgid "Holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:159 calibre-plugin/dialog/loans.py:162
+msgid "View in Libby"
+msgstr "在Libby中查看"
+
+#: calibre-plugin/dialog/holds.py:164 calibre-plugin/dialog/loans.py:167
+msgid "View in OverDrive"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:169
+msgid "Cancel hold"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:183
+#, python-brace-format
+msgid "Borrowing {book}"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:202
+msgid "Failed to borrow book"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:205 calibre-plugin/dialog/holds.py:252
+#: calibre-plugin/dialog/loans.py:376
+msgid "finished"
+msgstr "完成"
+
+#: calibre-plugin/dialog/holds.py:209
+msgid "Cancel this hold?"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:219
+msgid "Cancel Holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:230
+#, python-brace-format
+msgid "Cancelling hold on {book}"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:249
+msgid "Failed to cancel hold"
+msgstr ""
+
+#: calibre-plugin/dialog/loans.py:65
+msgid "Get latest loans"
+msgstr "获取最新借阅的书籍"
+
+#: calibre-plugin/dialog/loans.py:132 calibre-plugin/dialog/loans.py:189
+msgid "Download"
+msgstr "下载"
+
+#: calibre-plugin/dialog/loans.py:135
+msgid "Download selected loans"
+msgstr "下载选定的图书借阅"
+
+#: calibre-plugin/dialog/loans.py:145
+msgid "Loans"
+msgstr ""
+
+#: calibre-plugin/dialog/loans.py:173
+#, python-brace-format
+msgid "Return {n} loan"
+msgid_plural "Return {n} loans"
+msgstr[0] "归还 {n} 本书借阅"
+
+#: calibre-plugin/dialog/loans.py:189
+msgid "Please select at least 1 loan."
+msgstr "请选择至少 1 本书借阅。"
+
+#: calibre-plugin/dialog/loans.py:252 calibre-plugin/dialog/loans.py:299
+#, python-brace-format
+msgid "Downloading {book}"
+msgstr "正在下载 {book}"
+
+#: calibre-plugin/dialog/loans.py:331
+#, python-brace-format
+msgid "Return this loan?"
+msgid_plural "Return these {n} loans?"
+msgstr[0] "归还这 {n} 本书借阅吗？"
+
+#: calibre-plugin/dialog/loans.py:343
+msgid "Return Loans"
+msgstr "归还图书借阅"
+
+#: calibre-plugin/dialog/loans.py:354
+#, python-brace-format
+msgid "Returning {book}"
+msgstr "归还 {book}"
+
+#: calibre-plugin/dialog/loans.py:373
+msgid "Failed to return loan"
+msgstr "借书归还失败"

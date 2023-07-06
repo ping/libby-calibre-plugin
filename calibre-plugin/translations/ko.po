@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.3\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-06 11:33+0800\n"
+"POT-Creation-Date: 2023-07-06 14:18+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,131 +22,9 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libby 계정에서 대출 가져오기"
 
-#: calibre-plugin/action.py:73
+#: calibre-plugin/action.py:44
 msgid "Run the OverDrive Libby client UI"
 msgstr "OverDrive Libby 클라이언트 UI 실행"
-
-#: calibre-plugin/action.py:132
-#, python-brace-format
-msgid "OverDrive Libby v{version}"
-msgstr ""
-
-#: calibre-plugin/action.py:159 calibre-plugin/action.py:241
-msgid "Refresh"
-msgstr "새로고침"
-
-#: calibre-plugin/action.py:162
-msgid "Get latest loans"
-msgstr "최신 도서 대출 받기"
-
-#: calibre-plugin/action.py:207 calibre-plugin/action.py:472
-msgid "Download"
-msgstr "다운로드하다"
-
-#: calibre-plugin/action.py:210
-msgid "Download selected loans"
-msgstr "선택한 도서 대출 다운로드"
-
-#: calibre-plugin/action.py:232
-msgid "Loans"
-msgstr ""
-
-#: calibre-plugin/action.py:244
-msgid "Get latest holds"
-msgstr ""
-
-#: calibre-plugin/action.py:294
-msgid "Borrow"
-msgstr ""
-
-#: calibre-plugin/action.py:297
-msgid "Borrow selected hold"
-msgstr ""
-
-#: calibre-plugin/action.py:306
-msgid "Hide unavailable holds"
-msgstr ""
-
-#: calibre-plugin/action.py:317
-msgid "Holds"
-msgstr ""
-
-#: calibre-plugin/action.py:385 calibre-plugin/action.py:386
-msgid "Synchronizing..."
-msgstr ""
-
-#: calibre-plugin/action.py:425 calibre-plugin/action.py:445
-msgid "View in Libby"
-msgstr "Libby에서 보기"
-
-#: calibre-plugin/action.py:431
-#, python-brace-format
-msgid "Return {n} loan"
-msgid_plural "Return {n} loans"
-msgstr[0] "{n} 도서 대출 반환"
-
-#: calibre-plugin/action.py:450
-msgid "Cancel hold"
-msgstr ""
-
-#: calibre-plugin/action.py:472
-msgid "Please select at least 1 loan."
-msgstr "도서 대출을 1 개 이상 선택하십시오."
-
-#: calibre-plugin/action.py:477
-msgid "Cancel this hold?"
-msgstr ""
-
-#: calibre-plugin/action.py:487
-msgid "Cancel Holds"
-msgstr ""
-
-#: calibre-plugin/action.py:557 calibre-plugin/action.py:604
-#, python-brace-format
-msgid "Downloading {book}"
-msgstr "다운로드중 {book}"
-
-#: calibre-plugin/action.py:644
-#, python-brace-format
-msgid "Return this loan?"
-msgid_plural "Return these {n} loans?"
-msgstr[0] "이 도서 대출을 반환하시겠습니까?"
-
-#: calibre-plugin/action.py:656
-msgid "Return Loans"
-msgstr "도서 대출 반환"
-
-#: calibre-plugin/action.py:667
-#, python-brace-format
-msgid "Returning {book}"
-msgstr "{book}를 반환하는 중"
-
-#: calibre-plugin/action.py:686
-msgid "Failed to return loan"
-msgstr "도서 대출 반환 실패"
-
-#: calibre-plugin/action.py:689 calibre-plugin/action.py:722
-#: calibre-plugin/action.py:747
-msgid "finished"
-msgstr "완료됨"
-
-#: calibre-plugin/action.py:700
-#, python-brace-format
-msgid "Borrowing {book}"
-msgstr ""
-
-#: calibre-plugin/action.py:719
-msgid "Failed to borrow book"
-msgstr ""
-
-#: calibre-plugin/action.py:725
-#, python-brace-format
-msgid "Cancelling hold on {book}"
-msgstr ""
-
-#: calibre-plugin/action.py:744
-msgid "Failed to cancel hold"
-msgstr ""
 
 #: calibre-plugin/config.py:37 calibre-plugin/config.py:237
 msgid "Libby Setup Code"
@@ -257,5 +135,128 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#~ msgid "Fetching loans..."
-#~ msgstr "최신 도서 대출 가져 오기 ..."
+#: calibre-plugin/dialog/base.py:45
+#, python-brace-format
+msgid "OverDrive Libby v{version}"
+msgstr ""
+
+#: calibre-plugin/dialog/base.py:118
+msgid "Synchronizing..."
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:55 calibre-plugin/dialog/loans.py:62
+msgid "Refresh"
+msgstr "새로고침"
+
+#: calibre-plugin/dialog/holds.py:58
+msgid "Get latest holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:114
+msgid "Hide unavailable holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:124
+msgid "Borrow"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:127
+msgid "Borrow selected hold"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:135
+msgid "Holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:159 calibre-plugin/dialog/loans.py:162
+msgid "View in Libby"
+msgstr "Libby에서 보기"
+
+#: calibre-plugin/dialog/holds.py:164 calibre-plugin/dialog/loans.py:167
+msgid "View in OverDrive"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:169
+msgid "Cancel hold"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:183
+#, python-brace-format
+msgid "Borrowing {book}"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:202
+msgid "Failed to borrow book"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:205 calibre-plugin/dialog/holds.py:252
+#: calibre-plugin/dialog/loans.py:376
+msgid "finished"
+msgstr "완료됨"
+
+#: calibre-plugin/dialog/holds.py:209
+msgid "Cancel this hold?"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:219
+msgid "Cancel Holds"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:230
+#, python-brace-format
+msgid "Cancelling hold on {book}"
+msgstr ""
+
+#: calibre-plugin/dialog/holds.py:249
+msgid "Failed to cancel hold"
+msgstr ""
+
+#: calibre-plugin/dialog/loans.py:65
+msgid "Get latest loans"
+msgstr "최신 도서 대출 받기"
+
+#: calibre-plugin/dialog/loans.py:132 calibre-plugin/dialog/loans.py:189
+msgid "Download"
+msgstr "다운로드하다"
+
+#: calibre-plugin/dialog/loans.py:135
+msgid "Download selected loans"
+msgstr "선택한 도서 대출 다운로드"
+
+#: calibre-plugin/dialog/loans.py:145
+msgid "Loans"
+msgstr ""
+
+#: calibre-plugin/dialog/loans.py:173
+#, python-brace-format
+msgid "Return {n} loan"
+msgid_plural "Return {n} loans"
+msgstr[0] "{n} 도서 대출 반환"
+
+#: calibre-plugin/dialog/loans.py:189
+msgid "Please select at least 1 loan."
+msgstr "도서 대출을 1 개 이상 선택하십시오."
+
+#: calibre-plugin/dialog/loans.py:252 calibre-plugin/dialog/loans.py:299
+#, python-brace-format
+msgid "Downloading {book}"
+msgstr "다운로드중 {book}"
+
+#: calibre-plugin/dialog/loans.py:331
+#, python-brace-format
+msgid "Return this loan?"
+msgid_plural "Return these {n} loans?"
+msgstr[0] "이 도서 대출을 반환하시겠습니까?"
+
+#: calibre-plugin/dialog/loans.py:343
+msgid "Return Loans"
+msgstr "도서 대출 반환"
+
+#: calibre-plugin/dialog/loans.py:354
+#, python-brace-format
+msgid "Returning {book}"
+msgstr "{book}를 반환하는 중"
+
+#: calibre-plugin/dialog/loans.py:373
+msgid "Failed to return loan"
+msgstr "도서 대출 반환 실패"

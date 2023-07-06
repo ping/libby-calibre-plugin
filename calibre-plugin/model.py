@@ -51,6 +51,8 @@ class LibbyModel(QAbstractTableModel):
         self.db = db
         self._cards = []
         self._libraries = []
+        self._rows = []
+        self.filtered_rows = []
 
     def headerData(self, section, orientation, role):
         if role != Qt.DisplayRole:
@@ -63,6 +65,17 @@ class LibbyModel(QAbstractTableModel):
 
     def columnCount(self, parent=None):
         return len(self.column_headers)
+
+    def rowCount(self, parent=None):
+        return len(self.filtered_rows)
+
+    def removeRows(self, row, count, _):
+        self.beginRemoveRows(QModelIndex(), row, row + count - 1)
+        self.filtered_rows = (
+            self.filtered_rows[:row] + self.filtered_rows[row + count :]
+        )
+        self.endRemoveRows()
+        return True
 
     def sync(self, synced_state: Optional[Dict] = None):
         if not synced_state:
@@ -99,8 +112,6 @@ class LibbyLoansModel(LibbyModel):
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent, synced_state, db)
-        self._loans = []
-        self.filtered_loans = []
         self.filter_hide_books_already_in_library = PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ]
@@ -110,19 +121,19 @@ class LibbyLoansModel(LibbyModel):
         super().sync(synced_state)
         if not synced_state:
             synced_state = {}
-        self._loans = sorted(
+        self._rows = sorted(
             synced_state.get("loans", []),
             key=lambda ln: ln["checkoutDate"],
             reverse=True,
         )
-        self.filter_loans()
+        self.filter_rows()
 
-    def filter_loans(self):
+    def filter_rows(self):
         self.beginResetModel()
-        self.filtered_loans = []
+        self.filtered_rows = []
         for loan in [
             l
-            for l in self._loans
+            for l in self._rows
             if (
                 not PREFS[PreferenceKeys.HIDE_EBOOKS]
                 and LibbyClient.is_downloadable_ebook_loan(l)
@@ -133,29 +144,26 @@ class LibbyLoansModel(LibbyModel):
             )
         ]:
             if not self.filter_hide_books_already_in_library:
-                self.filtered_loans.append(loan)
+                self.filtered_rows.append(loan)
                 continue
             title = get_loan_title(loan)
             authors = []
             if loan.get("firstCreatorName", ""):
                 authors = [loan.get("firstCreatorName", "")]
             if not self.db.has_book(Metadata(title=title, authors=authors)):
-                self.filtered_loans.append(loan)
+                self.filtered_rows.append(loan)
         self.endResetModel()
 
     def set_filter_hide_books_already_in_library(self, value: bool):
         if value != self.filter_hide_books_already_in_library:
             self.filter_hide_books_already_in_library = value
-            self.filter_loans()
-
-    def rowCount(self, parent):
-        return len(self.filtered_loans)
+            self.filter_rows()
 
     def data(self, index, role):
         row, col = index.row(), index.column()
-        if row >= len(self.filtered_loans):
+        if row >= self.rowCount():
             return None
-        loan: Dict = self.filtered_loans[row]
+        loan: Dict = self.filtered_rows[row]
         if role == Qt.UserRole:
             return loan
         if role == Qt.TextAlignmentRole and col >= 2:
@@ -189,14 +197,6 @@ class LibbyLoansModel(LibbyModel):
             )
         return None
 
-    def removeRows(self, row, count, _):
-        self.beginRemoveRows(QModelIndex(), row, row + count - 1)
-        self.filtered_loans = (
-            self.filtered_loans[:row] + self.filtered_loans[row + count :]
-        )
-        self.endRemoveRows()
-        return True
-
 
 class LibbyHoldsModel(LibbyModel):
     column_headers = [
@@ -211,8 +211,6 @@ class LibbyHoldsModel(LibbyModel):
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent, synced_state, db)
-        self._holds = []
-        self.filtered_holds = []
         self.filter_hide_unavailable_holds = PREFS[
             PreferenceKeys.HIDE_HOLDS_UNAVAILABLE
         ]
@@ -222,7 +220,7 @@ class LibbyHoldsModel(LibbyModel):
         super().sync(synced_state)
         if not synced_state:
             synced_state = {}
-        self._holds = sorted(
+        self._rows = sorted(
             synced_state.get("holds", []),
             key=lambda h: (
                 h["isAvailable"],
@@ -231,14 +229,14 @@ class LibbyHoldsModel(LibbyModel):
             ),
             reverse=True,
         )
-        self.filter_holds()
+        self.filter_rows()
 
-    def filter_holds(self):
+    def filter_rows(self):
         self.beginResetModel()
-        self.filtered_holds = []
+        self.filtered_rows = []
         for hold in [
             h
-            for h in self._holds
+            for h in self._rows
             if (
                 not PREFS[PreferenceKeys.HIDE_EBOOKS]
                 and LibbyClient.is_downloadable_ebook_loan(h)
@@ -249,22 +247,19 @@ class LibbyHoldsModel(LibbyModel):
             )
         ]:
             if hold.get("isAvailable", False) or not self.filter_hide_unavailable_holds:
-                self.filtered_holds.append(hold)
+                self.filtered_rows.append(hold)
         self.endResetModel()
 
     def set_filter_hide_unavailable_holds(self, value: bool):
         if value != self.filter_hide_unavailable_holds:
             self.filter_hide_unavailable_holds = value
-            self.filter_holds()
-
-    def rowCount(self, parent):
-        return len(self.filtered_holds)
+            self.filter_rows()
 
     def data(self, index, role):
         row, col = index.row(), index.column()
-        if row >= len(self.filtered_holds):
+        if row >= self.rowCount():
             return None
-        hold: Dict = self.filtered_holds[row]
+        hold: Dict = self.filtered_rows[row]
         if role == Qt.UserRole:
             return hold
         if role == Qt.TextAlignmentRole and col >= 2:
@@ -298,11 +293,3 @@ class LibbyHoldsModel(LibbyModel):
                 return str(hold.get("isAvailable", False))
             return _("Yes") if hold.get("isAvailable", False) else _("No")
         return None
-
-    def removeRows(self, row, count, _):
-        self.beginRemoveRows(QModelIndex(), row, row + count - 1)
-        self.filtered_holds = (
-            self.filtered_holds[:row] + self.filtered_holds[row + count :]
-        )
-        self.endRemoveRows()
-        return True

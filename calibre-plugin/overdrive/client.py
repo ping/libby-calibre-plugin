@@ -15,11 +15,12 @@ from http.client import HTTPException
 from io import BytesIO
 from socket import timeout as SocketTimeout, error as SocketError
 from ssl import SSLError
-from typing import Optional, Dict, List, Union, Tuple
+from typing import Optional, Dict, List, Union
 from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlencode
 from urllib.request import Request, build_opener
 
+from .common import pageable
 from .errors import ClientConnectionError
 
 USER_AGENT = (
@@ -69,13 +70,16 @@ class OverDriveClient(object):
         }
         return headers
 
-    def default_query(self) -> Dict:
+    def default_query(self, paging: bool = False) -> Dict:
         """
         Default set of GET request parameters.
 
         :return:
         """
-        return {"x-client-id": CLIENT_ID}
+        query = {"x-client-id": CLIENT_ID}
+        if paging:
+            query.update({"page": 1, "perPage": 24})  # type: ignore[dict-item]
+        return query
 
     def _read_response(self, response, decode: bool = True) -> Union[bytes, str]:
         """
@@ -126,7 +130,7 @@ class OverDriveClient(object):
         if headers is None:
             headers = self.default_headers()
         if query:
-            endpoint_url += "?" if "?" not in endpoint else "&" + urlencode(query)
+            endpoint_url += ("?" if "?" not in endpoint else "&") + urlencode(query)
         if not method:
             # try to set an HTTP method
             if params is None:
@@ -253,3 +257,24 @@ class OverDriveClient(object):
         params = self.default_query()
         params.update(kwargs)
         return self.send_request(f"media/{title_id}", query=params)
+
+    @pageable
+    def libraries(self, website_ids: Optional[List[int]] = None, **kwargs) -> dict:
+        """
+        Get a list of libraries.
+
+        :param website_ids: Comma-separated list of website IDs to get the information for. Max 24 items.
+        :param kwargs:
+            - websiteId: A unique id that identifies the library
+            - libraryKeys: Comma-separated list of library keys to get the information for.
+            - perPage: The number of items to return per page, up to a max of 100 (defaults to 24)
+            - page: The current page being requested (defaults to 1)
+        :return:
+        """
+        params = self.default_query(paging=True)
+        if website_ids:
+            params["websiteIds"] = ",".join(
+                [str(website_id) for website_id in website_ids]
+            )
+        params.update(kwargs)
+        return self.send_request("libraries/", query=params)

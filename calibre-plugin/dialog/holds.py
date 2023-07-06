@@ -181,6 +181,9 @@ class HoldsDialogMixin(BaseDialogMixin):
             rows = selection_model.selectedRows()
             for row in reversed(rows):
                 self.borrow_hold(row.data(Qt.UserRole))
+                self.holds_model.removeRow(
+                    self.holds_search_proxy_model.mapToSource(row).row()
+                )
 
     def borrow_hold(self, hold):
         card = self.holds_model.get_card(hold["cardId"])

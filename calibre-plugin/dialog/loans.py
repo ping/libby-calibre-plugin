@@ -185,6 +185,10 @@ class LoansDialogMixin(BaseDialogMixin):
             rows = selection_model.selectedRows()
             for row in reversed(rows):
                 self.download_loan(row.data(Qt.UserRole))
+                if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]:
+                    self.loans_model.removeRow(
+                        self.loans_search_proxy_model.mapToSource(row).row()
+                    )
         else:
             return error_dialog(
                 self, _("Download"), _("Please select at least 1 loan."), show=True

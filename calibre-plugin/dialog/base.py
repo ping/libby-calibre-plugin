@@ -9,6 +9,8 @@
 #
 from typing import Dict
 
+from calibre.gui2.viewer.overlay import LoadingOverlay
+
 # noinspection PyUnresolvedReferences
 from qt.core import (
     Qt,
@@ -144,6 +146,15 @@ class BaseDialogMixin(QDialog):
                 bar.clearMessage()
             thread.quit()
 
+        def errored_out(err: Exception):
+            for btn in self.refresh_buttons:
+                btn.setEnabled(True)
+            for bar in self.status_bars:
+                bar.clearMessage()
+            thread.quit()
+            raise err
+
         worker.finished.connect(lambda value: loaded(value))
+        worker.errored.connect(lambda err: errored_out(err))
 
         return thread

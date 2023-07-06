@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.3\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-05 14:49+0800\n"
+"POT-Creation-Date: 2023-07-06 11:33+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,160 +22,239 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:69
+#: calibre-plugin/action.py:73
 msgid "Run the OverDrive Libby client UI"
 msgstr ""
 
-#: calibre-plugin/action.py:130
+#: calibre-plugin/action.py:132
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/action.py:137
+#: calibre-plugin/action.py:159 calibre-plugin/action.py:241
 msgid "Refresh"
 msgstr ""
 
-#: calibre-plugin/action.py:140
+#: calibre-plugin/action.py:162
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/action.py:177 calibre-plugin/action.py:312
+#: calibre-plugin/action.py:207 calibre-plugin/action.py:472
 msgid "Download"
 msgstr ""
 
-#: calibre-plugin/action.py:180
+#: calibre-plugin/action.py:210
 msgid "Download selected loans"
 msgstr ""
 
-#: calibre-plugin/action.py:258
-msgid "Fetching loans..."
+#: calibre-plugin/action.py:232
+msgid "Loans"
 msgstr ""
 
-#: calibre-plugin/action.py:290
+#: calibre-plugin/action.py:244
+msgid "Get latest holds"
+msgstr ""
+
+#: calibre-plugin/action.py:294
+msgid "Borrow"
+msgstr ""
+
+#: calibre-plugin/action.py:297
+msgid "Borrow selected hold"
+msgstr ""
+
+#: calibre-plugin/action.py:306
+msgid "Hide unavailable holds"
+msgstr ""
+
+#: calibre-plugin/action.py:317
+msgid "Holds"
+msgstr ""
+
+#: calibre-plugin/action.py:385 calibre-plugin/action.py:386
+msgid "Synchronizing..."
+msgstr ""
+
+#: calibre-plugin/action.py:425 calibre-plugin/action.py:445
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:296
+#: calibre-plugin/action.py:431
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/action.py:312
+#: calibre-plugin/action.py:450
+msgid "Cancel hold"
+msgstr ""
+
+#: calibre-plugin/action.py:472
 msgid "Please select at least 1 loan."
 msgstr ""
 
-#: calibre-plugin/action.py:375 calibre-plugin/action.py:422
+#: calibre-plugin/action.py:477
+msgid "Cancel this hold?"
+msgstr ""
+
+#: calibre-plugin/action.py:487
+msgid "Cancel Holds"
+msgstr ""
+
+#: calibre-plugin/action.py:557 calibre-plugin/action.py:604
 #, python-brace-format
 msgid "Downloading {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:471
+#: calibre-plugin/action.py:644
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/action.py:483
+#: calibre-plugin/action.py:656
 msgid "Return Loans"
 msgstr ""
 
-#: calibre-plugin/action.py:492
+#: calibre-plugin/action.py:667
 #, python-brace-format
 msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/action.py:511
+#: calibre-plugin/action.py:686
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/action.py:514
+#: calibre-plugin/action.py:689 calibre-plugin/action.py:722
+#: calibre-plugin/action.py:747
 msgid "finished"
 msgstr ""
 
-#: calibre-plugin/config.py:36 calibre-plugin/config.py:221
+#: calibre-plugin/action.py:700
+#, python-brace-format
+msgid "Borrowing {book}"
+msgstr ""
+
+#: calibre-plugin/action.py:719
+msgid "Failed to borrow book"
+msgstr ""
+
+#: calibre-plugin/action.py:725
+#, python-brace-format
+msgid "Cancelling hold on {book}"
+msgstr ""
+
+#: calibre-plugin/action.py:744
+msgid "Failed to cancel hold"
+msgstr ""
+
+#: calibre-plugin/config.py:37 calibre-plugin/config.py:237
 msgid "Libby Setup Code"
 msgstr ""
 
-#: calibre-plugin/config.py:37
+#: calibre-plugin/config.py:38
 msgid "8-digit setup code"
 msgstr ""
 
-#: calibre-plugin/config.py:38
+#: calibre-plugin/config.py:39
 msgid "Hide Magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:39
+#: calibre-plugin/config.py:40
 msgid "Hide Ebooks"
 msgstr ""
 
-#: calibre-plugin/config.py:40
+#: calibre-plugin/config.py:41
 msgid "Hide books already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:41
+#: calibre-plugin/config.py:42
 msgid "Prefer Open Formats"
 msgstr ""
 
-#: calibre-plugin/config.py:42
+#: calibre-plugin/config.py:43
 msgid "Tag downloaded ebooks with"
 msgstr ""
 
-#: calibre-plugin/config.py:43
+#: calibre-plugin/config.py:44
 msgid "Example: library,books"
 msgstr ""
 
-#: calibre-plugin/config.py:44
+#: calibre-plugin/config.py:45
 msgid "Tag downloaded magazines with"
 msgstr ""
 
-#: calibre-plugin/config.py:45
+#: calibre-plugin/config.py:46
 msgid "Example: library,magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:46
+#: calibre-plugin/config.py:47
 msgid "Always confirm returns"
 msgstr ""
 
-#: calibre-plugin/config.py:75
+#: calibre-plugin/config.py:48
+msgid "Always confirm holds cancellation"
+msgstr ""
+
+#: calibre-plugin/config.py:78
 msgid "Libby is configured."
 msgstr ""
 
-#: calibre-plugin/config.py:77
+#: calibre-plugin/config.py:80
 msgid "Libby is not configured yet."
 msgstr ""
 
-#: calibre-plugin/config.py:222
+#: calibre-plugin/config.py:238
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""
 
-#: calibre-plugin/model.py:29
+#: calibre-plugin/model.py:42
 msgid "ebook"
 msgstr ""
 
-#: calibre-plugin/model.py:29
+#: calibre-plugin/model.py:42
 msgid "magazine"
 msgstr ""
 
-#: calibre-plugin/model.py:34
+#: calibre-plugin/model.py:47 calibre-plugin/model.py:180
 msgid "Title"
 msgstr ""
 
-#: calibre-plugin/model.py:35
+#: calibre-plugin/model.py:48 calibre-plugin/model.py:181
 msgid "Author"
 msgstr ""
 
-#: calibre-plugin/model.py:36
+#: calibre-plugin/model.py:49
 msgid "Checkout Date"
 msgstr ""
 
-#: calibre-plugin/model.py:37
+#: calibre-plugin/model.py:50 calibre-plugin/model.py:184
 msgid "Type"
 msgstr ""
 
-#: calibre-plugin/model.py:38
+#: calibre-plugin/model.py:51
 msgid "Format"
+msgstr ""
+
+#: calibre-plugin/model.py:182
+msgid "Hold Date"
+msgstr ""
+
+#: calibre-plugin/model.py:183
+msgid "Library"
+msgstr ""
+
+#: calibre-plugin/model.py:185
+msgid "Available"
+msgstr ""
+
+#: calibre-plugin/model.py:304
+msgid "Yes"
+msgstr ""
+
+#: calibre-plugin/model.py:304
+msgid "No"
 msgstr ""

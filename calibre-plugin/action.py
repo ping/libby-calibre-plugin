@@ -37,17 +37,21 @@ from qt.core import (
     QCursor,
     QUrl,
     QDesktopServices,
+    QTabWidget,
+    QWidget,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, __version__
+from .borrow_book import LibbyBorrowHold
 from .config import PREFS, PreferenceKeys, PreferenceTexts
 from .ebook_download import CustomEbookDownload
+from .hold_cancel import LibbyHoldCancel
 from .libby import LibbyClient
 from .libby.client import LibbyFormats
 from .loan_return import LibbyLoanReturn
 from .magazine_download import CustomMagazineDownload
-from .model import get_loan_title, LibbyLoansModel
-from .worker import LoanDataWorker
+from .model import get_loan_title, LibbyLoansModel, LibbyHoldsModel
+from .worker import SyncDataWorker
 
 load_translations()
 
@@ -56,8 +60,9 @@ ICON_MAP = {
     "download": "download-line.png",
     "ext-link": "external-link-line.png",
     "refresh": "refresh-line.png",
+    "borrow": "file-add-line.png",
+    "cancel_hold": "delete-bin-line.png",
 }
-_icons = {}
 
 
 class OverdriveLibbyAction(InterfaceAction):
@@ -82,8 +87,9 @@ class OverdriveLibbyAction(InterfaceAction):
         icons_resources = get_icons(
             [str(theme_folder.joinpath(v)) for v in ICON_MAP.values()] + [PLUGIN_ICON]
         )
+        self.icons = {}
         for k, v in ICON_MAP.items():
-            _icons[k] = icons_resources.pop(str(theme_folder.joinpath(v)))
+            self.icons[k] = icons_resources.pop(str(theme_folder.joinpath(v)))
 
         # action icon
         self.qaction.setIcon(icons_resources.pop(PLUGIN_ICON))
@@ -92,7 +98,9 @@ class OverdriveLibbyAction(InterfaceAction):
     def show_dialog(self):
         base_plugin_object = self.interface_action_base_plugin
         do_user_config = base_plugin_object.do_user_config
-        d = OverdriveLibbyDialog(self.gui, self.qaction.icon(), do_user_config)
+        d = OverdriveLibbyDialog(
+            self.gui, self.qaction.icon(), do_user_config, self.icons
+        )
         d.setModal(True)
         d.show()
 
@@ -102,18 +110,21 @@ class OverdriveLibbyAction(InterfaceAction):
 
 gui_ebook_download = CustomEbookDownload()
 gui_magazine_download = CustomMagazineDownload()
-guid_libby_return = LibbyLoanReturn()
+gui_libby_return = LibbyLoanReturn()
+gui_libby_cancel_hold = LibbyHoldCancel()
+gui_libby_borrow_hold = LibbyBorrowHold()
 
 
 class OverdriveLibbyDialog(QDialog):
-    def __init__(self, gui, icon, do_user_config):
+    def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.gui = gui
         self.do_user_config = do_user_config
+        self.icons = icons
         self.db = gui.current_db.new_api
         self.client = None
-        self.__loans_thread = QThread()
+        self.__sync_thread = QThread()
         self.__curr_width = 0
         self.__curr_height = 0
 
@@ -130,39 +141,49 @@ class OverdriveLibbyDialog(QDialog):
                 identity_token=libby_token, max_retries=1, timeout=30, logger=logger
             )
 
-        self.layout = QGridLayout()
-        self.setLayout(self.layout)
+        layout = QGridLayout()
+        self.setLayout(layout)
+
+        self.tabs = QTabWidget(self)
+
+        # Loans Tab -------------------------
+        loans_widget = QWidget()
+        loans_widget.layout = QGridLayout()
+        loans_widget.setLayout(loans_widget.layout)
+
         loan_view_hspan = 8
         loan_view_vspan = 3
-        widget_row_pos = 0
+        loans_widget_row_pos = 0
 
         # Refresh button
-        self.refresh_btn = QPushButton(_("Refresh"), self)
-        self.refresh_btn.setIcon(_icons["refresh"])
-        self.refresh_btn.setAutoDefault(False)
-        self.refresh_btn.setToolTip(_("Get latest loans"))
-        self.refresh_btn.clicked.connect(self.do_refresh)
-        self.layout.addWidget(self.refresh_btn, widget_row_pos, 0)
+        self.loans_refresh_btn = QPushButton(_("Refresh"), self)
+        self.loans_refresh_btn.setIcon(self.icons["refresh"])
+        self.loans_refresh_btn.setAutoDefault(False)
+        self.loans_refresh_btn.setToolTip(_("Get latest loans"))
+        self.loans_refresh_btn.clicked.connect(self.do_refresh)
+        loans_widget.layout.addWidget(self.loans_refresh_btn, loans_widget_row_pos, 0)
 
         # Status bar
-        self.status_bar = QStatusBar(self)
-        self.status_bar.setSizeGripEnabled(False)
-        self.layout.addWidget(self.status_bar, widget_row_pos, 1, 1, 3)
-        widget_row_pos += 1
+        self.loans_status_bar = QStatusBar(self)
+        self.loans_status_bar.setSizeGripEnabled(False)
+        loans_widget.layout.addWidget(
+            self.loans_status_bar, loans_widget_row_pos, 1, 1, 3
+        )
+        loans_widget_row_pos += 1
 
-        self.model = LibbyLoansModel(None, [], self.db)
-        self.search_proxy_model = QSortFilterProxyModel(self)
-        self.search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.search_proxy_model.setFilterKeyColumn(-1)
-        self.search_proxy_model.setSourceModel(self.model)
-        self.search_proxy_model.setSortRole(LibbyLoansModel.DisplaySortRole)
+        self.loans_model = LibbyLoansModel(None, [], self.db)
+        self.loans_search_proxy_model = QSortFilterProxyModel(self)
+        self.loans_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.loans_search_proxy_model.setFilterKeyColumn(-1)
+        self.loans_search_proxy_model.setSourceModel(self.loans_model)
+        self.loans_search_proxy_model.setSortRole(LibbyLoansModel.DisplaySortRole)
 
         # The main loan list
         self.loans_view = QTableView(self)
         self.loans_view.setSortingEnabled(True)
         self.loans_view.setAlternatingRowColors(True)
         self.loans_view.setMinimumWidth(720)
-        self.loans_view.setModel(self.search_proxy_model)
+        self.loans_view.setModel(self.loans_search_proxy_model)
         horizontal_header = self.loans_view.horizontalHeader()
         for col_index, mode in [
             (0, QHeaderView.ResizeMode.Stretch),
@@ -176,20 +197,22 @@ class OverdriveLibbyDialog(QDialog):
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
         # add context menu
         self.loans_view.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.loans_view.customContextMenuRequested.connect(self.loan_view_context_menu)
-        self.layout.addWidget(
-            self.loans_view, widget_row_pos, 0, loan_view_vspan, loan_view_hspan
+        self.loans_view.customContextMenuRequested.connect(self.loans_view_context_menu)
+        loans_widget.layout.addWidget(
+            self.loans_view, loans_widget_row_pos, 0, loan_view_vspan, loan_view_hspan
         )
-        widget_row_pos += loan_view_vspan
+        loans_widget_row_pos += loan_view_vspan
 
         # Download button
         self.download_btn = QPushButton(_("Download"), self)
-        self.download_btn.setIcon(_icons["download"])
+        self.download_btn.setIcon(self.icons["download"])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
         self.download_btn.clicked.connect(self.download_selected_loans)
-        self.layout.addWidget(self.download_btn, widget_row_pos, loan_view_hspan - 1)
+        loans_widget.layout.addWidget(
+            self.download_btn, loans_widget_row_pos, loan_view_hspan - 1
+        )
 
         # Hide books already in lib checkbox
         self.hide_book_already_in_lib_checkbox = QCheckBox(
@@ -201,10 +224,99 @@ class OverdriveLibbyDialog(QDialog):
         self.hide_book_already_in_lib_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
-        self.layout.addWidget(
-            self.hide_book_already_in_lib_checkbox, widget_row_pos, 0, 1, 3
+        loans_widget.layout.addWidget(
+            self.hide_book_already_in_lib_checkbox, loans_widget_row_pos, 0, 1, 3
         )
-        widget_row_pos += 1
+        loans_widget_row_pos += 1
+
+        self.tabs.addTab(loans_widget, _("Loans"))
+
+        # Holds Tab -------------------------
+        holds_widget = QWidget()
+        holds_widget.layout = QGridLayout()
+        holds_widget.setLayout(holds_widget.layout)
+        holds_widget_row_pos = 0
+
+        # Refresh button
+        self.holds_refresh_btn = QPushButton(_("Refresh"), self)
+        self.holds_refresh_btn.setIcon(self.icons["refresh"])
+        self.holds_refresh_btn.setAutoDefault(False)
+        self.holds_refresh_btn.setToolTip(_("Get latest holds"))
+        self.holds_refresh_btn.clicked.connect(self.do_refresh)
+        holds_widget.layout.addWidget(self.holds_refresh_btn, holds_widget_row_pos, 0)
+        # Status bar
+        self.holds_status_bar = QStatusBar(self)
+        self.holds_status_bar.setSizeGripEnabled(False)
+        holds_widget.layout.addWidget(
+            self.holds_status_bar, holds_widget_row_pos, 1, 1, 3
+        )
+        holds_widget_row_pos += 1
+
+        self.holds_model = LibbyHoldsModel(None, [], self.db)
+        self.holds_search_proxy_model = QSortFilterProxyModel(self)
+        self.holds_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.holds_search_proxy_model.setFilterKeyColumn(-1)
+        self.holds_search_proxy_model.setSourceModel(self.holds_model)
+        self.holds_search_proxy_model.setSortRole(LibbyHoldsModel.DisplaySortRole)
+
+        # The main holds list
+        self.holds_view = QTableView(self)
+        self.holds_view.setSortingEnabled(True)
+        self.holds_view.setAlternatingRowColors(True)
+        self.holds_view.setMinimumWidth(720)
+        self.holds_view.setModel(self.holds_search_proxy_model)
+        horizontal_header = self.holds_view.horizontalHeader()
+        for col_index, mode in [
+            (0, QHeaderView.ResizeMode.Stretch),
+            (1, QHeaderView.ResizeMode.ResizeToContents),
+            (2, QHeaderView.ResizeMode.ResizeToContents),
+            (3, QHeaderView.ResizeMode.ResizeToContents),
+            (4, QHeaderView.ResizeMode.ResizeToContents),
+            (5, QHeaderView.ResizeMode.ResizeToContents),
+        ]:
+            horizontal_header.setSectionResizeMode(col_index, mode)
+        self.holds_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.holds_view.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
+        # add context menu
+        self.holds_view.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.holds_view.customContextMenuRequested.connect(self.holds_view_context_menu)
+        holds_view_selection_model = self.holds_view.selectionModel()
+        holds_view_selection_model.selectionChanged.connect(
+            self.toggle_borrow_btn_state
+        )
+        holds_widget.layout.addWidget(
+            self.holds_view, holds_widget_row_pos, 0, loan_view_vspan, loan_view_hspan
+        )
+        holds_widget_row_pos += loan_view_vspan
+
+        # Borrow button
+        self.borrow_btn = QPushButton(_("Borrow"), self)
+        self.borrow_btn.setIcon(self.icons["borrow"])
+        self.borrow_btn.setAutoDefault(False)
+        self.borrow_btn.setToolTip(_("Borrow selected hold"))
+        self.borrow_btn.setStyleSheet("padding: 4px 16px")
+        self.borrow_btn.clicked.connect(self.borrow_selected_hold)
+        holds_widget.layout.addWidget(
+            self.borrow_btn, holds_widget_row_pos, loan_view_hspan - 1
+        )
+
+        # Hide unavailable holds
+        self.hide_unavailable_holds_checkbox = QCheckBox(
+            _("Hide unavailable holds"), self
+        )
+        self.hide_unavailable_holds_checkbox.clicked.connect(
+            self.set_hide_unavailable_holds
+        )
+        self.hide_unavailable_holds_checkbox.setChecked(True)
+        holds_widget.layout.addWidget(
+            self.hide_unavailable_holds_checkbox, holds_widget_row_pos, 0, 1, 3
+        )
+        holds_widget_row_pos += 1
+
+        self.tabs.addTab(holds_widget, _("Holds"))
+
+        layout.addWidget(self.tabs, 0, 0)
 
         if (
             PREFS[PreferenceKeys.MAIN_UI_WIDTH]
@@ -230,7 +342,7 @@ class OverdriveLibbyDialog(QDialog):
         self.__curr_width = self.size().width()
         self.__curr_height = self.size().height()
 
-        self.fetch_loans()
+        self.sync()
 
     def resizeEvent(self, e):
         # Because resizeEvent is called *multiple* times during a resize,
@@ -262,27 +374,33 @@ class OverdriveLibbyDialog(QDialog):
             logger.debug("Saved new UI height preference: %d", new_height)
 
     def do_refresh(self):
-        self.model.refresh_loans({})
-        self.fetch_loans()
+        self.loans_model.sync({})
+        self.holds_model.sync({})
+        self.sync()
 
-    def fetch_loans(self):
-        if not self.__loans_thread.isRunning():
-            self.refresh_btn.setEnabled(False)
-            self.status_bar.showMessage(_("Fetching loans..."))
-            self.__loans_thread = self.__get_loans_thread()
-            self.__loans_thread.start()
+    def sync(self):
+        if not self.__sync_thread.isRunning():
+            self.loans_refresh_btn.setEnabled(False)
+            self.holds_refresh_btn.setEnabled(False)
+            self.loans_status_bar.showMessage(_("Synchronizing..."))
+            self.holds_status_bar.showMessage(_("Synchronizing..."))
+            self.__sync_thread = self.__get_sync_thread()
+            self.__sync_thread.start()
 
-    def __get_loans_thread(self):
+    def __get_sync_thread(self):
         thread = QThread()
-        worker = LoanDataWorker()
+        worker = SyncDataWorker()
         worker.moveToThread(thread)
         thread.worker = worker
         thread.started.connect(worker.run)
 
         def loaded(value: Dict):
-            self.model.refresh_loans(value)
-            self.refresh_btn.setEnabled(True)
-            self.status_bar.clearMessage()
+            self.loans_model.sync(value)
+            self.holds_model.sync(value)
+            self.loans_refresh_btn.setEnabled(True)
+            self.holds_refresh_btn.setEnabled(True)
+            self.loans_status_bar.clearMessage()
+            self.holds_status_bar.clearMessage()
             thread.quit()
 
         worker.finished.connect(lambda value: loaded(value))
@@ -291,28 +409,57 @@ class OverdriveLibbyDialog(QDialog):
 
     def set_hide_books_already_in_library(self, checked: bool):
         PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
-        self.model.set_filter_hide_books_already_in_library(checked)
+        self.loans_model.set_filter_hide_books_already_in_library(checked)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
 
-    def loan_view_context_menu(self, pos):
-        selection_model = self.loans_view.selectionModel()
+    def set_hide_unavailable_holds(self, checked: bool):
+        self.holds_model.set_filter_hide_unavailable_holds(checked)
+        self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
+
+    def loans_view_context_menu(self, pos):
+        selection_model = self.holds_view.selectionModel()
         if not selection_model.hasSelection():
             return
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         view_action = menu.addAction(_("View in Libby"))
-        view_action.setIcon(_icons["ext-link"])
+        view_action.setIcon(self.icons["ext-link"])
         view_action.triggered.connect(
-            lambda: self.open_selected_loans_in_libby(indices)
+            lambda: self.open_selected_in_libby(indices, self.loans_model)
         )
         return_action = menu.addAction(
             ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
                 n=len(indices)
             )
         )
-        return_action.setIcon(_icons["return"])
+        return_action.setIcon(self.icons["return"])
         return_action.triggered.connect(lambda: self.return_selected_loans(indices))
         menu.exec(QCursor.pos())
+
+    def holds_view_context_menu(self, pos):
+        selection_model = self.holds_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        menu = QMenu(self)
+        view_action = menu.addAction(_("View in Libby"))
+        view_action.setIcon(self.icons["ext-link"])
+        view_action.triggered.connect(
+            lambda: self.open_selected_in_libby(indices, self.holds_model)
+        )
+        cancel_action = menu.addAction(_("Cancel hold"))
+        cancel_action.setIcon(self.icons["cancel_hold"])
+        cancel_action.triggered.connect(lambda: self.cancel_selected_hold(indices))
+        menu.exec(QCursor.pos())
+
+    def toggle_borrow_btn_state(self, selected, deselected):
+        selection_model = self.holds_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        for index in indices:
+            hold = index.data(Qt.UserRole)
+            self.borrow_btn.setEnabled(hold.get("isAvailable", False))
 
     def download_selected_loans(self):
         selection_model = self.loans_view.selectionModel()
@@ -324,6 +471,28 @@ class OverdriveLibbyDialog(QDialog):
             return error_dialog(
                 self, _("Download"), _("Please select at least 1 loan."), show=True
             )
+
+    def cancel_selected_hold(self, indices):
+        msg = (
+            _("Cancel this hold?")
+            + "\n- "
+            + "\n- ".join(
+                [get_loan_title(index.data(Qt.UserRole)) for index in indices]
+            )
+        )
+        if confirm(
+            msg,
+            name=PreferenceKeys.CONFIRM_RETURNS,
+            parent=self,
+            title=_("Cancel Holds"),
+            config_set=PREFS,
+        ):
+            for index in reversed(indices):
+                hold = index.data(Qt.UserRole)
+                self.cancel_hold(hold)
+                self.holds_model.removeRow(
+                    self.holds_search_proxy_model.mapToSource(index).row()
+                )
 
     def download_loan(self, loan: Dict):
         format_id = LibbyClient.get_loan_format(
@@ -461,19 +630,10 @@ class OverdriveLibbyDialog(QDialog):
         self.gui.job_manager.run_threaded_job(job)
         self.gui.status_bar.show_message(description, 3000)
 
-    def open_selected_loans_in_libby(self, indices):
+    def open_selected_in_libby(self, indices, model):
         for index in indices:
             loan = index.data(Qt.UserRole)
-            library_key = next(
-                iter(
-                    [
-                        c["advantageKey"]
-                        for c in self.model._cards
-                        if c["cardId"] == loan["cardId"]
-                    ]
-                ),
-                "",
-            )
+            library_key = model.get_card(loan["cardId"])["advantageKey"]
             QDesktopServices.openUrl(
                 QUrl(LibbyClient.libby_title_permalink(library_key, loan["id"]))
             )
@@ -499,7 +659,9 @@ class OverdriveLibbyDialog(QDialog):
             for index in reversed(indices):
                 loan = index.data(Qt.UserRole)
                 self.return_loan(loan)
-                self.model.removeRow(self.search_proxy_model.mapToSource(index).row())
+                self.loans_model.removeRow(
+                    self.loans_search_proxy_model.mapToSource(index).row()
+                )
 
     def return_loan(self, loan: Dict):
         description = _("Returning {book}").format(
@@ -509,7 +671,7 @@ class OverdriveLibbyDialog(QDialog):
         job = ThreadedJob(
             "overdrive_libby_return",
             description,
-            guid_libby_return,
+            gui_libby_return,
             (self.gui, self.client, loan),
             {},
             callback,
@@ -522,6 +684,64 @@ class OverdriveLibbyDialog(QDialog):
     def returned_loan(self, job):
         if job.failed:
             self.gui.job_exception(job, dialog_title=_("Failed to return loan"))
+            return
+
+        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+
+    def borrow_selected_hold(self):
+        selection_model = self.holds_view.selectionModel()
+        if selection_model.hasSelection():
+            rows = selection_model.selectedRows()
+            for row in reversed(rows):
+                self.borrow_hold(row.data(Qt.UserRole))
+
+    def borrow_hold(self, hold):
+        card = self.holds_model.get_card(hold["cardId"])
+        description = _("Borrowing {book}").format(
+            book=as_unicode(get_loan_title(hold), errors="replace")
+        )
+        callback = Dispatcher(self.borrowed_book)
+        job = ThreadedJob(
+            "overdrive_libby_borrow_book",
+            description,
+            gui_libby_borrow_hold,
+            (self.gui, self.client, hold, card),
+            {},
+            callback,
+            max_concurrent_count=2,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+
+    def borrowed_book(self, job):
+        if job.failed:
+            self.gui.job_exception(job, dialog_title=_("Failed to borrow book"))
+            return
+
+        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+
+    def cancel_hold(self, hold: Dict):
+        description = _("Cancelling hold on {book}").format(
+            book=as_unicode(get_loan_title(hold), errors="replace")
+        )
+        callback = Dispatcher(self.cancelled_hold)
+        job = ThreadedJob(
+            "overdrive_libby_cancel_hold",
+            description,
+            gui_libby_cancel_hold,
+            (self.gui, self.client, hold),
+            {},
+            callback,
+            max_concurrent_count=2,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+
+    def cancelled_hold(self, job):
+        if job.failed:
+            self.gui.job_exception(job, dialog_title=_("Failed to cancel hold"))
             return
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)

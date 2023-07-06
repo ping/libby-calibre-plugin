@@ -693,3 +693,73 @@ class LibbyClient(object):
         :return:
         """
         self.return_title(loan["id"], loan["cardId"])
+
+    def cancel_hold_title(self, title_id: str, card_id: str) -> None:
+        """
+        Cancel a hold by title and card.
+
+        :param title_id:
+        :param card_id:
+        :return:
+        """
+        self.send_request(
+            f"card/{card_id}/hold/{title_id}", method="DELETE", return_response=True
+        )
+
+    def cancel_hold(self, hold: Dict) -> None:
+        """
+        Cancel a hold.
+
+        :param hold:
+        :return:
+        """
+        self.cancel_hold_title(hold["id"], hold["cardId"])
+
+    def borrow_title(
+        self, title_id: str, title_format: str, card_id: str, days: int = 21
+    ) -> Dict:
+        """
+        Return a title.
+
+        :param title_id:
+        :param title_format: Type ID
+        :param card_id:
+        :param days:
+        :return:
+        """
+        if days <= 0:
+            raise ValueError("days cannot be %d" % days)
+        data = {
+            "period": days,
+            "units": "days",
+            "lucky_day": None,
+            "title_format": title_format,
+        }
+
+        res: Dict = self.send_request(
+            f"card/{card_id}/loan/{title_id}", params=data, is_form=False, method="POST"
+        )
+        return res
+
+    def borrow_hold(self, hold: Dict, card: Optional[Dict] = None) -> Dict:
+        """
+        Borrow a hold.
+
+        :param card:
+        :param hold:
+        :return:
+        """
+        if card:
+            # map ebook -> book
+            lending_period_type = {"ebook": "book"}.get(hold["type"]["id"]) or hold[
+                "type"
+            ]["id"]
+            days = (
+                card.get("lendingPeriods", {})
+                .get(lending_period_type, {})
+                .get("preference", [0, "days"])[0]
+            )
+            return self.borrow_title(
+                hold["id"], hold["type"]["id"], hold["cardId"], days=days
+            )
+        return self.borrow_title(hold["id"], hold["type"]["id"], hold["cardId"])

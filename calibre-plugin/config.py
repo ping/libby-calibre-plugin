@@ -30,6 +30,7 @@ class PreferenceKeys:
     TAG_EBOOKS = "tag_ebooks"
     TAG_MAGAZINES = "tag_magazines"
     CONFIRM_RETURNS = "confirm_returns"
+    CONFIRM_CANCELLATIONS = "confirm_cancels"
 
 
 class PreferenceTexts:
@@ -44,6 +45,7 @@ class PreferenceTexts:
     TAG_MAGAZINES = _("Tag downloaded magazines with")
     TAG_MAGAZINES_PLACEHOLDER = _("Example: library,magazines")
     CONFIRM_RETURNS = _("Always confirm returns")
+    CONFIRM_CANCELLATIONS = _("Always confirm holds cancellation")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -59,6 +61,7 @@ PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.TAG_EBOOKS] = ""
 PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
+PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
 
 
 class ConfigWidget(QWidget):
@@ -186,6 +189,19 @@ class ConfigWidget(QWidget):
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)]
         )
         self.layout.addWidget(self.confirm_returns_checkbox, widget_row_pos, 0)
+        label_column_widths.append(
+            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        )
+        widget_row_pos += 1
+
+        # Always confirm cancelations
+        self.confirm_cancel_hold_checkbox = QCheckBox(
+            PreferenceTexts.CONFIRM_CANCELLATIONS, self
+        )
+        self.confirm_cancel_hold_checkbox.setChecked(
+            PREFS[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)]
+        )
+        self.layout.addWidget(self.confirm_cancel_hold_checkbox, widget_row_pos, 0)
         label_column_widths.append(
             self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
         )

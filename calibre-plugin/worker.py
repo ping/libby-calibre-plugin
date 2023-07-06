@@ -8,7 +8,7 @@ from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 
 
-class LoanDataWorker(QObject):
+class SyncDataWorker(QObject):
     finished = pyqtSignal(dict)
 
     def __int__(self):

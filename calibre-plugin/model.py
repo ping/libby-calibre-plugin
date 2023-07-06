@@ -285,17 +285,8 @@ class LibbyHoldsModel(LibbyModel):
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
-            return next(
-                iter(
-                    [
-                        # c["library"]["name"]
-                        c["advantageKey"]
-                        for c in self._cards
-                        if c["cardId"] == hold["cardId"]
-                    ]
-                ),
-                "",
-            )
+            card = self.get_card(hold["cardId"])
+            return card["advantageKey"]
         if col == 4:
             type_id = hold.get("type", {}).get("id", "")
             return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id

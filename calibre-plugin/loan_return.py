@@ -1,7 +1,7 @@
 from typing import Dict
 
 from .libby import LibbyClient
-from .model import get_loan_title
+from .model import get_media_title
 
 load_translations()
 
@@ -19,4 +19,4 @@ class LibbyLoanReturn:
         logger = log
         notifications.put((0.5, _("Returning")))
         libby_client.return_loan(loan)
-        logger.info("Returned %s successfully." % get_loan_title(loan))
+        logger.info("Returned %s successfully." % get_media_title(loan))

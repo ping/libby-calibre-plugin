@@ -1,7 +1,7 @@
 from typing import Dict
 
 from .libby import LibbyClient
-from .model import get_loan_title
+from .model import get_media_title
 
 load_translations()
 
@@ -19,4 +19,4 @@ class LibbyHoldCancel:
         logger = log
         notifications.put((0.5, _("Cancelling")))
         libby_client.cancel_hold(hold)
-        logger.info("Cancelled hold for %s successfully." % get_loan_title(hold))
+        logger.info("Cancelled hold for %s successfully." % get_media_title(hold))

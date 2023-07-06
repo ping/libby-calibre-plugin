@@ -1,7 +1,7 @@
 from typing import Dict
 
 from .libby import LibbyClient
-from .model import get_loan_title
+from .model import get_media_title
 
 load_translations()
 
@@ -22,5 +22,5 @@ class LibbyBorrowHold:
         libby_client.borrow_hold(hold, card)
         logger.info(
             "Borrowed %s successfully from %s."
-            % (get_loan_title(hold), card["advantageKey"])
+            % (get_media_title(hold), card["advantageKey"])
         )

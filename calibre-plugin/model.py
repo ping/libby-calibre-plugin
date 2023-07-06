@@ -19,7 +19,7 @@ from .magazine_download_utils import parse_datetime
 load_translations()
 
 
-def get_loan_title(loan: Dict, for_sorting: bool = False) -> str:
+def get_media_title(loan: Dict, for_sorting: bool = False) -> str:
     """
     Formats the title for a loan
 
@@ -150,7 +150,7 @@ class LibbyLoansModel(LibbyModel):
             if not self.filter_hide_books_already_in_library:
                 self.filtered_rows.append(loan)
                 continue
-            title = get_loan_title(loan)
+            title = get_media_title(loan)
             authors = []
             if loan.get("firstCreatorName", ""):
                 authors = [loan.get("firstCreatorName", "")]
@@ -178,8 +178,8 @@ class LibbyLoansModel(LibbyModel):
             return None
         if col == 0:
             if role == LibbyLoansModel.DisplaySortRole:
-                return get_loan_title(loan, for_sorting=True)
-            return get_loan_title(loan)
+                return get_media_title(loan, for_sorting=True)
+            return get_media_title(loan)
         if col == 1:
             creator_name = loan.get("firstCreatorName", "")
             if role == LibbyLoansModel.DisplaySortRole:
@@ -278,8 +278,8 @@ class LibbyHoldsModel(LibbyModel):
             return None
         if col == 0:
             if role == LibbyHoldsModel.DisplaySortRole:
-                return get_loan_title(hold, for_sorting=True)
-            return get_loan_title(hold)
+                return get_media_title(hold, for_sorting=True)
+            return get_media_title(hold)
         if col == 1:
             creator_name = hold.get("firstCreatorName", "")
             if role == LibbyHoldsModel.DisplaySortRole:

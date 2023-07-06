@@ -40,7 +40,7 @@ from ..libby import LibbyClient
 from ..libby.client import LibbyFormats
 from ..loan_return import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
-from ..model import get_loan_title, LibbyLoansModel
+from ..model import get_media_title, LibbyLoansModel
 
 load_translations()
 
@@ -56,7 +56,7 @@ class LoansDialogMixin(BaseDialogMixin):
         loans_widget.layout = QGridLayout()
         loans_widget.setLayout(loans_widget.layout)
 
-        loans_widget_row_pos = 0
+        widget_row_pos = 0
 
         # Refresh button
         self.loans_refresh_btn = QPushButton(_("Refresh"), self)
@@ -64,17 +64,17 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_refresh_btn.setAutoDefault(False)
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
-        loans_widget.layout.addWidget(self.loans_refresh_btn, loans_widget_row_pos, 0)
+        loans_widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
         self.refresh_buttons.append(self.loans_refresh_btn)
 
         # Status bar
         self.loans_status_bar = QStatusBar(self)
         self.loans_status_bar.setSizeGripEnabled(False)
         loans_widget.layout.addWidget(
-            self.loans_status_bar, loans_widget_row_pos, 1, 1, self.view_hspan - 1
+            self.loans_status_bar, widget_row_pos, 1, 1, self.view_hspan - 1
         )
         self.status_bars.append(self.loans_status_bar)
-        loans_widget_row_pos += 1
+        widget_row_pos += 1
 
         self.loans_model = LibbyLoansModel(None, [], self.db)
         self.loans_search_proxy_model = QSortFilterProxyModel(self)
@@ -107,9 +107,9 @@ class LoansDialogMixin(BaseDialogMixin):
             self.loans_view_context_menu_requested
         )
         loans_widget.layout.addWidget(
-            self.loans_view, loans_widget_row_pos, 0, self.view_vspan, self.view_hspan
+            self.loans_view, widget_row_pos, 0, self.view_vspan, self.view_hspan
         )
-        loans_widget_row_pos += self.view_vspan
+        widget_row_pos += self.view_vspan
 
         # Hide books already in lib checkbox
         self.hide_book_already_in_lib_checkbox = QCheckBox(
@@ -123,7 +123,7 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         loans_widget.layout.addWidget(
             self.hide_book_already_in_lib_checkbox,
-            loans_widget_row_pos,
+            widget_row_pos,
             0,
             1,
             self.view_hspan - 1,
@@ -137,11 +137,11 @@ class LoansDialogMixin(BaseDialogMixin):
         self.download_btn.clicked.connect(self.download_btn_clicked)
         loans_widget.layout.addWidget(
             self.download_btn,
-            loans_widget_row_pos,
+            widget_row_pos,
             self.view_hspan - 1,
         )
         self.refresh_buttons.append(self.download_btn)
-        loans_widget_row_pos += 1
+        widget_row_pos += 1
 
         self.tabs.addTab(loans_widget, _("Loans"))
         loans_widget.layout.setColumnMinimumWidth(0, 120)
@@ -199,7 +199,7 @@ class LoansDialogMixin(BaseDialogMixin):
             loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
         if LibbyClient.is_downloadable_ebook_loan(loan):
-            show_download_info(get_loan_title(loan), self)
+            show_download_info(get_media_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_EBOOKS].split(",")]
             if format_id in (LibbyFormats.EBookEPubOpen, LibbyFormats.EBookPDFOpen):
                 # special handling required for these formats
@@ -227,7 +227,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 )
 
         if LibbyClient.is_downloadable_magazine_loan(loan):
-            show_download_info(get_loan_title(loan), self)
+            show_download_info(get_media_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_MAGAZINES].split(",")]
             self.download_magazine(
                 loan,
@@ -255,7 +255,7 @@ class LoansDialogMixin(BaseDialogMixin):
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
         description = _("Downloading {book}").format(
-            book=as_unicode(get_loan_title(loan), errors="replace")
+            book=as_unicode(get_media_title(loan), errors="replace")
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -302,7 +302,7 @@ class LoansDialogMixin(BaseDialogMixin):
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
         description = _("Downloading {book}").format(
-            book=as_unicode(get_loan_title(loan), errors="replace")
+            book=as_unicode(get_media_title(loan), errors="replace")
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -337,7 +337,7 @@ class LoansDialogMixin(BaseDialogMixin):
             ).format(n=len(indices))
             + "\n- "
             + "\n- ".join(
-                [get_loan_title(index.data(Qt.UserRole)) for index in indices]
+                [get_media_title(index.data(Qt.UserRole)) for index in indices]
             )
         )
 
@@ -357,7 +357,7 @@ class LoansDialogMixin(BaseDialogMixin):
 
     def return_loan(self, loan: Dict):
         description = _("Returning {book}").format(
-            book=as_unicode(get_loan_title(loan), errors="replace")
+            book=as_unicode(get_media_title(loan), errors="replace")
         )
         callback = Dispatcher(self.returned_loan)
         job = ThreadedJob(

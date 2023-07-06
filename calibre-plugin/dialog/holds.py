@@ -35,7 +35,7 @@ from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_cancel import LibbyHoldCancel
-from ..model import get_loan_title, LibbyHoldsModel
+from ..model import get_media_title, LibbyHoldsModel
 
 load_translations()
 
@@ -49,7 +49,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         holds_widget = QWidget()
         holds_widget.layout = QGridLayout()
         holds_widget.setLayout(holds_widget.layout)
-        holds_widget_row_pos = 0
+        widget_row_pos = 0
 
         # Refresh button
         self.holds_refresh_btn = QPushButton(_("Refresh"), self)
@@ -57,16 +57,14 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_refresh_btn.setAutoDefault(False)
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
-        holds_widget.layout.addWidget(self.holds_refresh_btn, holds_widget_row_pos, 0)
+        holds_widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
         self.refresh_buttons.append(self.holds_refresh_btn)
         # Status bar
         self.holds_status_bar = QStatusBar(self)
         self.holds_status_bar.setSizeGripEnabled(False)
-        holds_widget.layout.addWidget(
-            self.holds_status_bar, holds_widget_row_pos, 1, 1, 3
-        )
+        holds_widget.layout.addWidget(self.holds_status_bar, widget_row_pos, 1, 1, 3)
         self.status_bars.append(self.holds_status_bar)
-        holds_widget_row_pos += 1
+        widget_row_pos += 1
 
         self.holds_model = LibbyHoldsModel(None, [], self.db)
         self.holds_search_proxy_model = QSortFilterProxyModel(self)
@@ -105,9 +103,9 @@ class HoldsDialogMixin(BaseDialogMixin):
             self.holds_view_selection_model_selectionchanged
         )
         holds_widget.layout.addWidget(
-            self.holds_view, holds_widget_row_pos, 0, self.view_vspan, self.view_hspan
+            self.holds_view, widget_row_pos, 0, self.view_vspan, self.view_hspan
         )
-        holds_widget_row_pos += self.view_vspan
+        widget_row_pos += self.view_vspan
 
         # Hide unavailable holds
         self.hide_unavailable_holds_checkbox = QCheckBox(
@@ -120,7 +118,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
         )
         holds_widget.layout.addWidget(
-            self.hide_unavailable_holds_checkbox, holds_widget_row_pos, 0
+            self.hide_unavailable_holds_checkbox, widget_row_pos, 0
         )
         # Borrow button
         self.borrow_btn = QPushButton(_("Borrow"), self)
@@ -130,10 +128,10 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.borrow_btn.setStyleSheet("padding: 4px 16px")
         self.borrow_btn.clicked.connect(self.borrow_btn_clicked)
         holds_widget.layout.addWidget(
-            self.borrow_btn, holds_widget_row_pos, self.view_hspan - 1
+            self.borrow_btn, widget_row_pos, self.view_hspan - 1
         )
         self.refresh_buttons.append(self.borrow_btn)
-        holds_widget_row_pos += 1
+        widget_row_pos += 1
 
         self.tabs.addTab(holds_widget, _("Holds"))
 
@@ -188,7 +186,7 @@ class HoldsDialogMixin(BaseDialogMixin):
     def borrow_hold(self, hold):
         card = self.holds_model.get_card(hold["cardId"])
         description = _("Borrowing {book}").format(
-            book=as_unicode(get_loan_title(hold), errors="replace")
+            book=as_unicode(get_media_title(hold), errors="replace")
         )
         callback = Dispatcher(self.borrowed_book)
         job = ThreadedJob(
@@ -216,7 +214,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             _("Cancel this hold?")
             + "\n- "
             + "\n- ".join(
-                [get_loan_title(index.data(Qt.UserRole)) for index in indices]
+                [get_media_title(index.data(Qt.UserRole)) for index in indices]
             )
         )
         if confirm(
@@ -235,7 +233,7 @@ class HoldsDialogMixin(BaseDialogMixin):
 
     def cancel_hold(self, hold: Dict):
         description = _("Cancelling hold on {book}").format(
-            book=as_unicode(get_loan_title(hold), errors="replace")
+            book=as_unicode(get_media_title(hold), errors="replace")
         )
         callback = Dispatcher(self.cancelled_hold)
         job = ThreadedJob(

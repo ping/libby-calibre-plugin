@@ -105,7 +105,9 @@ class BaseDialogMixin(QDialog):
     def view_in_overdrive_action_triggered(self, indices, model):
         for index in indices:
             data = index.data(Qt.UserRole)
-            library_key = model.get_card(data["cardId"])["advantageKey"]
+            library_key = model.get_card(data["cardId"])["advantageKey"].split("-")[
+                0
+            ]  # workaround hack for consortiums
             QDesktopServices.openUrl(
                 QUrl(OverDriveClient.library_title_permalink(library_key, data["id"]))
             )

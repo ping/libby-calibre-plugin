@@ -140,6 +140,7 @@ class LoansDialogMixin(BaseDialogMixin):
             loans_widget_row_pos,
             self.view_hspan - 1,
         )
+        self.refresh_buttons.append(self.download_btn)
         loans_widget_row_pos += 1
 
         self.tabs.addTab(loans_widget, _("Loans"))

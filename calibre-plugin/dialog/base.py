@@ -20,6 +20,7 @@ from qt.core import (
     QTabWidget,
     QDesktopServices,
     QUrl,
+    QWidget,
 )
 
 from .. import logger, __version__
@@ -67,6 +68,7 @@ class BaseDialogMixin(QDialog):
         self.refresh_buttons = []
         self.status_bars = []
         self.models = []
+        self.loading_overlay = CustomLoadingOverlay(self)
 
     def resizeEvent(self, e):
         # Because resizeEvent is called *multiple* times during a resize,
@@ -75,6 +77,7 @@ class BaseDialogMixin(QDialog):
         # This does not completely debounce the saves, but it does reduce
         # it reasonably imo.
         new_size = e.size()
+        self.loading_overlay.resize(new_size)
         new_width = new_size.width()
         new_height = new_size.height()
         min_diff = 5
@@ -127,6 +130,7 @@ class BaseDialogMixin(QDialog):
                 bar.showMessage(_("Synchronizing..."))
             for model in self.models:
                 model.sync({})
+            self.loading_overlay(_("Synchronizing..."))
             self._sync_thread = self._get_sync_thread()
             self._sync_thread.start()
 
@@ -138,6 +142,7 @@ class BaseDialogMixin(QDialog):
         thread.started.connect(worker.run)
 
         def loaded(value: Dict):
+            self.loading_overlay.hide()
             for model in self.models:
                 model.sync(value)
             for btn in self.refresh_buttons:
@@ -147,6 +152,7 @@ class BaseDialogMixin(QDialog):
             thread.quit()
 
         def errored_out(err: Exception):
+            self.loading_overlay.hide()
             for btn in self.refresh_buttons:
                 btn.setEnabled(True)
             for bar in self.status_bars:
@@ -158,3 +164,9 @@ class BaseDialogMixin(QDialog):
         worker.errored.connect(lambda err: errored_out(err))
 
         return thread
+
+
+class CustomLoadingOverlay(LoadingOverlay):
+    def hide(self):
+        self.pi.stop()
+        return QWidget.hide(self)

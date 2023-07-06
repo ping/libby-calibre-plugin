@@ -54,6 +54,8 @@ NAV_XHTMLTEMPLATE = """
 </html>
 """
 
+load_translations()
+
 
 def _sort_toc(toc: Dict) -> List:
     """
@@ -404,17 +406,17 @@ class CustomMagazineDownload(EbookDownload):
         notifications.put(
             (
                 (1 / meta_tasks) * meta_progress_fraction,
-                "Getting loan details",
+                _("Getting loan details"),
             )
         )
-        _, openbook, rosters = libby_client.process_ebook(loan)
+        __, openbook, rosters = libby_client.process_ebook(loan)
         cover_url = get_best_cover_url(loan)
         cover_path = book_folder.joinpath("cover.jpg")
         try:
             notifications.put(
                 (
                     (2 / meta_tasks) * meta_progress_fraction,
-                    "Downloading cover",
+                    _("Downloading cover"),
                 )
             )
             with cover_path.open("w+b") as cover_f:
@@ -443,7 +445,7 @@ class CustomMagazineDownload(EbookDownload):
         notifications.put(
             (
                 (3 / meta_tasks) * meta_progress_fraction,
-                "Getting book details",
+                _("Getting book details"),
             )
         )
         media_info = od_client.media(loan["id"])
@@ -582,7 +584,7 @@ class CustomMagazineDownload(EbookDownload):
                     font_families = list(
                         set(patch_magazine_css_font_re.findall(css_content))
                     )
-                    for font_family, _ in font_families:
+                    for font_family, __ in font_families:
                         new_font_css = font_family[:-1]
                         if "Serif" in font_family:
                             new_font_css += ',Charter,"Bitstream Charter","Sitka Text",Cambria,serif'
@@ -671,7 +673,7 @@ class CustomMagazineDownload(EbookDownload):
                 (
                     (i / total_downloads) * download_progress_fraction
                     + meta_progress_fraction,
-                    "Downloading",
+                    _("Downloading"),
                 )
             )
 
@@ -866,7 +868,7 @@ class CustomMagazineDownload(EbookDownload):
         if cover_img_manifest_id:
             metadata = package.find("metadata")
             if metadata:
-                _ = ET.SubElement(
+                __ = ET.SubElement(
                     metadata,
                     "meta",
                     attrib={"name": "cover", "content": cover_img_manifest_id},
@@ -906,7 +908,7 @@ class CustomMagazineDownload(EbookDownload):
         if openbook.get("nav", {}).get("landmarks"):
             guide = ET.SubElement(package, "guide")
             for landmark in openbook["nav"]["landmarks"]:
-                _ = ET.SubElement(
+                __ = ET.SubElement(
                     guide,
                     "reference",
                     attrib={
@@ -928,7 +930,7 @@ class CustomMagazineDownload(EbookDownload):
             },
         )
         root_files = ET.SubElement(container, "rootfiles")
-        _ = ET.SubElement(
+        __ = ET.SubElement(
             root_files,
             "rootfile",
             attrib={

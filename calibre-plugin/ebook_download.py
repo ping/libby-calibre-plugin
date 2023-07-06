@@ -17,6 +17,8 @@ from calibre.ptempfile import PersistentTemporaryDirectory
 from .libby import LibbyClient
 
 
+load_translations()
+
 # Ref: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L77-L122
 class CustomEbookDownload(EbookDownload):
     def __call__(
@@ -67,7 +69,7 @@ class CustomEbookDownload(EbookDownload):
         notifications=None,
     ) -> str:
         temp_path = os.path.join(PersistentTemporaryDirectory(), filename)
-        notifications.put((0.5, "Downloading"))
+        notifications.put((0.5, _("Downloading")))
         res_content = libby_client.fulfill_loan_file(
             loan["id"], loan["cardId"], format_id
         )

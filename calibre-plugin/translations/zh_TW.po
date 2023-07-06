@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.3\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-06 20:09+0800\n"
+"POT-Creation-Date: 2023-07-06 22:40+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,9 +22,13 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "從您的 OverDrive Libby 帳戶導入已借閱的圖書"
 
-#: calibre-plugin/action.py:44
+#: calibre-plugin/action.py:43
 msgid "Run the OverDrive Libby client UI"
 msgstr "運行 OverDrive Libby 客戶端 UI"
+
+#: calibre-plugin/borrow_book.py:21
+msgid "Borrowing"
+msgstr ""
 
 #: calibre-plugin/config.py:38 calibre-plugin/config.py:253
 msgid "Libby Setup Code"
@@ -91,6 +95,30 @@ msgstr "Libby未配置。"
 msgid "Invalid setup code format: {code}"
 msgstr ""
 
+#: calibre-plugin/ebook_download.py:72 calibre-plugin/magazine_download.py:676
+msgid "Downloading"
+msgstr ""
+
+#: calibre-plugin/hold_cancel.py:20
+msgid "Cancelling"
+msgstr ""
+
+#: calibre-plugin/loan_return.py:20
+msgid "Returning"
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:409
+msgid "Getting loan details"
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:419
+msgid "Downloading cover"
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:448
+msgid "Getting book details"
+msgstr ""
+
 #: calibre-plugin/model.py:42
 msgid "ebook"
 msgstr "電子書"
@@ -99,43 +127,43 @@ msgstr "電子書"
 msgid "magazine"
 msgstr "雜誌"
 
-#: calibre-plugin/model.py:104 calibre-plugin/model.py:203
+#: calibre-plugin/model.py:108 calibre-plugin/model.py:211
 msgid "Title"
 msgstr "書名"
 
-#: calibre-plugin/model.py:105 calibre-plugin/model.py:204
+#: calibre-plugin/model.py:109 calibre-plugin/model.py:212
 msgid "Author"
 msgstr "作者"
 
-#: calibre-plugin/model.py:106
+#: calibre-plugin/model.py:110
 msgid "Checkout Date"
 msgstr "借閱日期"
 
-#: calibre-plugin/model.py:107 calibre-plugin/model.py:207
+#: calibre-plugin/model.py:111 calibre-plugin/model.py:215
 msgid "Type"
 msgstr "書籍類型"
 
-#: calibre-plugin/model.py:108
+#: calibre-plugin/model.py:112
 msgid "Format"
 msgstr "格式"
 
-#: calibre-plugin/model.py:205
+#: calibre-plugin/model.py:213
 msgid "Hold Date"
 msgstr ""
 
-#: calibre-plugin/model.py:206
+#: calibre-plugin/model.py:214
 msgid "Library"
 msgstr "圖書館"
 
-#: calibre-plugin/model.py:208
+#: calibre-plugin/model.py:216
 msgid "Available"
 msgstr "可藉閱"
 
-#: calibre-plugin/model.py:294
+#: calibre-plugin/model.py:302
 msgid "Yes"
 msgstr "是"
 
-#: calibre-plugin/model.py:294
+#: calibre-plugin/model.py:302
 msgid "No"
 msgstr "否"
 

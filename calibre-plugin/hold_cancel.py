@@ -3,6 +3,8 @@ from typing import Dict
 from .libby import LibbyClient
 from .model import get_loan_title
 
+load_translations()
+
 
 class LibbyHoldCancel:
     def __call__(
@@ -15,6 +17,6 @@ class LibbyHoldCancel:
         notifications=None,
     ):
         logger = log
-        notifications.put((0.5, "Cancelling"))
+        notifications.put((0.5, _("Cancelling")))
         libby_client.cancel_hold(hold)
         logger.info("Cancelled hold for %s successfully." % get_loan_title(hold))

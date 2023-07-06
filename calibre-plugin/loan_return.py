@@ -3,6 +3,8 @@ from typing import Dict
 from .libby import LibbyClient
 from .model import get_loan_title
 
+load_translations()
+
 
 class LibbyLoanReturn:
     def __call__(
@@ -15,6 +17,6 @@ class LibbyLoanReturn:
         notifications=None,
     ):
         logger = log
-        notifications.put((0.5, "Returning"))
+        notifications.put((0.5, _("Returning")))
         libby_client.return_loan(loan)
         logger.info("Returned %s successfully." % get_loan_title(loan))

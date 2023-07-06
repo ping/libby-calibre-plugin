@@ -42,7 +42,51 @@ def get_loan_title(loan: Dict, for_sorting: bool = False) -> str:
 LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}
 
 
-class LibbyLoansModel(QAbstractTableModel):
+class LibbyModel(QAbstractTableModel):
+    column_headers = []
+    DisplaySortRole = Qt.UserRole + 1000
+
+    def __init__(self, parent, synced_state=None, db=None):
+        super().__init__(parent)
+        self.db = db
+        self._cards = []
+        self._libraries = []
+
+    def headerData(self, section, orientation, role):
+        if role != Qt.DisplayRole:
+            return None
+        if orientation == Qt.Vertical:
+            return section + 1
+        if section >= len(self.column_headers):
+            return None
+        return self.column_headers[section]
+
+    def columnCount(self, parent=None):
+        return len(self.column_headers)
+
+    def sync(self, synced_state: Optional[Dict] = None):
+        if not synced_state:
+            synced_state = {}
+        self._cards = synced_state.get("cards", [])
+        self._libraries = synced_state.get("__libraries", [])
+
+    def get_card(self, card_id) -> Optional[Dict]:
+        return next(
+            iter([c for c in self._cards if c["cardId"] == card_id]),
+            None,
+        )
+
+    def get_website_id(self, card) -> int:
+        return int(card.get("library", {}).get("websiteId", "0"))
+
+    def get_library(self, website_id: int) -> Optional[Dict]:
+        return next(
+            iter([l for l in self._libraries if l["websiteId"] == website_id]),
+            None,
+        )
+
+
+class LibbyLoansModel(LibbyModel):
     column_headers = [
         _("Title"),
         _("Author"),
@@ -52,12 +96,9 @@ class LibbyLoansModel(QAbstractTableModel):
     ]
     column_count = len(column_headers)
     filter_hide_books_already_in_library = False
-    DisplaySortRole = Qt.UserRole + 1000
 
     def __init__(self, parent, synced_state=None, db=None):
-        super().__init__(parent)
-        self.db = db
-        self._cards = []
+        super().__init__(parent, synced_state, db)
         self._loans = []
         self.filtered_loans = []
         self.filter_hide_books_already_in_library = PREFS[
@@ -66,21 +107,15 @@ class LibbyLoansModel(QAbstractTableModel):
         self.sync(synced_state)
 
     def sync(self, synced_state: Optional[Dict] = None):
+        super().sync(synced_state)
         if not synced_state:
             synced_state = {}
-        self._cards = synced_state.get("cards", [])
         self._loans = sorted(
             synced_state.get("loans", []),
             key=lambda ln: ln["checkoutDate"],
             reverse=True,
         )
         self.filter_loans()
-
-    def get_card(self, card_id) -> Optional[Dict]:
-        return next(
-            iter([c for c in self._cards if c["cardId"] == card_id]),
-            None,
-        )
 
     def filter_loans(self):
         self.beginResetModel()
@@ -113,20 +148,8 @@ class LibbyLoansModel(QAbstractTableModel):
             self.filter_hide_books_already_in_library = value
             self.filter_loans()
 
-    def headerData(self, section, orientation, role):
-        if role != Qt.DisplayRole:
-            return None
-        if orientation == Qt.Vertical:
-            return section + 1
-        if section >= len(self.column_headers):
-            return None
-        return self.column_headers[section]
-
     def rowCount(self, parent):
         return len(self.filtered_loans)
-
-    def columnCount(self, parent):
-        return self.column_count
 
     def data(self, index, role):
         row, col = index.row(), index.column()
@@ -139,7 +162,7 @@ class LibbyLoansModel(QAbstractTableModel):
             return Qt.AlignCenter
         if role not in (Qt.DisplayRole, LibbyLoansModel.DisplaySortRole):
             return None
-        if col >= self.column_count:
+        if col >= self.columnCount():
             return None
         if col == 0:
             if role == LibbyLoansModel.DisplaySortRole:
@@ -175,7 +198,7 @@ class LibbyLoansModel(QAbstractTableModel):
         return True
 
 
-class LibbyHoldsModel(QAbstractTableModel):
+class LibbyHoldsModel(LibbyModel):
     column_headers = [
         _("Title"),
         _("Author"),
@@ -184,22 +207,18 @@ class LibbyHoldsModel(QAbstractTableModel):
         _("Type"),
         _("Available"),
     ]
-    column_count = len(column_headers)
     filter_hide_unavailable_holds = True
-    DisplaySortRole = Qt.UserRole + 1000
 
     def __init__(self, parent, synced_state=None, db=None):
-        super().__init__(parent)
-        self.db = db
-        self._cards = []
+        super().__init__(parent, synced_state, db)
         self._holds = []
         self.filtered_holds = []
         self.sync(synced_state)
 
     def sync(self, synced_state: Optional[Dict] = None):
+        super().sync(synced_state)
         if not synced_state:
             synced_state = {}
-        self._cards = synced_state.get("cards", [])
         self._holds = sorted(
             synced_state.get("holds", []),
             key=lambda h: (
@@ -210,12 +229,6 @@ class LibbyHoldsModel(QAbstractTableModel):
             reverse=True,
         )
         self.filter_holds()
-
-    def get_card(self, card_id) -> Optional[Dict]:
-        return next(
-            iter([c for c in self._cards if c["cardId"] == card_id]),
-            None,
-        )
 
     def filter_holds(self):
         self.beginResetModel()
@@ -241,20 +254,8 @@ class LibbyHoldsModel(QAbstractTableModel):
             self.filter_hide_unavailable_holds = value
             self.filter_holds()
 
-    def headerData(self, section, orientation, role):
-        if role != Qt.DisplayRole:
-            return None
-        if orientation == Qt.Vertical:
-            return section + 1
-        if section >= len(self.column_headers):
-            return None
-        return self.column_headers[section]
-
     def rowCount(self, parent):
         return len(self.filtered_holds)
-
-    def columnCount(self, parent):
-        return self.column_count
 
     def data(self, index, role):
         row, col = index.row(), index.column()
@@ -267,7 +268,7 @@ class LibbyHoldsModel(QAbstractTableModel):
             return Qt.AlignCenter
         if role not in (Qt.DisplayRole, LibbyHoldsModel.DisplaySortRole):
             return None
-        if col >= self.column_count:
+        if col >= self.columnCount():
             return None
         if col == 0:
             if role == LibbyHoldsModel.DisplaySortRole:

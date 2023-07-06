@@ -23,6 +23,7 @@ from qt.core import (
 from .. import logger, __version__
 from ..config import PREFS, PreferenceKeys
 from ..libby import LibbyClient
+from ..model import LibbyModel
 from ..overdrive import OverDriveClient
 from ..worker import SyncDataWorker
 
@@ -102,14 +103,18 @@ class BaseDialogMixin(QDialog):
                 QUrl(LibbyClient.libby_title_permalink(library_key, data["id"]))
             )
 
-    def view_in_overdrive_action_triggered(self, indices, model):
+    def view_in_overdrive_action_triggered(self, indices, model: LibbyModel):
         for index in indices:
             data = index.data(Qt.UserRole)
-            library_key = model.get_card(data["cardId"])["advantageKey"].split("-")[
-                0
-            ]  # workaround hack for consortiums
+            card = model.get_card(data["cardId"])
+            library = model.get_library(model.get_website_id(card))
+
             QDesktopServices.openUrl(
-                QUrl(OverDriveClient.library_title_permalink(library_key, data["id"]))
+                QUrl(
+                    OverDriveClient.library_title_permalink(
+                        library["preferredKey"], data["id"]
+                    )
+                )
             )
 
     def sync(self):

@@ -213,6 +213,9 @@ class LibbyHoldsModel(LibbyModel):
         super().__init__(parent, synced_state, db)
         self._holds = []
         self.filtered_holds = []
+        self.filter_hide_unavailable_holds = PREFS[
+            PreferenceKeys.HIDE_HOLDS_UNAVAILABLE
+        ]
         self.sync(synced_state)
 
     def sync(self, synced_state: Optional[Dict] = None):

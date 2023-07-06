@@ -33,7 +33,7 @@ from qt.core import (
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
-from ..config import PREFS, PreferenceKeys
+from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_cancel import LibbyHoldCancel
 from ..model import get_loan_title, LibbyHoldsModel
 
@@ -111,12 +111,14 @@ class HoldsDialogMixin(BaseDialogMixin):
 
         # Hide unavailable holds
         self.hide_unavailable_holds_checkbox = QCheckBox(
-            _("Hide unavailable holds"), self
+            PreferenceTexts.HIDE_HOLDS_UNAVAILABLE, self
         )
         self.hide_unavailable_holds_checkbox.clicked.connect(
             self.hide_unavailable_holds_checkbox_clicked
         )
-        self.hide_unavailable_holds_checkbox.setChecked(True)
+        self.hide_unavailable_holds_checkbox.setChecked(
+            PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
+        )
         holds_widget.layout.addWidget(
             self.hide_unavailable_holds_checkbox, holds_widget_row_pos, 0
         )
@@ -136,6 +138,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.tabs.addTab(holds_widget, _("Holds"))
 
     def hide_unavailable_holds_checkbox_clicked(self, checked: bool):
+        PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = checked
         self.holds_model.set_filter_hide_unavailable_holds(checked)
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
 

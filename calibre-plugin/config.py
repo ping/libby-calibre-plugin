@@ -24,6 +24,7 @@ class PreferenceKeys:
     HIDE_MAGAZINES = "hide_magazines"
     HIDE_EBOOKS = "hide_ebooks"
     HIDE_BOOKS_ALREADY_IN_LIB = "hide_books_in_already_lib"
+    HIDE_HOLDS_UNAVAILABLE = "hide_holds_unavailable"
     PREFER_OPEN_FORMATS = "prefer_open_formats"
     MAIN_UI_WIDTH = "main_ui_width"
     MAIN_UI_HEIGHT = "main_ui_height"
@@ -39,6 +40,7 @@ class PreferenceTexts:
     HIDE_MAGAZINES = _("Hide Magazines")
     HIDE_EBOOKS = _("Hide Ebooks")
     HIDE_BOOKS_ALREADY_IN_LIB = _("Hide books already in library")
+    HIDE_HOLDS_UNAVAILABLE = _("Hide unavailable holds")
     PREFER_OPEN_FORMATS = _("Prefer Open Formats")
     TAG_EBOOKS = _("Tag downloaded ebooks with")
     TAG_EBOOKS_PLACEHOLDER = _("Example: library,books")
@@ -55,6 +57,7 @@ PREFS.defaults[PreferenceKeys.LIBBY_TOKEN] = ""
 PREFS.defaults[PreferenceKeys.HIDE_MAGAZINES] = False
 PREFS.defaults[PreferenceKeys.HIDE_EBOOKS] = False
 PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
+PREFS.defaults[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = True
 PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
@@ -178,6 +181,19 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(
             self.hide_books_already_in_lib_checkbox, widget_row_pos, 0
         )
+        label_column_widths.append(
+            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        )
+        widget_row_pos += 1
+
+        # Hide unavailable holds
+        self.hide_holds_unavailable_checkbox = QCheckBox(
+            PreferenceTexts.HIDE_HOLDS_UNAVAILABLE, self
+        )
+        self.hide_holds_unavailable_checkbox.setChecked(
+            PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
+        )
+        self.layout.addWidget(self.hide_holds_unavailable_checkbox, widget_row_pos, 0)
         label_column_widths.append(
             self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
         )

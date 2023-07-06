@@ -8,7 +8,6 @@
 # information
 #
 from pathlib import Path
-from typing import Dict
 
 from calibre.gui2 import is_dark_theme
 from calibre.gui2.actions import InterfaceAction

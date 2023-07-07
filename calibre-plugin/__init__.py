@@ -11,6 +11,7 @@
 import io
 import logging
 import sys
+from enum import Enum
 
 from calibre.constants import is_debugging
 from calibre.customize import InterfaceActionBase
@@ -20,6 +21,32 @@ load_translations()
 __version__ = (0, 1, 3)
 PLUGIN_NAME = "overdrive_libby"
 PLUGIN_ICON = "images/plugin.png"
+
+
+class PluginIcons(str, Enum):
+    ReturnLoan = "return"
+    Download = "download"
+    ExternalLink = "ext-link"
+    Refresh = "refresh"
+    Borrow = "borrow"
+    CancelHold = "cancel-hold"
+    AddMagazine = "magazines-add"
+    CancelMagazine = "cancel-sub"
+
+    def __str__(self):
+        return str(self.value)
+
+
+ICON_MAP = {
+    PluginIcons.ReturnLoan: "arrow-go-back-fill.png",
+    PluginIcons.Download: "download-line.png",
+    PluginIcons.ExternalLink: "external-link-line.png",
+    PluginIcons.Refresh: "refresh-line.png",
+    PluginIcons.Borrow: "file-add-line.png",
+    PluginIcons.CancelHold: "delete-bin-line.png",
+    PluginIcons.AddMagazine: "heart-add-line.png",
+    PluginIcons.CancelMagazine: "dislike-line.png",
+}
 
 
 logger = logging.getLogger(__name__)

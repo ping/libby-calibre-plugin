@@ -37,6 +37,8 @@ class OverDriveClient(object):
     A really simplified OverDrive Thunder API client
     """
 
+    MAX_PER_PAGE = 24
+
     def __init__(
         self,
         max_retries: int = 0,
@@ -78,7 +80,7 @@ class OverDriveClient(object):
         """
         query = {"x-client-id": CLIENT_ID}
         if paging:
-            query.update({"page": 1, "perPage": 24})  # type: ignore[dict-item]
+            query.update({"page": 1, "perPage": self.MAX_PER_PAGE})  # type: ignore[dict-item]
         return query
 
     def _read_response(self, response, decode: bool = True) -> Union[bytes, str]:
@@ -258,6 +260,18 @@ class OverDriveClient(object):
         params.update(kwargs)
         return self.send_request(f"media/{title_id}", query=params)
 
+    def media_bulk(self, title_ids: List[str], **kwargs) -> List[dict]:
+        """
+        Retrieve a list of titles.
+
+        :param title_ids: The ids passed in this request can be titleIds or reserveIds.
+        :return:
+        """
+        params = self.default_query()
+        params.update({"titleIds": ",".join(title_ids)})
+        params.update(kwargs)
+        return self.send_request("media/bulk", query=params)
+
     @pageable
     def libraries(self, website_ids: Optional[List[int]] = None, **kwargs) -> dict:
         """
@@ -278,3 +292,18 @@ class OverDriveClient(object):
             )
         params.update(kwargs)
         return self.send_request("libraries/", query=params)
+
+    def library_media(self, library_key: str, title_id: str, **kwargs) -> dict:
+        """
+        Get title.
+
+        :param library_key: A unique key that identifies the library
+        :param title_id:
+        :return:
+        """
+        params = self.default_query()
+        params.update({"titleIds": title_id})
+        params.update(kwargs)
+        return self.send_request(
+            f"libraries/{library_key}/media/{title_id}", query=params
+        )

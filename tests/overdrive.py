@@ -169,3 +169,14 @@ class OverDriveClientTests(BaseTests):
                 libraries.append(item["preferredKey"])
 
         self.assertEqual(len(all_library_keys), len(libraries))
+
+    def test_media_bulk(self):
+        title_ids = ["9945849", "9954663", "9963571"]
+        titles = self.client.media_bulk(title_ids=title_ids)
+        self.assertEqual(len(titles), len(title_ids))
+
+    def test_library_media(self):
+        title = self.client.library_media("lapl", "9945849")
+        for k in ("title", "isOwned", "isAvailable"):
+            with self.subTest("library media response", k=k):
+                self.assertTrue(title.get(k))

@@ -19,20 +19,16 @@ from qt.core import (
     QSize,
 )
 
-from . import logger, PLUGIN_NAME, PLUGIN_ICON
+from . import logger, PLUGIN_NAME, PLUGIN_ICON, ICON_MAP
 from .config import PREFS, PreferenceKeys
-from .dialog import BaseDialogMixin, LoansDialogMixin, HoldsDialogMixin
+from .dialog import (
+    BaseDialogMixin,
+    LoansDialogMixin,
+    HoldsDialogMixin,
+    MagazinesDialogMixin,
+)
 
 load_translations()
-
-ICON_MAP = {
-    "return": "arrow-go-back-fill.png",
-    "download": "download-line.png",
-    "ext-link": "external-link-line.png",
-    "refresh": "refresh-line.png",
-    "borrow": "file-add-line.png",
-    "cancel-hold": "delete-bin-line.png",
-}
 
 
 class OverdriveLibbyAction(InterfaceAction):
@@ -78,7 +74,9 @@ class OverdriveLibbyAction(InterfaceAction):
         pass
 
 
-class OverdriveLibbyDialog(HoldsDialogMixin, LoansDialogMixin, BaseDialogMixin):
+class OverdriveLibbyDialog(
+    MagazinesDialogMixin, HoldsDialogMixin, LoansDialogMixin, BaseDialogMixin
+):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
 

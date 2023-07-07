@@ -32,6 +32,7 @@ class PreferenceKeys:
     TAG_MAGAZINES = "tag_magazines"
     CONFIRM_RETURNS = "confirm_returns"
     CONFIRM_CANCELLATIONS = "confirm_cancels"
+    MAGAZINE_SUBSCRIPTIONS = "magazine_subscriptions"
 
 
 class PreferenceTexts:
@@ -65,6 +66,7 @@ PREFS.defaults[PreferenceKeys.TAG_EBOOKS] = ""
 PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
+PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
 
 
 class ConfigWidget(QWidget):

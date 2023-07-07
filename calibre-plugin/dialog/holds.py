@@ -32,6 +32,7 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
+from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_cancel import LibbyHoldCancel
@@ -53,7 +54,7 @@ class HoldsDialogMixin(BaseDialogMixin):
 
         # Refresh button
         self.holds_refresh_btn = QPushButton(_("Refresh"), self)
-        self.holds_refresh_btn.setIcon(self.icons["refresh"])
+        self.holds_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
         self.holds_refresh_btn.setAutoDefault(False)
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
@@ -125,7 +126,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         )
         # Borrow button
         self.borrow_btn = QPushButton(_("Borrow"), self)
-        self.borrow_btn.setIcon(self.icons["borrow"])
+        self.borrow_btn.setIcon(self.icons[PluginIcons.Borrow])
         self.borrow_btn.setAutoDefault(False)
         self.borrow_btn.setToolTip(_("Borrow selected hold"))
         self.borrow_btn.setStyleSheet("padding: 4px 16px")
@@ -166,17 +167,17 @@ class HoldsDialogMixin(BaseDialogMixin):
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons["ext-link"])
+        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.holds_model)
         )
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons["ext-link"])
+        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
         cancel_action = menu.addAction(_("Cancel hold"))
-        cancel_action.setIcon(self.icons["cancel-hold"])
+        cancel_action.setIcon(self.icons[PluginIcons.CancelHold])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
 

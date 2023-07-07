@@ -1,15 +1,12 @@
-from typing import Dict, Optional
+from datetime import datetime
+from typing import Dict, Optional, List
 
 from calibre.ebooks.metadata.book.base import Metadata
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date
 
 # noinspection PyUnresolvedReferences
-from qt.core import (
-    Qt,
-    QAbstractTableModel,
-    QModelIndex,
-)
+from qt.core import Qt, QAbstractTableModel, QModelIndex, pyqtSignal
 
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
@@ -37,6 +34,12 @@ def get_media_title(loan: Dict, for_sorting: bool = False) -> str:
             title = f'{title}|{loan["id"]}'
 
     return title
+
+
+def truncate_for_display(text, text_length=30):
+    if len(text) <= text_length:
+        return text
+    return text[:text_length] + "…"
 
 
 LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}
@@ -300,4 +303,125 @@ class LibbyHoldsModel(LibbyModel):
             if role == LibbyModel.DisplaySortRole:
                 return int(hold.get("isAvailable", False))
             return _("Yes") if hold.get("isAvailable", False) else _("No")
+        return None
+
+
+class LibbyCardsModel(LibbyModel):
+    """
+    Underlying data model for the Library Cards combobox
+    """
+
+    column_headers = ["Card"]
+
+    def __init__(self, parent, synced_state=None, db=None):
+        super().__init__(parent, synced_state, db)
+        self.sync(synced_state)
+
+    def sync(self, synced_state: Optional[Dict] = None):
+        super().sync(synced_state)
+        self._rows = self._cards
+        self.filter_rows()
+
+    def filter_rows(self):
+        self.beginResetModel()
+        self.filtered_rows = sorted(self._rows, key=lambda c: c["createDate"])
+        self.endResetModel()
+
+    def data(self, index, role):
+        row, col = index.row(), index.column()
+        if row >= self.rowCount():
+            return None
+        card: Dict = self.filtered_rows[row]
+        if role == Qt.UserRole:
+            return card
+        if role != Qt.DisplayRole:
+            return None
+        if col == 0:
+            return truncate_for_display(f'{card["advantageKey"]}: {card["cardName"]}')
+        return None
+
+
+class LibbyMagazinesModel(LibbyModel):
+    """
+    Underlying data model for the Magazines table view
+    """
+
+    column_headers = [_("Title"), _("Release Date"), _("Library"), _("Borrowed")]
+    filter_hide_magazines_already_in_library = False
+
+    def __init__(self, parent, synced_state=None, db=None):
+        super().__init__(parent, synced_state, db)
+        self._loans: List[Dict] = []
+        self.filter_hide_magazines_already_in_library = PREFS[
+            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
+        ]
+        self.sync(synced_state)
+
+    def set_filter_hide_magazines_already_in_library(self, value: bool):
+        if value != self.filter_hide_magazines_already_in_library:
+            self.filter_hide_magazines_already_in_library = value
+            self.filter_rows()
+
+    def sync(self, synced_state: Optional[Dict] = None):
+        super().sync(synced_state)
+        if not synced_state:
+            synced_state = {}
+        self._loans = synced_state.get("loans", [])
+        self._rows = synced_state.get("__subscriptions", [])
+        self.filter_rows()
+
+    def sync_subscriptions(self, subscriptions: List[Dict]):
+        self._rows = subscriptions
+        self.filter_rows()
+
+    def filter_rows(self):
+        self.beginResetModel()
+        self.filtered_rows = []
+        for r in sorted(
+            self._rows, key=lambda t: t["estimatedReleaseDate"], reverse=True
+        ):
+            r["__is_borrowed"] = bool([l for l in self._loans if l["id"] == r["id"]])
+            if not self.filter_hide_magazines_already_in_library:
+                self.filtered_rows.append(r)
+                continue
+            title = get_media_title(r)
+            authors = []
+            if r.get("firstCreatorName", ""):
+                authors = [r.get("firstCreatorName", "")]
+            if not self.db.has_book(Metadata(title=title, authors=authors)):
+                self.filtered_rows.append(r)
+        self.endResetModel()
+
+    def data(self, index, role):
+        row, col = index.row(), index.column()
+        if row >= self.rowCount():
+            return None
+        subscription: Dict = self.filtered_rows[row]
+        if role == Qt.UserRole:
+            return subscription
+        if role == Qt.TextAlignmentRole and col >= 1:
+            return Qt.AlignCenter
+        if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
+            return None
+        if col == 0:
+            return get_media_title(subscription)
+        if col == 1:
+            dt_value = datetime.strptime(
+                subscription["estimatedReleaseDate"], "%Y-%m-%dT%H:%M:%SZ"
+            )
+            if role == LibbyModel.DisplaySortRole:
+                return dt_value.isoformat()
+            return format_date(dt_value, tweaks["gui_timestamp_display_format"])
+        if col == 2:
+            card = self.get_card(subscription["cardId"])
+            if not card:
+                return "Invalid card setup"
+            # library = self.get_library(self.get_website_id(card))
+            # return library.get("name", "")
+            return truncate_for_display(f'{card["advantageKey"]}: {card["cardName"]}')
+        if col == 3:
+            is_borrowed = subscription.get("__is_borrowed")
+            if role == LibbyModel.DisplaySortRole:
+                return int(is_borrowed)
+            return _("Yes") if is_borrowed else _("No")
         return None

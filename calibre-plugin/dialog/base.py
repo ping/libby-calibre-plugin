@@ -7,7 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-from typing import Dict
+from typing import Dict, List
 
 from calibre.gui2.viewer.overlay import LoadingOverlay
 
@@ -21,6 +21,7 @@ from qt.core import (
     QDesktopServices,
     QUrl,
     QWidget,
+    QStatusBar,
 )
 
 from .. import logger, __version__
@@ -57,6 +58,9 @@ class BaseDialogMixin(QDialog):
             self.client = LibbyClient(
                 identity_token=libby_token, max_retries=1, timeout=30, logger=logger
             )
+        self.overdrive_client = OverDriveClient(
+            max_retries=1, timeout=30, logger=logger
+        )
 
         self.layout = QGridLayout()
         self.setLayout(self.layout)

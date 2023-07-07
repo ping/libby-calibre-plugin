@@ -22,6 +22,8 @@ class SyncDataWorker(QObject):
         if not libby_token:
             self.finished.emit({})
 
+        subscriptions = PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS]
+        total_start = timer()
         try:
             # Fetch libby sync state
             start = timer()
@@ -49,6 +51,57 @@ class SyncDataWorker(QObject):
                 libraries.extend(results.get("items", []))
             logger.info("OverDrive request took %f seconds" % (timer() - start))
             synced_state["__libraries"] = libraries
+
+            subbed_magazines = []
+            if subscriptions:
+                # Fetch magazine details from OD
+                start = timer()
+                all_parent_magazine_ids = [
+                    s["parent_magazine_id"] for s in subscriptions
+                ]
+                total_pages = math.ceil(
+                    len(all_parent_magazine_ids) / OverDriveClient.MAX_PER_PAGE
+                )
+                for page in range(1, 1 + total_pages):
+                    parent_magazine_ids = all_parent_magazine_ids[
+                        (page - 1)
+                        * OverDriveClient.MAX_PER_PAGE : page
+                        * OverDriveClient.MAX_PER_PAGE
+                    ]
+                    parent_magazines = od_client.media_bulk(
+                        title_ids=parent_magazine_ids
+                    )
+                    # we re-query with the new title IDs because querying with the parent magazine ID
+                    # returns an old estimatedReleaseDate, so if we want to sort by estimatedReleaseDate
+                    # we need to re-query
+                    titles = od_client.media_bulk(
+                        title_ids=[
+                            # sometimes t["id"] is not the latest issue (due to misconfig?)
+                            # so use t["recentIssues"] instead
+                            t["recentIssues"][0]["id"]
+                            if t.get("recentIssues")
+                            else t["id"]
+                            for t in parent_magazines
+                        ]
+                    )
+                    for t in titles:
+                        t["cardId"] = next(
+                            iter(
+                                [
+                                    s["card_id"]
+                                    for s in subscriptions
+                                    if s["parent_magazine_id"]
+                                    == t["parentMagazineTitleId"]
+                                ]
+                            ),
+                            None,
+                        )
+                    subbed_magazines.extend(titles)
+                logger.info(
+                    "OverDrive Magazines request took %f seconds" % (timer() - start)
+                )
+            synced_state["__subscriptions"] = subbed_magazines
+            logger.info("Total Sync Time took %f seconds" % (timer() - total_start))
 
             self.finished.emit(synced_state)
         except Exception as err:

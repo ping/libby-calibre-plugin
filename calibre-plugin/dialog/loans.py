@@ -34,6 +34,7 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
+from .. import PluginIcons
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
@@ -60,7 +61,7 @@ class LoansDialogMixin(BaseDialogMixin):
 
         # Refresh button
         self.loans_refresh_btn = QPushButton(_("Refresh"), self)
-        self.loans_refresh_btn.setIcon(self.icons["refresh"])
+        self.loans_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
         self.loans_refresh_btn.setAutoDefault(False)
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
@@ -133,7 +134,7 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         # Download button
         self.download_btn = QPushButton(_("Download"), self)
-        self.download_btn.setIcon(self.icons["download"])
+        self.download_btn.setIcon(self.icons[PluginIcons.Download])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
@@ -158,8 +159,12 @@ class LoansDialogMixin(BaseDialogMixin):
     def hide_book_already_in_lib_checkbox_state_clicked(self, checked):
         if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] != checked:
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
-        self.loans_model.set_filter_hide_books_already_in_library(checked)
-        self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
+        # toggle the other checkbox on the magazines tab
+        if (
+            hasattr(self, "hide_mag_already_in_lib_checkbox")
+            and self.hide_mag_already_in_lib_checkbox.isChecked() != checked
+        ):
+            self.hide_mag_already_in_lib_checkbox.setChecked(checked)
 
     def loans_refresh_btn_clicked(self):
         self.sync()
@@ -171,12 +176,12 @@ class LoansDialogMixin(BaseDialogMixin):
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons["ext-link"])
+        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.loans_model)
         )
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons["ext-link"])
+        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
         )
@@ -185,7 +190,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 n=len(indices)
             )
         )
-        return_action.setIcon(self.icons["return"])
+        return_action.setIcon(self.icons[PluginIcons.ReturnLoan])
         return_action.triggered.connect(lambda: self.return_action_triggered(indices))
         menu.exec(QCursor.pos())
 

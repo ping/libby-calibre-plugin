@@ -35,7 +35,7 @@ from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_cancel import LibbyHoldCancel
-from ..model import get_media_title, LibbyHoldsModel
+from ..model import get_media_title, LibbyHoldsModel, LibbyModel
 
 load_translations()
 
@@ -71,7 +71,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.holds_search_proxy_model.setFilterKeyColumn(-1)
         self.holds_search_proxy_model.setSourceModel(self.holds_model)
-        self.holds_search_proxy_model.setSortRole(LibbyHoldsModel.DisplaySortRole)
+        self.holds_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
         self.models.append(self.holds_model)
 
         # The main holds list
@@ -133,7 +133,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.borrow_btn)
         widget_row_pos += 1
 
-        self.tabs.addTab(holds_widget, _("Holds"))
+        self.tab_index = self.tabs.addTab(holds_widget, _("Holds"))
 
     def hide_unavailable_holds_checkbox_clicked(self, checked: bool):
         PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = checked
@@ -166,7 +166,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
         view_in_overdrive_action.setIcon(self.icons["ext-link"])
         view_in_overdrive_action.triggered.connect(
-            lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
+            lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
         cancel_action = menu.addAction(_("Cancel hold"))
         cancel_action.setIcon(self.icons["cancel-hold"])

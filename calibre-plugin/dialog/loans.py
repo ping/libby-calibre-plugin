@@ -40,7 +40,7 @@ from ..libby import LibbyClient
 from ..libby.client import LibbyFormats
 from ..loan_return import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
-from ..model import get_media_title, LibbyLoansModel
+from ..model import get_media_title, LibbyLoansModel, LibbyModel
 
 load_translations()
 
@@ -81,7 +81,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.loans_search_proxy_model.setFilterKeyColumn(-1)
         self.loans_search_proxy_model.setSourceModel(self.loans_model)
-        self.loans_search_proxy_model.setSortRole(LibbyLoansModel.DisplaySortRole)
+        self.loans_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
         self.models.append(self.loans_model)
 
         # The main loan list
@@ -143,8 +143,9 @@ class LoansDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.download_btn)
         widget_row_pos += 1
 
-        self.tabs.addTab(loans_widget, _("Loans"))
         loans_widget.layout.setColumnMinimumWidth(0, 120)
+
+        self.tab_index = self.tabs.addTab(loans_widget, _("Loans"))
 
     def hide_book_already_in_lib_checkbox_clicked(self, checked: bool):
         PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked

@@ -65,9 +65,9 @@ class BaseDialogMixin(QDialog):
 
         self.view_vspan = 8
         self.view_hspan = 4
-        self.refresh_buttons = []
-        self.status_bars = []
-        self.models = []
+        self.refresh_buttons: List[QWidget] = []
+        self.status_bars: List[QStatusBar] = []
+        self.models: List[LibbyModel] = []
         self.loading_overlay = CustomLoadingOverlay(self)
 
     def resizeEvent(self, e):
@@ -143,12 +143,12 @@ class BaseDialogMixin(QDialog):
 
         def loaded(value: Dict):
             self.loading_overlay.hide()
-            for model in self.models:
-                model.sync(value)
             for btn in self.refresh_buttons:
                 btn.setEnabled(True)
             for bar in self.status_bars:
                 bar.clearMessage()
+            for model in self.models:
+                model.sync(value)
             thread.quit()
 
         def errored_out(err: Exception):

@@ -172,22 +172,22 @@ class LibbyLoansModel(LibbyModel):
             return loan
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
-        if role not in (Qt.DisplayRole, LibbyLoansModel.DisplaySortRole):
+        if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col >= self.columnCount():
             return None
         if col == 0:
-            if role == LibbyLoansModel.DisplaySortRole:
+            if role == LibbyModel.DisplaySortRole:
                 return get_media_title(loan, for_sorting=True)
             return get_media_title(loan)
         if col == 1:
             creator_name = loan.get("firstCreatorName", "")
-            if role == LibbyLoansModel.DisplaySortRole:
+            if role == LibbyModel.DisplaySortRole:
                 return loan.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
             dt_value = parse_datetime(loan["checkoutDate"])
-            if role == LibbyLoansModel.DisplaySortRole:
+            if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
@@ -272,22 +272,22 @@ class LibbyHoldsModel(LibbyModel):
             return hold
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
-        if role not in (Qt.DisplayRole, LibbyHoldsModel.DisplaySortRole):
+        if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col >= self.columnCount():
             return None
         if col == 0:
-            if role == LibbyHoldsModel.DisplaySortRole:
+            if role == LibbyModel.DisplaySortRole:
                 return get_media_title(hold, for_sorting=True)
             return get_media_title(hold)
         if col == 1:
             creator_name = hold.get("firstCreatorName", "")
-            if role == LibbyHoldsModel.DisplaySortRole:
+            if role == LibbyModel.DisplaySortRole:
                 return hold.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
             dt_value = parse_datetime(hold["placedDate"])
-            if role == LibbyHoldsModel.DisplaySortRole:
+            if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
@@ -297,7 +297,7 @@ class LibbyHoldsModel(LibbyModel):
             type_id = hold.get("type", {}).get("id", "")
             return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id
         if col == 5:
-            if role == LibbyHoldsModel.DisplaySortRole:
-                return str(hold.get("isAvailable", False))
+            if role == LibbyModel.DisplaySortRole:
+                return int(hold.get("isAvailable", False))
             return _("Yes") if hold.get("isAvailable", False) else _("No")
         return None

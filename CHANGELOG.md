@@ -1,5 +1,13 @@
 # Changelog
 
+Unreleased
+- New: Borrow and cancel holds
+- New: Fave magazines to monitor for new issues
+- Add option to View in OverDrive
+- Sort titles with sort name instead of name
+- Colored icons
+- Implement loading overlay
+
 Version 0.1.3 - 2023-07-03
 - New: View loans in Libby (from context/right-click menu)
 - New: Return loans (from context/right-click menu)

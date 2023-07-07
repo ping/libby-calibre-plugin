@@ -6,7 +6,7 @@ from calibre.utils.config import tweaks
 from calibre.utils.date import format_date
 
 # noinspection PyUnresolvedReferences
-from qt.core import Qt, QAbstractTableModel, QModelIndex, pyqtSignal
+from qt.core import Qt, QAbstractTableModel, QModelIndex
 
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
@@ -416,8 +416,6 @@ class LibbyMagazinesModel(LibbyModel):
             card = self.get_card(subscription["cardId"])
             if not card:
                 return "Invalid card setup"
-            # library = self.get_library(self.get_website_id(card))
-            # return library.get("name", "")
             return truncate_for_display(f'{card["advantageKey"]}: {card["cardName"]}')
         if col == 3:
             is_borrowed = subscription.get("__is_borrowed")

@@ -24,12 +24,12 @@ PLUGIN_ICON = "images/plugin.png"
 
 
 class PluginIcons(str, Enum):
-    ReturnLoan = "return"
+    Return = "return"
     Download = "download"
     ExternalLink = "ext-link"
     Refresh = "refresh"
-    Borrow = "borrow"
-    CancelHold = "cancel-hold"
+    Add = "add-file"
+    Delete = "delete"
     AddMagazine = "magazines-add"
     CancelMagazine = "cancel-sub"
 
@@ -38,12 +38,12 @@ class PluginIcons(str, Enum):
 
 
 ICON_MAP = {
-    PluginIcons.ReturnLoan: "arrow-go-back-fill.png",
+    PluginIcons.Return: "arrow-go-back-fill.png",
     PluginIcons.Download: "download-line.png",
     PluginIcons.ExternalLink: "external-link-line.png",
     PluginIcons.Refresh: "refresh-line.png",
-    PluginIcons.Borrow: "file-add-line.png",
-    PluginIcons.CancelHold: "delete-bin-line.png",
+    PluginIcons.Add: "file-add-line.png",
+    PluginIcons.Delete: "delete-bin-line.png",
     PluginIcons.AddMagazine: "heart-add-line.png",
     PluginIcons.CancelMagazine: "dislike-line.png",
 }

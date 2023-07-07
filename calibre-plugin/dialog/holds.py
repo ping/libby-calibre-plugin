@@ -126,7 +126,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         )
         # Borrow button
         self.borrow_btn = QPushButton(_("Borrow"), self)
-        self.borrow_btn.setIcon(self.icons[PluginIcons.Borrow])
+        self.borrow_btn.setIcon(self.icons[PluginIcons.Add])
         self.borrow_btn.setAutoDefault(False)
         self.borrow_btn.setToolTip(_("Borrow selected hold"))
         self.borrow_btn.setStyleSheet("padding: 4px 16px")
@@ -177,7 +177,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
         cancel_action = menu.addAction(_("Cancel hold"))
-        cancel_action.setIcon(self.icons[PluginIcons.CancelHold])
+        cancel_action.setIcon(self.icons[PluginIcons.Delete])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
 

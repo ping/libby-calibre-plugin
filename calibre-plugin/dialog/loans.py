@@ -190,7 +190,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 n=len(indices)
             )
         )
-        return_action.setIcon(self.icons[PluginIcons.ReturnLoan])
+        return_action.setIcon(self.icons[PluginIcons.Return])
         return_action.triggered.connect(lambda: self.return_action_triggered(indices))
         menu.exec(QCursor.pos())
 

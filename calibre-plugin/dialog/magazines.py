@@ -162,7 +162,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         # Borrow button
         self.magazines_borrow_btn = QPushButton(_("Borrow"), self)
-        self.magazines_borrow_btn.setIcon(self.icons[PluginIcons.Borrow])
+        self.magazines_borrow_btn.setIcon(self.icons[PluginIcons.Add])
         self.magazines_borrow_btn.setAutoDefault(False)
         self.magazines_borrow_btn.setToolTip(_("Borrow selected magazine"))
         self.magazines_borrow_btn.setStyleSheet("padding: 4px 16px")

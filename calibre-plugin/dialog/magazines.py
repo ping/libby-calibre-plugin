@@ -40,6 +40,16 @@ from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
 from ..model import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
 
+LIBBY_SHARE_URL_RE = re.compile(
+    r"https://share\.libbyapp\.com/title/(?P<title_id>\d+)\b", re.IGNORECASE
+)
+LIBBY_URL_RE = re.compile(
+    r"https://libbyapp.com/library/.+/(.*/)?page-\d+/(?P<title_id>\d+)\b", re.IGNORECASE
+)
+OVERDRIVE_URL_RE = re.compile(
+    r"https://(.+)?overdrive.com/(.*/)?media/(?P<title_id>\d+)\b", re.IGNORECASE
+)
+
 load_translations()
 
 gui_libby_borrow_hold = LibbyBorrowHold()
@@ -266,10 +276,10 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
     def add_magazine_btn_clicked(self):
         share_url = self.magazine_link_txt.text().strip()
-        mobj = re.match(
-            r"https:\/\/share\.libbyapp\.com\/title\/(?P<title_id>\d+)",
-            share_url,
-            re.IGNORECASE,
+        mobj = (
+            LIBBY_SHARE_URL_RE.match(share_url)
+            or LIBBY_URL_RE.match(share_url)
+            or OVERDRIVE_URL_RE.match(share_url)
         )
         if not mobj:
             return error_dialog(self, _("Add Magazine"), _("Invalid URL"), show=True)

@@ -169,7 +169,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
         )
         cancel_action = menu.addAction(_("Cancel hold"))
-        cancel_action.setIcon(self.icons["cancel_hold"])
+        cancel_action.setIcon(self.icons["cancel-hold"])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
 

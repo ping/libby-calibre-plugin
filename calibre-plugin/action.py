@@ -31,7 +31,7 @@ ICON_MAP = {
     "ext-link": "external-link-line.png",
     "refresh": "refresh-line.png",
     "borrow": "file-add-line.png",
-    "cancel_hold": "delete-bin-line.png",
+    "cancel-hold": "delete-bin-line.png",
 }
 
 

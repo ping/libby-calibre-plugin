@@ -118,6 +118,9 @@ class LoansDialogMixin(BaseDialogMixin):
         self.hide_book_already_in_lib_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
+        self.hide_book_already_in_lib_checkbox.clicked.connect(
+            self.hide_book_already_in_lib_checkbox_state_clicked
+        )
         self.hide_book_already_in_lib_checkbox.stateChanged.connect(
             self.hide_book_already_in_lib_checkbox_state_changed
         )
@@ -149,6 +152,10 @@ class LoansDialogMixin(BaseDialogMixin):
 
     def hide_book_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_book_already_in_lib_checkbox.isChecked()
+        self.loans_model.set_filter_hide_books_already_in_library(checked)
+        self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
+
+    def hide_book_already_in_lib_checkbox_state_clicked(self, checked):
         if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] != checked:
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
         self.loans_model.set_filter_hide_books_already_in_library(checked)

@@ -20,7 +20,7 @@ class SyncDataWorker(QObject):
     def run(self):
         libby_token: str = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if not libby_token:
-            self.finished.emit([])
+            self.finished.emit({})
 
         try:
             # Fetch libby sync state

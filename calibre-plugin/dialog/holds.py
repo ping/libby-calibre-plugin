@@ -111,11 +111,11 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.hide_unavailable_holds_checkbox = QCheckBox(
             PreferenceTexts.HIDE_HOLDS_UNAVAILABLE, self
         )
-        self.hide_unavailable_holds_checkbox.clicked.connect(
-            self.hide_unavailable_holds_checkbox_clicked
-        )
         self.hide_unavailable_holds_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
+        )
+        self.hide_unavailable_holds_checkbox.stateChanged.connect(
+            self.hide_unavailable_holds_checkbox_state_changed
         )
         holds_widget.layout.addWidget(
             self.hide_unavailable_holds_checkbox, widget_row_pos, 0
@@ -135,8 +135,10 @@ class HoldsDialogMixin(BaseDialogMixin):
 
         self.tab_index = self.tabs.addTab(holds_widget, _("Holds"))
 
-    def hide_unavailable_holds_checkbox_clicked(self, checked: bool):
-        PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = checked
+    def hide_unavailable_holds_checkbox_state_changed(self, __):
+        checked = self.hide_unavailable_holds_checkbox.isChecked()
+        if PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] != checked:
+            PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = checked
         self.holds_model.set_filter_hide_unavailable_holds(checked)
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
 

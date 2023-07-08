@@ -31,12 +31,14 @@ class SyncDataWorker(QObject):
                 identity_token=libby_token, max_retries=1, timeout=30, logger=logger
             )
             synced_state = libby_client.sync()
-            logger.info("Libby request took %f seconds" % (timer() - start))
+            logger.info("Libby Sync request took %f seconds" % (timer() - start))
 
             # Fetch libraries details from OD and patch it onto synced state
             start = timer()
             cards = synced_state.get("cards", [])
             all_website_ids = [c["library"]["websiteId"] for c in cards]
+
+            logger.info("Fetching %d libraries" % len(all_website_ids))
             od_client = OverDriveClient(max_retries=1, timeout=30, logger=logger)
             max_per_page = 24
             total_pages = math.ceil(len(all_website_ids) / max_per_page)
@@ -49,11 +51,14 @@ class SyncDataWorker(QObject):
                     website_ids=website_ids, per_page=max_per_page
                 )
                 libraries.extend(results.get("items", []))
-            logger.info("OverDrive request took %f seconds" % (timer() - start))
+            logger.info(
+                "OverDrive Libraries requests took %f seconds" % (timer() - start)
+            )
             synced_state["__libraries"] = libraries
 
             subbed_magazines = []
             if subscriptions:
+                logger.info("Checking %d magazines" % len(subscriptions))
                 # Fetch magazine details from OD
                 start = timer()
                 all_parent_magazine_ids = [
@@ -98,7 +103,7 @@ class SyncDataWorker(QObject):
                         )
                     subbed_magazines.extend(titles)
                 logger.info(
-                    "OverDrive Magazines request took %f seconds" % (timer() - start)
+                    "OverDrive Magazines requests took %f seconds" % (timer() - start)
                 )
             synced_state["__subscriptions"] = subbed_magazines
             logger.info("Total Sync Time took %f seconds" % (timer() - total_start))

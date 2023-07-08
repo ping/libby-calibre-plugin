@@ -357,8 +357,8 @@ class LibbyClient(object):
 
         for attempt in range(0, self.max_retries + 1):
             try:
-                self.logger.info(
-                    "REQUEST: {0!s} {1!s}".format(req.get_method(), endpoint)
+                self.logger.debug(
+                    "REQUEST: {0!s} {1!s}".format(req.get_method(), endpoint_url)
                 )
                 self.logger.debug(
                     "REQ HEADERS: \n{0!s}".format(

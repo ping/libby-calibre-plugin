@@ -1,15 +1,19 @@
 import time
 from pathlib import Path
-from typing import List
+from typing import List, Dict
+
+from .magazine_download_utils import extract_isbn, extract_asin
 
 
 class LibbyDownload:
     def add(
         self,
         gui,
+        loan: Dict,
+        format_id: str,
         downloaded_file: Path,
-        tags: List[str] = [],
         book_id: int = None,
+        tags: List[str] = [],
         metadata=None,
         log=None,
     ) -> None:
@@ -47,6 +51,14 @@ class LibbyDownload:
             with open(new_path, "rb") as f:
                 mi = get_metadata(f, new_ext, force_read_metadata=True)
             mi.tags.extend(tags)
+
+            isbn = extract_isbn(loan.get("formats", []), [format_id])
+            asin = extract_asin(loan.get("formats", []))
+            identifiers = mi.identifiers
+            if isbn and "isbn" not in identifiers:
+                mi.identifiers["isbn"] = isbn
+            if asin and not ("amazon" in identifiers or "asin" in identifiers):
+                mi.identifiers["amazon"] = asin
 
             book_id = gui.library_view.model().db.create_book_entry(mi)
             gui.library_view.model().db.add_format_with_hooks(

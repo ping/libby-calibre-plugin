@@ -375,7 +375,10 @@ class CustomMagazineDownload(LibbyDownload):
             downloaded_filepath = self._custom_download(
                 libby_client, loan, format_id, filename, log, abort, notifications
             )
-            self.add(gui, downloaded_filepath, tags, None, log=log)
+            self.add(
+                gui, loan, format_id, downloaded_filepath, None, tags, None, log=log
+            )
+
         finally:
             try:
                 if dfilename:

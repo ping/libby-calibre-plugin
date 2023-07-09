@@ -50,7 +50,16 @@ class CustomEbookDownload(LibbyDownload):
                 abort=abort,
                 notifications=notifications,
             )
-            self.add(gui, downloaded_filepath, tags, book_id, metadata, log=log)
+            self.add(
+                gui,
+                loan,
+                format_id,
+                downloaded_filepath,
+                book_id,
+                tags,
+                metadata,
+                log=log,
+            )
 
         finally:
             try:

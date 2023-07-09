@@ -1,6 +1,10 @@
 # Changelog
 
 Unreleased
+- New: Right-click shortcut to borrow and download in a single click
+- Fix regression where generated magazines temp files were not being properly deleted
+
+Version 0.1.4 - 2023-07-10
 - New: Borrow and cancel holds
 - New: Fave magazines to monitor for new issues
 - Integration with the [OverDrive Link plugin](https://www.mobileread.com/forums/showthread.php?t=187919): If an existing book has a matching OverDrive link and no formats, the loan download will be added to the book.

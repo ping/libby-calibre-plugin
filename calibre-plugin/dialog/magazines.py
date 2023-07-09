@@ -148,6 +148,11 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_view.customContextMenuRequested.connect(
             self.magazines_view_context_menu_requested
         )
+        magazines_view_selection_model = self.magazines_view.selectionModel()
+        magazines_view_selection_model.selectionChanged.connect(
+            self.magazines_view_selection_model_selectionchanged
+        )
+
         magazines_widget.layout.addWidget(
             self.magazines_view, widget_row_pos, 0, self.view_vspan, self.view_hspan
         )
@@ -198,6 +203,17 @@ class MagazinesDialogMixin(BaseDialogMixin):
             and self.hide_book_already_in_lib_checkbox.isChecked() != checked
         ):
             self.hide_book_already_in_lib_checkbox.setChecked(checked)
+
+    def magazines_view_selection_model_selectionchanged(self):
+        selection_model = self.magazines_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        for index in indices:
+            magazine = index.data(Qt.UserRole)
+            self.magazines_borrow_btn.setEnabled(
+                not magazine.get("__is_borrowed", False)
+            )
 
     def magazines_view_context_menu_requested(self, pos):
         selection_model = self.magazines_view.selectionModel()

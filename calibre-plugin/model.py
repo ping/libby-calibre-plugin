@@ -6,7 +6,7 @@ from calibre.utils.config import tweaks
 from calibre.utils.date import format_date
 
 # noinspection PyUnresolvedReferences
-from qt.core import Qt, QAbstractTableModel, QModelIndex
+from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
 
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
@@ -275,6 +275,11 @@ class LibbyHoldsModel(LibbyModel):
             return hold
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
+        if role == Qt.FontRole and col == 5:
+            if hold.get("isAvailable", False):
+                font = QFont()
+                font.setBold(True)
+                return font
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col >= self.columnCount():

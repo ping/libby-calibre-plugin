@@ -41,7 +41,7 @@ class PreferenceTexts:
     LIBBY_SETUP_CODE_DESC = _("8-digit setup code")
     HIDE_MAGAZINES = _("Hide Magazines")
     HIDE_EBOOKS = _("Hide Ebooks")
-    HIDE_BOOKS_ALREADY_IN_LIB = _("Hide books already in library")
+    HIDE_BOOKS_ALREADY_IN_LIB = _("Hide titles already in library")
     HIDE_HOLDS_UNAVAILABLE = _("Hide unavailable holds")
     PREFER_OPEN_FORMATS = _("Prefer Open Formats")
     TAG_EBOOKS = _("Tag downloaded ebooks with")

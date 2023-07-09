@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.4\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-09 22:48+0800\n"
+"POT-Creation-Date: 2023-07-09 22:54+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,7 +47,7 @@ msgid "Hide Ebooks"
 msgstr ""
 
 #: calibre-plugin/config.py:44
-msgid "Hide books already in library"
+msgid "Hide titles already in library"
 msgstr ""
 
 #: calibre-plugin/config.py:45

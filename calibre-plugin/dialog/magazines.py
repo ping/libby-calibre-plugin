@@ -233,10 +233,27 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 indices, self.magazines_model
             )
         )
+        if hasattr(self, "download_loan"):
+            subs = [index.data(Qt.UserRole) for index in indices]
+            if not [s for s in subs if s.get("__is_borrowed", False)]:
+                # all selected issues have not been borrowed
+                borrow_and_download_sub_action = menu.addAction(
+                    _("Borrow and Download")
+                )
+                borrow_and_download_sub_action.setIcon(self.icons[PluginIcons.Add])
+                borrow_and_download_sub_action.triggered.connect(
+                    lambda: self.borrow_and_download_sub_action_triggered(indices)
+                )
+
         unsub_action = menu.addAction(_("Cancel"))
         unsub_action.setIcon(self.icons[PluginIcons.CancelMagazine])
         unsub_action.triggered.connect(lambda: self.unsub_action_triggered(indices))
         menu.exec(QCursor.pos())
+
+    def borrow_and_download_sub_action_triggered(self, indices):
+        for index in reversed(indices):
+            sub = index.data(Qt.UserRole)
+            self.borrow_magazine(sub)
 
     def magazines_refresh_btn_clicked(self):
         self.sync()
@@ -264,12 +281,17 @@ class MagazinesDialogMixin(BaseDialogMixin):
             ]
             PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = subscriptions
 
-    def borrow_magazine(self, magazine):
+    def borrow_magazine(self, magazine, do_download=True):
         card = self.magazines_model.get_card(magazine["cardId"])
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(magazine), errors="replace")
         )
-        callback = Dispatcher(self.borrowed_magazine)
+        if do_download:
+            callback = Dispatcher(
+                lambda j: self.borrowed_magazine_and_download(j, magazine, card)
+            )
+        else:
+            callback = Dispatcher(self.borrowed_magazine)
         job = ThreadedJob(
             "overdrive_libby_borrow_book",
             description,
@@ -289,6 +311,12 @@ class MagazinesDialogMixin(BaseDialogMixin):
             return
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+
+    def borrowed_magazine_and_download(self, job, magazine, card):
+        self.borrowed_magazine(job)
+        if not job.failed:
+            magazine["cardId"] = card["cardId"]
+            self.download_loan(magazine)
 
     def add_magazine_btn_clicked(self):
         share_url = self.magazine_link_txt.text().strip()

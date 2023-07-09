@@ -176,10 +176,30 @@ class HoldsDialogMixin(BaseDialogMixin):
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
+        if hasattr(self, "download_loan"):
+            holds = [index.data(Qt.UserRole) for index in indices]
+            if not [h for h in holds if not h.get("isAvailable", False)]:
+                # all selected holds are available
+                borrow_and_download_hold_action = menu.addAction(
+                    _("Borrow and Download")
+                )
+                borrow_and_download_hold_action.setIcon(self.icons[PluginIcons.Add])
+                borrow_and_download_hold_action.triggered.connect(
+                    lambda: self.borrow_and_download_hold_action_triggered(indices)
+                )
+
         cancel_action = menu.addAction(_("Cancel hold"))
         cancel_action.setIcon(self.icons[PluginIcons.Delete])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
+
+    def borrow_and_download_hold_action_triggered(self, indices):
+        for index in reversed(indices):
+            hold = index.data(Qt.UserRole)
+            self.borrow_hold(hold, do_download=True)
+            self.holds_model.removeRow(
+                self.holds_search_proxy_model.mapToSource(index).row()
+            )
 
     def borrow_btn_clicked(self):
         selection_model = self.holds_view.selectionModel()
@@ -191,12 +211,15 @@ class HoldsDialogMixin(BaseDialogMixin):
                     self.holds_search_proxy_model.mapToSource(row).row()
                 )
 
-    def borrow_hold(self, hold):
+    def borrow_hold(self, hold, do_download=False):
         card = self.holds_model.get_card(hold["cardId"])
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(hold), errors="replace")
         )
-        callback = Dispatcher(self.borrowed_book)
+        if do_download:
+            callback = Dispatcher(lambda j: self.borrowed_book_and_download(j, hold))
+        else:
+            callback = Dispatcher(self.borrowed_book)
         job = ThreadedJob(
             "overdrive_libby_borrow_book",
             description,
@@ -216,6 +239,11 @@ class HoldsDialogMixin(BaseDialogMixin):
             return
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+
+    def borrowed_book_and_download(self, job, hold):
+        self.borrowed_book(job)
+        if not job.failed:
+            self.download_loan(hold)
 
     def cancel_action_triggered(self, indices):
         msg = (

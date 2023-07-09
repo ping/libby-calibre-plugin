@@ -213,9 +213,9 @@ class LibbyHoldsModel(LibbyModel):
     column_headers = [
         _("Title"),
         _("Author"),
-        _("Hold Date"),
+        _("Hold/Expire Date"),
         _("Library"),
-        _("Type"),
+        _("Format"),
         _("Available"),
     ]
     filter_hide_unavailable_holds = True
@@ -289,7 +289,7 @@ class LibbyHoldsModel(LibbyModel):
                 return hold.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
-            dt_value = parse_datetime(hold["placedDate"])
+            dt_value = parse_datetime(hold.get("expireDate") or hold["placedDate"])
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
@@ -297,8 +297,11 @@ class LibbyHoldsModel(LibbyModel):
             card = self.get_card(hold["cardId"])
             return card["advantageKey"]
         if col == 4:
-            type_id = hold.get("type", {}).get("id", "")
-            return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id
+            return str(
+                LibbyClient.get_loan_format(
+                    hold, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+                )
+            )
         if col == 5:
             if role == LibbyModel.DisplaySortRole:
                 return int(hold.get("isAvailable", False))

@@ -33,12 +33,14 @@ class CustomEbookDownload(LibbyDownload):
         filename="",
         save_loc="",
         add_to_lib=True,
-        tags=[],
+        tags=None,
         create_browser=None,
         log=None,
         abort=None,
         notifications=None,
     ):
+        if not tags:
+            tags = []
         downloaded_filepath: Optional[Path] = None
         try:
             downloaded_filepath = self._custom_download(

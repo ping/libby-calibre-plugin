@@ -17,7 +17,7 @@ import zipfile
 from datetime import datetime
 from functools import cmp_to_key
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 from urllib.parse import urlparse, urljoin
 
 from bs4 import BeautifulSoup, Doctype, Tag, element
@@ -364,12 +364,15 @@ class CustomMagazineDownload(LibbyDownload):
         filename="",
         save_loc="",
         add_to_lib=True,
-        tags=[],
+        tags=None,
         create_browser=None,
         log=None,
         abort=None,
         notifications=None,
     ):
+        if not tags:
+            tags = []
+
         dfilename = ""
         try:
             downloaded_filepath = self._custom_download(

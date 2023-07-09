@@ -243,9 +243,12 @@ class LoansDialogMixin(BaseDialogMixin):
         filename="",
         save_loc="",
         add_to_lib=True,
-        tags=[],
+        tags=None,
         create_browser=None,
     ):
+        if not tags:
+            tags = []
+
         # We will handle the downloading of the files ourselves
 
         # [OverDrive Link integration]
@@ -321,9 +324,12 @@ class LoansDialogMixin(BaseDialogMixin):
         filename="",
         save_loc="",
         add_to_lib=True,
-        tags=[],
+        tags=None,
         create_browser=None,
     ):
+        if not tags:
+            tags = []
+
         # We will handle the downloading of the files ourselves instead of depending
         # on the calibre browser
 

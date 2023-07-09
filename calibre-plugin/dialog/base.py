@@ -46,6 +46,8 @@ class BaseDialogMixin(QDialog):
         self._sync_thread = QThread()
         self._curr_width = 0
         self._curr_height = 0
+        self.logger = logger
+
         self.setWindowTitle(
             _("OverDrive Libby v{version}").format(
                 version=".".join([str(d) for d in __version__])

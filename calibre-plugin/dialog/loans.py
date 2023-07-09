@@ -251,15 +251,26 @@ class LoansDialogMixin(BaseDialogMixin):
         # [OverDrive Link integration]
         # If we find a book without formats and has the odid identifier matching the loan,
         # add the new file as a format to the existing book record
-        card = self.loans_model.get_card(loan["cardId"])
-        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
-        search_query = (
-            "format:False "
-            f'and identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
+        book_id = None
+        mi = None
+        enable_overdrivelink_integration = PREFS[
+            PreferenceKeys.OVERDRIVELINK_INTEGRATION
+        ]
+        self.logger.debug(
+            "OverDrive Link Integration enabled: %s", enable_overdrivelink_integration
         )
-        book_ids = list(self.db.search(search_query))
-        book_id = book_ids[0] if book_ids else 0
-        mi = self.db.get_metadata(book_id) if book_id else None
+        if enable_overdrivelink_integration:
+            card = self.loans_model.get_card(loan["cardId"])
+            library = self.loans_model.get_library(
+                self.loans_model.get_website_id(card)
+            )
+            search_query = (
+                "format:False "
+                f'and identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
+            )
+            book_ids = list(self.db.search(search_query))
+            book_id = book_ids[0] if book_ids else 0
+            mi = self.db.get_metadata(book_id) if book_id else None
 
         description = (
             _(

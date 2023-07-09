@@ -373,7 +373,7 @@ class CustomMagazineDownload(LibbyDownload):
         if not tags:
             tags = []
 
-        dfilename = ""
+        downloaded_filepath: Optional[Path] = None
         try:
             downloaded_filepath = self._custom_download(
                 libby_client, loan, format_id, filename, log, abort, notifications
@@ -384,8 +384,8 @@ class CustomMagazineDownload(LibbyDownload):
 
         finally:
             try:
-                if dfilename:
-                    os.remove(dfilename)
+                if downloaded_filepath:
+                    downloaded_filepath.unlink(missing_ok=True)
             except:
                 pass
 

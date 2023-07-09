@@ -21,7 +21,6 @@ from typing import Dict, List
 from urllib.parse import urlparse, urljoin
 
 from bs4 import BeautifulSoup, Doctype, Tag, element
-from calibre.gui2.ebook_download import EbookDownload
 from calibre.ptempfile import PersistentTemporaryDirectory
 
 from .libby import LibbyClient
@@ -55,6 +54,8 @@ NAV_XHTMLTEMPLATE = """
 """
 
 load_translations()
+
+from .download import LibbyDownload
 
 
 def _sort_toc(toc: Dict) -> List:
@@ -351,8 +352,7 @@ def _filter_content(entry: Dict, media_info: Dict, toc_pages: List[str]):
     return True
 
 
-# Ref: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L77-L122
-class CustomMagazineDownload(EbookDownload):
+class CustomMagazineDownload(LibbyDownload):
     def __call__(
         self,
         gui,
@@ -372,11 +372,10 @@ class CustomMagazineDownload(EbookDownload):
     ):
         dfilename = ""
         try:
-            dfilename = self._custom_download(
+            downloaded_filepath = self._custom_download(
                 libby_client, loan, format_id, filename, log, abort, notifications
             )
-            self._add(dfilename, gui, add_to_lib, tags)
-            self._save_as(dfilename, save_loc)
+            self.add(gui, downloaded_filepath, tags, None, log=log)
         finally:
             try:
                 if dfilename:
@@ -393,7 +392,7 @@ class CustomMagazineDownload(EbookDownload):
         log=None,
         abort=None,
         notifications=None,
-    ) -> str:
+    ) -> Path:
         logger = log
         download_progress_fraction = 0.97
         meta_progress_fraction = 1.0 - download_progress_fraction
@@ -964,4 +963,4 @@ class CustomMagazineDownload(EbookDownload):
                         'epub: Added "%s" as "%s"' % (zip_target_file, zip_archive_name)
                     )
         logger.info('Saved "%s"' % epub_file_path)
-        return str(epub_file_path)
+        return epub_file_path

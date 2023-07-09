@@ -8,25 +8,26 @@
 # information
 #
 
-import os
-from typing import Dict
+from pathlib import Path
+from typing import Dict, Optional
 
-from calibre.gui2.ebook_download import EbookDownload
 from calibre.ptempfile import PersistentTemporaryDirectory
 
+from .download import LibbyDownload
 from .libby import LibbyClient
-
 
 load_translations()
 
-# Ref: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L77-L122
-class CustomEbookDownload(EbookDownload):
+
+class CustomEbookDownload(LibbyDownload):
     def __call__(
         self,
         gui,
         libby_client: LibbyClient,
         loan: Dict,
         format_id: str,
+        book_id=None,
+        metadata=None,
         cookie_file=None,
         url="",
         filename="",
@@ -38,9 +39,9 @@ class CustomEbookDownload(EbookDownload):
         abort=None,
         notifications=None,
     ):
-        dfilename = ""
+        downloaded_filepath: Optional[Path] = None
         try:
-            dfilename = self._custom_download(
+            downloaded_filepath = self._custom_download(
                 libby_client,
                 loan,
                 format_id,
@@ -49,12 +50,12 @@ class CustomEbookDownload(EbookDownload):
                 abort=abort,
                 notifications=notifications,
             )
-            self._add(dfilename, gui, add_to_lib, tags)
-            self._save_as(dfilename, save_loc)
+            self.add(gui, downloaded_filepath, tags, book_id, metadata, log=log)
+
         finally:
             try:
-                if dfilename:
-                    os.remove(dfilename)
+                if downloaded_filepath:
+                    downloaded_filepath.unlink(missing_ok=True)
             except:
                 pass
 
@@ -67,13 +68,15 @@ class CustomEbookDownload(EbookDownload):
         log=None,
         abort=None,
         notifications=None,
-    ) -> str:
-        temp_path = os.path.join(PersistentTemporaryDirectory(), filename)
+    ) -> Path:
+        book_folder_path = Path(PersistentTemporaryDirectory())
+        book_file_path = book_folder_path.joinpath(filename)
+
         notifications.put((0.5, _("Downloading")))
         res_content = libby_client.fulfill_loan_file(
             loan["id"], loan["cardId"], format_id
         )
-        with open(temp_path, "w+b") as tf:
+        with book_file_path.open("w+b") as tf:
             tf.write(res_content)
-            dfilename = tf.name
-        return dfilename
+
+        return book_file_path

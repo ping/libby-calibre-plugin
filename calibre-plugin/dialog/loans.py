@@ -216,30 +216,13 @@ class LoansDialogMixin(BaseDialogMixin):
         if LibbyClient.is_downloadable_ebook_loan(loan):
             show_download_info(get_media_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_EBOOKS].split(",")]
-            if format_id in (LibbyFormats.EBookEPubOpen, LibbyFormats.EBookPDFOpen):
-                # special handling required for these formats
-                self.download_ebook(
-                    loan,
-                    format_id,
-                    filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',
-                    tags=tags,
-                )
-            else:
-                endpoint_url, headers = self.client.get_loan_fulfilment_details(
-                    loan["id"], loan["cardId"], format_id
-                )
 
-                def create_custom_browser():
-                    br = browser()
-                    for k, v in headers.items():
-                        br.set_header(k, v)
-                    return br
-
-                self.gui.download_ebook(
-                    url=endpoint_url,
-                    create_browser=create_custom_browser,
-                    tags=tags,
-                )
+            self.download_ebook(
+                loan,
+                format_id,
+                filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',
+                tags=tags,
+            )
 
         if LibbyClient.is_downloadable_magazine_loan(loan):
             show_download_info(get_media_title(loan), self)
@@ -263,14 +246,32 @@ class LoansDialogMixin(BaseDialogMixin):
         tags=[],
         create_browser=None,
     ):
-        # We will handle the downloading of the files ourselves instead of depending
-        # on the calibre browser
+        # We will handle the downloading of the files ourselves
 
-        # Heavily referenced from
-        # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
+        # [OverDrive Link integration]
+        # If we find a book without formats and has the odid identifier matching the loan,
+        # add the new file as a format to the existing book record
+        card = self.loans_model.get_card(loan["cardId"])
+        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
+        search_query = (
+            "format:False "
+            f'and identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
+        )
+        book_ids = list(self.db.search(search_query))
+        book_id = book_ids[0] if book_ids else 0
+        mi = self.db.get_metadata(book_id) if book_id else None
 
-        description = _("Downloading {book}").format(
-            book=as_unicode(get_media_title(loan), errors="replace")
+        description = (
+            _(
+                "Downloading {format} for {book}".format(
+                    format=LibbyClient.get_file_extension(format_id).upper(),
+                    book=as_unicode(get_media_title(loan), errors="replace"),
+                )
+            )
+            if book_id and mi
+            else _("Downloading {book}").format(
+                book=as_unicode(get_media_title(loan), errors="replace")
+            )
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
@@ -282,6 +283,8 @@ class LoansDialogMixin(BaseDialogMixin):
                 self.client,
                 loan,
                 format_id,
+                book_id,
+                mi,
                 cookie_file,
                 url,
                 filename,

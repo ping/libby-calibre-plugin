@@ -4,7 +4,7 @@ Unreleased
 - New: Borrow and cancel holds
 - New: Fave magazines to monitor for new issues
 - Integration with the [OverDrive Link plugin](https://www.mobileread.com/forums/showthread.php?t=187919): If an existing book has a matching OverDrive link and no formats, the loan download will be added to the book.
-- Workaround issue with converted `.acsm` downloads not having metadata
+- Fix issue with converted `.acsm` downloads not having metadata
 - Add option to View in OverDrive
 - Sort titles with sort name instead of name
 - Colored icons

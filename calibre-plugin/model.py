@@ -354,7 +354,7 @@ class LibbyMagazinesModel(LibbyModel):
     Underlying data model for the Magazines table view
     """
 
-    column_headers = [_("Title"), _("Release Date"), _("Library"), _("Borrowed")]
+    column_headers = [_("Title"), _("Release Date"), _("Library Card"), _("Borrowed")]
     filter_hide_magazines_already_in_library = False
 
     def __init__(self, parent, synced_state=None, db=None):

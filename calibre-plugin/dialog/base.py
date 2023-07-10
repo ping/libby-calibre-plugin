@@ -10,6 +10,7 @@
 from typing import Dict, List
 
 from calibre.gui2.viewer.overlay import LoadingOverlay
+from calibre.gui2.widgets2 import CenteredToolButton
 from qt.core import (
     Qt,
     QDialog,
@@ -20,6 +21,8 @@ from qt.core import (
     QUrl,
     QWidget,
     QStatusBar,
+    QApplication,
+    QFont,
 )
 
 from .. import logger, __version__
@@ -30,6 +33,18 @@ from ..overdrive import OverDriveClient
 from ..workers import SyncDataWorker
 
 load_translations()
+
+
+class BorrowAndDownloadButton(CenteredToolButton):
+    def __init__(self, text, icon=None, action=None, parent=None):
+        super().__init__(icon, text, parent)
+        self.setText(text)
+        if icon is not None:
+            self.setIcon(icon)
+        if action is not None:
+            self.clicked.connect(action)
+        self.setStyleSheet("padding: 2px 16px")
+        self.setFont(QFont(QApplication.font()))  # make it bigger
 
 
 class BaseDialogMixin(QDialog):
@@ -54,6 +69,8 @@ class BaseDialogMixin(QDialog):
         self.setWindowIcon(icon)
         self.view_vspan = 8
         self.view_hspan = 4
+        self.min_button_width = 150
+        self.min_view_width = 720
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:

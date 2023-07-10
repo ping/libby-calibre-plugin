@@ -1,9 +1,10 @@
 # Changelog
 
 Unreleased
-- New: Right-click shortcut to Borrow and Download holds/magazines in a single click
+- New: Option to "Borrow and Download" from the Borrow button for loans/magazines
 - Disable Borrow button if a magazine issue is already borrowed
 - Fix regression where generated magazines temp files were not being properly deleted
+- Fix layout wonkiness
 
 Version 0.1.4 - 2023-07-10
 - New: Borrow and cancel holds

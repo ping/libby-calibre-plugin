@@ -28,9 +28,10 @@ from qt.core import (
     QMenu,
     QCursor,
     QThread,
+    QToolButton,
 )
 
-from .base import BaseDialogMixin
+from .base import BaseDialogMixin, BorrowAndDownloadButton
 from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
@@ -60,8 +61,13 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         magazines_widget = QWidget()
         magazines_widget.layout = QGridLayout()
+        for col_num in range(1, self.view_hspan - 2):
+            magazines_widget.layout.setColumnStretch(col_num, 1)
+        magazines_widget.layout.setColumnMinimumWidth(0, self.min_button_width)
+        magazines_widget.layout.setColumnMinimumWidth(
+            self.view_hspan - 1, self.min_button_width
+        )
         magazines_widget.setLayout(magazines_widget.layout)
-
         widget_row_pos = 0
 
         # Share link label
@@ -94,7 +100,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.cards_cbbox.setModel(self.cards_model)
         self.cards_cbbox.setModelColumn(0)
         magazines_widget.layout.addWidget(
-            self.cards_cbbox, widget_row_pos, self.view_hspan - 2
+            self.cards_cbbox, widget_row_pos, self.view_hspan - 2, 1, 1
         )
 
         # Add Magazine button
@@ -129,7 +135,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_view = QTableView(self)
         self.magazines_view.setSortingEnabled(True)
         self.magazines_view.setAlternatingRowColors(True)
-        self.magazines_view.setMinimumWidth(720)
+        self.magazines_view.setMinimumWidth(self.min_view_width)
         self.magazines_view.setModel(self.magazines_search_proxy_model)
         horizontal_header = self.magazines_view.horizontalHeader()
         for col_index, mode in [
@@ -174,18 +180,41 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
 
         # Borrow button
-        self.magazines_borrow_btn = QPushButton(_("Borrow"), self)
-        self.magazines_borrow_btn.setIcon(self.icons[PluginIcons.Add])
-        self.magazines_borrow_btn.setAutoDefault(False)
-        self.magazines_borrow_btn.setToolTip(_("Borrow selected magazine"))
-        self.magazines_borrow_btn.setStyleSheet("padding: 4px 16px")
-        self.magazines_borrow_btn.clicked.connect(self.magazines_borrow_btn_clicked)
+        self.magazines_borrow_btn = BorrowAndDownloadButton(
+            _("Borrow"),
+            self.icons[PluginIcons.Add],
+            self.magazines_borrow_btn_clicked,
+            self,
+        )
+        if hasattr(self, "download_loan"):
+            self.magazines_borrow_btn.setPopupMode(
+                QToolButton.ToolButtonPopupMode.DelayedPopup
+            )
+            magazines_borrow_btn_menu = QMenu(self.magazines_borrow_btn)
+            magazines_borrow_btn_menu_bnd_action = magazines_borrow_btn_menu.addAction(
+                _("Borrow and Download")
+            )
+            magazines_borrow_btn_menu_bnd_action.triggered.connect(
+                self.magazines_borrow_btn_menu_bnd_action_triggered
+            )
+            self.magazines_borrow_btn.setMenu(magazines_borrow_btn_menu)
+            self.magazines_borrow_btn.bnd_menu = magazines_borrow_btn_menu
         magazines_widget.layout.addWidget(
             self.magazines_borrow_btn, widget_row_pos, self.view_hspan - 1
         )
+        self.refresh_buttons.append(self.magazines_borrow_btn)
         widget_row_pos += 1
 
         self.tab_index = self.tabs.addTab(magazines_widget, _("Magazines"))
+
+    def magazines_borrow_btn_menu_bnd_action_triggered(self):
+        selection_model = self.magazines_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        for index in indices:
+            sub = index.data(Qt.UserRole)
+            self.borrow_magazine(sub, do_download=True)
 
     def hide_mag_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_mag_already_in_lib_checkbox.isChecked()
@@ -231,27 +260,11 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 indices, self.magazines_model
             )
         )
-        if hasattr(self, "download_loan"):
-            subs = [index.data(Qt.UserRole) for index in indices]
-            if not [s for s in subs if s.get("__is_borrowed", False)]:
-                # all selected issues have not been borrowed
-                borrow_and_download_sub_action = menu.addAction(
-                    _("Borrow and Download")
-                )
-                borrow_and_download_sub_action.setIcon(self.icons[PluginIcons.Add])
-                borrow_and_download_sub_action.triggered.connect(
-                    lambda: self.borrow_and_download_sub_action_triggered(indices)
-                )
 
         unsub_action = menu.addAction(_("Cancel"))
         unsub_action.setIcon(self.icons[PluginIcons.CancelMagazine])
         unsub_action.triggered.connect(lambda: self.unsub_action_triggered(indices))
         menu.exec(QCursor.pos())
-
-    def borrow_and_download_sub_action_triggered(self, indices):
-        for index in reversed(indices):
-            sub = index.data(Qt.UserRole)
-            self.borrow_magazine(sub, do_download=True)
 
     def magazines_refresh_btn_clicked(self):
         self.sync()
@@ -265,7 +278,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
     def unsub_action_triggered(self, indices):
         title_ids = []
-        for index in reversed(indices):
+        for index in indices:
             sub = index.data(Qt.UserRole)
             title_ids.append(sub["parentMagazineTitleId"])
             self.magazines_model.removeRow(

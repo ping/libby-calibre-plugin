@@ -26,9 +26,10 @@ from qt.core import (
     QMenu,
     QCursor,
     QWidget,
+    QToolButton,
 )
 
-from .base import BaseDialogMixin
+from .base import BaseDialogMixin, BorrowAndDownloadButton
 from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
@@ -44,9 +45,13 @@ gui_libby_borrow_hold = LibbyBorrowHold()
 class HoldsDialogMixin(BaseDialogMixin):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
-        holds_widget = QWidget()
-        holds_widget.layout = QGridLayout()
-        holds_widget.setLayout(holds_widget.layout)
+        widget = QWidget()
+        widget.layout = QGridLayout()
+        for col_num in range(1, self.view_hspan - 2):
+            widget.layout.setColumnStretch(col_num, 1)
+        widget.layout.setColumnMinimumWidth(0, self.min_button_width)
+        widget.layout.setColumnMinimumWidth(self.view_hspan - 1, self.min_button_width)
+        widget.setLayout(widget.layout)
         widget_row_pos = 0
 
         # Refresh button
@@ -55,7 +60,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_refresh_btn.setAutoDefault(False)
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
-        holds_widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
+        widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
         self.refresh_buttons.append(self.holds_refresh_btn)
         widget_row_pos += 1
 
@@ -71,7 +76,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_view = QTableView(self)
         self.holds_view.setSortingEnabled(True)
         self.holds_view.setAlternatingRowColors(True)
-        self.holds_view.setMinimumWidth(720)
+        self.holds_view.setMinimumWidth(self.min_view_width)
         self.holds_view.setModel(self.holds_search_proxy_model)
         horizontal_header = self.holds_view.horizontalHeader()
         for col_index, mode in [
@@ -95,7 +100,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         holds_view_selection_model.selectionChanged.connect(
             self.holds_view_selection_model_selectionchanged
         )
-        holds_widget.layout.addWidget(
+        widget.layout.addWidget(
             self.holds_view, widget_row_pos, 0, self.view_vspan, self.view_hspan
         )
         widget_row_pos += self.view_vspan
@@ -113,23 +118,44 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.hide_unavailable_holds_checkbox.clicked.connect(
             self.hide_unavailable_holds_checkbox_clicked
         )
-        holds_widget.layout.addWidget(
-            self.hide_unavailable_holds_checkbox, widget_row_pos, 0
+        widget.layout.addWidget(
+            self.hide_unavailable_holds_checkbox, widget_row_pos, 0, 1, 2
         )
         # Borrow button
-        self.borrow_btn = QPushButton(_("Borrow"), self)
-        self.borrow_btn.setIcon(self.icons[PluginIcons.Add])
-        self.borrow_btn.setAutoDefault(False)
-        self.borrow_btn.setToolTip(_("Borrow selected hold"))
-        self.borrow_btn.setStyleSheet("padding: 4px 16px")
-        self.borrow_btn.clicked.connect(self.borrow_btn_clicked)
-        holds_widget.layout.addWidget(
-            self.borrow_btn, widget_row_pos, self.view_hspan - 1
+        self.borrow_btn = BorrowAndDownloadButton(
+            _("Borrow"),
+            self.icons[PluginIcons.Add],
+            self.borrow_btn_clicked,
+            self,
         )
+        if hasattr(self, "download_loan"):
+            self.borrow_btn.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+            borrow_btn_menu = QMenu(self.borrow_btn)
+            borrow_btn_menu_bnd_action = borrow_btn_menu.addAction(
+                _("Borrow and Download")
+            )
+            borrow_btn_menu_bnd_action.triggered.connect(
+                self.borrow_btn_menu_bnd_action_triggered
+            )
+            self.borrow_btn.setMenu(borrow_btn_menu)
+            self.borrow_btn.bnd_menu = borrow_btn_menu
+        widget.layout.addWidget(self.borrow_btn, widget_row_pos, self.view_hspan - 1)
         self.refresh_buttons.append(self.borrow_btn)
         widget_row_pos += 1
 
-        self.tab_index = self.tabs.addTab(holds_widget, _("Holds"))
+        self.tab_index = self.tabs.addTab(widget, _("Holds"))
+
+    def borrow_btn_menu_bnd_action_triggered(self):
+        selection_model = self.holds_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        for index in reversed(indices):
+            hold = index.data(Qt.UserRole)
+            self.borrow_hold(hold, do_download=True)
+            self.holds_model.removeRow(
+                self.holds_search_proxy_model.mapToSource(index).row()
+            )
 
     def hide_unavailable_holds_checkbox_state_changed(self, __):
         checked = self.hide_unavailable_holds_checkbox.isChecked()
@@ -168,30 +194,11 @@ class HoldsDialogMixin(BaseDialogMixin):
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
-        if hasattr(self, "download_loan"):
-            holds = [index.data(Qt.UserRole) for index in indices]
-            if not [h for h in holds if not h.get("isAvailable", False)]:
-                # all selected holds are available
-                borrow_and_download_hold_action = menu.addAction(
-                    _("Borrow and Download")
-                )
-                borrow_and_download_hold_action.setIcon(self.icons[PluginIcons.Add])
-                borrow_and_download_hold_action.triggered.connect(
-                    lambda: self.borrow_and_download_hold_action_triggered(indices)
-                )
 
         cancel_action = menu.addAction(_("Cancel hold"))
         cancel_action.setIcon(self.icons[PluginIcons.Delete])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
-
-    def borrow_and_download_hold_action_triggered(self, indices):
-        for index in reversed(indices):
-            hold = index.data(Qt.UserRole)
-            self.borrow_hold(hold, do_download=True)
-            self.holds_model.removeRow(
-                self.holds_search_proxy_model.mapToSource(index).row()
-            )
 
     def borrow_btn_clicked(self):
         selection_model = self.holds_view.selectionModel()

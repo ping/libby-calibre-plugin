@@ -10,7 +10,7 @@
 
 from typing import Dict
 
-from calibre.gui2 import Dispatcher, error_dialog
+from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
@@ -48,10 +48,13 @@ gui_libby_return = LibbyLoanReturn()
 class LoansDialogMixin(BaseDialogMixin):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
-        loans_widget = QWidget()
-        loans_widget.layout = QGridLayout()
-        loans_widget.setLayout(loans_widget.layout)
-
+        widget = QWidget()
+        widget.layout = QGridLayout()
+        for col_num in range(1, self.view_hspan - 2):
+            widget.layout.setColumnStretch(col_num, 1)
+        widget.layout.setColumnMinimumWidth(0, self.min_button_width)
+        widget.layout.setColumnMinimumWidth(self.view_hspan - 1, self.min_button_width)
+        widget.setLayout(widget.layout)
         widget_row_pos = 0
 
         # Refresh button
@@ -60,7 +63,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_refresh_btn.setAutoDefault(False)
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
-        loans_widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
+        widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
         self.refresh_buttons.append(self.loans_refresh_btn)
         widget_row_pos += 1
 
@@ -76,7 +79,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_view = QTableView(self)
         self.loans_view.setSortingEnabled(True)
         self.loans_view.setAlternatingRowColors(True)
-        self.loans_view.setMinimumWidth(720)
+        self.loans_view.setMinimumWidth(self.min_view_width)
         self.loans_view.setModel(self.loans_search_proxy_model)
         horizontal_header = self.loans_view.horizontalHeader()
         for col_index, mode in [
@@ -94,7 +97,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_view.customContextMenuRequested.connect(
             self.loans_view_context_menu_requested
         )
-        loans_widget.layout.addWidget(
+        widget.layout.addWidget(
             self.loans_view, widget_row_pos, 0, self.view_vspan, self.view_hspan
         )
         widget_row_pos += self.view_vspan
@@ -112,12 +115,8 @@ class LoansDialogMixin(BaseDialogMixin):
         self.hide_book_already_in_lib_checkbox.stateChanged.connect(
             self.hide_book_already_in_lib_checkbox_state_changed
         )
-        loans_widget.layout.addWidget(
-            self.hide_book_already_in_lib_checkbox,
-            widget_row_pos,
-            0,
-            1,
-            self.view_hspan - 1,
+        widget.layout.addWidget(
+            self.hide_book_already_in_lib_checkbox, widget_row_pos, 0, 1, 2
         )
         # Download button
         self.download_btn = QPushButton(_("Download"), self)
@@ -126,7 +125,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
         self.download_btn.clicked.connect(self.download_btn_clicked)
-        loans_widget.layout.addWidget(
+        widget.layout.addWidget(
             self.download_btn,
             widget_row_pos,
             self.view_hspan - 1,
@@ -134,9 +133,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.download_btn)
         widget_row_pos += 1
 
-        loans_widget.layout.setColumnMinimumWidth(0, 120)
-
-        self.tab_index = self.tabs.addTab(loans_widget, _("Loans"))
+        self.tab_index = self.tabs.addTab(widget, _("Loans"))
 
     def hide_book_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_book_already_in_lib_checkbox.isChecked()
@@ -191,10 +188,10 @@ class LoansDialogMixin(BaseDialogMixin):
                     self.loans_model.removeRow(
                         self.loans_search_proxy_model.mapToSource(row).row()
                     )
-        else:
-            return error_dialog(
-                self, _("Download"), _("Please select at least 1 loan."), show=True
-            )
+        # else:
+        #     return error_dialog(
+        #         self, _("Download"), _("Please select at least 1 loan."), show=True
+        #     )
 
     def download_loan(self, loan: Dict):
         format_id = LibbyClient.get_loan_format(

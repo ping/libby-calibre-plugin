@@ -251,7 +251,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
     def borrow_and_download_sub_action_triggered(self, indices):
         for index in reversed(indices):
             sub = index.data(Qt.UserRole)
-            self.borrow_magazine(sub)
+            self.borrow_magazine(sub, do_download=True)
 
     def magazines_refresh_btn_clicked(self):
         self.sync()
@@ -279,7 +279,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             ]
             PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = subscriptions
 
-    def borrow_magazine(self, magazine, do_download=True):
+    def borrow_magazine(self, magazine, do_download=False):
         card = self.magazines_model.get_card(magazine["cardId"])
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(magazine), errors="replace")

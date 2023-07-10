@@ -54,6 +54,8 @@ class BaseDialogMixin(QDialog):
             )
         )
         self.setWindowIcon(icon)
+        self.view_vspan = 8
+        self.view_hspan = 4
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:
@@ -64,15 +66,20 @@ class BaseDialogMixin(QDialog):
             max_retries=1, timeout=30, logger=logger
         )
 
-        self.layout = QGridLayout()
-        self.setLayout(self.layout)
+        layout = QGridLayout()
+        self.setLayout(layout)
         self.tabs = QTabWidget(self)
-        self.layout.addWidget(self.tabs, 0, 0)
+        layout.addWidget(self.tabs, 0, 0)
 
-        self.view_vspan = 8
-        self.view_hspan = 4
+        # Status bar
+        self.status_bar = QStatusBar(self)
+        self.status_bar.setSizeGripEnabled(False)
+        self.status_bar.setStyleSheet(
+            "background-color: rgba(127, 127, 127, 0.1); border-radius: 4px;"
+        )
+        layout.addWidget(self.status_bar, 1, 0)
+
         self.refresh_buttons: List[QWidget] = []
-        self.status_bars: List[QStatusBar] = []
         self.models: List[LibbyModel] = []
         self.loading_overlay = CustomLoadingOverlay(self)
 
@@ -132,8 +139,7 @@ class BaseDialogMixin(QDialog):
         if not self._sync_thread.isRunning():
             for btn in self.refresh_buttons:
                 btn.setEnabled(False)
-            for bar in self.status_bars:
-                bar.showMessage(_("Synchronizing..."))
+            self.status_bar.showMessage(_("Synchronizing..."))
             for model in self.models:
                 model.sync({})
             self.loading_overlay(_("Synchronizing..."))
@@ -151,18 +157,32 @@ class BaseDialogMixin(QDialog):
             self.loading_overlay.hide()
             for btn in self.refresh_buttons:
                 btn.setEnabled(True)
-            for bar in self.status_bars:
-                bar.clearMessage()
+
+            holds = value.get("holds", [])
+            holds_count = len(holds)
+            holds_unique_count = len(list(set([h["id"] for h in holds])))
+            self.status_bar.showMessage(
+                _(
+                    "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards."
+                ).format(
+                    loans=len(value.get("loans", [])),
+                    holds=holds_count,
+                    unique_holds=holds_unique_count,
+                    cards=len(value.get("cards", [])),
+                ),
+                3000,
+            )
             for model in self.models:
                 model.sync(value)
             thread.quit()
 
         def errored_out(err: Exception):
             self.loading_overlay.hide()
+            self.status_bar.showMessage(
+                _("An error occured during sync: {err}").format(err=str(err))
+            )
             for btn in self.refresh_buttons:
                 btn.setEnabled(True)
-            for bar in self.status_bars:
-                bar.clearMessage()
             thread.quit()
             raise err
 

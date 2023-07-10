@@ -60,11 +60,6 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
         holds_widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
         self.refresh_buttons.append(self.holds_refresh_btn)
-        # Status bar
-        self.holds_status_bar = QStatusBar(self)
-        self.holds_status_bar.setSizeGripEnabled(False)
-        holds_widget.layout.addWidget(self.holds_status_bar, widget_row_pos, 1, 1, 3)
-        self.status_bars.append(self.holds_status_bar)
         widget_row_pos += 1
 
         self.holds_model = LibbyHoldsModel(None, [], self.db)

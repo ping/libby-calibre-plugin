@@ -67,14 +67,6 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
         loans_widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
         self.refresh_buttons.append(self.loans_refresh_btn)
-
-        # Status bar
-        self.loans_status_bar = QStatusBar(self)
-        self.loans_status_bar.setSizeGripEnabled(False)
-        loans_widget.layout.addWidget(
-            self.loans_status_bar, widget_row_pos, 1, 1, self.view_hspan - 1
-        )
-        self.status_bars.append(self.loans_status_bar)
         widget_row_pos += 1
 
         self.loans_model = LibbyLoansModel(None, [], self.db)

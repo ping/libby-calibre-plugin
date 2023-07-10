@@ -10,8 +10,6 @@
 from typing import Dict, List
 
 from calibre.gui2.viewer.overlay import LoadingOverlay
-
-# noinspection PyUnresolvedReferences
 from qt.core import (
     Qt,
     QDialog,
@@ -27,9 +25,9 @@ from qt.core import (
 from .. import logger, __version__
 from ..config import PREFS, PreferenceKeys
 from ..libby import LibbyClient
-from ..model import LibbyModel
+from ..models import LibbyModel
 from ..overdrive import OverDriveClient
-from ..worker import SyncDataWorker
+from ..workers import SyncDataWorker
 
 load_translations()
 

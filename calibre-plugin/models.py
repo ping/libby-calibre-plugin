@@ -1,11 +1,19 @@
+#
+# Copyright (C) 2023 github.com/ping
+#
+# This file is part of the OverDrive Libby Plugin by ping
+# OverDrive Libby Plugin for calibre / libby-calibre-plugin
+#
+# See https://github.com/ping/libby-calibre-plugin for more
+# information
+#
+
 from datetime import datetime
 from typing import Dict, Optional, List
 
 from calibre.ebooks.metadata.book.base import Metadata
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date
-
-# noinspection PyUnresolvedReferences
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
 
 from .config import PREFS, PreferenceKeys

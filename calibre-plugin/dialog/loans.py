@@ -10,14 +10,11 @@
 
 from typing import Dict
 
-from calibre import browser
 from calibre.gui2 import Dispatcher, error_dialog
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
-
-# noinspection PyUnresolvedReferences
 from qt.core import (
     Qt,
     QGridLayout,
@@ -27,7 +24,6 @@ from qt.core import (
     QTableView,
     QHeaderView,
     QSortFilterProxyModel,
-    QStatusBar,
     QMenu,
     QCursor,
     QWidget,
@@ -38,10 +34,9 @@ from .. import PluginIcons
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
-from ..libby.client import LibbyFormats
 from ..loan_return import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
-from ..model import get_media_title, LibbyLoansModel, LibbyModel
+from ..models import get_media_title, LibbyLoansModel, LibbyModel
 
 load_translations()
 

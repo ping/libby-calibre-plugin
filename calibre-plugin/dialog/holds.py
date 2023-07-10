@@ -14,8 +14,6 @@ from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
-
-# noinspection PyUnresolvedReferences
 from qt.core import (
     Qt,
     QGridLayout,
@@ -25,7 +23,6 @@ from qt.core import (
     QTableView,
     QHeaderView,
     QSortFilterProxyModel,
-    QStatusBar,
     QMenu,
     QCursor,
     QWidget,
@@ -36,7 +33,7 @@ from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_cancel import LibbyHoldCancel
-from ..model import get_media_title, LibbyHoldsModel, LibbyModel
+from ..models import get_media_title, LibbyHoldsModel, LibbyModel
 
 load_translations()
 

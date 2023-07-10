@@ -11,11 +11,8 @@ from pathlib import Path
 
 from calibre.gui2 import is_dark_theme
 from calibre.gui2.actions import InterfaceAction
-
-# noinspection PyUnresolvedReferences
 from qt.core import (
     QToolButton,
-    QThread,
     QSize,
 )
 

@@ -12,8 +12,6 @@ import re
 from calibre.gui2 import Dispatcher, error_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
-
-# noinspection PyUnresolvedReferences
 from qt.core import (
     Qt,
     QWidget,
@@ -38,7 +36,7 @@ from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
-from ..model import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
+from ..models import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
 
 LIBBY_SHARE_URL_RE = re.compile(
     r"https://share\.libbyapp\.com/title/(?P<title_id>\d+)\b", re.IGNORECASE

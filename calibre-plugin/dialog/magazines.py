@@ -9,7 +9,7 @@
 #
 import re
 
-from calibre.gui2 import Dispatcher, error_dialog
+from calibre.gui2 import Dispatcher, error_dialog, info_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
 from qt.core import (
@@ -37,6 +37,7 @@ from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
+from ..magazine_monitor import OverdriveGetLibraryMedia
 from ..models import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
 
 LIBBY_SHARE_URL_RE = re.compile(
@@ -52,6 +53,7 @@ OVERDRIVE_URL_RE = re.compile(
 load_translations()
 
 gui_libby_borrow_hold = LibbyBorrowHold()
+gui_overdrive_get_lib_media = OverdriveGetLibraryMedia()
 
 
 class MagazinesDialogMixin(BaseDialogMixin):
@@ -337,11 +339,42 @@ class MagazinesDialogMixin(BaseDialogMixin):
             or OVERDRIVE_URL_RE.match(share_url)
         )
         if not mobj:
-            return error_dialog(self, _("Add Magazine"), _("Invalid URL"), show=True)
+            return error_dialog(
+                self,
+                _("Add Magazine"),
+                _("Invalid URL {url}").format(url=share_url),
+                show=True,
+            )
 
+        self.add_magazine_btn.setEnabled(False)
         card = self.cards_model.filtered_rows[self.cards_cbbox.currentIndex()]
         title_id = mobj.group("title_id")
-        media = self.overdrive_client.library_media(card["advantageKey"], title_id)
+
+        description = _(
+            "Getting magazine (id: {id}) information from {library}"
+        ).format(id=title_id, library=card["advantageKey"])
+
+        callback = Dispatcher(self.found_media)
+        job = ThreadedJob(
+            "overdrive_libby_get_lib_media",
+            description,
+            gui_overdrive_get_lib_media,
+            (self.gui, self.overdrive_client, card, title_id),
+            {},
+            callback,
+            max_concurrent_count=1,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+
+    def found_media(self, job):
+        self.add_magazine_btn.setEnabled(True)
+        if job.failed:
+            self.gui.job_exception(
+                job, dialog_title=_("Failed to get magazine information")
+            )
+            return
+        media, card = job.result
         if not (
             media.get("type", {}).get("id", "") == LibbyMediaTypes.Magazine
             and LibbyClient.has_format(media, LibbyFormats.MagazineOverDrive)
@@ -349,7 +382,11 @@ class MagazinesDialogMixin(BaseDialogMixin):
             return error_dialog(
                 self,
                 _("Add Magazine"),
-                _("Title is not a downloadable magazine"),
+                _(
+                    "{media} is not a downloadable magazine".format(
+                        media=media["title"]
+                    )
+                ),
                 show=True,
             )
         if not (media.get("isOwned") and media.get("parentMagazineTitleId")):
@@ -364,7 +401,12 @@ class MagazinesDialogMixin(BaseDialogMixin):
             for sub in subscriptions
             if sub["parent_magazine_id"] == parent_magazine_id
         ]:
-            return error_dialog(self, _("Add Magazine"), _("Already added"), show=True)
+            return error_dialog(
+                self,
+                _("Add Magazine"),
+                _("Already added {magazine}").format(magazine=media["title"]),
+                show=True,
+            )
         subscriptions.append(
             {
                 "card_id": card_id,
@@ -373,4 +415,10 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
         PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = subscriptions
         self.magazine_link_txt.setText("")
+        info_dialog(
+            self,
+            _("Add Magazine"),
+            _("Added {magazine} for monitoring.".format(magazine=media["title"])),
+            show=True,
+        )
         self.sync()

@@ -38,6 +38,7 @@ class OverdriveLibbyAction(InterfaceAction):
     )
     popup_type = QToolButton.MenuButtonPopup
     action_type = "current"
+    action_add_menu = True
     dont_add_to = frozenset(["context-menu-device"])
 
     def genesis(self):
@@ -57,6 +58,16 @@ class OverdriveLibbyAction(InterfaceAction):
         # action icon
         self.qaction.setIcon(icons_resources.pop(PLUGIN_ICON))
         self.qaction.triggered.connect(self.show_dialog)
+        self.libby_menu = self.qaction.menu()
+        self.create_menu_action(
+            self.libby_menu,
+            "overdrive-libby-config",
+            _("Customize plugin"),
+            "config.png",
+            triggered=lambda: self.interface_action_base_plugin.do_user_config(
+                self.gui
+            ),
+        )
 
     def show_dialog(self):
         base_plugin_object = self.interface_action_base_plugin

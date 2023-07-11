@@ -3,6 +3,7 @@
 Unreleased
 - New: Option to "Borrow and Download" from the Borrow button for loans/magazines
 - Disable Borrow button if a magazine issue is already borrowed
+- Generate the `odid` identifier for a new download if user has the OverDrive Link plugin installed
 - Fix regression where generated magazines temp files were not being properly deleted
 - Fix layout wonkiness
 

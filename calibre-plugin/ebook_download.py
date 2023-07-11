@@ -25,6 +25,8 @@ class CustomEbookDownload(LibbyDownload):
         gui,
         libby_client: LibbyClient,
         loan: Dict,
+        card: Dict,
+        library: Dict,
         format_id: str,
         book_id=None,
         metadata=None,
@@ -55,6 +57,8 @@ class CustomEbookDownload(LibbyDownload):
             self.add(
                 gui,
                 loan,
+                card,
+                library,
                 format_id,
                 downloaded_filepath,
                 book_id,

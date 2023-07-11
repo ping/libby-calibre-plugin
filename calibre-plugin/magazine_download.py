@@ -358,6 +358,8 @@ class CustomMagazineDownload(LibbyDownload):
         gui,
         libby_client: LibbyClient,
         loan: Dict,
+        card: Dict,
+        library: Dict,
         format_id: str,
         cookie_file=None,
         url="",
@@ -379,7 +381,16 @@ class CustomMagazineDownload(LibbyDownload):
                 libby_client, loan, format_id, filename, log, abort, notifications
             )
             self.add(
-                gui, loan, format_id, downloaded_filepath, None, tags, None, log=log
+                gui,
+                loan,
+                card,
+                library,
+                format_id,
+                downloaded_filepath,
+                None,
+                tags,
+                None,
+                log=log,
             )
 
         finally:

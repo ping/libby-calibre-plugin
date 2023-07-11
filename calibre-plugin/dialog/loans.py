@@ -232,6 +232,8 @@ class LoansDialogMixin(BaseDialogMixin):
     ):
         if not tags:
             tags = []
+        card = self.loans_model.get_card(loan["cardId"])
+        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
 
         # We will handle the downloading of the files ourselves
 
@@ -247,10 +249,6 @@ class LoansDialogMixin(BaseDialogMixin):
             "OverDrive Link Integration enabled: %s", enable_overdrivelink_integration
         )
         if enable_overdrivelink_integration:
-            card = self.loans_model.get_card(loan["cardId"])
-            library = self.loans_model.get_library(
-                self.loans_model.get_website_id(card)
-            )
             search_query = (
                 "format:False "
                 f'and identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
@@ -280,6 +278,8 @@ class LoansDialogMixin(BaseDialogMixin):
                 self.gui,
                 self.client,
                 loan,
+                card,
+                library,
                 format_id,
                 book_id,
                 mi,
@@ -313,6 +313,8 @@ class LoansDialogMixin(BaseDialogMixin):
     ):
         if not tags:
             tags = []
+        card = self.loans_model.get_card(loan["cardId"])
+        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
 
         # We will handle the downloading of the files ourselves instead of depending
         # on the calibre browser
@@ -332,6 +334,8 @@ class LoansDialogMixin(BaseDialogMixin):
                 self.gui,
                 self.client,
                 loan,
+                card,
+                library,
                 format_id,
                 cookie_file,
                 url,

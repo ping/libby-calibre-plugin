@@ -12,6 +12,7 @@ import time
 from pathlib import Path
 from typing import List, Dict
 
+from .config import PREFS, PreferenceKeys
 from .magazine_download_utils import extract_isbn, extract_asin
 
 
@@ -20,6 +21,8 @@ class LibbyDownload:
         self,
         gui,
         loan: Dict,
+        card: Dict,
+        library: Dict,
         format_id: str,
         downloaded_file: Path,
         book_id: int = None,
@@ -62,13 +65,23 @@ class LibbyDownload:
                 mi = get_metadata(f, new_ext, force_read_metadata=True)
             mi.tags.extend(tags)
 
+            # set identifiers
             isbn = extract_isbn(loan.get("formats", []), [format_id])
             asin = extract_asin(loan.get("formats", []))
-            identifiers = mi.identifiers
-            if isbn and "isbn" not in identifiers:
-                mi.identifiers["isbn"] = isbn
-            if asin and not ("amazon" in identifiers or "asin" in identifiers):
-                mi.identifiers["amazon"] = asin
+            identifiers = mi.get_identifiers()
+            if isbn and not identifiers.get("isbn"):
+                mi.set_identifier("isbn", isbn)
+            if asin and not (identifiers.get("amazon") or identifiers.get("asin")):
+                mi.set_identifier("amazon", asin)
+            if (
+                PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
+                and "Overdrive Link" in gui.iactions
+                and not identifiers.get("odid")
+            ):
+                # user has OverdriveLink installed with integration enabled and no odid
+                mi.set_identifier(
+                    "odid", f'{loan["id"]}@{library["preferredKey"]}.overdrive.com'
+                )
 
             book_id = gui.library_view.model().db.create_book_entry(mi)
             gui.library_view.model().db.add_format_with_hooks(

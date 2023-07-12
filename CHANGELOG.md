@@ -4,6 +4,7 @@ Unreleased
 - New: Option to "Borrow and Download" from the Borrow button for loans/magazines
 - Disable Borrow button if a magazine issue is already borrowed
 - Generate the `odid` identifier for a new download if user has the  [OverDrive Link plugin](https://www.mobileread.com/forums/showthread.php?t=187919) installed
+- Fix title matching for book that has a subtitle
 - Fix regression where generated magazines temp files were not being properly deleted
 - Fix layout wonkiness
 

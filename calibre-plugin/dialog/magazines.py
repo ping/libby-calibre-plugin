@@ -8,6 +8,7 @@
 # information
 #
 import re
+from typing import Dict
 
 from calibre.gui2 import Dispatcher, error_dialog, info_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
@@ -37,8 +38,9 @@ from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
-from ..magazine_monitor import OverdriveGetLibraryMedia
 from ..models import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
+from ..overdrive import OverDriveClient
+from ..workers import OverDriveLibraryMediaWorker
 
 LIBBY_SHARE_URL_RE = re.compile(
     r"https://share\.libbyapp\.com/title/(?P<title_id>\d+)\b", re.IGNORECASE
@@ -53,13 +55,12 @@ OVERDRIVE_URL_RE = re.compile(
 load_translations()
 
 gui_libby_borrow_hold = LibbyBorrowHold()
-gui_overdrive_get_lib_media = OverdriveGetLibraryMedia()
 
 
 class MagazinesDialogMixin(BaseDialogMixin):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
-        self._sync_magazines_thread = QThread()
+        self._fetch_library_media_thread = QThread()
 
         magazines_widget = QWidget()
         magazines_widget.layout = QGridLayout()
@@ -346,35 +347,16 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 show=True,
             )
 
-        self.add_magazine_btn.setEnabled(False)
         card = self.cards_model.filtered_rows[self.cards_cbbox.currentIndex()]
         title_id = mobj.group("title_id")
-
-        description = _(
-            "Getting magazine (id: {id}) information from {library}"
-        ).format(id=title_id, library=card["advantageKey"])
-
-        callback = Dispatcher(self.found_media)
-        job = ThreadedJob(
-            "overdrive_libby_get_lib_media",
-            description,
-            gui_overdrive_get_lib_media,
-            (self.gui, self.overdrive_client, card, title_id),
-            {},
-            callback,
-            max_concurrent_count=1,
-            killable=False,
-        )
-        self.gui.job_manager.run_threaded_job(job)
-
-    def found_media(self, job):
-        self.add_magazine_btn.setEnabled(True)
-        if job.failed:
-            self.gui.job_exception(
-                job, dialog_title=_("Failed to get magazine information")
+        if not self._fetch_library_media_thread.isRunning():
+            self._fetch_library_media_thread = self._get_fetch_library_media_thread(
+                self.overdrive_client, card, title_id
             )
-            return
-        media, card = job.result
+            self.add_magazine_btn.setEnabled(False)
+            self._fetch_library_media_thread.start()
+
+    def found_media(self, media, card):
         if not (
             media.get("type", {}).get("id", "") == LibbyMediaTypes.Magazine
             and LibbyClient.has_format(media, LibbyFormats.MagazineOverDrive)
@@ -422,3 +404,27 @@ class MagazinesDialogMixin(BaseDialogMixin):
             show=True,
         )
         self.sync()
+
+    def _get_fetch_library_media_thread(
+        self, overdrive_client: OverDriveClient, card: Dict, title_id: str
+    ):
+        thread = QThread()
+        worker = OverDriveLibraryMediaWorker()
+        worker.moveToThread(thread)
+        thread.worker = worker
+        thread.started.connect(lambda: worker.run(overdrive_client, card, title_id))
+
+        def loaded(media):
+            self.found_media(media, card)
+            self.add_magazine_btn.setEnabled(True)
+            thread.quit()
+
+        def errored_out(err: Exception):
+            self.add_magazine_btn.setEnabled(True)
+            thread.quit()
+            raise err
+
+        worker.finished.connect(lambda media: loaded(media))
+        worker.errored.connect(lambda err: errored_out(err))
+
+        return thread

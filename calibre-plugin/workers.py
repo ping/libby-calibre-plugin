@@ -10,6 +10,7 @@
 
 import math
 from timeit import default_timer as timer
+from typing import Dict
 
 from qt.core import QObject, pyqtSignal
 
@@ -17,6 +18,27 @@ from . import logger
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .overdrive import OverDriveClient
+
+
+class OverDriveLibraryMediaWorker(QObject):
+    finished = pyqtSignal(dict)
+    errored = pyqtSignal(Exception)
+
+    def __int__(self):
+        super().__init__()
+
+    def run(self, overdrive_client: OverDriveClient, card: Dict, title_id: str):
+        total_start = timer()
+        try:
+            media = overdrive_client.library_media(card["advantageKey"], title_id)
+            self.finished.emit(media)
+        except Exception as err:
+            self.errored.emit(err)
+        finally:
+            logger.info(
+                "Total OverDrive Library Media Fetch took %f seconds"
+                % (timer() - total_start)
+            )
 
 
 class SyncDataWorker(QObject):

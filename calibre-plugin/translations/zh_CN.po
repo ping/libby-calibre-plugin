@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.4\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-12 15:33+0800\n"
+"POT-Creation-Date: 2023-07-12 22:51+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -127,64 +127,64 @@ msgstr ""
 msgid "Getting book details"
 msgstr ""
 
-#: calibre-plugin/models.py:53
+#: calibre-plugin/models.py:63
 msgid "ebook"
 msgstr "电子书"
 
-#: calibre-plugin/models.py:53
+#: calibre-plugin/models.py:63
 msgid "magazine"
 msgstr "杂志"
 
-#: calibre-plugin/models.py:119 calibre-plugin/models.py:222
-#: calibre-plugin/models.py:365
+#: calibre-plugin/models.py:129 calibre-plugin/models.py:239
+#: calibre-plugin/models.py:382
 msgid "Title"
 msgstr "书名"
 
-#: calibre-plugin/models.py:120 calibre-plugin/models.py:223
+#: calibre-plugin/models.py:130 calibre-plugin/models.py:240
 msgid "Author"
 msgstr "作者"
 
-#: calibre-plugin/models.py:121
+#: calibre-plugin/models.py:131
 msgid "Checkout Date"
 msgstr "借阅日期"
 
-#: calibre-plugin/models.py:122
+#: calibre-plugin/models.py:132
 msgid "Type"
 msgstr "书籍类型"
 
-#: calibre-plugin/models.py:123 calibre-plugin/models.py:226
+#: calibre-plugin/models.py:133 calibre-plugin/models.py:243
 msgid "Format"
 msgstr "格式"
 
-#: calibre-plugin/models.py:224
+#: calibre-plugin/models.py:241
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:225
+#: calibre-plugin/models.py:242
 msgid "Library"
 msgstr "图书馆"
 
-#: calibre-plugin/models.py:227
+#: calibre-plugin/models.py:244
 msgid "Available"
 msgstr "可借阅"
 
-#: calibre-plugin/models.py:321 calibre-plugin/models.py:440
+#: calibre-plugin/models.py:338 calibre-plugin/models.py:457
 msgid "Yes"
 msgstr "是"
 
-#: calibre-plugin/models.py:321 calibre-plugin/models.py:440
+#: calibre-plugin/models.py:338 calibre-plugin/models.py:457
 msgid "No"
 msgstr "否"
 
-#: calibre-plugin/models.py:365
+#: calibre-plugin/models.py:382
 msgid "Release Date"
 msgstr ""
 
-#: calibre-plugin/models.py:365
+#: calibre-plugin/models.py:382
 msgid "Library Card"
 msgstr ""
 
-#: calibre-plugin/models.py:365
+#: calibre-plugin/models.py:382
 msgid "Borrowed"
 msgstr ""
 
@@ -208,14 +208,22 @@ msgstr ""
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:232 calibre-plugin/dialog/base.py:245
-#: calibre-plugin/dialog/base.py:268 calibre-plugin/dialog/base.py:279
+#: calibre-plugin/dialog/base.py:232 calibre-plugin/dialog/base.py:250
+#: calibre-plugin/dialog/base.py:273 calibre-plugin/dialog/base.py:289
 msgid "Borrow"
 msgstr "借阅"
 
-#: calibre-plugin/dialog/base.py:234 calibre-plugin/dialog/base.py:243
-#: calibre-plugin/dialog/base.py:268 calibre-plugin/dialog/base.py:277
+#: calibre-plugin/dialog/base.py:234 calibre-plugin/dialog/base.py:248
+#: calibre-plugin/dialog/base.py:273 calibre-plugin/dialog/base.py:287
 msgid "Borrow and Download"
+msgstr ""
+
+#: calibre-plugin/dialog/base.py:240 calibre-plugin/dialog/base.py:276
+msgid "Borrow selected title"
+msgstr ""
+
+#: calibre-plugin/dialog/base.py:242 calibre-plugin/dialog/base.py:278
+msgid "Borrow and download selected title"
 msgstr ""
 
 #: calibre-plugin/dialog/holds.py:57 calibre-plugin/dialog/loans.py:61

@@ -236,6 +236,11 @@ class BaseDialogMixin(QDialog):
             lambda: borrow_function(do_download=not borrow_action_default_is_borrow),
             self,
         )
+        borrow_btn.setToolTip(
+            _("Borrow selected title")
+            if borrow_action_default_is_borrow
+            else _("Borrow and download selected title")
+        )
         if hasattr(self, "download_loan"):
             borrow_btn.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
             borrow_btn_menu = QMenu(borrow_btn)
@@ -266,6 +271,11 @@ class BaseDialogMixin(QDialog):
         )
         borrow_btn.setText(
             _("Borrow") if borrow_action_default_is_borrow else _("Borrow and Download")
+        )
+        borrow_btn.setToolTip(
+            _("Borrow selected title")
+            if borrow_action_default_is_borrow
+            else _("Borrow and download selected title")
         )
         borrow_btn.set_action(
             lambda: borrow_function(do_download=not borrow_action_default_is_borrow)

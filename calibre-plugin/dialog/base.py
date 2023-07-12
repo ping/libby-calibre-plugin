@@ -23,10 +23,12 @@ from qt.core import (
     QStatusBar,
     QApplication,
     QFont,
+    QToolButton,
+    QMenu,
 )
 
-from .. import logger, __version__
-from ..config import PREFS, PreferenceKeys
+from .. import logger, __version__, PluginIcons
+from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel
 from ..overdrive import OverDriveClient
@@ -41,10 +43,19 @@ class BorrowAndDownloadButton(CenteredToolButton):
         self.setText(text)
         if icon is not None:
             self.setIcon(icon)
-        if action is not None:
-            self.clicked.connect(action)
         self.setStyleSheet("padding: 2px 16px")
         self.setFont(QFont(QApplication.font()))  # make it bigger
+        self.action = None
+        self.set_action(action)
+
+    def set_action(self, action):
+        try:
+            self.clicked.disconnect()
+        except TypeError:
+            pass
+        self.action = action
+        if self.action:
+            self.clicked.connect(self.action)
 
 
 class BaseDialogMixin(QDialog):
@@ -205,6 +216,92 @@ class BaseDialogMixin(QDialog):
         worker.errored.connect(lambda err: errored_out(err))
 
         return thread
+
+    def init_borrow_btn(self, borrow_function):
+        """
+        Build a borrow button for Holds and Magazines tabs
+
+        :param borrow_function:
+        :return:
+        """
+        borrow_action_default_is_borrow = PREFS[
+            PreferenceKeys.LAST_BORROW_ACTION
+        ] == BorrowActions.BORROW or not hasattr(self, "download_loan")
+
+        borrow_btn = BorrowAndDownloadButton(
+            _("Borrow")
+            if borrow_action_default_is_borrow
+            else _("Borrow and Download"),
+            self.icons[PluginIcons.Add],
+            lambda: borrow_function(do_download=not borrow_action_default_is_borrow),
+            self,
+        )
+        if hasattr(self, "download_loan"):
+            borrow_btn.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+            borrow_btn_menu = QMenu(borrow_btn)
+            borrow_btn_menu_bnd_action = borrow_btn_menu.addAction(
+                _("Borrow and Download")
+                if borrow_action_default_is_borrow
+                else _("Borrow")
+            )
+            borrow_btn_menu_bnd_action.triggered.connect(
+                lambda: borrow_function(do_download=borrow_action_default_is_borrow)
+            )
+            borrow_btn_menu.borrow_action = borrow_btn_menu_bnd_action
+            borrow_btn.borrow_menu = borrow_btn_menu
+            borrow_btn.setMenu(borrow_btn_menu)
+        return borrow_btn
+
+    def rebind_borrow_btn(self, borrow_action: str, borrow_btn, borrow_function):
+        """
+        Shared funct for rebinding Holds and Mgazines tabs borrow button
+
+        :param borrow_action:
+        :param borrow_btn:
+        :param borrow_function:
+        :return:
+        """
+        borrow_action_default_is_borrow = (
+            borrow_action == BorrowActions.BORROW or not hasattr(self, "download_loan")
+        )
+        borrow_btn.setText(
+            _("Borrow") if borrow_action_default_is_borrow else _("Borrow and Download")
+        )
+        borrow_btn.set_action(
+            lambda: borrow_function(do_download=not borrow_action_default_is_borrow)
+        )
+        if hasattr(borrow_btn, "borrow_menu") and hasattr(
+            borrow_btn.borrow_menu, "borrow_action"
+        ):
+            borrow_btn.borrow_menu.borrow_action.setText(
+                _("Borrow and Download")
+                if borrow_action_default_is_borrow
+                else _("Borrow")
+            )
+            try:
+                borrow_btn.borrow_menu.borrow_action.triggered.disconnect()
+            except TypeError:
+                pass
+            borrow_btn.borrow_menu.borrow_action.triggered.connect(
+                lambda: borrow_function(do_download=borrow_action_default_is_borrow)
+            )
+
+    def rebind_borrow_buttons(self, do_download=False):
+        """
+        Calls the known rebind borrow button functions from tabs
+
+        :param do_download:
+        :return:
+        """
+        borrow_action = (
+            BorrowActions.BORROW_AND_DOWNLOAD if do_download else BorrowActions.BORROW
+        )
+        if PREFS[PreferenceKeys.LAST_BORROW_ACTION] != borrow_action:
+            PREFS[PreferenceKeys.LAST_BORROW_ACTION] = borrow_action
+            if hasattr(self, "rebind_magazines_download_button_and_menu"):
+                self.rebind_magazines_download_button_and_menu(borrow_action)
+            if hasattr(self, "rebind_holds_download_button_and_menu"):
+                self.rebind_holds_download_button_and_menu(borrow_action)
 
 
 class CustomLoadingOverlay(LoadingOverlay):

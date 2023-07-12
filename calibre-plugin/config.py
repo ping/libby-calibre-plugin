@@ -34,6 +34,13 @@ class PreferenceKeys:
     CONFIRM_CANCELLATIONS = "confirm_cancels"
     OVERDRIVELINK_INTEGRATION = "enable_overdrivelink_integration"
     MAGAZINE_SUBSCRIPTIONS = "magazine_subscriptions"
+    # used to toggle the default borrow btn action
+    LAST_BORROW_ACTION = "last_borrow_action"
+
+
+class BorrowActions:
+    BORROW = "borrow"
+    BORROW_AND_DOWNLOAD = "borrow_and_download"
 
 
 class PreferenceTexts:
@@ -70,6 +77,7 @@ PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
 PREFS.defaults[PreferenceKeys.OVERDRIVELINK_INTEGRATION] = True
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
+PREFS.defaults[PreferenceKeys.LAST_BORROW_ACTION] = BorrowActions.BORROW
 
 
 class ConfigWidget(QWidget):

@@ -24,17 +24,27 @@ from .magazine_download_utils import parse_datetime
 load_translations()
 
 
-def get_media_title(loan: Dict, for_sorting: bool = False) -> str:
+def get_media_title(
+    loan: Dict, for_sorting: bool = False, include_subtitle: bool = False
+) -> str:
     """
     Formats the title for a loan
 
     :param loan:
     :param for_sorting: If True, uses the sort attributes instead
+    :param include_subtitle: If True, include subtitle
     :return:
     """
-    title = (
+    title: str = (
         loan["sortTitle"] if for_sorting and loan.get("sortTitle") else loan["title"]
     )
+    if (
+        include_subtitle
+        and loan.get("subtitle")
+        and not title.endswith(loan["subtitle"])
+    ):
+        # sortTitle contains subtitle?
+        title = f'{title}: {loan["subtitle"]}'
     if loan["type"]["id"] == LibbyMediaTypes.Magazine and loan.get("edition", ""):
         if not for_sorting:
             title = f'{title} - {loan.get("edition", "")}'
@@ -161,11 +171,18 @@ class LibbyLoansModel(LibbyModel):
             if not self.filter_hide_books_already_in_library:
                 self.filtered_rows.append(loan)
                 continue
-            title = get_media_title(loan)
             authors = []
             if loan.get("firstCreatorName", ""):
                 authors = [loan.get("firstCreatorName", "")]
-            if not self.db.has_book(Metadata(title=title, authors=authors)):
+            if not (
+                self.db.has_book(Metadata(title=get_media_title(loan), authors=authors))
+                or self.db.has_book(
+                    Metadata(
+                        title=get_media_title(loan, include_subtitle=True),
+                        authors=authors,
+                    )
+                )
+            ):
                 self.filtered_rows.append(loan)
         self.endResetModel()
 

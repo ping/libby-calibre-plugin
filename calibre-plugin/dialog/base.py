@@ -162,6 +162,9 @@ class BaseDialogMixin(QDialog):
             )
 
     def sync(self):
+        if not self.client:
+            self.status_bar.showMessage("Plugin is not configured!")
+            return
         if not self._sync_thread.isRunning():
             for btn in self.refresh_buttons:
                 btn.setEnabled(False)

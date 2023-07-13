@@ -52,6 +52,7 @@ class SyncDataWorker(QObject):
         libby_token: str = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if not libby_token:
             self.finished.emit({})
+            return
 
         subscriptions = PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS]
         total_start = timer()

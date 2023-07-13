@@ -11,6 +11,7 @@
 import io
 import logging
 import sys
+from collections import namedtuple
 from enum import Enum
 
 from calibre.constants import is_debugging
@@ -20,7 +21,7 @@ load_translations()
 
 __version__ = (0, 1, 4)
 PLUGIN_NAME = "overdrive_libby"
-PLUGIN_ICON = "images/plugin.png"
+PLUGIN_ICON = "images/plugin.svg"
 
 
 class PluginIcons(str, Enum):
@@ -37,15 +38,51 @@ class PluginIcons(str, Enum):
         return str(self.value)
 
 
+IconDefinition = namedtuple(
+    "IconDefinition", ["file", "dark_theme_color", "light_theme_color"]
+)
+
 ICON_MAP = {
-    PluginIcons.Return: "arrow-go-back-fill.png",
-    PluginIcons.Download: "download-line.png",
-    PluginIcons.ExternalLink: "external-link-line.png",
-    PluginIcons.Refresh: "refresh-line.png",
-    PluginIcons.Add: "file-add-line.png",
-    PluginIcons.Delete: "delete-bin-line.png",
-    PluginIcons.AddMagazine: "heart-add-line.png",
-    PluginIcons.CancelMagazine: "dislike-line.png",
+    PluginIcons.Return: IconDefinition(
+        file="images/arrow-go-back-line.svg",
+        dark_theme_color="#DC3545",
+        light_theme_color="#DC3545",
+    ),
+    PluginIcons.Download: IconDefinition(
+        file="images/download-line.svg",
+        dark_theme_color="#6EA8FE",
+        light_theme_color="#0E6EFD",
+    ),
+    PluginIcons.ExternalLink: IconDefinition(
+        file="images/external-link-line.svg",
+        dark_theme_color="#07CAF0",
+        light_theme_color="#6F42C1",
+    ),
+    PluginIcons.Refresh: IconDefinition(
+        file="images/refresh-line.svg",
+        dark_theme_color="#FFC107",
+        light_theme_color="#FD7E14",
+    ),
+    PluginIcons.Add: IconDefinition(
+        file="images/file-add-line.svg",
+        dark_theme_color="#6EA8FE",
+        light_theme_color="#0E6EFD",
+    ),
+    PluginIcons.Delete: IconDefinition(
+        file="images/delete-bin-line.svg",
+        dark_theme_color="#DC3545",
+        light_theme_color="#DC3545",
+    ),
+    PluginIcons.AddMagazine: IconDefinition(
+        file="images/heart-add-line.svg",
+        dark_theme_color="#EA868E",
+        light_theme_color="#D63284",
+    ),
+    PluginIcons.CancelMagazine: IconDefinition(
+        file="images/dislike-line.svg",
+        dark_theme_color="#DC3545",
+        light_theme_color="#DC3545",
+    ),
 }
 
 

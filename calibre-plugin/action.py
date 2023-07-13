@@ -7,13 +7,20 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-from pathlib import Path
+from typing import Optional
 
 from calibre.gui2 import is_dark_theme
 from calibre.gui2.actions import InterfaceAction
 from qt.core import (
     QToolButton,
     QSize,
+    QIcon,
+    QColor,
+    Qt,
+    QPainter,
+    QXmlStreamReader,
+    QSvgRenderer,
+    QPixmap,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, ICON_MAP
@@ -41,22 +48,39 @@ class OverdriveLibbyAction(InterfaceAction):
     action_add_menu = True
     dont_add_to = frozenset(["context-menu-device"])
 
+    @staticmethod
+    def svg_to_qicon(data: bytes, color: Optional[QColor] = None, size=(64, 64)):
+        renderer = QSvgRenderer(QXmlStreamReader(data))
+        pixmap = QPixmap(*size)
+        pixmap.fill(Qt.GlobalColor.transparent)
+        painter = QPainter(pixmap)
+        renderer.render(painter)
+        painter.setCompositionMode(painter.CompositionMode.CompositionMode_SourceIn)
+        if color:
+            painter.fillRect(pixmap.rect(), color)
+        painter.end()
+        return QIcon(pixmap)
+
     def genesis(self):
         # This method is called once per plugin, do initial setup here
 
         # extract icons
-        theme_folder = Path("images").joinpath(
-            "dark-theme" if is_dark_theme() else "light-theme"
-        )
-        icons_resources = get_icons(
-            [str(theme_folder.joinpath(v)) for v in ICON_MAP.values()] + [PLUGIN_ICON]
+        image_resources = get_resources(
+            [v.file for v in ICON_MAP.values()] + [PLUGIN_ICON]
         )
         self.icons = {}
         for k, v in ICON_MAP.items():
-            self.icons[k] = icons_resources.pop(str(theme_folder.joinpath(v)))
+            self.icons[k] = self.svg_to_qicon(
+                image_resources.pop(v.file),
+                QColor.fromString(
+                    v.dark_theme_color if is_dark_theme() else v.light_theme_color
+                ),
+            )
 
         # action icon
-        self.qaction.setIcon(icons_resources.pop(PLUGIN_ICON))
+        self.qaction.setIcon(
+            self.svg_to_qicon(image_resources.pop(PLUGIN_ICON), size=(300, 300))
+        )
         self.qaction.triggered.connect(self.show_dialog)
         self.libby_menu = self.qaction.menu()
         self.create_menu_action(

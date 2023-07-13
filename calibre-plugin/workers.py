@@ -145,4 +145,6 @@ class SyncDataWorker(QObject):
 
             self.finished.emit(synced_state)
         except Exception as err:
+            logger.info("Sync failed after %f seconds" % (timer() - total_start))
+
             self.errored.emit(err)

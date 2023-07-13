@@ -223,6 +223,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             self.hide_book_already_in_lib_checkbox.setChecked(checked)
 
     def magazines_view_selection_model_selectionchanged(self):
+        # enables/disables borrow button
         selection_model = self.magazines_view.selectionModel()
         if not selection_model.hasSelection():
             return
@@ -261,6 +262,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.sync()
 
     def unsub_action_triggered(self, indices):
+        # remove subscribed magazine
         title_ids = []
         for index in indices:
             sub = index.data(Qt.UserRole)
@@ -277,6 +279,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = subscriptions
 
     def borrow_magazine(self, magazine, do_download=False):
+        # do actual borrowing
         card = self.magazines_model.get_card(magazine["cardId"])
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(magazine), errors="replace")
@@ -301,6 +304,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(description, 3000)
 
     def borrowed_magazine(self, job):
+        # callback after magazine is borrowed
         if job.failed:
             self.gui.job_exception(job, dialog_title=_("Failed to borrow magazine"))
             return
@@ -308,6 +312,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
 
     def borrowed_magazine_and_download(self, job, magazine, card):
+        # callback after magazine is borrowed
         self.borrowed_magazine(job)
         if not job.failed:
             magazine["cardId"] = card["cardId"]
@@ -338,6 +343,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             self._fetch_library_media_thread.start()
 
     def found_media(self, media, card):
+        # callback after media is found
         if not (
             media.get("type", {}).get("id", "") == LibbyMediaTypes.Magazine
             and LibbyClient.has_format(media, LibbyFormats.MagazineOverDrive)

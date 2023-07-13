@@ -17,6 +17,10 @@ from .magazine_download_utils import extract_isbn, extract_asin
 
 
 class LibbyDownload:
+    """
+    Base class for download jobs
+    """
+
     def add(
         self,
         gui,
@@ -30,6 +34,21 @@ class LibbyDownload:
         metadata=None,
         log=None,
     ) -> None:
+        """
+        Adds the new downloaded book to calibre db
+
+        :param gui:
+        :param loan:
+        :param card:
+        :param library:
+        :param format_id:
+        :param downloaded_file:
+        :param book_id:
+        :param tags:
+        :param metadata:
+        :param log:
+        :return:
+        """
         db = gui.current_db.new_api
         ext = downloaded_file.suffix[1:]  # remove the "." suffix
 

@@ -162,6 +162,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.sync()
 
     def holds_view_selection_model_selectionchanged(self, selected, deselected):
+        # enables/disables the borrow button
         selection_model = self.holds_view.selectionModel()
         if not selection_model.hasSelection():
             return
@@ -171,6 +172,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             self.holds_borrow_btn.setEnabled(hold.get("isAvailable", False))
 
     def holds_view_context_menu_requested(self, pos):
+        # displays context menu in the view
         selection_model = self.holds_view.selectionModel()
         if not selection_model.hasSelection():
             return
@@ -193,6 +195,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         menu.exec(QCursor.pos())
 
     def borrow_hold(self, hold, do_download=False):
+        # do the actual borrowing
         card = self.holds_model.get_card(hold["cardId"])
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(hold), errors="replace")
@@ -215,6 +218,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(description, 3000)
 
     def borrowed_book(self, job):
+        # callback after book is borrowed
         if job.failed:
             self.gui.job_exception(job, dialog_title=_("Failed to borrow book"))
             return
@@ -222,6 +226,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
 
     def borrowed_book_and_download(self, job, hold):
+        # callback after book is borrowed
         self.borrowed_book(job)
         if not job.failed:
             self.download_loan(hold)
@@ -249,6 +254,7 @@ class HoldsDialogMixin(BaseDialogMixin):
                 )
 
     def cancel_hold(self, hold: Dict):
+        # actually cancelling of the hold
         description = _("Cancelling hold on {book}").format(
             book=as_unicode(get_media_title(hold), errors="replace")
         )
@@ -267,6 +273,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(description, 3000)
 
     def cancelled_hold(self, job):
+        # callback after hold is cancelled
         if job.failed:
             self.gui.job_exception(job, dialog_title=_("Failed to cancel hold"))
             return

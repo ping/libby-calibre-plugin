@@ -59,6 +59,10 @@ class BorrowAndDownloadButton(CenteredToolButton):
 
 
 class BaseDialogMixin(QDialog):
+    """
+    Base mixin class for the main QDialog
+    """
+
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui)
         self.setAttribute(Qt.WA_DeleteOnClose)
@@ -67,9 +71,9 @@ class BaseDialogMixin(QDialog):
         self.icons = icons
         self.db = gui.current_db.new_api
         self.client = None
-        self._sync_thread = QThread()
-        self._curr_width = 0
-        self._curr_height = 0
+        self._sync_thread = QThread()  # main sync thread
+        self._curr_width = 0  # for persisting dialog size
+        self._curr_height = 0  # for persisting dialog size
         self.logger = logger
 
         self.setWindowTitle(
@@ -78,9 +82,11 @@ class BaseDialogMixin(QDialog):
             )
         )
         self.setWindowIcon(icon)
-        self.view_vspan = 8
+        self.view_vspan = 1
         self.view_hspan = 4
-        self.min_button_width = 150
+        self.min_button_width = (
+            150  # use this to set min col width for cols containing buttons
+        )
         self.min_view_width = 720
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
@@ -140,6 +146,13 @@ class BaseDialogMixin(QDialog):
             logger.debug("Saved new UI height preference: %d", new_height)
 
     def view_in_libby_action_triggered(self, indices, model):
+        """
+        Open title in Libby
+
+        :param indices:
+        :param model:
+        :return:
+        """
         for index in indices:
             data = index.data(Qt.UserRole)
             library_key = model.get_card(data["cardId"])["advantageKey"]
@@ -148,6 +161,13 @@ class BaseDialogMixin(QDialog):
             )
 
     def view_in_overdrive_action_triggered(self, indices, model: LibbyModel):
+        """
+        Open title in library OverDrive site
+
+        :param indices:
+        :param model:
+        :return:
+        """
         for index in indices:
             data = index.data(Qt.UserRole)
             card = model.get_card(data["cardId"])
@@ -262,7 +282,7 @@ class BaseDialogMixin(QDialog):
 
     def rebind_borrow_btn(self, borrow_action: str, borrow_btn, borrow_function):
         """
-        Shared funct for rebinding Holds and Mgazines tabs borrow button
+        Shared func for rebinding and toggling the borrow button in the Holds and Mgazines tabs.
 
         :param borrow_action:
         :param borrow_btn:
@@ -318,6 +338,7 @@ class BaseDialogMixin(QDialog):
 
 
 class CustomLoadingOverlay(LoadingOverlay):
+    # Custom https://github.com/kovidgoyal/calibre/blob/a562c1f637cf2756fa8336860543a15951f4fbc0/src/calibre/gui2/viewer/overlay.py#L10
     def hide(self):
         self.pi.stop()
         return QWidget.hide(self)

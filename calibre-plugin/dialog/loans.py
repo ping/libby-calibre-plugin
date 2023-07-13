@@ -194,6 +194,7 @@ class LoansDialogMixin(BaseDialogMixin):
         #     )
 
     def download_loan(self, loan: Dict):
+        # do actual downloading of the loan
         format_id = LibbyClient.get_loan_format(
             loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
@@ -397,6 +398,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(description, 3000)
 
     def returned_loan(self, job):
+        # callback after returning loan
         if job.failed:
             self.gui.job_exception(job, dialog_title=_("Failed to return loan"))
             return

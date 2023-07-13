@@ -155,8 +155,8 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
 
     def hide_unavailable_holds_checkbox_clicked(self, checked):
-        if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] != checked:
-            PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
+        if PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] != checked:
+            PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = checked
 
     def holds_refresh_btn_clicked(self):
         self.sync()

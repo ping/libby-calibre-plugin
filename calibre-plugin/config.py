@@ -280,6 +280,9 @@ class ConfigWidget(QWidget):
         PREFS[PreferenceKeys.TAG_EBOOKS] = self.tag_ebooks_txt.text().strip()
         PREFS[PreferenceKeys.TAG_MAGAZINES] = self.tag_magazines_txt.text().strip()
         PREFS[
+            PreferenceKeys.HIDE_HOLDS_UNAVAILABLE
+        ] = self.hide_holds_unavailable_checkbox.isChecked()
+        PREFS[
             confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)
         ] = self.confirm_returns_checkbox.isChecked()
         PREFS[

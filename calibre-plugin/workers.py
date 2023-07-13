@@ -31,14 +31,17 @@ class OverDriveLibraryMediaWorker(QObject):
         total_start = timer()
         try:
             media = overdrive_client.library_media(card["advantageKey"], title_id)
-            self.finished.emit(media)
-        except Exception as err:
-            self.errored.emit(err)
-        finally:
             logger.info(
                 "Total OverDrive Library Media Fetch took %f seconds"
                 % (timer() - total_start)
             )
+            self.finished.emit(media)
+        except Exception as err:
+            logger.info(
+                "OverDrive Library Media Fetch failed after %f seconds"
+                % (timer() - total_start)
+            )
+            self.errored.emit(err)
 
 
 class SyncDataWorker(QObject):

@@ -64,7 +64,21 @@ class LibbyDownload:
             )
             if successfully_added:
                 metadata.tags.extend(tags)
+
+                # set identifiers
+                isbn = extract_isbn(loan.get("formats", []), [format_id])
+                asin = extract_asin(loan.get("formats", []))
+                identifiers = metadata.get_identifiers()
+                if isbn and not identifiers.get("isbn"):
+                    metadata.set_identifier("isbn", isbn)
+                if asin and not (identifiers.get("amazon") or identifiers.get("asin")):
+                    metadata.set_identifier("amazon", asin)
+
                 db.set_metadata(book_id, metadata)
+
+                if PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]:
+                    gui.current_db.set_marked_ids([book_id])  # mark updated book
+                gui.library_view.model().refresh_ids([book_id])
         else:
             # add as a new book
             from calibre.ebooks.metadata.meta import get_metadata
@@ -108,3 +122,5 @@ class LibbyDownload:
             )
             gui.library_view.model().books_added(1)
             gui.library_view.model().count_changed()
+
+        gui.tags_view.recount()

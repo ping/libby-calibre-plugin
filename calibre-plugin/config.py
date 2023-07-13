@@ -33,6 +33,7 @@ class PreferenceKeys:
     CONFIRM_RETURNS = "confirm_returns"
     CONFIRM_CANCELLATIONS = "confirm_cancels"
     OVERDRIVELINK_INTEGRATION = "enable_overdrivelink_integration"
+    MARK_UPDATED_BOOKS = "mark_updated_books"
     MAGAZINE_SUBSCRIPTIONS = "magazine_subscriptions"
     # used to toggle the default borrow btn action
     LAST_BORROW_ACTION = "last_borrow_action"
@@ -58,6 +59,7 @@ class PreferenceTexts:
     CONFIRM_RETURNS = _("Always confirm returns")
     CONFIRM_CANCELLATIONS = _("Always confirm holds cancellation")
     OVERDRIVELINK_INTEGRATION = _("Enable OverDrive Link Plugin integration")
+    MARK_UPDATED_BOOKS = _("Mark updated books")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -76,6 +78,7 @@ PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
 PREFS.defaults[PreferenceKeys.OVERDRIVELINK_INTEGRATION] = True
+PREFS.defaults[PreferenceKeys.MARK_UPDATED_BOOKS] = True
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
 PREFS.defaults[PreferenceKeys.LAST_BORROW_ACTION] = BorrowActions.BORROW
 
@@ -249,6 +252,19 @@ class ConfigWidget(QWidget):
         )
         widget_row_pos += 1
 
+        # Enable OverDrive Link plugin integration
+        self.mark_updated_books_checkbox = QCheckBox(
+            PreferenceTexts.MARK_UPDATED_BOOKS, self
+        )
+        self.mark_updated_books_checkbox.setChecked(
+            PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]
+        )
+        self.layout.addWidget(self.mark_updated_books_checkbox, widget_row_pos, 0)
+        label_column_widths.append(
+            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        )
+        widget_row_pos += 1
+
         label_column_width = max(label_column_widths)
         self.layout.setColumnMinimumWidth(1, label_column_width)
 
@@ -269,6 +285,9 @@ class ConfigWidget(QWidget):
         PREFS[
             PreferenceKeys.OVERDRIVELINK_INTEGRATION
         ] = self.enable_overdrive_link_checkbox.isChecked()
+        PREFS[
+            PreferenceKeys.MARK_UPDATED_BOOKS
+        ] = self.mark_updated_books_checkbox.isChecked()
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:

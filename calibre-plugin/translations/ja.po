@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.4\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-13 14:04+0800\n"
+"POT-Creation-Date: 2023-07-13 16:46+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -34,71 +34,75 @@ msgstr ""
 msgid "Borrowing"
 msgstr ""
 
-#: calibre-plugin/config.py:47 calibre-plugin/config.py:282
+#: calibre-plugin/config.py:48 calibre-plugin/config.py:301
 msgid "Libby Setup Code"
 msgstr "Libby セットアップコード"
 
-#: calibre-plugin/config.py:48
+#: calibre-plugin/config.py:49
 msgid "8-digit setup code"
 msgstr "8桁のコード"
 
-#: calibre-plugin/config.py:49
+#: calibre-plugin/config.py:50
 msgid "Hide Magazines"
 msgstr "雑誌を隠す"
 
-#: calibre-plugin/config.py:50
+#: calibre-plugin/config.py:51
 msgid "Hide Ebooks"
 msgstr "電子書籍を隠す"
 
-#: calibre-plugin/config.py:51
+#: calibre-plugin/config.py:52
 msgid "Hide titles already in library"
 msgstr "ライブラリ内の既存の本を非表示にする"
 
-#: calibre-plugin/config.py:52
+#: calibre-plugin/config.py:53
 msgid "Hide unavailable holds"
 msgstr ""
 
-#: calibre-plugin/config.py:53
+#: calibre-plugin/config.py:54
 msgid "Prefer Open Formats"
 msgstr "オープンフォーマットを好む"
 
-#: calibre-plugin/config.py:54
+#: calibre-plugin/config.py:55
 msgid "Tag downloaded ebooks with"
 msgstr "ダウンロードした電子書籍にタグ付け"
 
-#: calibre-plugin/config.py:55
+#: calibre-plugin/config.py:56
 msgid "Example: library,books"
 msgstr "例:図書館,本"
 
-#: calibre-plugin/config.py:56
+#: calibre-plugin/config.py:57
 msgid "Tag downloaded magazines with"
 msgstr "ダウンロードした雑誌にタグ付け"
 
-#: calibre-plugin/config.py:57
+#: calibre-plugin/config.py:58
 msgid "Example: library,magazines"
 msgstr "例:図書館,雑誌"
 
-#: calibre-plugin/config.py:58
+#: calibre-plugin/config.py:59
 msgid "Always confirm returns"
 msgstr "常に返品確認"
 
-#: calibre-plugin/config.py:59
+#: calibre-plugin/config.py:60
 msgid "Always confirm holds cancellation"
 msgstr ""
 
-#: calibre-plugin/config.py:60
+#: calibre-plugin/config.py:61
 msgid "Enable OverDrive Link Plugin integration"
 msgstr ""
 
-#: calibre-plugin/config.py:94
+#: calibre-plugin/config.py:62
+msgid "Mark updated books"
+msgstr ""
+
+#: calibre-plugin/config.py:97
 msgid "Libby is configured."
 msgstr "Libbyが構成されました。"
 
-#: calibre-plugin/config.py:96
+#: calibre-plugin/config.py:99
 msgid "Libby is not configured yet."
 msgstr "Libbyが構成されていません。"
 
-#: calibre-plugin/config.py:283
+#: calibre-plugin/config.py:302
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""

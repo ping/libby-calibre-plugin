@@ -171,16 +171,10 @@ class LibbyLoansModel(LibbyModel):
             if not self.filter_hide_books_already_in_library:
                 self.filtered_rows.append(loan)
                 continue
-            authors = []
-            if loan.get("firstCreatorName", ""):
-                authors = [loan.get("firstCreatorName", "")]
             if not (
-                self.db.has_book(Metadata(title=get_media_title(loan), authors=authors))
+                self.db.has_book(Metadata(title=get_media_title(loan)))
                 or self.db.has_book(
-                    Metadata(
-                        title=get_media_title(loan, include_subtitle=True),
-                        authors=authors,
-                    )
+                    Metadata(title=get_media_title(loan, include_subtitle=True))
                 )
             ):
                 self.filtered_rows.append(loan)

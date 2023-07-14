@@ -13,7 +13,7 @@ from typing import Dict, Optional, List
 
 from calibre.ebooks.metadata.book.base import Metadata
 from calibre.utils.config import tweaks
-from calibre.utils.date import format_date
+from calibre.utils.date import format_date, dt_as_local
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
 
 from .config import PREFS, PreferenceKeys
@@ -208,7 +208,7 @@ class LibbyLoansModel(LibbyModel):
                 return loan.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
-            dt_value = parse_datetime(loan["checkoutDate"])
+            dt_value = dt_as_local(parse_datetime(loan["checkoutDate"]))
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
@@ -290,6 +290,10 @@ class LibbyHoldsModel(LibbyModel):
         if row >= self.rowCount():
             return None
         hold: Dict = self.filtered_rows[row]
+        is_suspended = bool(
+            hold.get("suspensionFlag") and hold.get("suspensionEnd")
+        ) and not hold.get("isAvailable")
+
         if role == Qt.UserRole:
             return hold
         if role == Qt.TextAlignmentRole and col >= 2:
@@ -299,6 +303,24 @@ class LibbyHoldsModel(LibbyModel):
                 font = QFont()
                 font.setBold(True)
                 return font
+        if role == Qt.ToolTipRole and col == 5:
+            if is_suspended:
+                suspended_till = dt_as_local(parse_datetime(hold["suspensionEnd"]))
+                if (
+                    hold.get("redeliveriesRequestedCount", 0) > 0
+                    or hold.get("redeliveriesAutomatedCount", 0) > 0
+                ):
+                    return _("Deliver after {dt}").format(
+                        dt=format_date(
+                            suspended_till, tweaks["gui_timestamp_display_format"]
+                        )
+                    )
+                else:
+                    return _("Suspended till {dt}").format(
+                        dt=format_date(
+                            suspended_till, tweaks["gui_timestamp_display_format"]
+                        )
+                    )
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col >= self.columnCount():
@@ -313,7 +335,9 @@ class LibbyHoldsModel(LibbyModel):
                 return hold.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
-            dt_value = parse_datetime(hold.get("expireDate") or hold["placedDate"])
+            dt_value = dt_as_local(
+                parse_datetime(hold.get("expireDate") or hold["placedDate"])
+            )
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
@@ -328,8 +352,16 @@ class LibbyHoldsModel(LibbyModel):
             )
         if col == 5:
             if role == LibbyModel.DisplaySortRole:
-                return int(hold.get("isAvailable", False))
+                return -1 if is_suspended else int(hold.get("isAvailable", False))
+            if is_suspended:
+                if (
+                    hold.get("redeliveriesRequestedCount", 0) > 0
+                    or hold.get("redeliveriesAutomatedCount", 0) > 0
+                ):
+                    return _("Delayed")
+                return _("Suspended")
             return _("Yes") if hold.get("isAvailable", False) else _("No")
+
         return None
 
 

@@ -26,19 +26,24 @@ from qt.core import (
     QMenu,
     QCursor,
     QWidget,
+    QDialog,
+    QLabel,
+    QSlider,
 )
 
 from .base import BaseDialogMixin
 from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
-from ..config import PREFS, PreferenceKeys, PreferenceTexts, BorrowActions
-from ..hold_cancel import LibbyHoldCancel
+from ..config import PREFS, PreferenceKeys, PreferenceTexts
+from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
+from ..libby import LibbyClient
 from ..models import get_media_title, LibbyHoldsModel, LibbyModel
 
 load_translations()
 
 gui_libby_cancel_hold = LibbyHoldCancel()
 gui_libby_borrow_hold = LibbyBorrowHold()
+gui_libby_update_hold = LibbyHoldUpdate()
 
 
 class HoldsDialogMixin(BaseDialogMixin):
@@ -189,10 +194,24 @@ class HoldsDialogMixin(BaseDialogMixin):
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
 
+        edit_hold_action = menu.addAction(_("Edit hold"))
+        edit_hold_action.setIcon(self.icons[PluginIcons.Edit])
+        edit_hold_action.triggered.connect(
+            lambda: self.edit_hold_action_triggered(indices)
+        )
+
         cancel_action = menu.addAction(_("Cancel hold"))
         cancel_action.setIcon(self.icons[PluginIcons.Delete])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
+
+    def edit_hold_action_triggered(self, indices):
+        for index in reversed(indices):
+            hold = index.data(Qt.UserRole)
+            # open dialog
+            d = SuspendHoldDialog(self, self.gui, self.icons, self.client, hold)
+            d.setModal(True)
+            d.open()
 
     def borrow_hold(self, hold, do_download=False):
         # do the actual borrowing
@@ -254,7 +273,7 @@ class HoldsDialogMixin(BaseDialogMixin):
                 )
 
     def cancel_hold(self, hold: Dict):
-        # actually cancelling of the hold
+        # actual cancelling of the hold
         description = _("Cancelling hold on {book}").format(
             book=as_unicode(get_media_title(hold), errors="replace")
         )
@@ -279,3 +298,101 @@ class HoldsDialogMixin(BaseDialogMixin):
             return
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+
+    def updated_hold(self, job):
+        # callback after hold is updated
+        if job.failed:
+            self.gui.job_exception(job, dialog_title=_("Failed to update hold"))
+            return
+
+        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+
+
+class SuspendHoldDialog(QDialog):
+    def __init__(
+        self,
+        parent: HoldsDialogMixin,
+        gui,
+        icons: Dict,
+        client: LibbyClient,
+        hold: Dict,
+    ):
+        super().__init__(parent)
+        self.gui = gui
+        self.icons = icons
+        self.client = client
+        self.hold = hold
+        self.setWindowFlag(Qt.Sheet)
+        self.setAttribute(Qt.WA_DeleteOnClose)
+        layout = QGridLayout()
+        self.setLayout(layout)
+        widget_row_pos = 0
+
+        # Instructions label
+        self.instructions_lbl = QLabel(
+            ngettext("Deliver after {n} day", "Deliver after {n} days", 0).format(n=0)
+            if (
+                hold.get("redeliveriesRequestedCount", 0) > 0
+                or hold.get("redeliveriesAutomatedCount", 0) > 0
+            )
+            else ngettext("Suspend for {n} day", "Suspend for {n} days", 0).format(n=0)
+        )
+        layout.addWidget(self.instructions_lbl, widget_row_pos, 0, 1, 2)
+        widget_row_pos += 1
+
+        self.days_slider = QSlider(Qt.Horizontal, self)
+        self.days_slider.setMinimum(0)
+        self.days_slider.setMaximum(30)
+        self.days_slider.setTickInterval(1)
+        self.days_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        layout.addWidget(self.days_slider, widget_row_pos, 0, 1, 2)
+        widget_row_pos += 1
+        self.days_slider.valueChanged.connect(
+            lambda n: self.instructions_lbl.setText(
+                ngettext("Deliver after {n} day", "Deliver after {n} days", n).format(
+                    n=n
+                )
+                if (
+                    hold.get("redeliveriesRequestedCount", 0) > 0
+                    or hold.get("redeliveriesAutomatedCount", 0) > 0
+                )
+                else ngettext("Suspend for {n} day", "Suspend for {n} days", n).format(
+                    n=n
+                )
+            )
+        )
+        self.days_slider.setValue(7)
+
+        self.cancel_btn = QPushButton(_("Cancel"), self)
+        self.cancel_btn.setIcon(self.icons[PluginIcons.Cancel])
+        self.cancel_btn.setAutoDefault(False)
+        self.cancel_btn.setToolTip(_("Don't save changes"))
+        self.cancel_btn.clicked.connect(lambda: self.reject())
+        layout.addWidget(self.cancel_btn, widget_row_pos, 0)
+
+        self.update_btn = QPushButton(_("Update"), self)
+        self.update_btn.setIcon(self.icons[PluginIcons.Okay])
+        self.update_btn.setAutoDefault(False)
+        self.update_btn.setToolTip(_("Save changes"))
+        self.update_btn.clicked.connect(self.update_btn_clicked)
+        layout.addWidget(self.update_btn, widget_row_pos, 1)
+        widget_row_pos += 1
+
+    def update_btn_clicked(self):
+        description = _("Updating hold on {book}").format(
+            book=as_unicode(get_media_title(self.hold), errors="replace")
+        )
+        callback = Dispatcher(self.parent().updated_hold)
+        job = ThreadedJob(
+            "overdrive_libby_update_hold",
+            description,
+            gui_libby_update_hold,
+            (self.gui, self.client, self.hold, self.days_slider.value()),
+            {},
+            callback,
+            max_concurrent_count=2,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+        self.accept()

@@ -763,3 +763,45 @@ class LibbyClient(object):
                 hold["id"], hold["type"]["id"], hold["cardId"], days=days
             )
         return self.borrow_title(hold["id"], hold["type"]["id"], hold["cardId"])
+
+    def suspend_hold_title(self, card_id, title_id, days_to_suspend: int = 7, **kwargs):
+        """
+        Suspend a hold for X days.
+        If a hold is actually available, this sets the hold to be delivered after X days.
+
+        :param card_id:
+        :param title_id:
+        :param days_to_suspend:
+        :param kwargs:
+        :return:
+        """
+        valid_days = (0 <= days_to_suspend <= 30) or days_to_suspend in (60, 90)
+        if not valid_days:
+            raise ValueError()
+        params = {"days_to_suspend": days_to_suspend}
+        params.update(kwargs)
+        return self.send_request(
+            f"card/{card_id}/hold/{title_id}",
+            params=params,
+            method="PUT",
+            is_form=False,
+        )
+
+    def unsuspend_hold(self, hold):
+        """
+        Unsuspend a hold.
+
+        :param hold:
+        :return:
+        """
+        return self.suspend_hold_title(hold["cardId"], hold["id"], 0)
+
+    def suspend_hold(self, hold, days_to_suspend: int = 7) -> Dict:
+        """
+        Suspend a hold.
+
+        :param hold:
+        :param days_to_suspend:
+        :return:
+        """
+        return self.suspend_hold_title(hold["cardId"], hold["id"], days_to_suspend)

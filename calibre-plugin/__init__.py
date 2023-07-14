@@ -33,6 +33,9 @@ class PluginIcons(str, Enum):
     Delete = "delete"
     AddMagazine = "magazines-add"
     CancelMagazine = "cancel-sub"
+    Edit = "pencil-line"
+    Cancel = "cancel"
+    Okay = "okay"
 
     def __str__(self):
         return str(self.value)
@@ -82,6 +85,21 @@ ICON_MAP = {
         file="images/dislike-line.svg",
         dark_theme_color="#DC3545",
         light_theme_color="#DC3545",
+    ),
+    PluginIcons.Edit: IconDefinition(
+        file="images/pencil-line.svg",
+        dark_theme_color="#FFFFFF",
+        light_theme_color="#000000",
+    ),
+    PluginIcons.Cancel: IconDefinition(
+        file="images/close-line.svg",
+        dark_theme_color="#FFFFFF",
+        light_theme_color="#000000",
+    ),
+    PluginIcons.Okay: IconDefinition(
+        file="images/check-line.svg",
+        dark_theme_color="#00D228",
+        light_theme_color="#00BA28",
     ),
 }
 

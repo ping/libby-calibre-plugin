@@ -7,6 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+import json
 import re
 from typing import Dict
 
@@ -356,11 +357,16 @@ class MagazinesDialogMixin(BaseDialogMixin):
                         media=media["title"]
                     )
                 ),
+                det_msg=json.dumps(media, indent=2),
                 show=True,
             )
         if not (media.get("isOwned") and media.get("parentMagazineTitleId")):
             return error_dialog(
-                self, _("Add Magazine"), _("Library does not own this title"), show=True
+                self,
+                _("Add Magazine"),
+                _("Library does not own this title"),
+                det_msg=json.dumps(media, indent=2),
+                show=True,
             )
         card_id = card["cardId"]
         parent_magazine_id = media["parentMagazineTitleId"]
@@ -374,6 +380,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 self,
                 _("Add Magazine"),
                 _("Already added {magazine}").format(magazine=media["title"]),
+                show_copy_button=False,
                 show=True,
             )
         subscriptions.append(
@@ -384,13 +391,18 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
         PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = subscriptions
         self.magazine_link_txt.setText("")
-        info_dialog(
+        if info_dialog(
             self,
             _("Add Magazine"),
-            _("Added {magazine} for monitoring.".format(magazine=media["title"])),
+            _(
+                "Added {magazine} for monitoring.\nClick OK to refresh.".format(
+                    magazine=media["title"]
+                )
+            ),
+            show_copy_button=False,
             show=True,
-        )
-        self.sync()
+        ):
+            self.sync()
 
     def _get_fetch_library_media_thread(
         self, overdrive_client: OverDriveClient, card: Dict, title_id: str

@@ -122,5 +122,3 @@ class LibbyDownload:
             )
             gui.library_view.model().books_added(1)
             gui.library_view.model().count_changed()
-
-        gui.tags_view.recount()

@@ -34,7 +34,7 @@ from .. import PluginIcons
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
-from ..loan_return import LibbyLoanReturn
+from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
 from ..models import get_media_title, LibbyLoansModel, LibbyModel
 

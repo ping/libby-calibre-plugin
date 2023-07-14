@@ -29,6 +29,7 @@ from qt.core import (
     QDialog,
     QLabel,
     QSlider,
+    QLayout,
 )
 
 from .base import BaseDialogMixin
@@ -337,6 +338,7 @@ class SuspendHoldDialog(QDialog):
             )
             else ngettext("Suspend for {n} day", "Suspend for {n} days", 0).format(n=0)
         )
+        self.instructions_lbl.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.instructions_lbl, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
@@ -377,6 +379,10 @@ class SuspendHoldDialog(QDialog):
         self.update_btn.clicked.connect(self.update_btn_clicked)
         layout.addWidget(self.update_btn, widget_row_pos, 1)
         widget_row_pos += 1
+
+        for r in range(0, 2):
+            layout.setColumnMinimumWidth(r, self.parent().min_button_width)
+        layout.setSizeConstraint(QLayout.SetFixedSize)
 
     def update_btn_clicked(self):
         description = _("Updating hold on {book}").format(

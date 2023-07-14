@@ -7,7 +7,6 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
 from typing import Dict
 
 from calibre.gui2 import Dispatcher
@@ -96,6 +95,10 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.holds_view.setSelectionMode(QAbstractItemView.SingleSelection)
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
+        # add debug trigger
+        self.holds_view.doubleClicked.connect(
+            lambda mi: self.display_debug("Hold", mi.data(Qt.UserRole))
+        )
         # add context menu
         self.holds_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.holds_view.customContextMenuRequested.connect(

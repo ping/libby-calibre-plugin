@@ -155,6 +155,10 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_view.customContextMenuRequested.connect(
             self.magazines_view_context_menu_requested
         )
+        # add debug trigger
+        self.magazines_view.doubleClicked.connect(
+            lambda mi: self.display_debug("Magazine", mi.data(Qt.UserRole))
+        )
         magazines_view_selection_model = self.magazines_view.selectionModel()
         magazines_view_selection_model.selectionChanged.connect(
             self.magazines_view_selection_model_selectionchanged

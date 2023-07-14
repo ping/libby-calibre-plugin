@@ -7,7 +7,6 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
 from typing import Dict
 
 from calibre.gui2 import Dispatcher
@@ -96,6 +95,10 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.loans_view.customContextMenuRequested.connect(
             self.loans_view_context_menu_requested
+        )
+        # add debug trigger
+        self.loans_view.doubleClicked.connect(
+            lambda mi: self.display_debug("Loan", mi.data(Qt.UserRole))
         )
         widget.layout.addWidget(
             self.loans_view, widget_row_pos, 0, self.view_vspan, self.view_hspan

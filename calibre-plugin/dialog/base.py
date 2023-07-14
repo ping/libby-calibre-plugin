@@ -7,8 +7,11 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+import json
 from typing import Dict, List
 
+from calibre.constants import is_debugging
+from calibre.gui2 import info_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton
 from qt.core import (
@@ -337,6 +340,16 @@ class BaseDialogMixin(QDialog):
                 self.rebind_magazines_download_button_and_menu(borrow_action)
             if hasattr(self, "rebind_holds_download_button_and_menu"):
                 self.rebind_holds_download_button_and_menu(borrow_action)
+
+    def display_debug(self, text, data):
+        if is_debugging():
+            return info_dialog(
+                self,
+                _("Debug"),
+                text,
+                det_msg=json.dumps(data, indent=2),
+                show=True,
+            )
 
 
 class CustomLoadingOverlay(LoadingOverlay):

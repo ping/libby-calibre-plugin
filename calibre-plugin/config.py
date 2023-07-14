@@ -13,7 +13,7 @@ from calibre.gui2 import error_dialog, is_dark_theme
 from calibre.utils.config import JSONConfig
 from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
-from . import logger, PLUGIN_NAME
+from . import logger, PLUGIN_NAME, DEMO_MODE
 
 load_translations()
 
@@ -93,6 +93,9 @@ class ConfigWidget(QWidget):
 
         # Setup Status
         is_configured = bool(PREFS[PreferenceKeys.LIBBY_TOKEN])
+        if DEMO_MODE:
+            is_configured = False
+
         self.libby_setup_status_lbl = QLabel(
             _("Libby is configured.")
             if is_configured
@@ -125,7 +128,8 @@ class ConfigWidget(QWidget):
             PreferenceTexts.LIBBY_SETUP_CODE_DESC
         )
         self.libby_setup_code_txt.setInputMask("99999999")
-        self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
+        if not DEMO_MODE:
+            self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
         self.layout.addWidget(self.libby_setup_code_txt, widget_row_pos, 1, 1, 1)
         self.libby_setup_code_lbl.setBuddy(self.libby_setup_code_txt)
         widget_row_pos += 1
@@ -138,7 +142,8 @@ class ConfigWidget(QWidget):
         )
         self.tag_ebooks_txt = QLineEdit(self)
         self.tag_ebooks_txt.setPlaceholderText(PreferenceTexts.TAG_EBOOKS_PLACEHOLDER)
-        self.tag_ebooks_txt.setText(PREFS[PreferenceKeys.TAG_EBOOKS])
+        if not DEMO_MODE:
+            self.tag_ebooks_txt.setText(PREFS[PreferenceKeys.TAG_EBOOKS])
         self.layout.addWidget(self.tag_ebooks_txt, widget_row_pos, 1, 1, 1)
         self.tag_ebooks_lbl.setBuddy(self.tag_ebooks_txt)
         widget_row_pos += 1
@@ -153,7 +158,8 @@ class ConfigWidget(QWidget):
         self.tag_magazines_txt.setPlaceholderText(
             PreferenceTexts.TAG_MAGAZINES_PLACEHOLDER
         )
-        self.tag_magazines_txt.setText(PREFS[PreferenceKeys.TAG_MAGAZINES])
+        if not DEMO_MODE:
+            self.tag_magazines_txt.setText(PREFS[PreferenceKeys.TAG_MAGAZINES])
         self.layout.addWidget(self.tag_magazines_txt, widget_row_pos, 1, 1, 1)
         self.tag_magazines_lbl.setBuddy(self.tag_magazines_txt)
         widget_row_pos += 1
@@ -271,6 +277,8 @@ class ConfigWidget(QWidget):
         self.layout.setColumnMinimumWidth(1, label_column_width)
 
     def save_settings(self):
+        if DEMO_MODE:
+            return
         PREFS[PreferenceKeys.HIDE_MAGAZINES] = self.hide_magazines_checkbox.isChecked()
         PREFS[PreferenceKeys.HIDE_EBOOKS] = self.hide_ebooks_checkbox.isChecked()
         PREFS[

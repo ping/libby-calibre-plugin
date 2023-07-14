@@ -27,7 +27,7 @@ from qt.core import (
     QMenu,
 )
 
-from .. import logger, __version__, PluginIcons
+from .. import logger, __version__, PluginIcons, DEMO_MODE
 from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel
@@ -80,6 +80,8 @@ class BaseDialogMixin(QDialog):
             _("OverDrive Libby v{version}").format(
                 version=".".join([str(d) for d in __version__])
             )
+            if not DEMO_MODE
+            else "OverDrive Libby"
         )
         self.setWindowIcon(icon)
         self.view_vspan = 1

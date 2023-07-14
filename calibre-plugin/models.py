@@ -16,6 +16,7 @@ from calibre.utils.config import tweaks
 from calibre.utils.date import format_date, dt_as_local
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
 
+from . import DEMO_MODE
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
@@ -55,6 +56,8 @@ def get_media_title(
 
 
 def truncate_for_display(text, text_length=30):
+    if DEMO_MODE:
+        return "*" * min(len(text), text_length)
     if len(text) <= text_length:
         return text
     return text[:text_length] + "…"
@@ -211,6 +214,11 @@ class LibbyLoansModel(LibbyModel):
             dt_value = dt_as_local(parse_datetime(loan["checkoutDate"]))
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
+            if DEMO_MODE:
+                return format_date(
+                    dt_value.replace(month=1, day=1),
+                    tweaks["gui_timestamp_display_format"],
+                )
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
             type_id = loan.get("type", {}).get("id", "")
@@ -340,9 +348,16 @@ class LibbyHoldsModel(LibbyModel):
             )
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
+            if DEMO_MODE:
+                return format_date(
+                    dt_value.replace(month=1, day=1),
+                    tweaks["gui_timestamp_display_format"],
+                )
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
             card = self.get_card(hold["cardId"])
+            if DEMO_MODE:
+                return "*" * len(card["advantageKey"])
             return card["advantageKey"]
         if col == 4:
             return str(

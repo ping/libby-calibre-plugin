@@ -23,6 +23,8 @@ __version__ = (0, 1, 4)
 PLUGIN_NAME = "overdrive_libby"
 PLUGIN_ICON = "images/plugin.svg"
 
+DEMO_MODE = False  # make it easier for screenshots :P
+
 
 class PluginIcons(str, Enum):
     Return = "return"

@@ -24,6 +24,7 @@ class PreferenceKeys:
     HIDE_MAGAZINES = "hide_magazines"
     HIDE_EBOOKS = "hide_ebooks"
     HIDE_BOOKS_ALREADY_IN_LIB = "hide_books_in_already_lib"
+    EXCLUDE_EMPTY_BOOKS = "exclude_empty_books"
     HIDE_HOLDS_UNAVAILABLE = "hide_holds_unavailable"
     PREFER_OPEN_FORMATS = "prefer_open_formats"
     MAIN_UI_WIDTH = "main_ui_width"
@@ -50,6 +51,7 @@ class PreferenceTexts:
     HIDE_MAGAZINES = _("Hide Magazines")
     HIDE_EBOOKS = _("Hide Ebooks")
     HIDE_BOOKS_ALREADY_IN_LIB = _("Hide titles already in library")
+    EXCLUDE_EMPTY_BOOKS = _("Exclude empty books when hiding titles already in library")
     HIDE_HOLDS_UNAVAILABLE = _("Hide unavailable holds")
     PREFER_OPEN_FORMATS = _("Prefer Open Formats")
     TAG_EBOOKS = _("Tag downloaded ebooks with")
@@ -69,6 +71,7 @@ PREFS.defaults[PreferenceKeys.LIBBY_TOKEN] = ""
 PREFS.defaults[PreferenceKeys.HIDE_MAGAZINES] = False
 PREFS.defaults[PreferenceKeys.HIDE_EBOOKS] = False
 PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
+PREFS.defaults[PreferenceKeys.EXCLUDE_EMPTY_BOOKS] = True
 PREFS.defaults[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = True
 PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
@@ -136,7 +139,7 @@ class ConfigWidget(QWidget):
 
         # Tag Ebooks
         self.tag_ebooks_lbl = QLabel(PreferenceTexts.TAG_EBOOKS)
-        self.layout.addWidget(self.tag_ebooks_lbl, widget_row_pos, 0)
+        self.layout.addWidget(self.tag_ebooks_lbl, widget_row_pos, 0, 1, 1)
         label_column_widths.append(
             self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
         )
@@ -150,7 +153,7 @@ class ConfigWidget(QWidget):
 
         # Tag Magazines
         self.tag_magazines_lbl = QLabel(PreferenceTexts.TAG_MAGAZINES)
-        self.layout.addWidget(self.tag_magazines_lbl, widget_row_pos, 0)
+        self.layout.addWidget(self.tag_magazines_lbl, widget_row_pos, 0, 1, 1)
         label_column_widths.append(
             self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
         )
@@ -167,19 +170,13 @@ class ConfigWidget(QWidget):
         # Hide Ebooks
         self.hide_ebooks_checkbox = QCheckBox(PreferenceTexts.HIDE_EBOOKS, self)
         self.hide_ebooks_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_EBOOKS])
-        self.layout.addWidget(self.hide_ebooks_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
+        self.layout.addWidget(self.hide_ebooks_checkbox, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
         # Hide Magazine
         self.hide_magazines_checkbox = QCheckBox(PreferenceTexts.HIDE_MAGAZINES, self)
         self.hide_magazines_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_MAGAZINES])
-        self.layout.addWidget(self.hide_magazines_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
+        self.layout.addWidget(self.hide_magazines_checkbox, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
         # Prefer Open Formats
@@ -189,9 +186,8 @@ class ConfigWidget(QWidget):
         self.prefer_open_formats_checkbox.setChecked(
             PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
-        self.layout.addWidget(self.prefer_open_formats_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        self.layout.addWidget(
+            self.prefer_open_formats_checkbox, widget_row_pos, 0, 1, 2
         )
         widget_row_pos += 1
 
@@ -203,10 +199,19 @@ class ConfigWidget(QWidget):
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
         self.layout.addWidget(
-            self.hide_books_already_in_lib_checkbox, widget_row_pos, 0
+            self.hide_books_already_in_lib_checkbox, widget_row_pos, 0, 1, 2
         )
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        widget_row_pos += 1
+
+        # Exclude empty books when hiding titles already in library
+        self.exclude_empty_books_checkbox = QCheckBox(
+            PreferenceTexts.EXCLUDE_EMPTY_BOOKS, self
+        )
+        self.exclude_empty_books_checkbox.setChecked(
+            PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
+        )
+        self.layout.addWidget(
+            self.exclude_empty_books_checkbox, widget_row_pos, 0, 1, 2
         )
         widget_row_pos += 1
 
@@ -217,9 +222,8 @@ class ConfigWidget(QWidget):
         self.hide_holds_unavailable_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
         )
-        self.layout.addWidget(self.hide_holds_unavailable_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        self.layout.addWidget(
+            self.hide_holds_unavailable_checkbox, widget_row_pos, 0, 1, 2
         )
         widget_row_pos += 1
 
@@ -228,10 +232,7 @@ class ConfigWidget(QWidget):
         self.confirm_returns_checkbox.setChecked(
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)]
         )
-        self.layout.addWidget(self.confirm_returns_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
+        self.layout.addWidget(self.confirm_returns_checkbox, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
         # Always confirm cancelations
@@ -241,9 +242,8 @@ class ConfigWidget(QWidget):
         self.confirm_cancel_hold_checkbox.setChecked(
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)]
         )
-        self.layout.addWidget(self.confirm_cancel_hold_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        self.layout.addWidget(
+            self.confirm_cancel_hold_checkbox, widget_row_pos, 0, 1, 2
         )
         widget_row_pos += 1
 
@@ -254,9 +254,8 @@ class ConfigWidget(QWidget):
         self.enable_overdrive_link_checkbox.setChecked(
             PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
         )
-        self.layout.addWidget(self.enable_overdrive_link_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        self.layout.addWidget(
+            self.enable_overdrive_link_checkbox, widget_row_pos, 0, 1, 2
         )
         widget_row_pos += 1
 
@@ -267,10 +266,7 @@ class ConfigWidget(QWidget):
         self.mark_updated_books_checkbox.setChecked(
             PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]
         )
-        self.layout.addWidget(self.mark_updated_books_checkbox, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
+        self.layout.addWidget(self.mark_updated_books_checkbox, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
         label_column_width = max(label_column_widths)
@@ -287,6 +283,9 @@ class ConfigWidget(QWidget):
         PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ] = self.hide_books_already_in_lib_checkbox.isChecked()
+        PREFS[
+            PreferenceKeys.EXCLUDE_EMPTY_BOOKS
+        ] = self.exclude_empty_books_checkbox.isChecked()
         PREFS[PreferenceKeys.TAG_EBOOKS] = self.tag_ebooks_txt.text().strip()
         PREFS[PreferenceKeys.TAG_MAGAZINES] = self.tag_magazines_txt.text().strip()
         PREFS[

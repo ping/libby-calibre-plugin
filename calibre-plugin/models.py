@@ -14,6 +14,7 @@ from typing import Dict, Optional, List
 from calibre.ebooks.metadata.book.base import Metadata
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date, dt_as_local
+from calibre.utils.icu import lower as icu_lower
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
 
 from . import DEMO_MODE
@@ -140,6 +141,8 @@ class LibbyLoansModel(LibbyModel):
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent, synced_state, db)
+        self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
+        self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self.filter_hide_books_already_in_library = PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ]
@@ -172,15 +175,26 @@ class LibbyLoansModel(LibbyModel):
             )
         ]:
             if not self.filter_hide_books_already_in_library:
+                # hide lib books filter is not enabled
+                book_in_library = False
                 self.filtered_rows.append(loan)
                 continue
-            if not (
-                self.db.has_book(Metadata(title=get_media_title(loan)))
-                or self.db.has_book(
-                    Metadata(title=get_media_title(loan, include_subtitle=True))
-                )
-            ):
+
+            # hide lib books filter is enabled
+            book_in_library = False
+            q1 = icu_lower(get_media_title(loan).strip())
+            q2 = icu_lower(get_media_title(loan, include_subtitle=True).strip())
+            for book_id, title in iter(self.all_book_ids_titles.items()):
+                if icu_lower(title) not in (q1, q2):
+                    continue
+                if (
+                    not PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
+                ) or self.all_book_ids_formats.get(book_id):
+                    book_in_library = True
+                break  # check only first matching book title
+            if not book_in_library:
                 self.filtered_rows.append(loan)
+
         self.endResetModel()
 
     def set_filter_hide_books_already_in_library(self, value: bool):
@@ -425,6 +439,8 @@ class LibbyMagazinesModel(LibbyModel):
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent, synced_state, db)
+        self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
+        self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self._loans: List[Dict] = []
         self.filter_hide_magazines_already_in_library = PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
@@ -458,12 +474,22 @@ class LibbyMagazinesModel(LibbyModel):
             if not self.filter_hide_magazines_already_in_library:
                 self.filtered_rows.append(r)
                 continue
-            title = get_media_title(r)
-            authors = []
-            if r.get("firstCreatorName", ""):
-                authors = [r.get("firstCreatorName", "")]
-            if not self.db.has_book(Metadata(title=title, authors=authors)):
+
+            # hide lib books filter is enabled
+            book_in_library = False
+            q1 = icu_lower(get_media_title(r).strip())
+            q2 = icu_lower(get_media_title(r, include_subtitle=True).strip())
+            for book_id, title in iter(self.all_book_ids_titles.items()):
+                if icu_lower(title) not in (q1, q2):
+                    continue
+                if (
+                    not PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
+                ) or self.all_book_ids_formats.get(book_id):
+                    book_in_library = True
+                break  # check only first matching book title
+            if not book_in_library:
                 self.filtered_rows.append(r)
+
         self.endResetModel()
 
     def data(self, index, role):

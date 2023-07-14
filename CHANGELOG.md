@@ -3,9 +3,10 @@
 Unreleased
 - New: Option to "Borrow and Download" from the Borrow button for loans/magazines
 - New: Edit a hold to suspend or delay delivery
+- New: Option to mark books that have been updated with a new format
+- New: Option to exclude/include empty books when hiding titles already in library
 - Disable Borrow button if a magazine issue is already borrowed
 - Generate the `odid` identifier for a new download if user has the  [OverDrive Link plugin](https://www.mobileread.com/forums/showthread.php?t=187919) installed
-- New: Option to mark books that have been updated with a new format
 - Fix title matching for book that has a subtitle
 - Fix regression where generated magazines temp files were not being properly deleted
 - Fix layout wonkiness

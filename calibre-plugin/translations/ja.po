@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.4\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-15 14:29+0800\n"
+"POT-Creation-Date: 2023-07-15 18:06+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,16 +22,20 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libbyアカウントからローンをインポート"
 
-#: calibre-plugin/action.py:91
+#: calibre-plugin/action.py:51
+msgid "Libby"
+msgstr ""
+
+#: calibre-plugin/action.py:99
 msgid "Customize plugin"
 msgstr ""
 
-#: calibre-plugin/action.py:100 calibre-plugin/config.py:274
+#: calibre-plugin/action.py:108 calibre-plugin/config.py:274
 #: calibre-plugin/dialog/base.py:120
 msgid "Help"
 msgstr ""
 
-#: calibre-plugin/action.py:109
+#: calibre-plugin/action.py:117
 msgid "MobileRead"
 msgstr ""
 

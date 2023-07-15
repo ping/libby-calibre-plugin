@@ -48,7 +48,7 @@ class OverdriveLibbyAction(InterfaceAction):
     popup_type = QToolButton.MenuButtonPopup
     action_type = "current"
     action_add_menu = True
-    action_menu_clone_qaction = True
+    action_menu_clone_qaction = _("Libby")
     dont_add_to = frozenset(["context-menu-device"])
 
     @staticmethod
@@ -81,13 +81,20 @@ class OverdriveLibbyAction(InterfaceAction):
             )
 
         # action icon
-        self.qaction.setIcon(
-            self.svg_to_qicon(image_resources.pop(PLUGIN_ICON), size=(300, 300))
+        plugin_icon = self.svg_to_qicon(
+            image_resources.pop(PLUGIN_ICON), size=(300, 300)
         )
+        self.qaction.setIcon(plugin_icon)
+        # set the cloned menu icon
+        mini_plugin_icon = QIcon(
+            plugin_icon.pixmap(QSize(32, 32), self.gui.devicePixelRatio())
+        )
+        self.menuless_qaction.setIcon(mini_plugin_icon)
         self.qaction.triggered.connect(self.show_dialog)
-        self.libby_menu = self.qaction.menu()
+        qaction_menu = self.qaction.menu()
+
         self.create_menu_action(
-            self.libby_menu,
+            qaction_menu,
             "overdrive-libby-config",
             _("Customize plugin"),
             "config.png",
@@ -96,7 +103,7 @@ class OverdriveLibbyAction(InterfaceAction):
             ),
         )
         self.create_menu_action(
-            self.libby_menu,
+            qaction_menu,
             "overdrive-libby-help",
             _("Help"),
             "help.png",
@@ -105,7 +112,7 @@ class OverdriveLibbyAction(InterfaceAction):
             ),
         )
         self.create_menu_action(
-            self.libby_menu,
+            qaction_menu,
             "overdrive-libby-mr",
             _("MobileRead"),
             "external-link.png",

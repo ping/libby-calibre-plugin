@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.4\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-15 18:06+0800\n"
+"POT-Creation-Date: 2023-07-15 19:09+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -35,7 +35,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: calibre-plugin/action.py:117
+#: calibre-plugin/action.py:117 calibre-plugin/dialog/base.py:122
 msgid "MobileRead"
 msgstr ""
 
@@ -232,41 +232,41 @@ msgstr ""
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:207 calibre-plugin/dialog/base.py:210
+#: calibre-plugin/dialog/base.py:209 calibre-plugin/dialog/base.py:212
 msgid "Synchronizing..."
 msgstr "同步中..."
 
-#: calibre-plugin/dialog/base.py:231
+#: calibre-plugin/dialog/base.py:233
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:248
+#: calibre-plugin/dialog/base.py:250
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:272 calibre-plugin/dialog/base.py:290
-#: calibre-plugin/dialog/base.py:313 calibre-plugin/dialog/base.py:329
+#: calibre-plugin/dialog/base.py:274 calibre-plugin/dialog/base.py:292
+#: calibre-plugin/dialog/base.py:315 calibre-plugin/dialog/base.py:331
 msgid "Borrow"
 msgstr "借阅"
 
-#: calibre-plugin/dialog/base.py:274 calibre-plugin/dialog/base.py:288
-#: calibre-plugin/dialog/base.py:313 calibre-plugin/dialog/base.py:327
+#: calibre-plugin/dialog/base.py:276 calibre-plugin/dialog/base.py:290
+#: calibre-plugin/dialog/base.py:315 calibre-plugin/dialog/base.py:329
 msgid "Borrow and Download"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:280 calibre-plugin/dialog/base.py:316
+#: calibre-plugin/dialog/base.py:282 calibre-plugin/dialog/base.py:318
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:282 calibre-plugin/dialog/base.py:318
+#: calibre-plugin/dialog/base.py:284 calibre-plugin/dialog/base.py:320
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:360
+#: calibre-plugin/dialog/base.py:362
 msgid "Debug"
 msgstr ""
 

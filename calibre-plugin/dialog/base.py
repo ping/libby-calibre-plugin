@@ -118,6 +118,8 @@ class BaseDialogMixin(QDialog):
         help_lbl = QLabel(
             '<a href="https://github.com/ping/libby-calibre-plugin#usage">'
             + _("Help")
+            + '</a> / <a href="https://www.mobileread.com/forums/showthread.php?t=354816">'
+            + _("MobileRead")
             + "</a>"
         )
         help_lbl.setStyleSheet("margin: 0 4px")

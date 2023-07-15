@@ -223,10 +223,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(hold), errors="replace")
         )
-        if do_download:
-            callback = Dispatcher(lambda j: self.borrowed_book_and_download(j, hold))
-        else:
-            callback = Dispatcher(self.borrowed_book)
+        callback = Dispatcher(
+            self.borrowed_book_and_download if do_download else self.borrowed_book
+        )
         job = ThreadedJob(
             "overdrive_libby_borrow_book",
             description,
@@ -248,11 +247,12 @@ class HoldsDialogMixin(BaseDialogMixin):
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
 
-    def borrowed_book_and_download(self, job, hold):
+    def borrowed_book_and_download(self, job):
         # callback after book is borrowed
         self.borrowed_book(job)
-        if not job.failed:
-            self.download_loan(hold)
+        if (not job.failed) and job.result and hasattr(self, "download_loan"):
+            # this is actually from the loans tab
+            self.download_loan(job.result)
 
     def cancel_action_triggered(self, indices):
         msg = (

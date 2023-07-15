@@ -289,12 +289,11 @@ class MagazinesDialogMixin(BaseDialogMixin):
         description = _("Borrowing {book}").format(
             book=as_unicode(get_media_title(magazine), errors="replace")
         )
-        if do_download:
-            callback = Dispatcher(
-                lambda j: self.borrowed_magazine_and_download(j, magazine, card)
-            )
-        else:
-            callback = Dispatcher(self.borrowed_magazine)
+        callback = Dispatcher(
+            self.borrowed_magazine_and_download
+            if do_download
+            else self.borrowed_magazine
+        )
         job = ThreadedJob(
             "overdrive_libby_borrow_book",
             description,
@@ -316,12 +315,12 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
 
-    def borrowed_magazine_and_download(self, job, magazine, card):
+    def borrowed_magazine_and_download(self, job):
         # callback after magazine is borrowed
         self.borrowed_magazine(job)
-        if not job.failed:
-            magazine["cardId"] = card["cardId"]
-            self.download_loan(magazine)
+        if (not job.failed) and job.result and hasattr(self, "download_loan"):
+            # this is actually from the loans tab
+            self.download_loan(job.result)
 
     def add_magazine_btn_clicked(self):
         share_url = self.magazine_link_txt.text().strip()

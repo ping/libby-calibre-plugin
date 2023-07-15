@@ -11,7 +11,6 @@
 from datetime import datetime
 from typing import Dict, Optional, List
 
-from calibre.ebooks.metadata.book.base import Metadata
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date, dt_as_local
 from calibre.utils.icu import lower as icu_lower

@@ -269,6 +269,19 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.mark_updated_books_checkbox, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
+        self.help_lbl = QLabel(
+            '<a style="padding: 0 4px;" href="https://github.com/ping/libby-calibre-plugin#setup">'
+            + _("Help")
+            + "</a>"
+        )
+        self.help_lbl.setAlignment(Qt.AlignRight)
+        self.help_lbl.setTextFormat(Qt.RichText)
+        self.help_lbl.setOpenExternalLinks(True)
+        self.layout.addWidget(self.help_lbl, widget_row_pos, 0, 1, 2)
+        label_column_widths.append(
+            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
+        )
+
         label_column_width = max(label_column_widths)
         self.layout.setColumnMinimumWidth(1, label_column_width)
 

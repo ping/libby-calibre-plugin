@@ -28,6 +28,7 @@ from qt.core import (
     QFont,
     QToolButton,
     QMenu,
+    QLabel,
 )
 
 from .. import logger, __version__, PluginIcons, DEMO_MODE
@@ -114,6 +115,16 @@ class BaseDialogMixin(QDialog):
         self.status_bar.setStyleSheet(
             "background-color: rgba(127, 127, 127, 0.1); border-radius: 4px;"
         )
+        help_lbl = QLabel(
+            '<a href="https://github.com/ping/libby-calibre-plugin#usage">'
+            + _("Help")
+            + "</a>"
+        )
+        help_lbl.setStyleSheet("margin: 0 4px")
+        help_lbl.setAttribute(Qt.WA_TranslucentBackground)
+        help_lbl.setTextFormat(Qt.RichText)
+        help_lbl.setOpenExternalLinks(True)
+        self.status_bar.addPermanentWidget(help_lbl)
         layout.addWidget(self.status_bar, 1, 0)
 
         self.refresh_buttons: List[QWidget] = []

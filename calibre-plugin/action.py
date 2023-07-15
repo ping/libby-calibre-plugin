@@ -21,6 +21,8 @@ from qt.core import (
     QXmlStreamReader,
     QSvgRenderer,
     QPixmap,
+    QUrl,
+    QDesktopServices,
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON, ICON_MAP
@@ -40,12 +42,13 @@ class OverdriveLibbyAction(InterfaceAction):
     action_spec = (
         "OverDrive Libby",
         None,
-        _("Run the OverDrive Libby client UI"),
+        _("Import loans from your OverDrive Libby account"),
         None,
     )
     popup_type = QToolButton.MenuButtonPopup
     action_type = "current"
     action_add_menu = True
+    action_menu_clone_qaction = True
     dont_add_to = frozenset(["context-menu-device"])
 
     @staticmethod
@@ -90,6 +93,24 @@ class OverdriveLibbyAction(InterfaceAction):
             "config.png",
             triggered=lambda: self.interface_action_base_plugin.do_user_config(
                 self.gui
+            ),
+        )
+        self.create_menu_action(
+            self.libby_menu,
+            "overdrive-libby-help",
+            _("Help"),
+            "help.png",
+            triggered=lambda: QDesktopServices.openUrl(
+                QUrl("https://github.com/ping/libby-calibre-plugin#setup")
+            ),
+        )
+        self.create_menu_action(
+            self.libby_menu,
+            "overdrive-libby-mr",
+            _("MobileRead"),
+            "external-link.png",
+            triggered=lambda: QDesktopServices.openUrl(
+                QUrl("https://www.mobileread.com/forums/showthread.php?t=354816")
             ),
         )
 

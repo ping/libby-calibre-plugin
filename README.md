@@ -6,7 +6,7 @@ Requires calibre 6.
 
 ## Main Features
 
-- Import the `.acsm` file for EPUB/PDF(DRM) book loans (see issue below)
+- Import the `.acsm` file for EPUB/PDF(DRM) book loans
 - Import the `.epub` file for EPUB (open) book loans
 - Import the `.epub` file for Magazines loans \[EXPERIMENTAL\]
 - View and borrow holds
@@ -22,13 +22,13 @@ Open Preferences > Plugins > Get new plugins, and install the "OverDrive Libby" 
 
 You may also download the latest plugin zip file from Releases and install the plugin manually, then restart calibre as described in the [Introduction to Plugins](https://www.mobileread.com/forums/showthread.php?t=118680) thread.
 
-To try out unreleased versions, go to [GitHub Actions](https://github.com/ping/libby-calibre-plugin/actions?query=branch%3Amain), and click on the latest run. The downloadable artifact, e.g. `overdrive-libby-plugin-1a2b3c4` will be an installable plugin zip.
+To try out unreleased versions, go to [GitHub Actions](https://github.com/ping/libby-calibre-plugin/actions?query=branch%3Amain), and click on the latest run. The downloadable artifact, e.g. `overdrive-libby-plugin-1a2b3c4` will be an installable plugin zip. You will need to be logged in to GitHub to download artifacts.
 
 ## Setup
 
 To configure this plugin, you must already be using Libby on a [compatible](https://help.libbyapp.com/en-us/6105.htm) device.
 
-Open the plugin customisation settings (Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
+Open the plugin customization settings (Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
 
 ![settings](images/settings.png)
 
@@ -50,6 +50,8 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
   - Choose DRM-free formats if available
 - Hide books already in library
   - Hide loans that are already in your library
+- Exclude empty books when hiding titles already in library
+  - When enabled, empty books are excluded when hiding titles already in your library
 - Hide unavailable holds
   - Hide holds that are not yet available
 - Always confirm returns
@@ -57,7 +59,9 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 - Always confim holds cancellation
   - Toggle the confirmation prompt before cancelling a hold
 - Enable OverDrive Link Plugin integration
-  - Enable or disable the integration
+  - Enable or disable the integration. If enabled, the plugin will attempt to find a matching OverDrive-linked book that does not have any formats and add the new download as an EPUB to the book record. Newly downloaded books will also have the `odid` identifier added.
+- Mark updated books
+  - This relates to the OverDrive Link Plugin integration. If enabled, book records that were updated with a new format will be marked.
 
 ## Usage
 
@@ -81,9 +85,15 @@ Select the "Holds" tab. Select the available hold you wish to borrow, then click
 
 Each selected hold will then be borrowed in its own job. When the job completes, click the "Refresh" button to see the new loan in the "Loans" tab.
 
+Alternatively, right-click on the Borrow button to choose the "Borrow and Download" action. This will borrow and download the selected hold.
+
 To list unavailable holds, uncheck the "Hide unavailable holds" checkbox.
 
 To cancel a hold, select and right-click on the row, then select "Cancel hold".
+
+To suspend a hold, or delay delivery, right-click and select "Edit hold". Use the slider to set the number of days to suspend/delay for, then click on "Update".
+
+![Edit Hold](images/edit_hold.png)
 
 ### Magazines
 

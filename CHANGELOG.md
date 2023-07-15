@@ -1,6 +1,6 @@
 # Changelog
 
-Unreleased
+Version 0.1.5 - 2023-07-15
 - New: Option to "Borrow and Download" from the Borrow button for loans/magazines
 - New: Edit a hold to suspend or delay delivery
 - New: Option to mark books that have been updated with a new format

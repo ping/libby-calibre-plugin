@@ -208,11 +208,13 @@ class LibbyLoansModel(LibbyModel):
         loan: Dict = self.filtered_rows[row]
         if role == Qt.UserRole:
             return loan
+        if col >= self.columnCount():
+            return None
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
+        if role == Qt.ToolTipRole and col == 0:
+            return get_media_title(loan, include_subtitle=True)
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
-            return None
-        if col >= self.columnCount():
             return None
         if col == 0:
             if role == LibbyModel.DisplaySortRole:
@@ -317,6 +319,8 @@ class LibbyHoldsModel(LibbyModel):
 
         if role == Qt.UserRole:
             return hold
+        if col >= self.columnCount():
+            return None
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
         if role == Qt.FontRole and col == 5:
@@ -324,6 +328,8 @@ class LibbyHoldsModel(LibbyModel):
                 font = QFont()
                 font.setBold(True)
                 return font
+        if role == Qt.ToolTipRole and col == 0:
+            return get_media_title(hold, include_subtitle=True)
         if role == Qt.ToolTipRole and col == 5:
             if is_suspended:
                 suspended_till = dt_as_local(parse_datetime(hold["suspensionEnd"]))
@@ -343,8 +349,6 @@ class LibbyHoldsModel(LibbyModel):
                         )
                     )
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
-            return None
-        if col >= self.columnCount():
             return None
         if col == 0:
             if role == LibbyModel.DisplaySortRole:
@@ -498,8 +502,12 @@ class LibbyMagazinesModel(LibbyModel):
         subscription: Dict = self.filtered_rows[row]
         if role == Qt.UserRole:
             return subscription
+        if col >= self.columnCount():
+            return None
         if role == Qt.TextAlignmentRole and col >= 1:
             return Qt.AlignCenter
+        if role == Qt.ToolTipRole and col == 0:
+            return get_media_title(subscription, include_subtitle=True)
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:

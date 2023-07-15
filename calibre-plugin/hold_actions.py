@@ -45,5 +45,6 @@ class LibbyHoldUpdate:
     ):
         logger = log
         notifications.put((0.5, _("Updating hold")))
-        libby_client.suspend_hold(hold, days_to_suspend)
+        hold = libby_client.suspend_hold(hold, days_to_suspend)
         logger.info("Updated hold for %s successfully." % get_media_title(hold))
+        return hold

@@ -29,8 +29,9 @@ class LibbyBorrowHold:
     ):
         logger = log
         notifications.put((0.5, _("Borrowing")))
-        libby_client.borrow_hold(hold, card)
+        loan = libby_client.borrow_hold(hold, card)
         logger.info(
             "Borrowed %s successfully from %s."
-            % (get_media_title(hold), card["advantageKey"])
+            % (get_media_title(loan), card["advantageKey"])
         )
+        return loan

@@ -7,7 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
+from collections import namedtuple
 from datetime import datetime
 from typing import Dict, Optional, List
 
@@ -20,7 +20,7 @@ from . import DEMO_MODE
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
-from .magazine_download_utils import parse_datetime
+from .magazine_download_utils import parse_datetime, extract_isbn, extract_asin
 
 load_translations()
 
@@ -123,6 +123,11 @@ class LibbyModel(QAbstractTableModel):
         )
 
 
+LoanMatchCondition = namedtuple(
+    "LoanMatchCondition", ["title1", "title2", "isbn", "asin"]
+)
+
+
 class LibbyLoansModel(LibbyModel):
     """
     Underlying data model for the Loans table view
@@ -142,6 +147,7 @@ class LibbyLoansModel(LibbyModel):
         super().__init__(parent, synced_state, db)
         self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
         self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
+        self.all_book_ids_identifiers = self.db.fields["identifiers"].table.book_col_map
         self.filter_hide_books_already_in_library = PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ]
@@ -161,36 +167,54 @@ class LibbyLoansModel(LibbyModel):
     def filter_rows(self):
         self.beginResetModel()
         self.filtered_rows = []
-        for loan in [
-            l
-            for l in self._rows
-            if (
-                not PREFS[PreferenceKeys.HIDE_EBOOKS]
-                and LibbyClient.is_downloadable_ebook_loan(l)
-            )
-            or (
-                not PREFS[PreferenceKeys.HIDE_MAGAZINES]
-                and LibbyClient.is_downloadable_magazine_loan(l)
-            )
-        ]:
+        for loan in self._rows:
+            if not (
+                (
+                    LibbyClient.is_downloadable_ebook_loan(loan)
+                    and not PREFS[PreferenceKeys.HIDE_EBOOKS]
+                )
+                or (
+                    LibbyClient.is_downloadable_magazine_loan(loan)
+                    and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
+                )
+            ):
+                continue
+
             if not self.filter_hide_books_already_in_library:
                 # hide lib books filter is not enabled
-                book_in_library = False
                 self.filtered_rows.append(loan)
                 continue
 
             # hide lib books filter is enabled
             book_in_library = False
-            q1 = icu_lower(get_media_title(loan).strip())
-            q2 = icu_lower(get_media_title(loan, include_subtitle=True).strip())
+            loan_title1 = icu_lower(get_media_title(loan).strip())
+            loan_title2 = icu_lower(
+                get_media_title(loan, include_subtitle=True).strip()
+            )
+            loan_isbn = extract_isbn(
+                loan.get("formats", []),
+                [
+                    LibbyClient.get_loan_format(
+                        loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+                    )
+                ],
+            )
+            loan_asin = extract_asin(loan.get("formats", []))
             for book_id, title in iter(self.all_book_ids_titles.items()):
-                if icu_lower(title) not in (q1, q2):
-                    continue
-                if (
-                    not PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
-                ) or self.all_book_ids_formats.get(book_id):
-                    book_in_library = True
-                break  # check only first matching book title
+                book_identifiers = self.all_book_ids_identifiers.get(book_id) or {}
+                book_in_library = (
+                    icu_lower(title) in (loan_title1, loan_title2)
+                    or (loan_isbn and loan_isbn == book_identifiers.get("isbn", ""))
+                    or (loan_asin and loan_asin == book_identifiers.get("amazon", ""))
+                    or (loan_asin and loan_asin == book_identifiers.get("asin", ""))
+                )
+                if book_in_library:
+                    if PREFS[
+                        PreferenceKeys.EXCLUDE_EMPTY_BOOKS
+                    ] and not self.all_book_ids_formats.get(book_id):
+                        book_in_library = False
+                    break  # check only first matching book
+
             if not book_in_library:
                 self.filtered_rows.append(loan)
 

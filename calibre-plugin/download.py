@@ -10,7 +10,7 @@
 
 import time
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 from .config import PREFS, PreferenceKeys
 from .magazine_download_utils import extract_isbn, extract_asin
@@ -21,6 +21,49 @@ class LibbyDownload:
     Base class for download jobs
     """
 
+    def update_metadata(
+        self,
+        gui,
+        loan: Dict,
+        library: Dict,
+        format_id: str,
+        metadata,
+        tags: Optional[List[str]] = None,
+    ):
+        """
+        Update identifiers in book metadata.
+
+        :param gui:
+        :param loan:
+        :param library:
+        :param format_id:
+        :param metadata:
+        :param tags:
+        :return:
+        """
+        if not tags:
+            tags = []
+        metadata.tags.extend(tags)
+
+        isbn = extract_isbn(loan.get("formats", []), [format_id])
+        asin = extract_asin(loan.get("formats", []))
+        odid_identifier = f'{loan["id"]}@{library["preferredKey"]}.overdrive.com'
+
+        identifiers = metadata.get_identifiers()
+        if isbn and not identifiers.get("isbn"):
+            metadata.set_identifier("isbn", isbn)
+        if asin and not (identifiers.get("amazon") or identifiers.get("asin")):
+            metadata.set_identifier("amazon", asin)
+        if (
+            PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
+            and "Overdrive Link" in gui.iactions
+            and not identifiers.get("odid")
+        ):
+            # user has OverdriveLink installed with integration enabled and no odid
+            metadata.set_identifier("odid", odid_identifier)
+
+        return metadata
+
     def add(
         self,
         gui,
@@ -30,7 +73,7 @@ class LibbyDownload:
         format_id: str,
         downloaded_file: Path,
         book_id: int = None,
-        tags: List[str] = [],
+        tags: Optional[List[str]] = None,
         metadata=None,
         log=None,
     ) -> None:
@@ -63,17 +106,9 @@ class LibbyDownload:
                 book_id, ext.upper(), str(downloaded_file), replace=False
             )
             if successfully_added:
-                metadata.tags.extend(tags)
-
-                # set identifiers
-                isbn = extract_isbn(loan.get("formats", []), [format_id])
-                asin = extract_asin(loan.get("formats", []))
-                identifiers = metadata.get_identifiers()
-                if isbn and not identifiers.get("isbn"):
-                    metadata.set_identifier("isbn", isbn)
-                if asin and not (identifiers.get("amazon") or identifiers.get("asin")):
-                    metadata.set_identifier("amazon", asin)
-
+                metadata = self.update_metadata(
+                    gui, loan, library, format_id, metadata, tags
+                )
                 db.set_metadata(book_id, metadata)
 
                 if PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]:
@@ -95,28 +130,12 @@ class LibbyDownload:
 
             # Reference: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L108-L116
             with open(new_path, "rb") as f:
-                mi = get_metadata(f, new_ext, force_read_metadata=True)
-            mi.tags.extend(tags)
+                metadata = get_metadata(f, new_ext, force_read_metadata=True)
 
-            # set identifiers
-            isbn = extract_isbn(loan.get("formats", []), [format_id])
-            asin = extract_asin(loan.get("formats", []))
-            identifiers = mi.get_identifiers()
-            if isbn and not identifiers.get("isbn"):
-                mi.set_identifier("isbn", isbn)
-            if asin and not (identifiers.get("amazon") or identifiers.get("asin")):
-                mi.set_identifier("amazon", asin)
-            if (
-                PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
-                and "Overdrive Link" in gui.iactions
-                and not identifiers.get("odid")
-            ):
-                # user has OverdriveLink installed with integration enabled and no odid
-                mi.set_identifier(
-                    "odid", f'{loan["id"]}@{library["preferredKey"]}.overdrive.com'
-                )
-
-            book_id = gui.library_view.model().db.create_book_entry(mi)
+            metadata = self.update_metadata(
+                gui, loan, library, format_id, metadata, tags
+            )
+            book_id = gui.library_view.model().db.create_book_entry(metadata)
             gui.library_view.model().db.add_format_with_hooks(
                 book_id, new_ext.upper(), new_path, index_is_id=True
             )

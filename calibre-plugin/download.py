@@ -57,10 +57,14 @@ class LibbyDownload:
         if (
             PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
             and "Overdrive Link" in gui.iactions
-            and not identifiers.get("odid")
         ):
-            # user has OverdriveLink installed with integration enabled and no odid
-            metadata.set_identifier("odid", odid_identifier)
+            # user has OverdriveLink installed with integration enabled
+            found_odid_identifiers = (
+                identifiers["odid"].split("&") if identifiers.get("odid") else []
+            )
+            if odid_identifier not in found_odid_identifiers:
+                found_odid_identifiers.append(odid_identifier)
+                metadata.set_identifier("odid", "&".join(found_odid_identifiers))
 
         return metadata
 

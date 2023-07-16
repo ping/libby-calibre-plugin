@@ -7,7 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-from typing import Dict
+from typing import Dict, List
 
 from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
@@ -35,6 +35,7 @@ from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
 from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
+from ..magazine_download_utils import extract_isbn, extract_asin
 from ..models import get_media_title, LibbyLoansModel, LibbyModel
 
 load_translations()
@@ -244,25 +245,36 @@ class LoansDialogMixin(BaseDialogMixin):
 
         # We will handle the downloading of the files ourselves
 
-        # [OverDrive Link integration]
-        # If we find a book without formats and has the odid identifier matching the loan,
+        # Matching an empty book:
+        # If we find a book without formats and matches isbn/asin and odid (if enabled),
         # add the new file as a format to the existing book record
         book_id = None
         mi = None
         enable_overdrivelink_integration = PREFS[
             PreferenceKeys.OVERDRIVELINK_INTEGRATION
         ]
-        self.logger.debug(
-            "OverDrive Link Integration enabled: %s", enable_overdrivelink_integration
-        )
+        search_query = "format:False"
+        loan_isbn = extract_isbn(loan.get("formats", []), [format_id])
+        loan_asin = extract_asin(loan.get("formats", []))
+        identifier_conditions: List[str] = []
+        if loan_isbn:
+            identifier_conditions.append(f"identifiers:=isbn:{loan_isbn}")
+        if loan_asin:
+            identifier_conditions.append(f"identifiers:=asin:{loan_asin}")
+            identifier_conditions.append(f"identifiers:=amazon:{loan_asin}")
         if enable_overdrivelink_integration:
-            search_query = (
-                "format:False "
-                f'and identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
+            identifier_conditions.append(
+                f'identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
             )
+        if identifier_conditions:
+            # search for existing empty book only if there is at least 1 identifier
+            search_query += " and (" + " or ".join(identifier_conditions) + ")"
+            self.logger.debug("Library Search Query: %s", search_query)
             book_ids = list(self.db.search(search_query))
             book_id = book_ids[0] if book_ids else 0
             mi = self.db.get_metadata(book_id) if book_id else None
+        if mi and book_id:
+            self.logger.debug("Matched existing empty book: %s", mi.title)
 
         description = (
             _(

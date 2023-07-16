@@ -237,7 +237,9 @@ class BaseDialogMixin(QDialog):
                     unique_holds=holds_unique_count,
                     cards=len(value.get("cards", [])),
                     magazines=len(PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS]),
-                ),
+                )
+                if not DEMO_MODE
+                else "",
                 5000,
             )
             for model in self.models:

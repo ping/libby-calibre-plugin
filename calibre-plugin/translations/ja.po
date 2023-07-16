@@ -28,12 +28,12 @@ msgstr ""
 
 #: calibre-plugin/action.py:99
 msgid "Customize plugin"
-msgstr ""
+msgstr "プラグインをカスタマイズ"
 
 #: calibre-plugin/action.py:108 calibre-plugin/config.py:274
 #: calibre-plugin/dialog/base.py:120
 msgid "Help"
-msgstr ""
+msgstr "ヘルプ"
 
 #: calibre-plugin/action.py:117 calibre-plugin/dialog/base.py:122
 msgid "MobileRead"
@@ -221,11 +221,11 @@ msgstr ""
 
 #: calibre-plugin/models.py:440
 msgid "Library Card"
-msgstr ""
+msgstr "図書カード"
 
 #: calibre-plugin/models.py:440
 msgid "Borrowed"
-msgstr ""
+msgstr "借り"
 
 #: calibre-plugin/dialog/base.py:84
 #, python-brace-format
@@ -351,7 +351,7 @@ msgstr[0] ""
 
 #: calibre-plugin/dialog/holds.py:379 calibre-plugin/dialog/magazines.py:261
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 #: calibre-plugin/dialog/holds.py:382
 msgid "Don't save changes"
@@ -359,7 +359,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/holds.py:386
 msgid "Update"
-msgstr ""
+msgstr "アップデート"
 
 #: calibre-plugin/dialog/holds.py:389
 msgid "Save changes"
@@ -430,7 +430,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/magazines.py:110
 msgid "Add"
-msgstr ""
+msgstr "追加"
 
 #: calibre-plugin/dialog/magazines.py:113
 msgid "Add to monitor for new issues"
@@ -442,7 +442,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/magazines.py:197
 msgid "Magazines"
-msgstr ""
+msgstr "雑誌"
 
 #: calibre-plugin/dialog/magazines.py:313
 msgid "Failed to borrow magazine"

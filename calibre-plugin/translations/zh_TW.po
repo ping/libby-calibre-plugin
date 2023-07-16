@@ -28,12 +28,12 @@ msgstr ""
 
 #: calibre-plugin/action.py:99
 msgid "Customize plugin"
-msgstr ""
+msgstr "自訂外掛"
 
 #: calibre-plugin/action.py:108 calibre-plugin/config.py:274
 #: calibre-plugin/dialog/base.py:120
 msgid "Help"
-msgstr ""
+msgstr "說明"
 
 #: calibre-plugin/action.py:117 calibre-plugin/dialog/base.py:122
 msgid "MobileRead"
@@ -221,11 +221,11 @@ msgstr ""
 
 #: calibre-plugin/models.py:440
 msgid "Library Card"
-msgstr ""
+msgstr "借書卡"
 
 #: calibre-plugin/models.py:440
 msgid "Borrowed"
-msgstr ""
+msgstr "已借閱"
 
 #: calibre-plugin/dialog/base.py:84
 #, python-brace-format
@@ -256,7 +256,7 @@ msgstr "借閱"
 #: calibre-plugin/dialog/base.py:276 calibre-plugin/dialog/base.py:290
 #: calibre-plugin/dialog/base.py:315 calibre-plugin/dialog/base.py:329
 msgid "Borrow and Download"
-msgstr ""
+msgstr "借阅并下载"
 
 #: calibre-plugin/dialog/base.py:282 calibre-plugin/dialog/base.py:318
 msgid "Borrow selected title"
@@ -351,7 +351,7 @@ msgstr[0] ""
 
 #: calibre-plugin/dialog/holds.py:379 calibre-plugin/dialog/magazines.py:261
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: calibre-plugin/dialog/holds.py:382
 msgid "Don't save changes"
@@ -359,7 +359,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/holds.py:386
 msgid "Update"
-msgstr ""
+msgstr "更新"
 
 #: calibre-plugin/dialog/holds.py:389
 msgid "Save changes"
@@ -430,7 +430,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/magazines.py:110
 msgid "Add"
-msgstr ""
+msgstr "加入"
 
 #: calibre-plugin/dialog/magazines.py:113
 msgid "Add to monitor for new issues"
@@ -442,7 +442,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/magazines.py:197
 msgid "Magazines"
-msgstr ""
+msgstr "雜誌"
 
 #: calibre-plugin/dialog/magazines.py:313
 msgid "Failed to borrow magazine"

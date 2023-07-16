@@ -1,5 +1,10 @@
 # Changelog
 
+Unreleased
+- Match empty books for update using ISBN/ASIN even if OverDrive Link Integration is not enabled
+- Improve identifying titles already in library by also matching ISBN/ASIN
+- Make UI more keyboard navigable
+
 Version 0.1.5 - 2023-07-15
 - New: Option to "Borrow and Download" from the Borrow button for loans/magazines
 - New: Edit a hold to suspend or delay delivery

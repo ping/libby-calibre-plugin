@@ -126,6 +126,9 @@ class BaseDialogMixin(QDialog):
         help_lbl.setAttribute(Qt.WA_TranslucentBackground)
         help_lbl.setTextFormat(Qt.RichText)
         help_lbl.setOpenExternalLinks(True)
+        help_lbl.setTextInteractionFlags(
+            Qt.LinksAccessibleByKeyboard | Qt.LinksAccessibleByMouse
+        )
         self.status_bar.addPermanentWidget(help_lbl)
         layout.addWidget(self.status_bar, 1, 0)
 

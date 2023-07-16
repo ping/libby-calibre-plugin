@@ -150,6 +150,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.magazines_view.setSelectionMode(QAbstractItemView.SingleSelection)
         self.magazines_view.sortByColumn(-1, Qt.AscendingOrder)
+        self.magazines_view.setTabKeyNavigation(
+            False
+        )  # prevents tab key being stuck in view
         # add context menu
         self.magazines_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.magazines_view.customContextMenuRequested.connect(

@@ -91,6 +91,9 @@ class LoansDialogMixin(BaseDialogMixin):
             horizontal_header.setSectionResizeMode(col_index, mode)
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
+        self.loans_view.setTabKeyNavigation(
+            False
+        )  # prevents tab key being stuck in view
         # add context menu
         self.loans_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.loans_view.customContextMenuRequested.connect(

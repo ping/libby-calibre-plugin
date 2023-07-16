@@ -43,7 +43,7 @@ class OverdriveLibbyAction(InterfaceAction):
         "OverDrive Libby",
         None,
         _("Import loans from your OverDrive Libby account"),
-        None,
+        (),
     )
     popup_type = QToolButton.MenuButtonPopup
     action_type = "current"

@@ -97,6 +97,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.holds_view.setSelectionMode(QAbstractItemView.SingleSelection)
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
+        self.holds_view.setTabKeyNavigation(
+            False
+        )  # prevents tab key being stuck in view
         # add debug trigger
         self.holds_view.doubleClicked.connect(
             lambda mi: self.display_debug("Hold", mi.data(Qt.UserRole))

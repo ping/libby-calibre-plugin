@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.5\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-17 13:39+0800\n"
+"POT-Creation-Date: 2023-07-17 16:23+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Borrowing"
 msgstr ""
 
-#: calibre-plugin/config.py:50 calibre-plugin/config.py:327
+#: calibre-plugin/config.py:50 calibre-plugin/config.py:328
 msgid "Libby Setup Code"
 msgstr ""
 
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Libby is not configured yet."
 msgstr ""
 
-#: calibre-plugin/config.py:328
+#: calibre-plugin/config.py:329
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""
@@ -326,28 +326,28 @@ msgid_plural "Return {n} loans"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/loans.py:282
+#: calibre-plugin/dialog/loans.py:288
 #, python-brace-format
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:381
+#: calibre-plugin/dialog/loans.py:387
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/loans.py:393
+#: calibre-plugin/dialog/loans.py:399
 msgid "Return Loans"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:404
+#: calibre-plugin/dialog/loans.py:410
 #, python-brace-format
 msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:424
+#: calibre-plugin/dialog/loans.py:430
 msgid "Failed to return loan"
 msgstr ""
 

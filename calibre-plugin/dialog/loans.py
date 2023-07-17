@@ -254,24 +254,30 @@ class LoansDialogMixin(BaseDialogMixin):
         enable_overdrivelink_integration = PREFS[
             PreferenceKeys.OVERDRIVELINK_INTEGRATION
         ]
-        search_query = "format:False"
         loan_isbn = extract_isbn(loan.get("formats", []), [format_id])
         loan_asin = extract_asin(loan.get("formats", []))
         identifier_conditions: List[str] = []
         if loan_isbn:
-            identifier_conditions.append(f"identifiers:=isbn:{loan_isbn}")
+            identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
         if loan_asin:
-            identifier_conditions.append(f"identifiers:=asin:{loan_asin}")
-            identifier_conditions.append(f"identifiers:=amazon:{loan_asin}")
+            identifier_conditions.append(f'identifiers:"=asin:{loan_asin}"')
+            identifier_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
         if enable_overdrivelink_integration:
             identifier_conditions.append(
                 f'identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
             )
         if identifier_conditions:
             # search for existing empty book only if there is at least 1 identifier
-            search_query += " and (" + " or ".join(identifier_conditions) + ")"
-            self.logger.debug("Library Search Query: %s", search_query)
-            book_ids = list(self.db.search(search_query))
+            search_query = " or ".join(identifier_conditions)
+            restriction = "format:False"
+            # use restriction because it's apparently cached
+            # ref: https://manual.calibre-ebook.com/db_api.html#calibre.db.cache.Cache.search
+            self.logger.debug(
+                "Library Search Query (with restriction: %s): %s",
+                restriction,
+                search_query,
+            )
+            book_ids = list(self.db.search(search_query, restriction=restriction))
             book_id = book_ids[0] if book_ids else 0
             mi = self.db.get_metadata(book_id) if book_id else None
         if mi and book_id:

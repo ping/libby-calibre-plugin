@@ -118,8 +118,9 @@ class ConfigWidget(QWidget):
 
         # Libby Setup Code
         self.libby_setup_code_lbl = QLabel(
-            PreferenceTexts.LIBBY_SETUP_CODE
-            + ' [<a style="padding: 0 4px;" href="https://help.libbyapp.com/en-us/6070.htm"> ? </a>]'
+            '<a href="https://help.libbyapp.com/en-us/6070.htm">'
+            + PreferenceTexts.LIBBY_SETUP_CODE
+            + "</a>"
         )
         self.libby_setup_code_lbl.setTextFormat(Qt.RichText)
         self.libby_setup_code_lbl.setOpenExternalLinks(True)

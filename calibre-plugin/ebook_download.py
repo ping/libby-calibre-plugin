@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from calibre.ptempfile import PersistentTemporaryDirectory
+from calibre.utils.localization import _ as _c
 
 from .download import LibbyDownload
 from .libby import LibbyClient
@@ -87,7 +88,7 @@ class CustomEbookDownload(LibbyDownload):
         book_folder_path = Path(PersistentTemporaryDirectory())
         book_file_path = book_folder_path.joinpath(filename)
 
-        notifications.put((0.5, _("Downloading")))
+        notifications.put((0.5, _c("Downloading")))
         res_content = libby_client.fulfill_loan_file(
             loan["id"], loan["cardId"], format_id
         )

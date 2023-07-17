@@ -22,6 +22,7 @@ from urllib.parse import urlparse, urljoin
 
 from bs4 import BeautifulSoup, Doctype, Tag, element
 from calibre.ptempfile import PersistentTemporaryDirectory
+from calibre.utils.localization import _ as _c
 
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes, LibbyFormats
@@ -432,7 +433,7 @@ class CustomMagazineDownload(LibbyDownload):
             notifications.put(
                 (
                     (2 / meta_tasks) * meta_progress_fraction,
-                    _("Downloading cover"),
+                    _c("Downloading cover..."),
                 )
             )
             with cover_path.open("w+b") as cover_f:
@@ -689,7 +690,7 @@ class CustomMagazineDownload(LibbyDownload):
                 (
                     (i / total_downloads) * download_progress_fraction
                     + meta_progress_fraction,
-                    _("Downloading"),
+                    _c("Downloading"),
                 )
             )
 

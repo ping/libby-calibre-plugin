@@ -14,6 +14,8 @@ from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
+from calibre.utils.localization import _ as _c
+
 from qt.core import (
     Qt,
     QGridLayout,
@@ -61,7 +63,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget_row_pos = 0
 
         # Refresh button
-        self.holds_refresh_btn = QPushButton(_("Refresh"), self)
+        self.holds_refresh_btn = QPushButton(_c("Refresh"), self)
         self.holds_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
         self.holds_refresh_btn.setAutoDefault(False)
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
@@ -250,7 +252,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             self.gui.job_exception(job, dialog_title=_("Failed to borrow book"))
             return
 
-        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def borrowed_book_and_download(self, job):
         # callback after book is borrowed
@@ -306,7 +308,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             self.gui.job_exception(job, dialog_title=_("Failed to cancel hold"))
             return
 
-        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def updated_hold(self, job):
         # callback after hold is updated
@@ -314,7 +316,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             self.gui.job_exception(job, dialog_title=_("Failed to update hold"))
             return
 
-        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
 
 class SuspendHoldDialog(QDialog):
@@ -379,14 +381,14 @@ class SuspendHoldDialog(QDialog):
             if suspend_interval.days >= 0:
                 self.days_slider.setValue(suspend_interval.days + 1)
 
-        self.cancel_btn = QPushButton(_("Cancel"), self)
+        self.cancel_btn = QPushButton(_c("Cancel"), self)
         self.cancel_btn.setIcon(self.icons[PluginIcons.Cancel])
         self.cancel_btn.setAutoDefault(False)
         self.cancel_btn.setToolTip(_("Don't save changes"))
         self.cancel_btn.clicked.connect(lambda: self.reject())
         layout.addWidget(self.cancel_btn, widget_row_pos, 0)
 
-        self.update_btn = QPushButton(_("Update"), self)
+        self.update_btn = QPushButton(_c("OK"), self)
         self.update_btn.setIcon(self.icons[PluginIcons.Okay])
         self.update_btn.setAutoDefault(False)
         self.update_btn.setToolTip(_("Save changes"))

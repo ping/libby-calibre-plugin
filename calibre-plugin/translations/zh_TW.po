@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.5\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-15 19:09+0800\n"
+"POT-Creation-Date: 2023-07-17 13:38+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,24 +18,15 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 "X-Generator: Poedit 3.3.2\n"
 
-#: calibre-plugin/__init__.py:133 calibre-plugin/action.py:45
+#: calibre-plugin/__init__.py:133 calibre-plugin/action.py:46
 msgid "Import loans from your OverDrive Libby account"
 msgstr "從您的 OverDrive Libby 帳戶導入已借閱的圖書"
 
-#: calibre-plugin/action.py:51
+#: calibre-plugin/action.py:52
 msgid "Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:99
-msgid "Customize plugin"
-msgstr "自訂外掛"
-
-#: calibre-plugin/action.py:108 calibre-plugin/config.py:274
-#: calibre-plugin/dialog/base.py:120
-msgid "Help"
-msgstr "說明"
-
-#: calibre-plugin/action.py:117 calibre-plugin/dialog/base.py:122
+#: calibre-plugin/action.py:118 calibre-plugin/dialog/base.py:123
 msgid "MobileRead"
 msgstr ""
 
@@ -43,85 +34,81 @@ msgstr ""
 msgid "Borrowing"
 msgstr ""
 
-#: calibre-plugin/config.py:49 calibre-plugin/config.py:326
+#: calibre-plugin/config.py:50 calibre-plugin/config.py:327
 msgid "Libby Setup Code"
 msgstr "Libby設定代碼"
 
-#: calibre-plugin/config.py:50
+#: calibre-plugin/config.py:51
 msgid "8-digit setup code"
 msgstr "8 位數字代碼"
 
-#: calibre-plugin/config.py:51
+#: calibre-plugin/config.py:52
 msgid "Hide Magazines"
 msgstr "隱藏雜誌"
 
-#: calibre-plugin/config.py:52
+#: calibre-plugin/config.py:53
 msgid "Hide Ebooks"
 msgstr "隱藏電子書"
 
-#: calibre-plugin/config.py:53
+#: calibre-plugin/config.py:54
 msgid "Hide titles already in library"
 msgstr "隱藏書庫中已有的書籍"
 
-#: calibre-plugin/config.py:54
+#: calibre-plugin/config.py:55
 msgid "Exclude empty books when hiding titles already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:55
+#: calibre-plugin/config.py:56
 msgid "Hide unavailable holds"
 msgstr ""
 
-#: calibre-plugin/config.py:56
+#: calibre-plugin/config.py:57
 msgid "Prefer Open Formats"
 msgstr "偏好开放格式"
 
-#: calibre-plugin/config.py:57
+#: calibre-plugin/config.py:58
 msgid "Tag downloaded ebooks with"
 msgstr "將下載的電子書標記為"
 
-#: calibre-plugin/config.py:58
+#: calibre-plugin/config.py:59
 msgid "Example: library,books"
 msgstr "示例：圖書館,書籍"
 
-#: calibre-plugin/config.py:59
+#: calibre-plugin/config.py:60
 msgid "Tag downloaded magazines with"
 msgstr "將下載的雜誌標記為"
 
-#: calibre-plugin/config.py:60
+#: calibre-plugin/config.py:61
 msgid "Example: library,magazines"
 msgstr "示例：圖書館,雜誌"
 
-#: calibre-plugin/config.py:61
+#: calibre-plugin/config.py:62
 msgid "Always confirm returns"
 msgstr "始终确认还书"
 
-#: calibre-plugin/config.py:62
+#: calibre-plugin/config.py:63
 msgid "Always confirm holds cancellation"
 msgstr ""
 
-#: calibre-plugin/config.py:63
+#: calibre-plugin/config.py:64
 msgid "Enable OverDrive Link Plugin integration"
 msgstr ""
 
-#: calibre-plugin/config.py:64
+#: calibre-plugin/config.py:65
 msgid "Mark updated books"
 msgstr ""
 
-#: calibre-plugin/config.py:103
+#: calibre-plugin/config.py:104
 msgid "Libby is configured."
 msgstr "Libby已配置。"
 
-#: calibre-plugin/config.py:105
+#: calibre-plugin/config.py:106
 msgid "Libby is not configured yet."
 msgstr "Libby未配置。"
 
-#: calibre-plugin/config.py:327
+#: calibre-plugin/config.py:328
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
-msgstr ""
-
-#: calibre-plugin/ebook_download.py:90 calibre-plugin/magazine_download.py:692
-msgid "Downloading"
 msgstr ""
 
 #: calibre-plugin/hold_actions.py:30
@@ -136,351 +123,332 @@ msgstr ""
 msgid "Returning"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:425
+#: calibre-plugin/magazine_download.py:426
 msgid "Getting loan details"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:435
-msgid "Downloading cover"
-msgstr ""
-
-#: calibre-plugin/magazine_download.py:464
+#: calibre-plugin/magazine_download.py:465
 msgid "Getting book details"
 msgstr ""
 
-#: calibre-plugin/models.py:66
+#: calibre-plugin/models.py:67
 msgid "ebook"
 msgstr "電子書"
 
-#: calibre-plugin/models.py:66
+#: calibre-plugin/models.py:67
 msgid "magazine"
 msgstr "雜誌"
 
-#: calibre-plugin/models.py:132 calibre-plugin/models.py:256
-#: calibre-plugin/models.py:440
-msgid "Title"
-msgstr "書名"
-
-#: calibre-plugin/models.py:133 calibre-plugin/models.py:257
-msgid "Author"
-msgstr "作者"
-
-#: calibre-plugin/models.py:134
+#: calibre-plugin/models.py:140
 msgid "Checkout Date"
 msgstr "借閱日期"
 
-#: calibre-plugin/models.py:135
-msgid "Type"
-msgstr "書籍類型"
-
-#: calibre-plugin/models.py:136 calibre-plugin/models.py:260
-msgid "Format"
-msgstr "格式"
-
-#: calibre-plugin/models.py:258
+#: calibre-plugin/models.py:283
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:259
+#: calibre-plugin/models.py:284
 msgid "Library"
 msgstr "圖書館"
 
-#: calibre-plugin/models.py:261
+#: calibre-plugin/models.py:286
 msgid "Available"
 msgstr "可藉閱"
 
-#: calibre-plugin/models.py:340
+#: calibre-plugin/models.py:365
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:346
+#: calibre-plugin/models.py:371
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:393
+#: calibre-plugin/models.py:418
 msgid "Delayed"
 msgstr ""
 
-#: calibre-plugin/models.py:394
+#: calibre-plugin/models.py:419
 msgid "Suspended"
 msgstr ""
 
-#: calibre-plugin/models.py:395 calibre-plugin/models.py:531
-msgid "Yes"
-msgstr "是"
-
-#: calibre-plugin/models.py:395 calibre-plugin/models.py:531
-msgid "No"
-msgstr "否"
-
-#: calibre-plugin/models.py:440
+#: calibre-plugin/models.py:465
 msgid "Release Date"
 msgstr ""
 
-#: calibre-plugin/models.py:440
+#: calibre-plugin/models.py:465
 msgid "Library Card"
 msgstr "借書卡"
 
-#: calibre-plugin/models.py:440
+#: calibre-plugin/models.py:465
 msgid "Borrowed"
 msgstr "已借閱"
 
-#: calibre-plugin/dialog/base.py:84
+#: calibre-plugin/dialog/base.py:85
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:209 calibre-plugin/dialog/base.py:212
+#: calibre-plugin/dialog/base.py:213 calibre-plugin/dialog/base.py:216
 msgid "Synchronizing..."
 msgstr "同步中..."
 
-#: calibre-plugin/dialog/base.py:233
+#: calibre-plugin/dialog/base.py:237
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:250
+#: calibre-plugin/dialog/base.py:256
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:274 calibre-plugin/dialog/base.py:292
-#: calibre-plugin/dialog/base.py:315 calibre-plugin/dialog/base.py:331
+#: calibre-plugin/dialog/base.py:280 calibre-plugin/dialog/base.py:298
+#: calibre-plugin/dialog/base.py:321 calibre-plugin/dialog/base.py:337
 msgid "Borrow"
 msgstr "借閱"
 
-#: calibre-plugin/dialog/base.py:276 calibre-plugin/dialog/base.py:290
-#: calibre-plugin/dialog/base.py:315 calibre-plugin/dialog/base.py:329
+#: calibre-plugin/dialog/base.py:282 calibre-plugin/dialog/base.py:296
+#: calibre-plugin/dialog/base.py:321 calibre-plugin/dialog/base.py:335
 msgid "Borrow and Download"
 msgstr "借阅并下载"
 
-#: calibre-plugin/dialog/base.py:282 calibre-plugin/dialog/base.py:318
+#: calibre-plugin/dialog/base.py:288 calibre-plugin/dialog/base.py:324
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:284 calibre-plugin/dialog/base.py:320
+#: calibre-plugin/dialog/base.py:290 calibre-plugin/dialog/base.py:326
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:362
-msgid "Debug"
-msgstr ""
-
-#: calibre-plugin/dialog/holds.py:64 calibre-plugin/dialog/loans.py:60
-#: calibre-plugin/dialog/magazines.py:121
-msgid "Refresh"
-msgstr "刷新"
-
-#: calibre-plugin/dialog/holds.py:67
+#: calibre-plugin/dialog/holds.py:69
 msgid "Get latest holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:142
+#: calibre-plugin/dialog/holds.py:147
 msgid "Holds"
 msgstr "預約"
 
-#: calibre-plugin/dialog/holds.py:192 calibre-plugin/dialog/loans.py:165
-#: calibre-plugin/dialog/magazines.py:248
+#: calibre-plugin/dialog/holds.py:197 calibre-plugin/dialog/loans.py:170
+#: calibre-plugin/dialog/magazines.py:252
 msgid "View in Libby"
 msgstr "在Libby中查看"
 
-#: calibre-plugin/dialog/holds.py:197 calibre-plugin/dialog/loans.py:170
-#: calibre-plugin/dialog/magazines.py:253
+#: calibre-plugin/dialog/holds.py:202 calibre-plugin/dialog/loans.py:175
+#: calibre-plugin/dialog/magazines.py:257
 msgid "View in OverDrive"
 msgstr "在OverDrive中查看"
 
-#: calibre-plugin/dialog/holds.py:203
+#: calibre-plugin/dialog/holds.py:208
 msgid "Edit hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:209
+#: calibre-plugin/dialog/holds.py:214
 msgid "Cancel hold"
 msgstr "取消已預約"
 
-#: calibre-plugin/dialog/holds.py:225 calibre-plugin/dialog/magazines.py:289
+#: calibre-plugin/dialog/holds.py:230 calibre-plugin/dialog/magazines.py:293
 #, python-brace-format
 msgid "Borrowing {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:247
+#: calibre-plugin/dialog/holds.py:252
 msgid "Failed to borrow book"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:250 calibre-plugin/dialog/holds.py:306
-#: calibre-plugin/dialog/holds.py:314 calibre-plugin/dialog/loans.py:409
-#: calibre-plugin/dialog/magazines.py:316
-msgid "finished"
-msgstr "已完成"
-
-#: calibre-plugin/dialog/holds.py:261
+#: calibre-plugin/dialog/holds.py:266
 msgid "Cancel this hold?"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:271
+#: calibre-plugin/dialog/holds.py:276
 msgid "Cancel Holds"
 msgstr "取消已預約"
 
-#: calibre-plugin/dialog/holds.py:283
+#: calibre-plugin/dialog/holds.py:288
 #, python-brace-format
 msgid "Cancelling hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:303
+#: calibre-plugin/dialog/holds.py:308
 msgid "Failed to cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:311
+#: calibre-plugin/dialog/holds.py:316
 msgid "Failed to update hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:339 calibre-plugin/dialog/holds.py:359
+#: calibre-plugin/dialog/holds.py:344 calibre-plugin/dialog/holds.py:364
 #, python-brace-format
 msgid "Deliver after {n} day"
 msgid_plural "Deliver after {n} days"
 msgstr[0] ""
 
-#: calibre-plugin/dialog/holds.py:344 calibre-plugin/dialog/holds.py:366
+#: calibre-plugin/dialog/holds.py:349 calibre-plugin/dialog/holds.py:371
 #, python-brace-format
 msgid "Suspend for {n} day"
 msgid_plural "Suspend for {n} days"
 msgstr[0] ""
 
-#: calibre-plugin/dialog/holds.py:379 calibre-plugin/dialog/magazines.py:261
-msgid "Cancel"
-msgstr "取消"
-
-#: calibre-plugin/dialog/holds.py:382
+#: calibre-plugin/dialog/holds.py:387
 msgid "Don't save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:386
-msgid "Update"
-msgstr "更新"
-
-#: calibre-plugin/dialog/holds.py:389
+#: calibre-plugin/dialog/holds.py:394
 msgid "Save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:399
+#: calibre-plugin/dialog/holds.py:404
 #, python-brace-format
 msgid "Updating hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:63
+#: calibre-plugin/dialog/loans.py:65
 msgid "Get latest loans"
 msgstr "獲取最新借閱的書籍"
 
-#: calibre-plugin/dialog/loans.py:125
-msgid "Download"
-msgstr "下載"
-
-#: calibre-plugin/dialog/loans.py:128
+#: calibre-plugin/dialog/loans.py:133
 msgid "Download selected loans"
 msgstr "下載選定的圖書借閱"
 
-#: calibre-plugin/dialog/loans.py:139
+#: calibre-plugin/dialog/loans.py:144
 msgid "Loans"
 msgstr "已借閱"
 
-#: calibre-plugin/dialog/loans.py:176
+#: calibre-plugin/dialog/loans.py:181
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] "歸還 {n} 本書借閱"
 
-#: calibre-plugin/dialog/loans.py:266
+#: calibre-plugin/dialog/loans.py:282
 #, python-brace-format
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:272 calibre-plugin/dialog/loans.py:329
-#, python-brace-format
-msgid "Downloading {book}"
-msgstr "正在下載 {book}"
-
-#: calibre-plugin/dialog/loans.py:363
+#: calibre-plugin/dialog/loans.py:381
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "歸還這 {n} 本書借閱嗎？"
 
-#: calibre-plugin/dialog/loans.py:375
+#: calibre-plugin/dialog/loans.py:393
 msgid "Return Loans"
 msgstr "歸還圖書借閱"
 
-#: calibre-plugin/dialog/loans.py:386
+#: calibre-plugin/dialog/loans.py:404
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "歸還 {book}"
 
-#: calibre-plugin/dialog/loans.py:406
+#: calibre-plugin/dialog/loans.py:424
 msgid "Failed to return loan"
 msgstr "借阅图书未能归还"
 
-#: calibre-plugin/dialog/magazines.py:79
+#: calibre-plugin/dialog/magazines.py:80
 msgid ""
 "Paste the share link of the magazine you wish to favorite and select a "
 "library card. \n"
 "Click on the Add button to monitor this title for new issues."
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:110
-msgid "Add"
-msgstr "加入"
-
-#: calibre-plugin/dialog/magazines.py:113
+#: calibre-plugin/dialog/magazines.py:114
 msgid "Add to monitor for new issues"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:124
+#: calibre-plugin/dialog/magazines.py:125
 msgid "Get latest magazines"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:197
+#: calibre-plugin/dialog/magazines.py:201
 msgid "Magazines"
 msgstr "雜誌"
 
-#: calibre-plugin/dialog/magazines.py:313
+#: calibre-plugin/dialog/magazines.py:317
 msgid "Failed to borrow magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:335
-#: calibre-plugin/dialog/magazines.py:357
-#: calibre-plugin/dialog/magazines.py:369
-#: calibre-plugin/dialog/magazines.py:384
-#: calibre-plugin/dialog/magazines.py:399
+#: calibre-plugin/dialog/magazines.py:339
+#: calibre-plugin/dialog/magazines.py:361
+#: calibre-plugin/dialog/magazines.py:373
+#: calibre-plugin/dialog/magazines.py:388
+#: calibre-plugin/dialog/magazines.py:403
 msgid "Add Magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:336
+#: calibre-plugin/dialog/magazines.py:340
 #, python-brace-format
 msgid "Invalid URL {url}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:359
+#: calibre-plugin/dialog/magazines.py:363
 #, python-brace-format
 msgid "{media} is not a downloadable magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:370
+#: calibre-plugin/dialog/magazines.py:374
 msgid "Library does not own this title"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:385
+#: calibre-plugin/dialog/magazines.py:389
 #, python-brace-format
 msgid "Already added {magazine}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:401
+#: calibre-plugin/dialog/magazines.py:405
 #, python-brace-format
 msgid ""
 "Added {magazine} for monitoring.\n"
 "Click OK to refresh."
 msgstr ""
+
+#~ msgid "Customize plugin"
+#~ msgstr "自訂外掛"
+
+#~ msgid "Refresh"
+#~ msgstr "刷新"
+
+#~ msgid "Update"
+#~ msgstr "更新"
+
+#~ msgid "Type"
+#~ msgstr "書籍類型"
+
+#~ msgid "Format"
+#~ msgstr "格式"
+
+#~ msgid "finished"
+#~ msgstr "已完成"
+
+#, python-brace-format
+#~ msgid "Downloading {book}"
+#~ msgstr "正在下載 {book}"
+
+#~ msgid "Download"
+#~ msgstr "下載"
+
+#~ msgid "Add"
+#~ msgstr "加入"
+
+#~ msgid "Help"
+#~ msgstr "說明"
+
+#~ msgid "Yes"
+#~ msgstr "是"
+
+#~ msgid "No"
+#~ msgstr "否"
+
+#~ msgid "Title"
+#~ msgstr "書名"
+
+#~ msgid "Author"
+#~ msgstr "作者"
+
+#~ msgid "Cancel"
+#~ msgstr "取消"
 
 #~ msgid "Run the OverDrive Libby client UI"
 #~ msgstr "運行 OverDrive Libby 客戶端 UI"

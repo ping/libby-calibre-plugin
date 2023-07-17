@@ -11,6 +11,7 @@ from typing import Optional
 
 from calibre.gui2 import is_dark_theme
 from calibre.gui2.actions import InterfaceAction
+from calibre.utils.localization import _ as _c
 from qt.core import (
     QToolButton,
     QSize,
@@ -96,7 +97,7 @@ class OverdriveLibbyAction(InterfaceAction):
         self.create_menu_action(
             qaction_menu,
             "overdrive-libby-config",
-            _("Customize plugin"),
+            _c("&Customize plugin"),
             "config.png",
             triggered=lambda: self.interface_action_base_plugin.do_user_config(
                 self.gui
@@ -105,7 +106,7 @@ class OverdriveLibbyAction(InterfaceAction):
         self.create_menu_action(
             qaction_menu,
             "overdrive-libby-help",
-            _("Help"),
+            _c("Help"),
             "help.png",
             triggered=lambda: QDesktopServices.openUrl(
                 QUrl("https://github.com/ping/libby-calibre-plugin#setup")

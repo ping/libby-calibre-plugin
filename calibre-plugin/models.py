@@ -14,6 +14,7 @@ from typing import Dict, Optional, List
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date, dt_as_local
 from calibre.utils.icu import lower as icu_lower
+from calibre.utils.localization import _ as _c
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
 
 from . import DEMO_MODE
@@ -134,11 +135,11 @@ class LibbyLoansModel(LibbyModel):
     """
 
     column_headers = [
-        _("Title"),
-        _("Author"),
+        _c("Title"),
+        _c("Author"),
         _("Checkout Date"),
-        _("Type"),
-        _("Format"),
+        _c("Type"),
+        _c("Format"),
     ]
     column_count = len(column_headers)
     filter_hide_books_already_in_library = False
@@ -277,11 +278,11 @@ class LibbyHoldsModel(LibbyModel):
     """
 
     column_headers = [
-        _("Title"),
-        _("Author"),
+        _c("Title"),
+        _c("Author"),
         _("Hold/Expire Date"),
         _("Library"),
-        _("Format"),
+        _c("Format"),
         _("Available"),
     ]
     filter_hide_unavailable_holds = True
@@ -416,7 +417,7 @@ class LibbyHoldsModel(LibbyModel):
                 ):
                     return _("Delayed")
                 return _("Suspended")
-            return _("Yes") if hold.get("isAvailable", False) else _("No")
+            return _c("Yes") if hold.get("isAvailable", False) else _c("No")
 
         return None
 
@@ -461,7 +462,7 @@ class LibbyMagazinesModel(LibbyModel):
     Underlying data model for the Magazines table view
     """
 
-    column_headers = [_("Title"), _("Release Date"), _("Library Card"), _("Borrowed")]
+    column_headers = [_c("Title"), _("Release Date"), _("Library Card"), _("Borrowed")]
     filter_hide_magazines_already_in_library = False
 
     def __init__(self, parent, synced_state=None, db=None):
@@ -552,5 +553,5 @@ class LibbyMagazinesModel(LibbyModel):
             is_borrowed = subscription.get("__is_borrowed")
             if role == LibbyModel.DisplaySortRole:
                 return int(is_borrowed)
-            return _("Yes") if is_borrowed else _("No")
+            return _c("Yes") if is_borrowed else _c("No")
         return None

@@ -11,6 +11,7 @@
 from calibre import confirm_config_name
 from calibre.gui2 import error_dialog, is_dark_theme
 from calibre.utils.config import JSONConfig
+from calibre.utils.localization import _ as _c
 from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
 from . import logger, PLUGIN_NAME, DEMO_MODE
@@ -271,7 +272,7 @@ class ConfigWidget(QWidget):
 
         self.help_lbl = QLabel(
             '<a style="padding: 0 4px;" href="https://github.com/ping/libby-calibre-plugin#setup">'
-            + _("Help")
+            + _c("Help")
             + "</a>"
         )
         self.help_lbl.setAlignment(Qt.AlignRight)

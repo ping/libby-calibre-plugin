@@ -13,6 +13,7 @@ from typing import Dict
 
 from calibre.gui2 import Dispatcher, error_dialog, info_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
+from calibre.utils.localization import _ as _c
 from polyglot.builtins import as_unicode
 from qt.core import (
     Qt,
@@ -35,7 +36,7 @@ from qt.core import (
 from .base import BaseDialogMixin
 from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
-from ..config import PREFS, PreferenceKeys, PreferenceTexts, BorrowActions
+from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
 from ..models import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
@@ -107,7 +108,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
 
         # Add Magazine button
-        self.add_magazine_btn = QPushButton(_("Add"), self)
+        self.add_magazine_btn = QPushButton(_c("Add"), self)
         self.add_magazine_btn.setIcon(self.icons[PluginIcons.AddMagazine])
         self.add_magazine_btn.setAutoDefault(False)
         self.add_magazine_btn.setToolTip(_("Add to monitor for new issues"))
@@ -118,7 +119,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         # Refresh button
-        self.magazines_refresh_btn = QPushButton(_("Refresh"), self)
+        self.magazines_refresh_btn = QPushButton(_c("Refresh"), self)
         self.magazines_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
         self.magazines_refresh_btn.setAutoDefault(False)
         self.magazines_refresh_btn.setToolTip(_("Get latest magazines"))
@@ -261,7 +262,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             )
         )
 
-        unsub_action = menu.addAction(_("Cancel"))
+        unsub_action = menu.addAction(_c("Cancel"))
         unsub_action.setIcon(self.icons[PluginIcons.CancelMagazine])
         unsub_action.triggered.connect(lambda: self.unsub_action_triggered(indices))
         menu.exec(QCursor.pos())
@@ -316,7 +317,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             self.gui.job_exception(job, dialog_title=_("Failed to borrow magazine"))
             return
 
-        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def borrowed_magazine_and_download(self, job):
         # callback after magazine is borrowed

@@ -14,6 +14,7 @@ from calibre.constants import is_debugging
 from calibre.gui2 import info_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton
+from calibre.utils.localization import _ as _c
 from qt.core import (
     Qt,
     QDialog,
@@ -117,7 +118,7 @@ class BaseDialogMixin(QDialog):
         )
         help_lbl = QLabel(
             '<a href="https://github.com/ping/libby-calibre-plugin#usage">'
-            + _("Help")
+            + _c("Help")
             + '</a> / <a href="https://www.mobileread.com/forums/showthread.php?t=354816">'
             + _("MobileRead")
             + "</a>"
@@ -364,7 +365,7 @@ class BaseDialogMixin(QDialog):
         if is_debugging():
             return info_dialog(
                 self,
-                _("Debug"),
+                _c("Debug"),
                 text,
                 det_msg=json.dumps(data, indent=2),
                 show=True,

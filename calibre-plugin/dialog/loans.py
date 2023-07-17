@@ -13,6 +13,7 @@ from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
+from calibre.utils.localization import _ as _c
 from polyglot.builtins import as_unicode
 from qt.core import (
     Qt,
@@ -58,7 +59,7 @@ class LoansDialogMixin(BaseDialogMixin):
         widget_row_pos = 0
 
         # Refresh button
-        self.loans_refresh_btn = QPushButton(_("Refresh"), self)
+        self.loans_refresh_btn = QPushButton(_c("Refresh"), self)
         self.loans_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
         self.loans_refresh_btn.setAutoDefault(False)
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
@@ -126,7 +127,7 @@ class LoansDialogMixin(BaseDialogMixin):
             self.hide_book_already_in_lib_checkbox, widget_row_pos, 0, 1, 2
         )
         # Download button
-        self.download_btn = QPushButton(_("Download"), self)
+        self.download_btn = QPushButton(_c("Download"), self)
         self.download_btn.setIcon(self.icons[PluginIcons.Download])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
@@ -284,8 +285,9 @@ class LoansDialogMixin(BaseDialogMixin):
                 )
             )
             if book_id and mi
-            else _("Downloading {book}").format(
-                book=as_unicode(get_media_title(loan), errors="replace")
+            else (
+                _c("Downloading %s")
+                % as_unicode(get_media_title(loan), errors="replace")
             )
         )
         callback = Dispatcher(self.gui.downloaded_ebook)
@@ -341,9 +343,10 @@ class LoansDialogMixin(BaseDialogMixin):
         # Heavily referenced from
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
-        description = _("Downloading {book}").format(
-            book=as_unicode(get_media_title(loan), errors="replace")
+        description = _c("Downloading %s") % as_unicode(
+            get_media_title(loan), errors="replace"
         )
+
         callback = Dispatcher(self.gui.downloaded_ebook)
         job = ThreadedJob(
             "overdrive_libby_download",
@@ -421,4 +424,4 @@ class LoansDialogMixin(BaseDialogMixin):
             self.gui.job_exception(job, dialog_title=_("Failed to return loan"))
             return
 
-        self.gui.status_bar.show_message(job.description + " " + _("finished"), 5000)
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)

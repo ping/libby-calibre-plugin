@@ -105,10 +105,15 @@ class ConfigWidget(QWidget):
             if is_configured
             else _("Libby is not configured yet.")
         )
+        # bump up font size a little
+        curr_font = self.libby_setup_status_lbl.font()
+        curr_font.setPointSizeF(curr_font.pointSizeF() * 1.1)
+        self.libby_setup_status_lbl.setFont(curr_font)
+        # color
         green = "#00D228" if is_dark_theme() else "#00BA28"
         red = "#FF0F00" if is_dark_theme() else "#E70E00"
         self.libby_setup_status_lbl.setStyleSheet(
-            "font-weight: bold; " f"color: {green if is_configured else red};"
+            f"font-weight: bold; color: {green if is_configured else red};"
         )
         self.layout.addWidget(self.libby_setup_status_lbl, widget_row_pos, 0)
         label_column_widths.append(

@@ -263,7 +263,7 @@ class LoansDialogMixin(BaseDialogMixin):
             identifier_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
         if enable_overdrivelink_integration:
             identifier_conditions.append(
-                f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}'
+                f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}"'
             )
         if identifier_conditions:
             # search for existing empty book only if there is at least 1 identifier

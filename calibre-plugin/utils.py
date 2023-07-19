@@ -21,7 +21,18 @@ def generate_od_identifier(media: Dict, library: Dict):
     :param library:
     :return:
     """
-    return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
+    try:
+        from calibre_plugins.overdrive_link.link import ODLink
+
+        return str(
+            ODLink(
+                provider_id="",
+                library_id=f'{library["preferredKey"]}.overdrive.com',
+                book_id=media["id"],
+            )
+        )
+    except ImportError:
+        return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
 
 
 class PluginColors(str, Enum):

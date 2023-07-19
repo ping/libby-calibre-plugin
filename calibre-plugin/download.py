@@ -60,14 +60,25 @@ class LibbyDownload:
             and "Overdrive Link" in gui.iactions
         ):
             # user has OverdriveLink installed with integration enabled
-            found_odid_identifiers = (
-                identifiers[OD_IDENTIFIER].split("&")
-                if identifiers.get(OD_IDENTIFIER)
-                else []
-            )
-            if odid_identifier not in found_odid_identifiers:
-                found_odid_identifiers.append(odid_identifier)
-                metadata.set_identifier(OD_IDENTIFIER, "&".join(found_odid_identifiers))
+            try:
+                from calibre_plugins.overdrive_link.link import ODLink, ODLinkSet
+
+                new_odlink = ODLink(string=odid_identifier)
+                odlinks = ODLinkSet(string=identifiers.get(OD_IDENTIFIER, ""))
+                if new_odlink not in odlinks:
+                    odlinks.add(ODLink(string=odid_identifier))
+                    metadata.set_identifier(OD_IDENTIFIER, str(odlinks))
+            except ImportError:
+                found_odid_identifiers = (
+                    identifiers[OD_IDENTIFIER].split("&")
+                    if identifiers.get(OD_IDENTIFIER)
+                    else []
+                )
+                if odid_identifier not in found_odid_identifiers:
+                    found_odid_identifiers.append(odid_identifier)
+                    metadata.set_identifier(
+                        OD_IDENTIFIER, "&".join(found_odid_identifiers)
+                    )
 
         return metadata
 

@@ -9,7 +9,6 @@
 #
 from typing import Optional
 
-from calibre.gui2 import is_dark_theme
 from calibre.gui2.actions import InterfaceAction
 from calibre.utils.localization import _ as _c
 from qt.core import (
@@ -26,7 +25,7 @@ from qt.core import (
     QDesktopServices,
 )
 
-from . import logger, PLUGIN_NAME, PLUGIN_ICON, ICON_MAP
+from . import logger, PLUGIN_NAME, PLUGIN_ICON
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,
@@ -34,6 +33,7 @@ from .dialog import (
     HoldsDialogMixin,
     MagazinesDialogMixin,
 )
+from .utils import ICON_MAP
 
 load_translations()
 
@@ -75,10 +75,7 @@ class OverdriveLibbyAction(InterfaceAction):
         self.icons = {}
         for k, v in ICON_MAP.items():
             self.icons[k] = self.svg_to_qicon(
-                image_resources.pop(v.file),
-                QColor.fromString(
-                    v.dark_theme_color if is_dark_theme() else v.light_theme_color
-                ),
+                image_resources.pop(v.file), QColor.fromString(v.color)
             )
 
         # action icon

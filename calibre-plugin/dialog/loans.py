@@ -30,7 +30,6 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
-from .. import PluginIcons
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
@@ -38,6 +37,7 @@ from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
 from ..magazine_download_utils import extract_isbn, extract_asin
 from ..models import get_media_title, LibbyLoansModel, LibbyModel
+from ..utils import PluginIcons
 
 load_translations()
 
@@ -83,14 +83,13 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_view.setMinimumWidth(self.min_view_width)
         self.loans_view.setModel(self.loans_search_proxy_model)
         horizontal_header = self.loans_view.horizontalHeader()
-        for col_index, mode in [
-            (0, QHeaderView.ResizeMode.Stretch),
-            (1, QHeaderView.ResizeMode.ResizeToContents),
-            (2, QHeaderView.ResizeMode.ResizeToContents),
-            (3, QHeaderView.ResizeMode.ResizeToContents),
-            (4, QHeaderView.ResizeMode.ResizeToContents),
-        ]:
-            horizontal_header.setSectionResizeMode(col_index, mode)
+        for col_index in range(self.loans_model.columnCount()):
+            horizontal_header.setSectionResizeMode(
+                col_index,
+                QHeaderView.ResizeMode.Stretch
+                if col_index == 0
+                else QHeaderView.ResizeMode.ResizeToContents,
+            )
         self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
         self.loans_view.setTabKeyNavigation(

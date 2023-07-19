@@ -32,11 +32,12 @@ from qt.core import (
     QLabel,
 )
 
-from .. import logger, __version__, PluginIcons, DEMO_MODE
+from .. import logger, __version__, DEMO_MODE
 from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel
 from ..overdrive import OverDriveClient
+from ..utils import PluginIcons
 from ..workers import SyncDataWorker
 
 load_translations()

@@ -8,20 +8,21 @@
 # information
 #
 from collections import namedtuple
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional, List
 
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date, dt_as_local
 from calibre.utils.icu import lower as icu_lower
 from calibre.utils.localization import _ as _c
-from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont
+from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont, QColor
 
 from . import DEMO_MODE
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import parse_datetime, extract_isbn, extract_asin
+from .utils import PluginColors
 
 load_translations()
 
@@ -137,11 +138,11 @@ class LibbyLoansModel(LibbyModel):
     column_headers = [
         _c("Title"),
         _c("Author"),
-        _("Checkout Date"),
+        _("Expire Date"),
+        _("Library"),
         _c("Type"),
         _c("Format"),
     ]
-    column_count = len(column_headers)
     filter_hide_books_already_in_library = False
 
     def __init__(self, parent, synced_state=None, db=None):
@@ -235,10 +236,15 @@ class LibbyLoansModel(LibbyModel):
             return loan
         if col >= self.columnCount():
             return None
-        if role == Qt.TextAlignmentRole and col >= 2:
-            return Qt.AlignCenter
         if role == Qt.ToolTipRole and col == 0:
             return get_media_title(loan, include_subtitle=True)
+        if role == Qt.TextAlignmentRole and col >= 2:
+            return Qt.AlignCenter
+        if role == Qt.ForegroundRole and col == 3:
+            if loan.get("renewableOn") and parse_datetime(
+                loan["renewableOn"]
+            ) <= datetime.now(timezone.utc):
+                return QColor.fromString(PluginColors.Red)
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:
@@ -251,19 +257,24 @@ class LibbyLoansModel(LibbyModel):
                 return loan.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
-            dt_value = dt_as_local(parse_datetime(loan["checkoutDate"]))
+            dt_value = dt_as_local(parse_datetime(loan["expireDate"]))
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             if DEMO_MODE:
                 return format_date(
-                    dt_value.replace(month=1, day=1),
+                    dt_value.replace(month=12, day=31),
                     tweaks["gui_timestamp_display_format"],
                 )
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
+            card = self.get_card(loan["cardId"])
+            if DEMO_MODE:
+                return "*" * len(card["advantageKey"])
+            return card["advantageKey"]
+        if col == 4:
             type_id = loan.get("type", {}).get("id", "")
             return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id
-        if col == 4:
+        if col == 5:
             return str(
                 LibbyClient.get_loan_format(
                     loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
@@ -346,6 +357,11 @@ class LibbyHoldsModel(LibbyModel):
             return hold
         if col >= self.columnCount():
             return None
+        if role == Qt.ToolTipRole and col == 0:
+            return get_media_title(hold, include_subtitle=True)
+        if role == Qt.ForegroundRole and col == 2:
+            if hold.get("isAvailable", False):
+                return QColor.fromString(PluginColors.Red)
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
         if role == Qt.FontRole and col == 5:
@@ -353,8 +369,6 @@ class LibbyHoldsModel(LibbyModel):
                 font = QFont()
                 font.setBold(True)
                 return font
-        if role == Qt.ToolTipRole and col == 0:
-            return get_media_title(hold, include_subtitle=True)
         if role == Qt.ToolTipRole and col == 5:
             if is_suspended:
                 suspended_till = dt_as_local(parse_datetime(hold["suspensionEnd"]))
@@ -533,6 +547,11 @@ class LibbyMagazinesModel(LibbyModel):
             return Qt.AlignCenter
         if role == Qt.ToolTipRole and col == 0:
             return get_media_title(subscription, include_subtitle=True)
+        if role == Qt.ToolTipRole and col == 2:
+            card = self.get_card(subscription["cardId"])
+            if not card:
+                return "Invalid card setup"
+            return f'{card["advantageKey"]}: {card["cardName"]}'
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:

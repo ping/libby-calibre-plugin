@@ -9,12 +9,13 @@
 #
 
 from calibre import confirm_config_name
-from calibre.gui2 import error_dialog, is_dark_theme
+from calibre.gui2 import error_dialog
 from calibre.utils.config import JSONConfig
 from calibre.utils.localization import _ as _c
 from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
 from . import logger, PLUGIN_NAME, DEMO_MODE
+from .utils import PluginColors
 
 load_translations()
 
@@ -110,10 +111,8 @@ class ConfigWidget(QWidget):
         curr_font.setPointSizeF(curr_font.pointSizeF() * 1.1)
         self.libby_setup_status_lbl.setFont(curr_font)
         # color
-        green = "#00D228" if is_dark_theme() else "#00BA28"
-        red = "#FF0F00" if is_dark_theme() else "#E70E00"
         self.libby_setup_status_lbl.setStyleSheet(
-            f"font-weight: bold; color: {green if is_configured else red};"
+            f"font-weight: bold; color: {PluginColors.Green if is_configured else PluginColors.Red};"
         )
         self.layout.addWidget(self.libby_setup_status_lbl, widget_row_pos, 0)
         label_column_widths.append(

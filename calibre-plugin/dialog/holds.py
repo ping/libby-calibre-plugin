@@ -13,9 +13,8 @@ from typing import Dict
 from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.threaded_jobs import ThreadedJob
-from polyglot.builtins import as_unicode
 from calibre.utils.localization import _ as _c
-
+from polyglot.builtins import as_unicode
 from qt.core import (
     Qt,
     QGridLayout,
@@ -35,13 +34,13 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
-from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
 from ..magazine_download_utils import parse_datetime
 from ..models import get_media_title, LibbyHoldsModel, LibbyModel
+from ..utils import PluginIcons
 
 load_translations()
 
@@ -87,15 +86,13 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_view.setMinimumWidth(self.min_view_width)
         self.holds_view.setModel(self.holds_search_proxy_model)
         horizontal_header = self.holds_view.horizontalHeader()
-        for col_index, mode in [
-            (0, QHeaderView.ResizeMode.Stretch),
-            (1, QHeaderView.ResizeMode.ResizeToContents),
-            (2, QHeaderView.ResizeMode.ResizeToContents),
-            (3, QHeaderView.ResizeMode.ResizeToContents),
-            (4, QHeaderView.ResizeMode.ResizeToContents),
-            (5, QHeaderView.ResizeMode.ResizeToContents),
-        ]:
-            horizontal_header.setSectionResizeMode(col_index, mode)
+        for col_index in range(self.holds_model.columnCount()):
+            horizontal_header.setSectionResizeMode(
+                col_index,
+                QHeaderView.ResizeMode.Stretch
+                if col_index == 0
+                else QHeaderView.ResizeMode.ResizeToContents,
+            )
         self.holds_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.holds_view.setSelectionMode(QAbstractItemView.SingleSelection)
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)

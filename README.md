@@ -61,7 +61,7 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 - Enable OverDrive Link Plugin integration
   - Enable or disable the integration. If enabled, the plugin will attempt to find a matching OverDrive-linked book that does not have any formats and add the new download as an EPUB to the book record. Newly downloaded books will also have the `odid` identifier added.
 - Mark updated books
-  - This relates to the OverDrive Link Plugin integration. If enabled, book records that were updated with a new format will be marked.
+  - This relates to empty books that are updated with a download by the plugin. If enabled, book records that were updated with a new format will be marked.
 
 ## Usage
 

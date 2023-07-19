@@ -34,13 +34,13 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
-from .. import PluginIcons
 from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
 from ..models import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
 from ..overdrive import OverDriveClient
+from ..utils import PluginIcons
 from ..workers import OverDriveLibraryMediaWorker
 
 LIBBY_SHARE_URL_RE = re.compile(
@@ -142,12 +142,13 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_view.setMinimumWidth(self.min_view_width)
         self.magazines_view.setModel(self.magazines_search_proxy_model)
         horizontal_header = self.magazines_view.horizontalHeader()
-        for col_index, mode in [
-            (0, QHeaderView.ResizeMode.Stretch),
-            (1, QHeaderView.ResizeMode.ResizeToContents),
-            (2, QHeaderView.ResizeMode.ResizeToContents),
-        ]:
-            horizontal_header.setSectionResizeMode(col_index, mode)
+        for col_index in range(self.magazines_model.columnCount()):
+            horizontal_header.setSectionResizeMode(
+                col_index,
+                QHeaderView.ResizeMode.Stretch
+                if col_index == 0
+                else QHeaderView.ResizeMode.ResizeToContents,
+            )
         self.magazines_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.magazines_view.setSelectionMode(QAbstractItemView.SingleSelection)
         self.magazines_view.sortByColumn(-1, Qt.AscendingOrder)

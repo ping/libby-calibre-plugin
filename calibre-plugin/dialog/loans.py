@@ -265,7 +265,7 @@ class LoansDialogMixin(BaseDialogMixin):
             identifier_conditions.append(
                 f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}"'
             )
-        if identifier_conditions:
+        if identifier_conditions and not PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]:
             # search for existing empty book only if there is at least 1 identifier
             search_query = " or ".join(identifier_conditions)
             restriction = "format:False"

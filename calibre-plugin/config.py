@@ -40,6 +40,7 @@ class PreferenceKeys:
     MAGAZINE_SUBSCRIPTIONS = "magazine_subscriptions"
     # used to toggle the default borrow btn action
     LAST_BORROW_ACTION = "last_borrow_action"
+    ALWAYS_DOWNLOAD_AS_NEW = "always_download_new"
 
 
 class BorrowActions:
@@ -64,6 +65,7 @@ class PreferenceTexts:
     CONFIRM_CANCELLATIONS = _("Always confirm holds cancellation")
     OVERDRIVELINK_INTEGRATION = _("Enable OverDrive Link Plugin integration")
     MARK_UPDATED_BOOKS = _("Mark updated books")
+    ALWAYS_DOWNLOAD_AS_NEW = _("Always download as a new book")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -76,14 +78,15 @@ PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
 PREFS.defaults[PreferenceKeys.EXCLUDE_EMPTY_BOOKS] = True
 PREFS.defaults[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = True
 PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
-PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
-PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.TAG_EBOOKS] = ""
 PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
 PREFS.defaults[PreferenceKeys.OVERDRIVELINK_INTEGRATION] = True
 PREFS.defaults[PreferenceKeys.MARK_UPDATED_BOOKS] = True
+PREFS.defaults[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW] = False
+PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
+PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
 PREFS.defaults[PreferenceKeys.LAST_BORROW_ACTION] = BorrowActions.BORROW
 
@@ -265,7 +268,7 @@ class ConfigWidget(QWidget):
         )
         widget_row_pos += 1
 
-        # Enable OverDrive Link plugin integration
+        # Mark updated books
         self.mark_updated_books_checkbox = QCheckBox(
             PreferenceTexts.MARK_UPDATED_BOOKS, self
         )
@@ -273,6 +276,18 @@ class ConfigWidget(QWidget):
             PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]
         )
         self.layout.addWidget(self.mark_updated_books_checkbox, widget_row_pos, 0, 1, 2)
+        widget_row_pos += 1
+
+        # Always download as a new book
+        self.always_download_as_new_checkbox = QCheckBox(
+            PreferenceTexts.ALWAYS_DOWNLOAD_AS_NEW, self
+        )
+        self.always_download_as_new_checkbox.setChecked(
+            PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]
+        )
+        self.layout.addWidget(
+            self.always_download_as_new_checkbox, widget_row_pos, 0, 1, 2
+        )
         widget_row_pos += 1
 
         self.help_lbl = QLabel(
@@ -319,6 +334,9 @@ class ConfigWidget(QWidget):
         PREFS[
             PreferenceKeys.MARK_UPDATED_BOOKS
         ] = self.mark_updated_books_checkbox.isChecked()
+        PREFS[
+            PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW
+        ] = self.always_download_as_new_checkbox.isChecked()
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:

@@ -2,6 +2,7 @@
 
 Unreleased
 - Match empty books for update using ISBN/ASIN even if OverDrive Link Integration is not enabled
+- Add configuration option to turn off updating of existing empty books
 - Improve identifying titles already in library by also matching ISBN/ASIN
 - Make UI more keyboard navigable
 

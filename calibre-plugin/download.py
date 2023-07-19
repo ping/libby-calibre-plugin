@@ -14,6 +14,7 @@ from typing import List, Dict, Optional
 
 from .config import PREFS, PreferenceKeys
 from .magazine_download_utils import extract_isbn, extract_asin
+from .utils import OD_IDENTIFIER, generate_od_identifier
 
 
 class LibbyDownload:
@@ -47,7 +48,7 @@ class LibbyDownload:
 
         isbn = extract_isbn(loan.get("formats", []), [format_id])
         asin = extract_asin(loan.get("formats", []))
-        odid_identifier = f'{loan["id"]}@{library["preferredKey"]}.overdrive.com'
+        odid_identifier = generate_od_identifier(loan, library)
 
         identifiers = metadata.get_identifiers()
         if isbn and not identifiers.get("isbn"):
@@ -60,11 +61,13 @@ class LibbyDownload:
         ):
             # user has OverdriveLink installed with integration enabled
             found_odid_identifiers = (
-                identifiers["odid"].split("&") if identifiers.get("odid") else []
+                identifiers[OD_IDENTIFIER].split("&")
+                if identifiers.get(OD_IDENTIFIER)
+                else []
             )
             if odid_identifier not in found_odid_identifiers:
                 found_odid_identifiers.append(odid_identifier)
-                metadata.set_identifier("odid", "&".join(found_odid_identifiers))
+                metadata.set_identifier(OD_IDENTIFIER, "&".join(found_odid_identifiers))
 
         return metadata
 

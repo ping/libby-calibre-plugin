@@ -1,7 +1,27 @@
 from collections import namedtuple
 from enum import Enum
+from typing import Dict
 
 from calibre.gui2 import is_dark_theme
+
+try:
+    from calibre_plugins.overdrive_link.link import (
+        IDENT_AVAILABLE_LINK as OD_IDENTIFIER,
+    )
+except ImportError:
+    OD_IDENTIFIER = "odid"
+
+
+def generate_od_identifier(media: Dict, library: Dict):
+    """
+    Generates the OverDrive Link identifier.
+    Should probably find a way to call the plugin to do it though.
+
+    :param media:
+    :param library:
+    :return:
+    """
+    return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
 
 
 class PluginColors(str, Enum):

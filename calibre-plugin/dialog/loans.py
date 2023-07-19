@@ -37,7 +37,7 @@ from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
 from ..magazine_download_utils import extract_isbn, extract_asin
 from ..models import get_media_title, LibbyLoansModel, LibbyModel
-from ..utils import PluginIcons
+from ..utils import PluginIcons, OD_IDENTIFIER, generate_od_identifier
 
 load_translations()
 
@@ -263,7 +263,7 @@ class LoansDialogMixin(BaseDialogMixin):
             identifier_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
         if enable_overdrivelink_integration:
             identifier_conditions.append(
-                f'identifiers:"=odid:{loan["id"]}@{library["preferredKey"]}.overdrive.com"'
+                f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}'
             )
         if identifier_conditions:
             # search for existing empty book only if there is at least 1 identifier

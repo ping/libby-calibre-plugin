@@ -245,40 +245,39 @@ class LoansDialogMixin(BaseDialogMixin):
 
         # We will handle the downloading of the files ourselves
 
-        # Matching an empty book:
-        # If we find a book without formats and matches isbn/asin and odid (if enabled),
-        # add the new file as a format to the existing book record
         book_id = None
         mi = None
-        enable_overdrivelink_integration = PREFS[
-            PreferenceKeys.OVERDRIVELINK_INTEGRATION
-        ]
-        loan_isbn = extract_isbn(loan.get("formats", []), [format_id])
-        loan_asin = extract_asin(loan.get("formats", []))
-        identifier_conditions: List[str] = []
-        if loan_isbn:
-            identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
-        if loan_asin:
-            identifier_conditions.append(f'identifiers:"=asin:{loan_asin}"')
-            identifier_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
-        if enable_overdrivelink_integration:
-            identifier_conditions.append(
-                f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}"'
-            )
-        if identifier_conditions and not PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]:
-            # search for existing empty book only if there is at least 1 identifier
-            search_query = " or ".join(identifier_conditions)
-            restriction = "format:False"
-            # use restriction because it's apparently cached
-            # ref: https://manual.calibre-ebook.com/db_api.html#calibre.db.cache.Cache.search
-            self.logger.debug(
-                "Library Search Query (with restriction: %s): %s",
-                restriction,
-                search_query,
-            )
-            book_ids = list(self.db.search(search_query, restriction=restriction))
-            book_id = book_ids[0] if book_ids else 0
-            mi = self.db.get_metadata(book_id) if book_id else None
+        if not PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]:
+            # Matching an empty book:
+            # If we find a book without formats and matches isbn/asin and odid (if enabled),
+            # add the new file as a format to the existing book record
+            loan_isbn = extract_isbn(loan.get("formats", []), [format_id])
+            loan_asin = extract_asin(loan.get("formats", []))
+            identifier_conditions: List[str] = []
+            if loan_isbn:
+                identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
+            if loan_asin:
+                identifier_conditions.append(f'identifiers:"=asin:{loan_asin}"')
+                identifier_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
+            if PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]:
+                identifier_conditions.append(
+                    f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}"'
+                )
+            if identifier_conditions:
+                # search for existing empty book only if there is at least 1 identifier
+                search_query = " or ".join(identifier_conditions)
+                restriction = "format:False"
+                # use restriction because it's apparently cached
+                # ref: https://manual.calibre-ebook.com/db_api.html#calibre.db.cache.Cache.search
+                self.logger.debug(
+                    "Library Search Query (with restriction: %s): %s",
+                    restriction,
+                    search_query,
+                )
+                book_ids = list(self.db.search(search_query, restriction=restriction))
+                book_id = book_ids[0] if book_ids else 0
+                mi = self.db.get_metadata(book_id) if book_id else None
+
         if mi and book_id:
             self.logger.debug("Matched existing empty book: %s", mi.title)
 

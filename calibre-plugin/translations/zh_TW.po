@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.5\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-20 08:28+0800\n"
+"POT-Creation-Date: 2023-07-20 12:15+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -198,33 +198,33 @@ msgstr ""
 msgid "Synchronizing..."
 msgstr "同步中..."
 
-#: calibre-plugin/dialog/base.py:238
+#: calibre-plugin/dialog/base.py:239
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:257
+#: calibre-plugin/dialog/base.py:263
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:281 calibre-plugin/dialog/base.py:299
-#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:338
+#: calibre-plugin/dialog/base.py:291 calibre-plugin/dialog/base.py:309
+#: calibre-plugin/dialog/base.py:332 calibre-plugin/dialog/base.py:348
 msgid "Borrow"
 msgstr "借閱"
 
-#: calibre-plugin/dialog/base.py:283 calibre-plugin/dialog/base.py:297
-#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:336
+#: calibre-plugin/dialog/base.py:293 calibre-plugin/dialog/base.py:307
+#: calibre-plugin/dialog/base.py:332 calibre-plugin/dialog/base.py:346
 msgid "Borrow and Download"
 msgstr "借阅并下载"
 
-#: calibre-plugin/dialog/base.py:289 calibre-plugin/dialog/base.py:325
+#: calibre-plugin/dialog/base.py:299 calibre-plugin/dialog/base.py:335
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:291 calibre-plugin/dialog/base.py:327
+#: calibre-plugin/dialog/base.py:301 calibre-plugin/dialog/base.py:337
 msgid "Borrow and download selected title"
 msgstr ""
 

@@ -227,38 +227,48 @@ class BaseDialogMixin(QDialog):
 
         def loaded(value: Dict):
             self.loading_overlay.hide()
-            for btn in self.refresh_buttons:
-                btn.setEnabled(True)
+            try:
+                for btn in self.refresh_buttons:
+                    btn.setEnabled(True)
 
-            holds = value.get("holds", [])
-            holds_count = len(holds)
-            holds_unique_count = len(list(set([h["id"] for h in holds])))
-            self.status_bar.showMessage(
-                _(
-                    "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, and {magazines} magazines."
-                ).format(
-                    loans=len(value.get("loans", [])),
-                    holds=holds_count,
-                    unique_holds=holds_unique_count,
-                    cards=len(value.get("cards", [])),
-                    magazines=len(PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS]),
+                holds = value.get("holds", [])
+                holds_count = len(holds)
+                holds_unique_count = len(list(set([h["id"] for h in holds])))
+                self.status_bar.showMessage(
+                    _(
+                        "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, and {magazines} magazines."
+                    ).format(
+                        loans=len(value.get("loans", [])),
+                        holds=holds_count,
+                        unique_holds=holds_unique_count,
+                        cards=len(value.get("cards", [])),
+                        magazines=len(PREFS[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS]),
+                    )
+                    if not DEMO_MODE
+                    else "",
+                    5000,
                 )
-                if not DEMO_MODE
-                else "",
-                5000,
-            )
-            for model in self.models:
-                model.sync(value)
-            thread.quit()
+                for model in self.models:
+                    model.sync(value)
+            except RuntimeError as err:
+                # most likely because the UI has been closed before syncing was completed
+                logger.warning("Error processing sync results: %s", err)
+            finally:
+                thread.quit()
 
         def errored_out(err: Exception):
-            self.loading_overlay.hide()
-            self.status_bar.showMessage(
-                _("An error occured during sync: {err}").format(err=str(err))
-            )
-            for btn in self.refresh_buttons:
-                btn.setEnabled(True)
-            thread.quit()
+            try:
+                self.loading_overlay.hide()
+                self.status_bar.showMessage(
+                    _("An error occured during sync: {err}").format(err=str(err))
+                )
+                for btn in self.refresh_buttons:
+                    btn.setEnabled(True)
+            except RuntimeError as err:
+                # most likely because the UI has been closed before syncing was completed
+                logger.warning("Error processing sync results: %s", err)
+            finally:
+                thread.quit()
             raise err
 
         worker.finished.connect(lambda value: loaded(value))
@@ -376,5 +386,9 @@ class BaseDialogMixin(QDialog):
 class CustomLoadingOverlay(LoadingOverlay):
     # Custom https://github.com/kovidgoyal/calibre/blob/a562c1f637cf2756fa8336860543a15951f4fbc0/src/calibre/gui2/viewer/overlay.py#L10
     def hide(self):
-        self.pi.stop()
-        return QWidget.hide(self)
+        try:
+            self.pi.stop()
+            return QWidget.hide(self)
+        except RuntimeError as err:
+            # most likely because the UI has been closed before loading was completed
+            logger.warning("Error hiding loading overlay: %s", err)

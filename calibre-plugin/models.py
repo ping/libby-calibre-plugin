@@ -182,6 +182,13 @@ class LibbyLoansModel(LibbyModel):
             ):
                 continue
 
+            try:
+                loan_format = LibbyClient.get_loan_format(
+                    loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+                )
+            except ValueError:
+                continue
+
             if not self.filter_hide_books_already_in_library:
                 # hide lib books filter is not enabled
                 self.filtered_rows.append(loan)
@@ -193,14 +200,7 @@ class LibbyLoansModel(LibbyModel):
             loan_title2 = icu_lower(
                 get_media_title(loan, include_subtitle=True).strip()
             )
-            loan_isbn = extract_isbn(
-                loan.get("formats", []),
-                [
-                    LibbyClient.get_loan_format(
-                        loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-                    )
-                ],
-            )
+            loan_isbn = extract_isbn(loan.get("formats", []), [loan_format])
             loan_asin = extract_asin(loan.get("formats", []))
             for book_id, title in iter(self.all_book_ids_titles.items()):
                 book_identifiers = self.all_book_ids_identifiers.get(book_id) or {}

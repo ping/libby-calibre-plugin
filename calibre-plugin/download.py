@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import List, Dict, Optional
 
 from .config import PREFS, PreferenceKeys
-from .magazine_download_utils import extract_isbn, extract_asin
+from .magazine_download_utils import extract_isbn, extract_asin, parse_datetime
 from .utils import OD_IDENTIFIER, generate_od_identifier
 
 
@@ -80,6 +80,27 @@ class LibbyDownload:
                         OD_IDENTIFIER, "&".join(found_odid_identifiers)
                     )
 
+        # update more metadata if available and not already set
+        pub_date = (
+            parse_datetime(loan["publishDate"]) if loan.get("publishDate") else None
+        )
+        if pub_date and not metadata.pubdate:
+            metadata.pubdate = pub_date
+        publisher_name = loan.get("publisherAccount", {}).get("name", "")
+        if publisher_name and not metadata.publisher:
+            metadata.publisher = publisher_name
+        series_info = loan.get("detailedSeries")
+        if series_info:
+            series_name = series_info.get("seriesName")
+            if series_name and not metadata.series:
+                metadata.series = series_name
+            try:
+                series_index = float(series_info.get("readingOrder", 0))
+                if series_index and series_index > 0 and not metadata.series_index:
+                    metadata.series_index = series_index
+            except:  # noqa
+                pass
+
         return metadata
 
     def add(
@@ -119,7 +140,7 @@ class LibbyDownload:
                     ext=ext.upper(), book=metadata.title
                 )
             )
-            # if book_id is found, it's an OverDriveLink book, download and add the book as a format
+            # if book_id is found, it's an empty book, download and add the epub/pdf as a format
             successfully_added = db.add_format(
                 book_id, ext.upper(), str(downloaded_file), replace=False
             )

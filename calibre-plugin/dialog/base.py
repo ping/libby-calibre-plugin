@@ -95,7 +95,7 @@ class BaseDialogMixin(QDialog):
         self.min_button_width = (
             150  # use this to set min col width for cols containing buttons
         )
-        self.min_view_width = 720
+        self.min_view_width = 740
 
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:

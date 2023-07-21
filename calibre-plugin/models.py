@@ -22,7 +22,7 @@ from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import parse_datetime, extract_isbn, extract_asin
-from .utils import PluginColors
+from .utils import PluginColors, PluginIcons
 
 load_translations()
 
@@ -145,8 +145,9 @@ class LibbyLoansModel(LibbyModel):
     ]
     filter_hide_books_already_in_library = False
 
-    def __init__(self, parent, synced_state=None, db=None):
+    def __init__(self, parent, synced_state=None, db=None, icons=None):
         super().__init__(parent, synced_state, db)
+        self.icons = icons
         self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
         self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self.all_book_ids_identifiers = self.db.fields["identifiers"].table.book_col_map
@@ -238,6 +239,10 @@ class LibbyLoansModel(LibbyModel):
             return None
         if role == Qt.ToolTipRole and col == 0:
             return get_media_title(loan, include_subtitle=True)
+        if role == Qt.ToolTipRole and col == 2 and loan.get("isLuckyDayCheckout"):
+            return _("A skip-the-line loan")
+        if role == Qt.DecorationRole and col == 2 and loan.get("isLuckyDayCheckout"):
+            return self.icons[PluginIcons.Clover]
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
         if role == Qt.ForegroundRole and col == 3:
@@ -359,34 +364,36 @@ class LibbyHoldsModel(LibbyModel):
             return None
         if role == Qt.ToolTipRole and col == 0:
             return get_media_title(hold, include_subtitle=True)
-        if role == Qt.ForegroundRole and col == 2:
-            if hold.get("isAvailable", False):
-                return QColor.fromString(PluginColors.Red)
+        if role == Qt.ToolTipRole and col == 2 and hold.get("expireDate"):
+            dt_value = dt_as_local(parse_datetime(hold["expireDate"]))
+            return _("Expires {dt}").format(
+                dt=format_date(dt_value, tweaks["gui_timestamp_display_format"])
+            )
+        if role == Qt.ForegroundRole and col == 2 and hold.get("isAvailable", False):
+            return QColor.fromString(PluginColors.Red)
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
-        if role == Qt.FontRole and col == 5:
-            if hold.get("isAvailable", False):
-                font = QFont()
-                font.setBold(True)
-                return font
-        if role == Qt.ToolTipRole and col == 5:
-            if is_suspended:
-                suspended_till = dt_as_local(parse_datetime(hold["suspensionEnd"]))
-                if (
-                    hold.get("redeliveriesRequestedCount", 0) > 0
-                    or hold.get("redeliveriesAutomatedCount", 0) > 0
-                ):
-                    return _("Deliver after {dt}").format(
-                        dt=format_date(
-                            suspended_till, tweaks["gui_timestamp_display_format"]
-                        )
+        if role == Qt.FontRole and col == 5 and hold.get("isAvailable", False):
+            font = QFont()
+            font.setBold(True)
+            return font
+        if role == Qt.ToolTipRole and col == 5 and is_suspended:
+            suspended_till = dt_as_local(parse_datetime(hold["suspensionEnd"]))
+            if (
+                hold.get("redeliveriesRequestedCount", 0) > 0
+                or hold.get("redeliveriesAutomatedCount", 0) > 0
+            ):
+                return _("Deliver after {dt}").format(
+                    dt=format_date(
+                        suspended_till, tweaks["gui_timestamp_display_format"]
                     )
-                else:
-                    return _("Suspended till {dt}").format(
-                        dt=format_date(
-                            suspended_till, tweaks["gui_timestamp_display_format"]
-                        )
+                )
+            else:
+                return _("Suspended till {dt}").format(
+                    dt=format_date(
+                        suspended_till, tweaks["gui_timestamp_display_format"]
                     )
+                )
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:

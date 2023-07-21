@@ -59,6 +59,7 @@ class PluginIcons(str, Enum):
     Edit = "pencil-line"
     Cancel = "cancel"
     Okay = "okay"
+    Clover = "clover"
 
     def __str__(self):
         return str(self.value)
@@ -101,5 +102,8 @@ ICON_MAP = {
     ),
     PluginIcons.Okay: IconDefinition(
         file="images/check-line.svg", color=PluginColors.Green
+    ),
+    PluginIcons.Clover: IconDefinition(
+        file="images/clover.svg", color=PluginColors.Green
     ),
 }

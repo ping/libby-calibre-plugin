@@ -68,7 +68,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.loans_refresh_btn)
         widget_row_pos += 1
 
-        self.loans_model = LibbyLoansModel(None, [], self.db)
+        self.loans_model = LibbyLoansModel(None, [], self.db, self.icons)
         self.loans_search_proxy_model = QSortFilterProxyModel(self)
         self.loans_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.loans_search_proxy_model.setFilterKeyColumn(-1)

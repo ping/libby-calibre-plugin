@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.5\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-20 12:15+0800\n"
+"POT-Creation-Date: 2023-07-20 18:29+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -147,45 +147,54 @@ msgstr "雜誌"
 msgid "Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:142 calibre-plugin/models.py:295
+#: calibre-plugin/models.py:142 calibre-plugin/models.py:300
 msgid "Library"
 msgstr "圖書館"
 
-#: calibre-plugin/models.py:294
+#: calibre-plugin/models.py:243
+msgid "A skip-the-line loan"
+msgstr ""
+
+#: calibre-plugin/models.py:299
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:297
+#: calibre-plugin/models.py:302
 msgid "Available"
 msgstr "可藉閱"
 
-#: calibre-plugin/models.py:379
+#: calibre-plugin/models.py:369
+#, python-brace-format
+msgid "Expires {dt}"
+msgstr ""
+
+#: calibre-plugin/models.py:386
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:385
+#: calibre-plugin/models.py:392
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:432
+#: calibre-plugin/models.py:439
 msgid "Delayed"
 msgstr ""
 
-#: calibre-plugin/models.py:433
+#: calibre-plugin/models.py:440
 msgid "Suspended"
 msgstr ""
 
-#: calibre-plugin/models.py:479
+#: calibre-plugin/models.py:486
 msgid "Release Date"
 msgstr ""
 
-#: calibre-plugin/models.py:479
+#: calibre-plugin/models.py:486
 msgid "Library Card"
 msgstr "借書卡"
 
-#: calibre-plugin/models.py:479
+#: calibre-plugin/models.py:486
 msgid "Borrowed"
 msgstr "已借閱"
 

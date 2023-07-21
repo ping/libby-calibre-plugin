@@ -11,6 +11,7 @@
 import gzip
 import json
 import logging
+from datetime import datetime, timezone
 from enum import Enum
 from http.client import HTTPException
 from http.cookiejar import CookieJar
@@ -248,6 +249,40 @@ class LibbyClient(object):
                 return LibbyFormats.EBookPDFAdobe
 
         raise ValueError("Unable to find a downloadable format")
+
+    @staticmethod
+    def parse_datetime(value: str) -> datetime:  # type: ignore[return]
+        """
+        Parses a datetime string from the API into a datetime.
+
+        :param value:
+        :return:
+        """
+        formats = ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S.%fZ")
+        for i, fmt in enumerate(formats, start=1):
+            try:
+                dt = datetime.strptime(value, fmt)
+                if not dt.tzinfo:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt
+            except ValueError:
+                if i == len(formats):
+                    raise
+
+    @staticmethod
+    def is_renewable(loan: Dict) -> bool:
+        """
+        Check if loan can be renewed.
+
+        :param loan:
+        :return:
+        """
+        if not loan.get("renewableOn"):
+            return False
+        # Example: 2023-02-23T07:33:55Z
+        return LibbyClient.parse_datetime(loan["renewableOn"]) <= datetime.now(
+            tz=timezone.utc
+        )
 
     @staticmethod
     def libby_title_permalink(library_key: str, title_id: str) -> str:

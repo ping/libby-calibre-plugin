@@ -13,7 +13,8 @@ from pathlib import Path
 from typing import List, Dict, Optional
 
 from .config import PREFS, PreferenceKeys
-from .magazine_download_utils import extract_isbn, extract_asin, parse_datetime
+from .libby import LibbyClient
+from .magazine_download_utils import extract_isbn, extract_asin
 from .utils import OD_IDENTIFIER, generate_od_identifier
 
 
@@ -82,7 +83,9 @@ class LibbyDownload:
 
         # update more metadata if available and not already set
         pub_date = (
-            parse_datetime(loan["publishDate"]) if loan.get("publishDate") else None
+            LibbyClient.parse_datetime(loan["publishDate"])
+            if loan.get("publishDate")
+            else None
         )
         if pub_date and not metadata.pubdate:
             metadata.pubdate = pub_date

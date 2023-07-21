@@ -38,7 +38,6 @@ from ..borrow_book import LibbyBorrowHold
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
-from ..magazine_download_utils import parse_datetime
 from ..models import get_media_title, LibbyHoldsModel, LibbyModel
 from ..utils import PluginIcons
 
@@ -372,9 +371,9 @@ class SuspendHoldDialog(QDialog):
         )
         self.days_slider.setValue(7)
         if hold.get("suspensionEnd"):
-            suspend_interval = parse_datetime(hold["suspensionEnd"]) - datetime.now(
-                tz=timezone.utc
-            )
+            suspend_interval = LibbyClient.parse_datetime(
+                hold["suspensionEnd"]
+            ) - datetime.now(tz=timezone.utc)
             if suspend_interval.days >= 0:
                 self.days_slider.setValue(suspend_interval.days + 1)
 

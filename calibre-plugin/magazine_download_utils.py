@@ -13,12 +13,11 @@ import platform
 import re
 import unicodedata
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
 from mimetypes import guess_type
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .libby.client import LibbyFormats
+from .libby.client import LibbyFormats, LibbyClient
 
 MIMETYPE_MAP = {
     ".xhtml": "application/xhtml+xml",
@@ -77,25 +76,6 @@ def slugify(value: str, allow_unicode: bool = False) -> str:
     )
     value = re.sub(r"[^\w\s-]", "", value).strip().lower()
     return re.sub(r"[-\s]+", "-", value)
-
-
-def parse_datetime(value: str) -> datetime:  # type: ignore[return]
-    """
-    Parses a datetime string from the API into a datetime.
-
-    :param value:
-    :return:
-    """
-    formats = ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S.%fZ")
-    for i, fmt in enumerate(formats, start=1):
-        try:
-            dt = datetime.strptime(value, fmt)
-            if not dt.tzinfo:
-                dt = dt.replace(tzinfo=timezone.utc)
-            return dt
-        except ValueError:
-            if i == len(formats):
-                raise
 
 
 def get_best_cover_url(loan: Dict) -> Optional[str]:
@@ -472,7 +452,9 @@ def build_opf_package(
             and loan_format == LibbyFormats.MagazineOverDrive
             and media_info.get("estimatedReleaseDate")
         ):
-            est_release_date = parse_datetime(media_info["estimatedReleaseDate"])
+            est_release_date = LibbyClient.parse_datetime(
+                media_info["estimatedReleaseDate"]
+            )
             reading_order = f"{est_release_date:%y%j}"  # use release date to construct a pseudo reading order
 
         if reading_order:

@@ -21,7 +21,7 @@ from . import DEMO_MODE
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
-from .magazine_download_utils import parse_datetime, extract_isbn, extract_asin
+from .magazine_download_utils import extract_isbn, extract_asin
 from .utils import PluginColors, PluginIcons
 
 load_translations()
@@ -245,11 +245,8 @@ class LibbyLoansModel(LibbyModel):
             return self.icons[PluginIcons.Clover]
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
-        if role == Qt.ForegroundRole and col == 3:
-            if loan.get("renewableOn") and parse_datetime(
-                loan["renewableOn"]
-            ) <= datetime.now(timezone.utc):
-                return QColor.fromString(PluginColors.Red)
+        if role == Qt.ForegroundRole and col == 3 and LibbyClient.is_renewable(loan):
+            return QColor.fromString(PluginColors.Red)
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:
@@ -262,7 +259,7 @@ class LibbyLoansModel(LibbyModel):
                 return loan.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
-            dt_value = dt_as_local(parse_datetime(loan["expireDate"]))
+            dt_value = dt_as_local(LibbyClient.parse_datetime(loan["expireDate"]))
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             if DEMO_MODE:
@@ -365,7 +362,7 @@ class LibbyHoldsModel(LibbyModel):
         if role == Qt.ToolTipRole and col == 0:
             return get_media_title(hold, include_subtitle=True)
         if role == Qt.ToolTipRole and col == 2 and hold.get("expireDate"):
-            dt_value = dt_as_local(parse_datetime(hold["expireDate"]))
+            dt_value = dt_as_local(LibbyClient.parse_datetime(hold["expireDate"]))
             return _("Expires {dt}").format(
                 dt=format_date(dt_value, tweaks["gui_timestamp_display_format"])
             )
@@ -378,7 +375,9 @@ class LibbyHoldsModel(LibbyModel):
             font.setBold(True)
             return font
         if role == Qt.ToolTipRole and col == 5 and is_suspended:
-            suspended_till = dt_as_local(parse_datetime(hold["suspensionEnd"]))
+            suspended_till = dt_as_local(
+                LibbyClient.parse_datetime(hold["suspensionEnd"])
+            )
             if (
                 hold.get("redeliveriesRequestedCount", 0) > 0
                 or hold.get("redeliveriesAutomatedCount", 0) > 0
@@ -407,7 +406,7 @@ class LibbyHoldsModel(LibbyModel):
             return creator_name
         if col == 2:
             dt_value = dt_as_local(
-                parse_datetime(hold.get("expireDate") or hold["placedDate"])
+                LibbyClient.parse_datetime(hold.get("expireDate") or hold["placedDate"])
             )
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()

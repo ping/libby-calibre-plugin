@@ -138,25 +138,25 @@ class OverdriveLibbyDialog(
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
 
+        # this non-intuitive code is because Windows
+        size_hint = self.sizeHint()
+        w = size_hint.width()
+        h = size_hint.height()
         if (
             PREFS[PreferenceKeys.MAIN_UI_WIDTH]
             and PREFS[PreferenceKeys.MAIN_UI_WIDTH] > 0
-            and PREFS[PreferenceKeys.MAIN_UI_HEIGHT]
+        ):
+            w = PREFS[PreferenceKeys.MAIN_UI_WIDTH]
+            logger.debug("Using saved window width: %d", w)
+        if (
+            PREFS[PreferenceKeys.MAIN_UI_HEIGHT]
             and PREFS[PreferenceKeys.MAIN_UI_HEIGHT] > 0
         ):
-            logger.debug(
-                "Resizing window using saved preferences: (%d, %d)",
-                PREFS[PreferenceKeys.MAIN_UI_WIDTH],
-                PREFS[PreferenceKeys.MAIN_UI_HEIGHT],
-            )
-            self.resize(
-                QSize(
-                    PREFS[PreferenceKeys.MAIN_UI_WIDTH],
-                    PREFS[PreferenceKeys.MAIN_UI_HEIGHT],
-                )
-            )
-        else:
-            self.resize(self.sizeHint())
+            h = PREFS[PreferenceKeys.MAIN_UI_HEIGHT]
+            logger.debug("Using saved windows height: %d", h)
+
+        logger.debug("Resizing window to: (%d, %d)", w, h)
+        self.resize(QSize(w, h))
 
         # for pseudo-debouncing resizeEvent
         self._curr_width = self.size().width()

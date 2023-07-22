@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libby-calibre-plugin 0.1.5\n"
+"Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-20 18:29+0800\n"
+"POT-Creation-Date: 2023-07-22 10:21+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -147,7 +147,7 @@ msgstr "매거진"
 msgid "Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:142 calibre-plugin/models.py:300
+#: calibre-plugin/models.py:142 calibre-plugin/models.py:297
 msgid "Library"
 msgstr "도서관"
 
@@ -155,46 +155,46 @@ msgstr "도서관"
 msgid "A skip-the-line loan"
 msgstr ""
 
-#: calibre-plugin/models.py:299
+#: calibre-plugin/models.py:296
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:302
+#: calibre-plugin/models.py:299
 msgid "Available"
 msgstr "대출 가능"
 
-#: calibre-plugin/models.py:369
+#: calibre-plugin/models.py:366
 #, python-brace-format
 msgid "Expires {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:386
+#: calibre-plugin/models.py:385
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:392
+#: calibre-plugin/models.py:391
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:439
+#: calibre-plugin/models.py:438
 msgid "Delayed"
 msgstr ""
 
-#: calibre-plugin/models.py:440
+#: calibre-plugin/models.py:439
 msgid "Suspended"
 msgstr ""
 
-#: calibre-plugin/models.py:486
+#: calibre-plugin/models.py:485
 msgid "Release Date"
 msgstr ""
 
-#: calibre-plugin/models.py:486
+#: calibre-plugin/models.py:485
 msgid "Library Card"
 msgstr "도서관 카드"
 
-#: calibre-plugin/models.py:486
+#: calibre-plugin/models.py:485
 msgid "Borrowed"
 msgstr "빌린"
 
@@ -237,69 +237,69 @@ msgstr ""
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:68
+#: calibre-plugin/dialog/holds.py:67
 msgid "Get latest holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:144
+#: calibre-plugin/dialog/holds.py:143
 msgid "Holds"
 msgstr "예약"
 
-#: calibre-plugin/dialog/holds.py:194 calibre-plugin/dialog/loans.py:169
+#: calibre-plugin/dialog/holds.py:193 calibre-plugin/dialog/loans.py:169
 #: calibre-plugin/dialog/magazines.py:253
 msgid "View in Libby"
 msgstr "Libby에서 보기"
 
-#: calibre-plugin/dialog/holds.py:199 calibre-plugin/dialog/loans.py:174
+#: calibre-plugin/dialog/holds.py:198 calibre-plugin/dialog/loans.py:174
 #: calibre-plugin/dialog/magazines.py:258
 msgid "View in OverDrive"
 msgstr "OverDrive에서 보기"
 
-#: calibre-plugin/dialog/holds.py:205
+#: calibre-plugin/dialog/holds.py:204
 msgid "Edit hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:211
+#: calibre-plugin/dialog/holds.py:210
 msgid "Cancel hold"
 msgstr "예약 취소"
 
-#: calibre-plugin/dialog/holds.py:227 calibre-plugin/dialog/magazines.py:294
+#: calibre-plugin/dialog/holds.py:226 calibre-plugin/dialog/magazines.py:294
 #, python-brace-format
 msgid "Borrowing {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:249
+#: calibre-plugin/dialog/holds.py:248
 msgid "Failed to borrow book"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:263
+#: calibre-plugin/dialog/holds.py:262
 msgid "Cancel this hold?"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:273
+#: calibre-plugin/dialog/holds.py:272
 msgid "Cancel Holds"
 msgstr "예약 취소"
 
-#: calibre-plugin/dialog/holds.py:285
+#: calibre-plugin/dialog/holds.py:284
 #, python-brace-format
 msgid "Cancelling hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:305
+#: calibre-plugin/dialog/holds.py:304
 msgid "Failed to cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:313
+#: calibre-plugin/dialog/holds.py:312
 msgid "Failed to update hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:341 calibre-plugin/dialog/holds.py:361
+#: calibre-plugin/dialog/holds.py:340 calibre-plugin/dialog/holds.py:360
 #, python-brace-format
 msgid "Deliver after {n} day"
 msgid_plural "Deliver after {n} days"
 msgstr[0] ""
 
-#: calibre-plugin/dialog/holds.py:346 calibre-plugin/dialog/holds.py:368
+#: calibre-plugin/dialog/holds.py:345 calibre-plugin/dialog/holds.py:367
 #, python-brace-format
 msgid "Suspend for {n} day"
 msgid_plural "Suspend for {n} days"
@@ -307,15 +307,15 @@ msgstr[0] ""
 
 # msgid "Cancel"
 # msgstr ""
-#: calibre-plugin/dialog/holds.py:384
+#: calibre-plugin/dialog/holds.py:383
 msgid "Don't save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:391
+#: calibre-plugin/dialog/holds.py:390
 msgid "Save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:401
+#: calibre-plugin/dialog/holds.py:400
 #, python-brace-format
 msgid "Updating hold on {book}"
 msgstr ""

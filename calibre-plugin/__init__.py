@@ -17,7 +17,7 @@ from calibre.customize import InterfaceActionBase
 
 load_translations()
 
-__version__ = (0, 1, 5)
+__version__ = (0, 1, 6)
 PLUGIN_NAME = "overdrive_libby"
 PLUGIN_ICON = "images/plugin.svg"
 

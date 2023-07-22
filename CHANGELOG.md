@@ -1,11 +1,12 @@
 # Changelog
 
-Unreleased
-- Match empty books for update using ISBN/ASIN even if OverDrive Link Integration is not enabled
-- Add configuration option to turn off updating of existing empty books
-- Indicate if loan is a skip-the-line checkout
-- Improve identifying titles already in library by also matching ISBN/ASIN
+Version 0.1.6 - 2023-07-21
 - Fix error if loan was sent to Kindle
+- Fix issue for Windows where window size is not restored properly
+- Update more book metadata from loan details
+- Match empty books for update using title/ISBN/ASIN even if OverDrive Link Integration is not enabled
+- Add option to disable updating of existing empty books
+- Indicate if loan is a skip-the-line checkout
 - Make UI more keyboard navigable
 
 Version 0.1.5 - 2023-07-15

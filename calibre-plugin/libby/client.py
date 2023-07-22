@@ -91,6 +91,10 @@ class NoRedirectHandler(request.HTTPRedirectHandler):
 
 # Original reverse engineering of the libby endpoints is thanks to https://github.com/lullius/pylibby
 
+# this doesn't guarantee that sensitive data will be scrubbed fully
+# it's just a best effort attempt
+_scrub_sensitive_data = True
+
 
 class LibbyClient(object):
     def __init__(
@@ -322,7 +326,19 @@ class LibbyClient(object):
             return res
 
         decoded_res = res.decode("utf8")
-        self.logger.debug("RES BODY: {0:s}".format(decoded_res))
+        if _scrub_sensitive_data and self.logger.level == logging.DEBUG:
+            try:
+                res_obj = json.loads(decoded_res)
+                if "identity" in res_obj:
+                    res_obj["identity"] = "*" * int(len(res_obj["identity"]) / 10)
+                self.logger.debug(
+                    "RES BODY: {0:s}".format(json.dumps(res_obj, separators=(",", ":")))
+                )
+            except:
+                # do nothing
+                pass
+        else:
+            self.logger.debug("RES BODY: {0:s}".format(decoded_res))
         return decoded_res
 
     def send_request(
@@ -395,10 +411,20 @@ class LibbyClient(object):
                 self.logger.debug(
                     "REQUEST: {0!s} {1!s}".format(req.get_method(), endpoint_url)
                 )
+                bearer_token = req.headers.get("Authorization", "")
+                if _scrub_sensitive_data and bearer_token:
+                    bearer_token = bearer_token[: len("Bearer ")] + "*" * int(
+                        len(bearer_token[len("Bearer ") :]) / 10
+                    )
                 self.logger.debug(
                     "REQ HEADERS: \n{0!s}".format(
                         "\n".join(
-                            ["{}: {}".format(k, v) for k, v in req.headers.items()]
+                            [
+                                "{}: {}".format(
+                                    k, v if k != "Authorization" else bearer_token
+                                )
+                                for k, v in req.headers.items()
+                            ]
                         )
                     )
                 )

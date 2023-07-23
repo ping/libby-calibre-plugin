@@ -1,5 +1,10 @@
 # Changelog
 
+Unrelease
+- Improvement: Display hold wait information in status bar
+- Improvement: Try to reduce the amount of sensitive data logged
+- Fix: Holds view default sort
+
 Version 0.1.6 - 2023-07-21
 - Fix: Error if loan was sent to Kindle
 - Fix: Issue for Windows where window size is not restored properly

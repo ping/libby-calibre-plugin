@@ -182,6 +182,28 @@ class HoldsDialogMixin(BaseDialogMixin):
         for index in indices:
             hold = index.data(Qt.UserRole)
             self.holds_borrow_btn.setEnabled(hold.get("isAvailable", False))
+            if hold.get("estimatedWaitDays"):
+                owned_copies = hold.get("ownedCopies", 0)
+                self.status_bar.showMessage(
+                    " ".join(
+                        [
+                            _("Estimated wait days: {n}.").format(
+                                n=hold["estimatedWaitDays"]
+                            ),
+                            _("You are number {n} in line.").format(
+                                n=hold.get("holdListPosition", 0)
+                            ),
+                            ngettext(
+                                "{n} copy ordered.", "{n} copies ordered.", owned_copies
+                            ).format(n=owned_copies)
+                            if hold.get("isPreReleaseTitle", False)
+                            else ngettext(
+                                "{n} copy in use.", "{n} copies in use.", owned_copies
+                            ).format(n=owned_copies),
+                        ]
+                    ),
+                    3000,
+                )
 
     def holds_view_context_menu_requested(self, pos):
         # displays context menu in the view

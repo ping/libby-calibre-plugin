@@ -8,7 +8,7 @@
 # information
 #
 from collections import namedtuple
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Dict, Optional, List
 
 from calibre.utils.config import tweaks
@@ -315,7 +315,7 @@ class LibbyHoldsModel(LibbyModel):
             synced_state.get("holds", []),
             key=lambda h: (
                 h["isAvailable"],
-                h.get("estimatedWaitDays", 9999),
+                -h.get("estimatedWaitDays", 9999),
                 h["placedDate"],
             ),
             reverse=True,

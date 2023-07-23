@@ -109,6 +109,13 @@ The title will then be listed below with its details. To borrow a title, select 
 
 To stop monitoring a title, select and right-click on the row, then select "Cancel".
 
+## FAQ
+
+### `[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed` error on Windows
+
+Download the Let's Encrypt R3 certificate https://letsencrypt.org/certs/lets-encrypt-r3.der. Import it into the Windows certificate store by double-clicking on the file and follow the subsequent prompts.
+
+
 ## Credit
 
 - Icons from https://remixicon.com/ and https://tabler-icons.io/

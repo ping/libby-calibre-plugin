@@ -33,7 +33,7 @@ from .dialog import (
     HoldsDialogMixin,
     MagazinesDialogMixin,
 )
-from .utils import ICON_MAP
+from .utils import ICON_MAP, hex_to_rgb
 
 load_translations()
 
@@ -75,7 +75,7 @@ class OverdriveLibbyAction(InterfaceAction):
         self.icons = {}
         for k, v in ICON_MAP.items():
             self.icons[k] = self.svg_to_qicon(
-                image_resources.pop(v.file), QColor.fromString(v.color)
+                image_resources.pop(v.file), QColor(*hex_to_rgb(v.color))
             )
 
         # action icon

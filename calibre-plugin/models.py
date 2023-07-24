@@ -22,7 +22,7 @@ from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import extract_isbn, extract_asin
-from .utils import PluginColors, PluginIcons
+from .utils import PluginColors, PluginIcons, hex_to_rgb
 
 load_translations()
 
@@ -246,7 +246,7 @@ class LibbyLoansModel(LibbyModel):
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
         if role == Qt.ForegroundRole and col == 3 and LibbyClient.is_renewable(loan):
-            return QColor.fromString(PluginColors.Red)
+            return QColor(*hex_to_rgb(PluginColors.Red))
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:
@@ -367,7 +367,7 @@ class LibbyHoldsModel(LibbyModel):
                 dt=format_date(dt_value, tweaks["gui_timestamp_display_format"])
             )
         if role == Qt.ForegroundRole and col == 2 and hold.get("isAvailable", False):
-            return QColor.fromString(PluginColors.Red)
+            return QColor(*hex_to_rgb(PluginColors.Red))
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
         if role == Qt.FontRole and col == 5 and hold.get("isAvailable", False):

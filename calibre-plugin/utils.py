@@ -1,7 +1,7 @@
 import re
 from collections import namedtuple
 from enum import Enum
-from typing import Dict
+from typing import Dict, Tuple
 
 from calibre.gui2 import is_dark_theme
 
@@ -13,7 +13,7 @@ except ImportError:
     OD_IDENTIFIER = "odid"
 
 
-def generate_od_identifier(media: Dict, library: Dict):
+def generate_od_identifier(media: Dict, library: Dict) -> str:
     """
     Generates the OverDrive Link identifier.
     Should probably find a way to call the plugin to do it though.
@@ -39,20 +39,20 @@ def generate_od_identifier(media: Dict, library: Dict):
 COLOR_HEX_RE = re.compile("^#[0-9a-f]{3,6}$", re.IGNORECASE)
 
 
-def hex_to_rgb(hexcode: str):
+def hex_to_rgb(hexcolor: str) -> Tuple:
     """
-    Converts a hex color value, e.g. "#FFFFFF" into (255, 255, 255) so that we
-    don't have to use QColor.fromString (introduced in Qt6.4).
+    Converts a hex color string into a rgb tuple, e.g. "#FFFFFF" to (255, 255, 255)
+    so that we don't have to use QColor.fromString (introduced in Qt6.4).
 
-    :param hexcode:
+    :param hexcolor:
     :return:
     """
-    if not COLOR_HEX_RE.match(hexcode):
-        raise ValueError(f"Invalid hexcode: {hexcode}")
-    hexcode = hexcode.upper().lstrip("#")
-    if len(hexcode) == 3:
-        return tuple(int(hexcode[i : i + 1] * 2, 16) for i in (0, 1, 2))
-    return tuple(int(hexcode[i : i + 2], 16) for i in (0, 2, 4))
+    if not COLOR_HEX_RE.match(hexcolor):
+        raise ValueError(f"Invalid hexcode: {hexcolor}")
+    hexcolor = hexcolor.upper().lstrip("#")
+    if len(hexcolor) == 3:
+        return tuple(int(hexcolor[i : i + 1] * 2, 16) for i in (0, 1, 2))
+    return tuple(int(hexcolor[i : i + 2], 16) for i in (0, 2, 4))
 
 
 class PluginColors(str, Enum):

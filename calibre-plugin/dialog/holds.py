@@ -78,6 +78,10 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
         self.models.append(self.holds_model)
 
+        self.holds_model.modelReset.connect(self.holds_model_changed)
+        self.holds_model.rowsRemoved.connect(self.holds_model_changed)
+        self.holds_model.dataChanged.connect(self.holds_model_changed)
+
         # The main holds list
         self.holds_view = QTableView(self)
         self.holds_view.setSortingEnabled(True)
@@ -141,6 +145,20 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.holds_tab_index = self.tabs.addTab(widget, _("Holds"))
+
+    def holds_model_changed(self):
+        available_holds_count = 0
+        for r in range(self.holds_model.rowCount()):
+            hold = self.holds_model.index(r, 0).data(Qt.UserRole)
+            if hold.get("isAvailable", False):
+                available_holds_count += 1
+        if available_holds_count:
+            self.tabs.setTabText(
+                self.holds_tab_index,
+                _("Holds ({n})").format(n=available_holds_count),
+            )
+        else:
+            self.tabs.setTabText(self.holds_tab_index, _("Holds"))
 
     def rebind_holds_download_button_and_menu(self, borrow_action):
         self.rebind_borrow_btn(

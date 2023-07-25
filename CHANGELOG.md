@@ -1,6 +1,7 @@
 # Changelog
 
 Unrelease
+- New: Display number of available holds in the Holds tab text
 - Improvement: Display hold wait information in status bar
 - Improvement: Try to reduce the amount of sensitive data logged
 - Fix: Holds view default sort

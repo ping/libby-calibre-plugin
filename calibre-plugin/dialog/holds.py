@@ -182,7 +182,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         for index in indices:
             hold = index.data(Qt.UserRole)
             self.holds_borrow_btn.setEnabled(hold.get("isAvailable", False))
-            if hold.get("estimatedWaitDays"):
+            if hold.get("estimatedWaitDays") and not hold.get("isAvailable", False):
                 owned_copies = hold.get("ownedCopies", 0)
                 self.status_bar.showMessage(
                     " ".join(

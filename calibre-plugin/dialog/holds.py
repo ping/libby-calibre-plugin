@@ -140,7 +140,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.holds_borrow_btn)
         widget_row_pos += 1
 
-        self.tab_index = self.tabs.addTab(widget, _("Holds"))
+        self.holds_tab_index = self.tabs.addTab(widget, _("Holds"))
 
     def rebind_holds_download_button_and_menu(self, borrow_action):
         self.rebind_borrow_btn(

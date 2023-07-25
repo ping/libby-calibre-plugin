@@ -140,7 +140,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.download_btn)
         widget_row_pos += 1
 
-        self.tab_index = self.tabs.addTab(widget, _("Loans"))
+        self.loans_tab_index = self.tabs.addTab(widget, _("Loans"))
 
     def hide_book_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_book_already_in_lib_checkbox.isChecked()

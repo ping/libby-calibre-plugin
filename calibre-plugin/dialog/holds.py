@@ -334,6 +334,17 @@ class HoldsDialogMixin(BaseDialogMixin):
             self.gui.job_exception(job, dialog_title=_("Failed to update hold"))
             return
 
+        else:
+            updated_hold = job.result
+            for r in range(self.holds_model.rowCount()):
+                index = self.holds_model.index(r, 0)
+                hold = index.data(Qt.UserRole)
+                if (
+                    hold["id"] == updated_hold["id"]
+                    and hold["cardId"] == updated_hold["cardId"]
+                ):
+                    self.holds_model.setData(index, updated_hold)
+                    break
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
 

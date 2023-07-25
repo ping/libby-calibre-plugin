@@ -346,6 +346,12 @@ class LibbyHoldsModel(LibbyModel):
             self.filter_hide_unavailable_holds = value
             self.filter_rows()
 
+    def setData(self, index, hold, role=Qt.EditRole):
+        if role == Qt.EditRole:
+            self.filtered_rows[index.row()] = hold
+            self.dataChanged.emit(index, index)
+            return True
+
     def data(self, index, role):
         row, col = index.row(), index.column()
         if row >= self.rowCount():

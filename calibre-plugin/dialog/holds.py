@@ -357,13 +357,19 @@ class SuspendHoldDialog(QDialog):
         self.setLayout(layout)
         widget_row_pos = 0
 
+        self.title_lbl = QLabel(get_media_title(hold))
+        self.title_lbl.setAlignment(Qt.AlignCenter)
+        curr_font = self.title_lbl.font()
+        curr_font.setPointSizeF(curr_font.pointSizeF() * 1.1)
+        self.title_lbl.setFont(curr_font)
+        self.title_lbl.setStyleSheet("font-weight: bold;")
+        layout.addWidget(self.title_lbl, widget_row_pos, 0, 1, 2)
+        widget_row_pos += 1
+
         # Instructions label
         self.instructions_lbl = QLabel(
             ngettext("Deliver after {n} day", "Deliver after {n} days", 0).format(n=0)
-            if (
-                hold.get("redeliveriesRequestedCount", 0) > 0
-                or hold.get("redeliveriesAutomatedCount", 0) > 0
-            )
+            if self._is_delivery_delay(hold)
             else ngettext("Suspend for {n} day", "Suspend for {n} days", 0).format(n=0)
         )
         self.instructions_lbl.setAlignment(Qt.AlignCenter)
@@ -382,10 +388,7 @@ class SuspendHoldDialog(QDialog):
                 ngettext("Deliver after {n} day", "Deliver after {n} days", n).format(
                     n=n
                 )
-                if (
-                    hold.get("redeliveriesRequestedCount", 0) > 0
-                    or hold.get("redeliveriesAutomatedCount", 0) > 0
-                )
+                if self._is_delivery_delay(hold)
                 else ngettext("Suspend for {n} day", "Suspend for {n} days", n).format(
                     n=n
                 )
@@ -417,6 +420,17 @@ class SuspendHoldDialog(QDialog):
         for r in range(0, 2):
             layout.setColumnMinimumWidth(r, self.parent().min_button_width)
         layout.setSizeConstraint(QLayout.SetFixedSize)
+
+    def _is_delivery_delay(self, hold):
+        if hold.get("isAvailable"):
+            return True
+        is_suspended = bool(hold.get("suspensionFlag") and hold.get("suspensionEnd"))
+        if is_suspended and (
+            hold.get("redeliveriesRequestedCount", 0) > 0
+            or hold.get("redeliveriesAutomatedCount", 0) > 0
+        ):
+            return True
+        return False
 
     def update_btn_clicked(self):
         description = _("Updating hold on {book}").format(

@@ -13,7 +13,6 @@ from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
-from calibre.utils.localization import _ as _c
 from polyglot.builtins import as_unicode
 from qt.core import (
     Qt,
@@ -30,6 +29,7 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
+from ..compat import _c
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient

@@ -12,8 +12,8 @@ from pathlib import Path
 from typing import Dict, Optional
 
 from calibre.ptempfile import PersistentTemporaryDirectory
-from calibre.utils.localization import _ as _c
 
+from .compat import _c
 from .download import LibbyDownload
 from .libby import LibbyClient
 

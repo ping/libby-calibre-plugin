@@ -22,8 +22,8 @@ from urllib.parse import urlparse, urljoin
 
 from bs4 import BeautifulSoup, Doctype, Tag, element
 from calibre.ptempfile import PersistentTemporaryDirectory
-from calibre.utils.localization import _ as _c
 
+from .compat import _c
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes, LibbyFormats
 from .magazine_download_utils import (

@@ -14,7 +14,6 @@ from calibre.constants import is_debugging
 from calibre.gui2 import info_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton
-from calibre.utils.localization import _ as _c
 from qt.core import (
     Qt,
     QDialog,
@@ -33,6 +32,7 @@ from qt.core import (
 )
 
 from .. import logger, __version__, DEMO_MODE
+from ..compat import _c
 from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel

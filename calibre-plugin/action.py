@@ -10,7 +10,6 @@
 from typing import Optional
 
 from calibre.gui2.actions import InterfaceAction
-from calibre.utils.localization import _ as _c
 from qt.core import (
     QToolButton,
     QSize,
@@ -26,6 +25,7 @@ from qt.core import (
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON
+from .compat import _c
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,

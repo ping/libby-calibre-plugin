@@ -11,10 +11,10 @@
 from calibre import confirm_config_name
 from calibre.gui2 import error_dialog
 from calibre.utils.config import JSONConfig
-from calibre.utils.localization import _ as _c
 from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
 
 from . import logger, PLUGIN_NAME, DEMO_MODE
+from .compat import _c
 from .utils import PluginColors
 
 load_translations()

@@ -14,10 +14,10 @@ from typing import Dict, Optional, List
 from calibre.utils.config import tweaks
 from calibre.utils.date import format_date, dt_as_local
 from calibre.utils.icu import lower as icu_lower
-from calibre.utils.localization import _ as _c
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont, QColor
 
 from . import DEMO_MODE
+from .compat import _c
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes

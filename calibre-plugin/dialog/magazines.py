@@ -13,7 +13,6 @@ from typing import Dict
 
 from calibre.gui2 import Dispatcher, error_dialog, info_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
-from calibre.utils.localization import _ as _c
 from polyglot.builtins import as_unicode
 from qt.core import (
     Qt,
@@ -35,6 +34,7 @@ from qt.core import (
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
+from ..compat import _c
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes

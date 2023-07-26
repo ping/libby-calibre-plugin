@@ -437,7 +437,9 @@ class LoansDialogMixin(BaseDialogMixin):
     def returned_loan(self, job):
         # callback after returning loan
         if job.failed:
-            self.unhandled_exception(job.exception, msg=_("Failed to return loan"))
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to return loan")
+            )
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 

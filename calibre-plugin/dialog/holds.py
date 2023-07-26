@@ -303,8 +303,9 @@ class HoldsDialogMixin(BaseDialogMixin):
     def borrowed_book(self, job):
         # callback after book is borrowed
         if job.failed:
-            self.unhandled_exception(job.exception, msg=_("Failed to borrow book"))
-            return
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to borrow book")
+            )
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 

@@ -279,18 +279,17 @@ class BaseDialogMixin(QDialog):
 
         def errored_out(err: Exception):
             try:
+                thread.quit()
                 self.loading_overlay.hide()
                 self.status_bar.showMessage(
                     _("An error occured during sync: {err}").format(err=str(err))
                 )
                 for btn in self.refresh_buttons:
                     btn.setEnabled(True)
+                return self.unhandled_exception(err, msg=_("Error synchronizing data"))
             except RuntimeError as err:
                 # most likely because the UI has been closed before syncing was completed
                 logger.warning("Error processing sync results: %s", err)
-            finally:
-                thread.quit()
-            self.unhandled_exception(err, msg=_("Error synchronizing data"))
 
         worker.finished.connect(lambda value: loaded(value))
         worker.errored.connect(lambda err: errored_out(err))

@@ -38,7 +38,7 @@ from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel
 from ..overdrive import OverDriveClient
-from ..utils import PluginIcons
+from ..utils import PluginIcons, compat_enum
 from ..workers import SyncDataWorker
 
 load_translations()
@@ -322,7 +322,9 @@ class BaseDialogMixin(QDialog):
             else _("Borrow and download selected title")
         )
         if hasattr(self, "download_loan"):
-            borrow_btn.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+            borrow_btn.setPopupMode(
+                compat_enum(QToolButton, "ToolButtonPopupMode.DelayedPopup")
+            )
             borrow_btn_menu = QMenu(borrow_btn)
             borrow_btn_menu_bnd_action = borrow_btn_menu.addAction(
                 _("Borrow and Download")
@@ -427,7 +429,7 @@ class BaseDialogMixin(QDialog):
                 print_basic_debug_info(out=sio)
             except:
                 pass
-            traceback.print_exception(err, file=sio)
+            traceback.print_exception(err.__class__, err, err.__traceback__, file=sio)
             fe = sio.getvalue()
             if msg:
                 msg = "<b>%s</b>: %s" % (err.__class__.__name__, msg)

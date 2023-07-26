@@ -33,7 +33,7 @@ from .dialog import (
     HoldsDialogMixin,
     MagazinesDialogMixin,
 )
-from .utils import ICON_MAP, hex_to_rgb
+from .utils import ICON_MAP, hex_to_rgb, compat_enum
 
 load_translations()
 
@@ -56,9 +56,12 @@ class OverdriveLibbyAction(InterfaceAction):
     def svg_to_qicon(data: bytes, color: Optional[QColor] = None, size=(64, 64)):
         renderer = QSvgRenderer(QXmlStreamReader(data))
         pixmap = QPixmap(*size)
-        pixmap.fill(Qt.GlobalColor.transparent)
+        pixmap.fill(compat_enum(Qt, "GlobalColor.transparent"))
         painter = QPainter(pixmap)
         renderer.render(painter)
+        painter.setCompositionMode(
+            compat_enum(QPainter, "CompositionMode.CompositionMode_SourceIn")
+        )
         painter.setCompositionMode(painter.CompositionMode.CompositionMode_SourceIn)
         if color:
             painter.fillRect(pixmap.rect(), color)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-26 22:39+0800\n"
+"POT-Creation-Date: 2023-07-27 00:11+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:115 calibre-plugin/dialog/base.py:126
+#: calibre-plugin/action.py:118 calibre-plugin/dialog/base.py:126
 msgid "MobileRead"
 msgstr ""
 
@@ -223,21 +223,21 @@ msgstr ""
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:312 calibre-plugin/dialog/base.py:330
-#: calibre-plugin/dialog/base.py:353 calibre-plugin/dialog/base.py:369
+#: calibre-plugin/dialog/base.py:312 calibre-plugin/dialog/base.py:332
+#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:371
 msgid "Borrow"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:314 calibre-plugin/dialog/base.py:328
-#: calibre-plugin/dialog/base.py:353 calibre-plugin/dialog/base.py:367
+#: calibre-plugin/dialog/base.py:314 calibre-plugin/dialog/base.py:330
+#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:369
 msgid "Borrow and Download"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:320 calibre-plugin/dialog/base.py:356
+#: calibre-plugin/dialog/base.py:320 calibre-plugin/dialog/base.py:358
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:358
+#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:360
 msgid "Borrow and download selected title"
 msgstr ""
 
@@ -332,29 +332,29 @@ msgstr ""
 msgid "Failed to update hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:420 calibre-plugin/dialog/holds.py:437
+#: calibre-plugin/dialog/holds.py:420 calibre-plugin/dialog/holds.py:439
 #, python-brace-format
 msgid "Deliver after {n} day"
 msgid_plural "Deliver after {n} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:422 calibre-plugin/dialog/holds.py:441
+#: calibre-plugin/dialog/holds.py:422 calibre-plugin/dialog/holds.py:443
 #, python-brace-format
 msgid "Suspend for {n} day"
 msgid_plural "Suspend for {n} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:457
+#: calibre-plugin/dialog/holds.py:459
 msgid "Don't save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:464
+#: calibre-plugin/dialog/holds.py:466
 msgid "Save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:485
+#: calibre-plugin/dialog/holds.py:487
 #, python-brace-format
 msgid "Updating hold on {book}"
 msgstr ""

@@ -39,7 +39,7 @@ from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
 from ..models import get_media_title, LibbyHoldsModel, LibbyModel
-from ..utils import PluginIcons
+from ..utils import PluginIcons, compat_enum
 
 load_translations()
 
@@ -429,7 +429,9 @@ class SuspendHoldDialog(QDialog):
         self.days_slider.setMinimum(0)
         self.days_slider.setMaximum(30)
         self.days_slider.setTickInterval(1)
-        self.days_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.days_slider.setTickPosition(
+            compat_enum(QSlider, "TickPosition.TicksBelow")
+        )
         layout.addWidget(self.days_slider, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
         self.days_slider.valueChanged.connect(

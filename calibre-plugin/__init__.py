@@ -52,7 +52,7 @@ class ActionLibby(InterfaceActionBase):
     supported_platforms = ["windows", "osx", "linux"]
     author = "ping"
     version = __version__
-    minimum_calibre_version = (6, 0, 0)
+    minimum_calibre_version = (5, 44, 0)
 
     actual_plugin = f"calibre_plugins.{PLUGIN_NAME}.action:OverdriveLibbyAction"
 

@@ -4,6 +4,7 @@ Unrelease
 - New: Display number of available holds in the Holds tab text
 - New: Last used tab will be opened by default
 - New: Disable borrow button if limits for the card has been reached
+- New: Compatible with calibre 5.44.0
 - Improvement: Display hold wait information in status bar
 - Improvement: Try to reduce the amount of sensitive data logged
 - Fix: Holds view default sort

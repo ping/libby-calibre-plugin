@@ -13,6 +13,25 @@ except ImportError:
     OD_IDENTIFIER = "odid"
 
 
+def compat_enum(obj, name):
+    """
+    A compat utility to get PyQt6 Qt.scoped.enums Vs. PyQt5 Qt.enums
+    so that we can support calibre 5?
+    Example: compat_enum(Qt, "GlobalColor.transparent")
+
+    :param obj:
+    :param name:
+    :return:
+    """
+    parent, child = name.split(".")
+    result = getattr(obj, child, False)
+    if result:  # Found using short name
+        return result
+
+    # Get parent, then child
+    return getattr(getattr(obj, parent), child)
+
+
 def generate_od_identifier(media: Dict, library: Dict) -> str:
     """
     Generates the OverDrive Link identifier.

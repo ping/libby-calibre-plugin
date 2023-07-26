@@ -100,6 +100,10 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_view.customContextMenuRequested.connect(
             self.loans_view_context_menu_requested
         )
+        # selection change
+        self.loans_view.selectionModel().selectionChanged.connect(
+            self.loans_view_selection_model_selectionchanged
+        )
         # add debug trigger
         self.loans_view.doubleClicked.connect(
             lambda mi: self.display_debug("Loan", mi.data(Qt.UserRole))
@@ -159,6 +163,14 @@ class LoansDialogMixin(BaseDialogMixin):
 
     def loans_refresh_btn_clicked(self):
         self.sync()
+
+    def loans_view_selection_model_selectionchanged(self, selected, deselected):
+        selection_model = self.loans_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        indices = selection_model.selectedRows()
+        loan = indices[-1].data(Qt.UserRole)
+        self.status_bar.showMessage(get_media_title(loan), 3000)
 
     def loans_view_context_menu_requested(self, pos):
         selection_model = self.loans_view.selectionModel()

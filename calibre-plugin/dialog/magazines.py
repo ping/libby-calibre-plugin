@@ -243,6 +243,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             self.magazines_borrow_btn.setEnabled(
                 not magazine.get("__is_borrowed", False)
             )
+            self.status_bar.showMessage(get_media_title(magazine), 3000)
 
     def magazines_view_context_menu_requested(self, pos):
         selection_model = self.magazines_view.selectionModel()

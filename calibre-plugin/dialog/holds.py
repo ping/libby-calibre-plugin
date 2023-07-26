@@ -303,7 +303,7 @@ class HoldsDialogMixin(BaseDialogMixin):
     def borrowed_book(self, job):
         # callback after book is borrowed
         if job.failed:
-            self.gui.job_exception(job, dialog_title=_("Failed to borrow book"))
+            self.unhandled_exception(job.exception, msg=_("Failed to borrow book"))
             return
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
@@ -359,16 +359,18 @@ class HoldsDialogMixin(BaseDialogMixin):
     def cancelled_hold(self, job):
         # callback after hold is cancelled
         if job.failed:
-            self.gui.job_exception(job, dialog_title=_("Failed to cancel hold"))
-            return
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to cancel hold")
+            )
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def updated_hold(self, job):
         # callback after hold is updated
         if job.failed:
-            self.gui.job_exception(job, dialog_title=_("Failed to update hold"))
-            return
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to update hold")
+            )
 
         else:
             updated_hold = job.result

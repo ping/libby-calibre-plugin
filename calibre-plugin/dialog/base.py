@@ -11,9 +11,10 @@ import json
 from typing import Dict, List
 
 from calibre.constants import is_debugging
-from calibre.gui2 import info_dialog
+from calibre.gui2 import info_dialog, error_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton
+from polyglot.io import PolyglotStringIO
 from qt.core import (
     Qt,
     QDialog,
@@ -289,7 +290,7 @@ class BaseDialogMixin(QDialog):
                 logger.warning("Error processing sync results: %s", err)
             finally:
                 thread.quit()
-            raise err
+            self.unhandled_exception(err, msg=_("Error synchronizing data"))
 
         worker.finished.connect(lambda value: loaded(value))
         worker.errored.connect(lambda err: errored_out(err))
@@ -401,6 +402,42 @@ class BaseDialogMixin(QDialog):
                 det_msg=json.dumps(data, indent=2),
                 show=True,
             )
+
+    def unhandled_exception(self, err, msg=None):
+        """
+        Use this to handle unexpected job/sync errors instead of letting calibre's main window do it,
+        so that it doesn't go below our modal plugin window in Windows.
+
+        Adapter from
+        https://github.com/kovidgoyal/calibre/blob/ffcaf382a277bd980771d36ce915cc451ef30b25/src/calibre/gui2/main_window.py#L216-L243
+
+        :param err:
+        :param msg:
+        :return:
+        """
+        if err is KeyboardInterrupt:
+            return
+        import traceback
+
+        try:
+            sio = PolyglotStringIO(errors="replace")
+            try:
+                from calibre.debug import print_basic_debug_info
+
+                print_basic_debug_info(out=sio)
+            except:
+                pass
+            traceback.print_exception(err, file=sio)
+            fe = sio.getvalue()
+            if msg:
+                msg = "<b>%s</b>: %s" % (err.__class__.__name__, msg)
+            else:
+                msg = "<b>%s</b>" % err.__class__.__name__
+            return error_dialog(
+                self, _c("Unhandled exception"), msg, det_msg=fe, show=True
+            )
+        except Exception as err:
+            logger.exception(err)
 
 
 class CustomLoadingOverlay(LoadingOverlay):

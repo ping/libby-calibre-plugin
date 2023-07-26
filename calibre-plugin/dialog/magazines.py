@@ -316,8 +316,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
     def borrowed_magazine(self, job):
         # callback after magazine is borrowed
         if job.failed:
-            self.gui.job_exception(job, dialog_title=_("Failed to borrow magazine"))
-            return
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to borrow magazine")
+            )
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 

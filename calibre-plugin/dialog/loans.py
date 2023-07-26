@@ -306,7 +306,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 % as_unicode(get_media_title(loan), errors="replace")
             )
         )
-        callback = Dispatcher(self.gui.downloaded_ebook)
+        callback = Dispatcher(self.downloaded_loan)
         job = ThreadedJob(
             "overdrive_libby_download",
             description,
@@ -363,7 +363,7 @@ class LoansDialogMixin(BaseDialogMixin):
             get_media_title(loan), errors="replace"
         )
 
-        callback = Dispatcher(self.gui.downloaded_ebook)
+        callback = Dispatcher(self.downloaded_loan)
         job = ThreadedJob(
             "overdrive_libby_download",
             description,
@@ -437,7 +437,13 @@ class LoansDialogMixin(BaseDialogMixin):
     def returned_loan(self, job):
         # callback after returning loan
         if job.failed:
-            self.gui.job_exception(job, dialog_title=_("Failed to return loan"))
-            return
+            self.unhandled_exception(job.exception, msg=_("Failed to return loan"))
+
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
+
+    def downloaded_loan(self, job):
+        if job.failed:
+            # self.gui.job_exception(job, dialog_title=_c("Failed to download e-book"))
+            self.unhandled_exception(job.exception, msg=_c("Failed to download e-book"))
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)

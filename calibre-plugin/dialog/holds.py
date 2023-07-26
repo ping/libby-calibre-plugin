@@ -199,12 +199,14 @@ class HoldsDialogMixin(BaseDialogMixin):
         indices = selection_model.selectedRows()
         for index in indices:
             hold = index.data(Qt.UserRole)
+            card = self.holds_model.get_card(hold["cardId"])
             self.holds_borrow_btn.setEnabled(hold.get("isAvailable", False))
             if hold.get("estimatedWaitDays") and not hold.get("isAvailable", False):
                 owned_copies = hold.get("ownedCopies", 0)
                 self.status_bar.showMessage(
                     " ".join(
                         [
+                            f'{get_media_title(hold)} @{card.get("advantageKey")}:',
                             _("Estimated wait days: {n}.").format(
                                 n=hold["estimatedWaitDays"]
                             ),
@@ -222,6 +224,22 @@ class HoldsDialogMixin(BaseDialogMixin):
                     ),
                     3000,
                 )
+                continue
+            elif hold.get("isAvailable"):
+                # check card loan limit
+                loan_limit = card.get("limits", {}).get("loan", 0)
+                used_loan_limit = card.get("counts", {}).get("loan", 0)
+                available_loan_limit = loan_limit - used_loan_limit
+                if available_loan_limit < 1:
+                    self.holds_borrow_btn.setEnabled(False)
+                    self.status_bar.showMessage(
+                        _(
+                            "You have reached your loan limit for this card. To update limits, click on Refresh."
+                        ),
+                        3000,
+                    )
+                    continue
+            self.status_bar.showMessage(get_media_title(hold), 3000)
 
     def holds_view_context_menu_requested(self, pos):
         # displays context menu in the view

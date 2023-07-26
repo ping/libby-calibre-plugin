@@ -245,7 +245,7 @@ class LibbyLoansModel(LibbyModel):
             return self.icons[PluginIcons.Clover]
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
-        if role == Qt.ForegroundRole and col == 3 and LibbyClient.is_renewable(loan):
+        if role == Qt.ForegroundRole and col == 2 and LibbyClient.is_renewable(loan):
             return QColor(*hex_to_rgb(PluginColors.Red))
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None

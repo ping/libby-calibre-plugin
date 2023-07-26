@@ -109,6 +109,7 @@ class BaseDialogMixin(QDialog):
         layout = QGridLayout()
         self.setLayout(layout)
         self.tabs = QTabWidget(self)
+        self.tabs.currentChanged.connect(self.tab_current_changed)
         layout.addWidget(self.tabs, 0, 0)
 
         # Status bar
@@ -167,6 +168,25 @@ class BaseDialogMixin(QDialog):
             PREFS[PreferenceKeys.MAIN_UI_HEIGHT] = new_height
             self._curr_height = new_height
             logger.debug("Saved new UI height preference: %d", new_height)
+
+    def add_tab(self, widget, label) -> int:
+        """
+        Helper method for adding tabs.
+        We temporarily block QTabWidget signals because the `currentChanged` signal is emitted
+        even on `addTab()`.
+
+        :param widget:
+        :param label:
+        :return:
+        """
+        prev = self.tabs.blockSignals(True)
+        new_tab_index = self.tabs.addTab(widget, label)
+        self.tabs.blockSignals(prev)
+        return new_tab_index
+
+    def tab_current_changed(self, index: int):
+        if index > -1:
+            PREFS[PreferenceKeys.LAST_SELECTED_TAB] = index
 
     def view_in_libby_action_triggered(self, indices, model):
         """

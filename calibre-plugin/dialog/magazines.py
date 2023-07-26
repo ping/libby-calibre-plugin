@@ -199,7 +199,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.magazines_borrow_btn)
         widget_row_pos += 1
 
-        self.magazines_tab_index = self.tabs.addTab(magazines_widget, _("Magazines"))
+        self.magazines_tab_index = self.add_tab(magazines_widget, _("Magazines"))
 
     def rebind_magazines_download_button_and_menu(self, borrow_action):
         self.rebind_borrow_btn(

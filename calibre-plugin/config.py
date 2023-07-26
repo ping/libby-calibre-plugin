@@ -40,6 +40,7 @@ class PreferenceKeys:
     MAGAZINE_SUBSCRIPTIONS = "magazine_subscriptions"
     # used to toggle the default borrow btn action
     LAST_BORROW_ACTION = "last_borrow_action"
+    LAST_SELECTED_TAB = "last_selected_tab"
     ALWAYS_DOWNLOAD_AS_NEW = "always_download_new"
 
 
@@ -89,6 +90,7 @@ PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
 PREFS.defaults[PreferenceKeys.LAST_BORROW_ACTION] = BorrowActions.BORROW
+PREFS.defaults[PreferenceKeys.LAST_SELECTED_TAB] = 0
 
 
 class ConfigWidget(QWidget):

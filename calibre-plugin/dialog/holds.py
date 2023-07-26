@@ -144,7 +144,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.refresh_buttons.append(self.holds_borrow_btn)
         widget_row_pos += 1
 
-        self.holds_tab_index = self.tabs.addTab(widget, _("Holds"))
+        self.holds_tab_index = self.add_tab(widget, _("Holds"))
 
     def holds_model_changed(self):
         available_holds_count = 0

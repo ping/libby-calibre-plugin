@@ -162,4 +162,10 @@ class OverdriveLibbyDialog(
         self._curr_width = self.size().width()
         self._curr_height = self.size().height()
 
+        if (
+            PREFS[PreferenceKeys.LAST_SELECTED_TAB]
+            and self.tabs.count() > PREFS[PreferenceKeys.LAST_SELECTED_TAB]
+        ):
+            self.tabs.setCurrentIndex(PREFS[PreferenceKeys.LAST_SELECTED_TAB])
+
         self.sync()

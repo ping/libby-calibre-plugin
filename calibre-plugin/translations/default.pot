@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-27 00:11+0800\n"
+"POT-Creation-Date: 2023-07-27 14:09+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: calibre-plugin/__init__.py:51 calibre-plugin/action.py:46
+#: calibre-plugin/__init__.py:51 calibre-plugin/action.py:50
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:52
+#: calibre-plugin/action.py:56
 msgid "Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:118 calibre-plugin/dialog/base.py:126
+#: calibre-plugin/action.py:120 calibre-plugin/dialog/base.py:125
 msgid "MobileRead"
 msgstr ""
 
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Libby is configured."
 msgstr ""
 
-#: calibre-plugin/config.py:112
+#: calibre-plugin/config.py:112 calibre-plugin/dialog/base.py:229
 msgid "Libby is not configured yet."
 msgstr ""
 
@@ -198,16 +198,16 @@ msgstr ""
 msgid "Borrowed"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:87
+#: calibre-plugin/dialog/base.py:86
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:235 calibre-plugin/dialog/base.py:238
+#: calibre-plugin/dialog/base.py:234 calibre-plugin/dialog/base.py:237
 msgid "Synchronizing..."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:260
+#: calibre-plugin/dialog/base.py:259
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
@@ -219,241 +219,241 @@ msgstr ""
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:293
+#: calibre-plugin/dialog/base.py:288
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:312 calibre-plugin/dialog/base.py:332
-#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:371
+#: calibre-plugin/dialog/base.py:310 calibre-plugin/dialog/base.py:328
+#: calibre-plugin/dialog/base.py:351 calibre-plugin/dialog/base.py:367
 msgid "Borrow"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:314 calibre-plugin/dialog/base.py:330
-#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:369
+#: calibre-plugin/dialog/base.py:312 calibre-plugin/dialog/base.py:326
+#: calibre-plugin/dialog/base.py:351 calibre-plugin/dialog/base.py:365
 msgid "Borrow and Download"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:320 calibre-plugin/dialog/base.py:358
+#: calibre-plugin/dialog/base.py:318 calibre-plugin/dialog/base.py:354
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:360
+#: calibre-plugin/dialog/base.py:320 calibre-plugin/dialog/base.py:356
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:67
+#: calibre-plugin/dialog/holds.py:71
 msgid "Get latest holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:147 calibre-plugin/dialog/holds.py:161
+#: calibre-plugin/dialog/holds.py:151 calibre-plugin/dialog/holds.py:165
 msgid "Holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:158
+#: calibre-plugin/dialog/holds.py:162
 #, python-brace-format
 msgid "Holds ({n})"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:210
+#: calibre-plugin/dialog/holds.py:214
 #, python-brace-format
 msgid "Estimated wait days: {n}."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:213
+#: calibre-plugin/dialog/holds.py:217
 #, python-brace-format
 msgid "You are number {n} in line."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:217
+#: calibre-plugin/dialog/holds.py:221
 #, python-brace-format
 msgid "{n} copy ordered."
 msgid_plural "{n} copies ordered."
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:221
+#: calibre-plugin/dialog/holds.py:225
 #, python-brace-format
 msgid "{n} copy in use."
 msgid_plural "{n} copies in use."
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:237
+#: calibre-plugin/dialog/holds.py:241
 msgid ""
 "You have reached your loan limit for this card. To update limits, click on "
 "Refresh."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:251 calibre-plugin/dialog/loans.py:181
-#: calibre-plugin/dialog/magazines.py:254
+#: calibre-plugin/dialog/holds.py:255 calibre-plugin/dialog/loans.py:184
+#: calibre-plugin/dialog/magazines.py:257
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:256 calibre-plugin/dialog/loans.py:186
-#: calibre-plugin/dialog/magazines.py:259
+#: calibre-plugin/dialog/holds.py:260 calibre-plugin/dialog/loans.py:189
+#: calibre-plugin/dialog/magazines.py:262
 msgid "View in OverDrive"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:262
+#: calibre-plugin/dialog/holds.py:266
 msgid "Edit hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:268
+#: calibre-plugin/dialog/holds.py:272
 msgid "Cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:284 calibre-plugin/dialog/magazines.py:295
+#: calibre-plugin/dialog/holds.py:288 calibre-plugin/dialog/magazines.py:298
 #, python-brace-format
 msgid "Borrowing {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:306
+#: calibre-plugin/dialog/holds.py:311
 msgid "Failed to borrow book"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:320
+#: calibre-plugin/dialog/holds.py:325
 msgid "Cancel this hold?"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:330
+#: calibre-plugin/dialog/holds.py:335
 msgid "Cancel Holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:342
+#: calibre-plugin/dialog/holds.py:347
 #, python-brace-format
 msgid "Cancelling hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:363
+#: calibre-plugin/dialog/holds.py:368
 msgid "Failed to cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:372
+#: calibre-plugin/dialog/holds.py:377
 msgid "Failed to update hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:420 calibre-plugin/dialog/holds.py:439
+#: calibre-plugin/dialog/holds.py:425 calibre-plugin/dialog/holds.py:442
 #, python-brace-format
 msgid "Deliver after {n} day"
 msgid_plural "Deliver after {n} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:422 calibre-plugin/dialog/holds.py:443
+#: calibre-plugin/dialog/holds.py:427 calibre-plugin/dialog/holds.py:446
 #, python-brace-format
 msgid "Suspend for {n} day"
 msgid_plural "Suspend for {n} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:459
+#: calibre-plugin/dialog/holds.py:462
 msgid "Don't save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:466
+#: calibre-plugin/dialog/holds.py:469
 msgid "Save changes"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:487
+#: calibre-plugin/dialog/holds.py:490
 #, python-brace-format
 msgid "Updating hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:65
+#: calibre-plugin/dialog/loans.py:68
 msgid "Get latest loans"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:136
+#: calibre-plugin/dialog/loans.py:139
 msgid "Download selected loans"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:147
+#: calibre-plugin/dialog/loans.py:150
 msgid "Loans"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:192
+#: calibre-plugin/dialog/loans.py:195
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/loans.py:298
+#: calibre-plugin/dialog/loans.py:301
 #, python-brace-format
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:397
+#: calibre-plugin/dialog/loans.py:400
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/loans.py:409
+#: calibre-plugin/dialog/loans.py:412
 msgid "Return Loans"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:420
+#: calibre-plugin/dialog/loans.py:423
 #, python-brace-format
 msgid "Returning {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:440
+#: calibre-plugin/dialog/loans.py:444
 msgid "Failed to return loan"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:80
+#: calibre-plugin/dialog/magazines.py:83
 msgid ""
 "Paste the share link of the magazine you wish to favorite and select a "
 "library card. \n"
 "Click on the Add button to monitor this title for new issues."
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:114
+#: calibre-plugin/dialog/magazines.py:117
 msgid "Add to monitor for new issues"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:125
+#: calibre-plugin/dialog/magazines.py:128
 msgid "Get latest magazines"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:202
+#: calibre-plugin/dialog/magazines.py:205
 msgid "Magazines"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:320
+#: calibre-plugin/dialog/magazines.py:323
 msgid "Failed to borrow magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:342
-#: calibre-plugin/dialog/magazines.py:364
-#: calibre-plugin/dialog/magazines.py:376
-#: calibre-plugin/dialog/magazines.py:391
-#: calibre-plugin/dialog/magazines.py:406
+#: calibre-plugin/dialog/magazines.py:345
+#: calibre-plugin/dialog/magazines.py:367
+#: calibre-plugin/dialog/magazines.py:379
+#: calibre-plugin/dialog/magazines.py:394
+#: calibre-plugin/dialog/magazines.py:409
 msgid "Add Magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:343
+#: calibre-plugin/dialog/magazines.py:346
 #, python-brace-format
 msgid "Invalid URL {url}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:366
+#: calibre-plugin/dialog/magazines.py:369
 #, python-brace-format
 msgid "{media} is not a downloadable magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:377
+#: calibre-plugin/dialog/magazines.py:380
 msgid "Library does not own this title"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:392
+#: calibre-plugin/dialog/magazines.py:395
 #, python-brace-format
 msgid "Already added {magazine}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:408
+#: calibre-plugin/dialog/magazines.py:411
 #, python-brace-format
 msgid ""
 "Added {magazine} for monitoring.\n"

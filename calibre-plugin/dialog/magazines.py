@@ -24,7 +24,6 @@ from qt.core import (
     QPushButton,
     QAbstractItemView,
     QTableView,
-    QHeaderView,
     QSortFilterProxyModel,
     QCheckBox,
     QMenu,
@@ -34,7 +33,11 @@ from qt.core import (
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
-from ..compat import _c
+from ..compat import (
+    _c,
+    QHeaderView_ResizeMode_Stretch,
+    QHeaderView_ResizeMode_ResizeToContents,
+)
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
@@ -145,9 +148,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         for col_index in range(self.magazines_model.columnCount()):
             horizontal_header.setSectionResizeMode(
                 col_index,
-                QHeaderView.ResizeMode.Stretch
+                QHeaderView_ResizeMode_Stretch
                 if col_index == 0
-                else QHeaderView.ResizeMode.ResizeToContents,
+                else QHeaderView_ResizeMode_ResizeToContents,
             )
         self.magazines_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.magazines_view.setSelectionMode(QAbstractItemView.SingleSelection)

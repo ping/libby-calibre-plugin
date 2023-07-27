@@ -27,13 +27,12 @@ from qt.core import (
     QStatusBar,
     QApplication,
     QFont,
-    QToolButton,
     QMenu,
     QLabel,
 )
 
 from .. import logger, __version__, DEMO_MODE
-from ..compat import _c, compat_enum
+from ..compat import _c, QToolButton_ToolButtonPopupMode_DelayedPopup
 from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel
@@ -321,9 +320,7 @@ class BaseDialogMixin(QDialog):
             else _("Borrow and download selected title")
         )
         if hasattr(self, "download_loan"):
-            borrow_btn.setPopupMode(
-                compat_enum(QToolButton, "ToolButtonPopupMode.DelayedPopup")
-            )
+            borrow_btn.setPopupMode(QToolButton_ToolButtonPopupMode_DelayedPopup)
             borrow_btn_menu = QMenu(borrow_btn)
             borrow_btn_menu_bnd_action = borrow_btn_menu.addAction(
                 _("Borrow and Download")
@@ -395,6 +392,13 @@ class BaseDialogMixin(QDialog):
                 self.rebind_holds_download_button_and_menu(borrow_action)
 
     def display_debug(self, text, data):
+        """
+        Used to display the underlying data for an item in a tableview.
+
+        :param text:
+        :param data:
+        :return:
+        """
         if is_debugging():
             return info_dialog(
                 self,

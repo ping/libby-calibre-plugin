@@ -15,7 +15,6 @@ from qt.core import (
     QSize,
     QIcon,
     QColor,
-    Qt,
     QPainter,
     QXmlStreamReader,
     QSvgRenderer,
@@ -25,7 +24,12 @@ from qt.core import (
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON
-from .compat import _c, compat_enum, hex_to_rgb
+from .compat import (
+    _c,
+    Qt_GlobalColor_transparent,
+    QPainter_CompositionMode_CompositionMode_SourceIn,
+    QColor_fromString,
+)
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,
@@ -56,12 +60,10 @@ class OverdriveLibbyAction(InterfaceAction):
     def svg_to_qicon(data: bytes, color: Optional[QColor] = None, size=(64, 64)):
         renderer = QSvgRenderer(QXmlStreamReader(data))
         pixmap = QPixmap(*size)
-        pixmap.fill(compat_enum(Qt, "GlobalColor.transparent"))
+        pixmap.fill(Qt_GlobalColor_transparent)
         painter = QPainter(pixmap)
         renderer.render(painter)
-        painter.setCompositionMode(
-            compat_enum(QPainter, "CompositionMode.CompositionMode_SourceIn")
-        )
+        painter.setCompositionMode(QPainter_CompositionMode_CompositionMode_SourceIn)
         painter.setCompositionMode(painter.CompositionMode.CompositionMode_SourceIn)
         if color:
             painter.fillRect(pixmap.rect(), color)
@@ -78,7 +80,7 @@ class OverdriveLibbyAction(InterfaceAction):
         self.icons = {}
         for k, v in ICON_MAP.items():
             self.icons[k] = self.svg_to_qicon(
-                image_resources.pop(v.file), QColor(*hex_to_rgb(v.color))
+                image_resources.pop(v.file), QColor_fromString(v.color)
             )
 
         # action icon

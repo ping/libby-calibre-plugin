@@ -21,7 +21,6 @@ from qt.core import (
     QCheckBox,
     QAbstractItemView,
     QTableView,
-    QHeaderView,
     QSortFilterProxyModel,
     QMenu,
     QCursor,
@@ -34,7 +33,12 @@ from qt.core import (
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
-from ..compat import _c, compat_enum
+from ..compat import (
+    _c,
+    QHeaderView_ResizeMode_Stretch,
+    QHeaderView_ResizeMode_ResizeToContents,
+    QSlider_TickPosition_TicksBelow,
+)
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
@@ -92,9 +96,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         for col_index in range(self.holds_model.columnCount()):
             horizontal_header.setSectionResizeMode(
                 col_index,
-                QHeaderView.ResizeMode.Stretch
+                QHeaderView_ResizeMode_Stretch
                 if col_index == 0
-                else QHeaderView.ResizeMode.ResizeToContents,
+                else QHeaderView_ResizeMode_ResizeToContents,
             )
         self.holds_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.holds_view.setSelectionMode(QAbstractItemView.SingleSelection)
@@ -430,9 +434,7 @@ class SuspendHoldDialog(QDialog):
         self.days_slider.setMinimum(0)
         self.days_slider.setMaximum(30)
         self.days_slider.setTickInterval(1)
-        self.days_slider.setTickPosition(
-            compat_enum(QSlider, "TickPosition.TicksBelow")
-        )
+        self.days_slider.setTickPosition(QSlider_TickPosition_TicksBelow)
         layout.addWidget(self.days_slider, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
         self.days_slider.valueChanged.connect(

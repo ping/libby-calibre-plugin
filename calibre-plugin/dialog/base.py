@@ -33,12 +33,12 @@ from qt.core import (
 )
 
 from .. import logger, __version__, DEMO_MODE
-from ..compat import _c
+from ..compat import _c, compat_enum
 from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
 from ..models import LibbyModel
 from ..overdrive import OverDriveClient
-from ..utils import PluginIcons, compat_enum
+from ..utils import PluginIcons
 from ..workers import SyncDataWorker
 
 load_translations()

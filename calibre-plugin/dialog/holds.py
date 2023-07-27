@@ -34,12 +34,12 @@ from qt.core import (
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
-from ..compat import _c
+from ..compat import _c, compat_enum
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
 from ..models import get_media_title, LibbyHoldsModel, LibbyModel
-from ..utils import PluginIcons, compat_enum
+from ..utils import PluginIcons
 
 load_translations()
 

@@ -17,12 +17,12 @@ from calibre.utils.icu import lower as icu_lower
 from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont, QColor
 
 from . import DEMO_MODE
-from .compat import _c
+from .compat import _c, hex_to_rgb
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import extract_isbn, extract_asin
-from .utils import PluginColors, PluginIcons, hex_to_rgb
+from .utils import PluginColors, PluginIcons
 
 load_translations()
 

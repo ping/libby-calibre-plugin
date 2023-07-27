@@ -25,7 +25,7 @@ from qt.core import (
 )
 
 from . import logger, PLUGIN_NAME, PLUGIN_ICON
-from .compat import _c
+from .compat import _c, compat_enum, hex_to_rgb
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,
@@ -33,7 +33,7 @@ from .dialog import (
     HoldsDialogMixin,
     MagazinesDialogMixin,
 )
-from .utils import ICON_MAP, hex_to_rgb, compat_enum
+from .utils import ICON_MAP
 
 load_translations()
 

@@ -12,7 +12,7 @@ import io
 import logging
 import sys
 
-from calibre.constants import is_debugging
+from calibre.constants import DEBUG
 from calibre.customize import InterfaceActionBase
 
 load_translations()
@@ -33,7 +33,7 @@ ch.setFormatter(
     )
 )
 logger.addHandler(ch)
-logger.setLevel(logging.INFO if not is_debugging() else logging.DEBUG)
+logger.setLevel(logging.INFO if not DEBUG else logging.DEBUG)
 
 
 class ActionLibby(InterfaceActionBase):
@@ -52,7 +52,7 @@ class ActionLibby(InterfaceActionBase):
     supported_platforms = ["windows", "osx", "linux"]
     author = "ping"
     version = __version__
-    minimum_calibre_version = (5, 44, 0)
+    minimum_calibre_version = (5, 34, 0)
 
     actual_plugin = f"calibre_plugins.{PLUGIN_NAME}.action:OverdriveLibbyAction"
 

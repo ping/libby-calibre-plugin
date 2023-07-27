@@ -10,7 +10,7 @@
 import json
 from typing import Dict, List
 
-from calibre.constants import is_debugging
+from calibre.constants import DEBUG
 from calibre.gui2 import info_dialog, error_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton
@@ -399,7 +399,7 @@ class BaseDialogMixin(QDialog):
         :param data:
         :return:
         """
-        if is_debugging():
+        if DEBUG:
             return info_dialog(
                 self,
                 _c("Debug"),

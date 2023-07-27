@@ -252,7 +252,7 @@ msgstr "予約中"
 #: calibre-plugin/dialog/holds.py:158
 #, python-brace-format
 msgid "Holds ({n})"
-msgstr ""
+msgstr "予約({n})"
 
 #: calibre-plugin/dialog/holds.py:210
 #, python-brace-format
@@ -315,7 +315,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/holds.py:330
 msgid "Cancel Holds"
-msgstr "예약 취소"
+msgstr "予約をキャンセルする"
 
 #: calibre-plugin/dialog/holds.py:342
 #, python-brace-format
@@ -456,52 +456,6 @@ msgstr ""
 
 #~ msgid "Checkout Date"
 #~ msgstr "借入日"
-
-#~ msgid "Customize plugin"
-#~ msgstr "プラグインをカスタマイズ"
-
-#~ msgid "Refresh"
-#~ msgstr "更新"
-
-#~ msgid "Update"
-#~ msgstr "アップデート"
-
-#~ msgid "Type"
-#~ msgstr "タイプ"
-
-#~ msgid "Format"
-#~ msgstr "形式"
-
-#~ msgid "finished"
-#~ msgstr "完了"
-
-#, python-brace-format
-#~ msgid "Downloading {book}"
-#~ msgstr "{book} をダウンロード中"
-
-#~ msgid "Download"
-#~ msgstr "ダウンロード"
-
-#~ msgid "Add"
-#~ msgstr "追加"
-
-#~ msgid "Help"
-#~ msgstr "ヘルプ"
-
-#~ msgid "Yes"
-#~ msgstr "はい"
-
-#~ msgid "No"
-#~ msgstr "いいえ"
-
-#~ msgid "Title"
-#~ msgstr "タイトル"
-
-#~ msgid "Author"
-#~ msgstr "著者"
-
-#~ msgid "Cancel"
-#~ msgstr "キャンセル"
 
 #~ msgid "Run the OverDrive Libby client UI"
 #~ msgstr "OverDrive LibbyクライアントUIを実行します"

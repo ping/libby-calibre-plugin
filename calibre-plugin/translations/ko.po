@@ -252,7 +252,7 @@ msgstr "예약"
 #: calibre-plugin/dialog/holds.py:158
 #, python-brace-format
 msgid "Holds ({n})"
-msgstr ""
+msgstr "예약({n})"
 
 #: calibre-plugin/dialog/holds.py:210
 #, python-brace-format
@@ -458,49 +458,6 @@ msgstr ""
 
 #~ msgid "Checkout Date"
 #~ msgstr "체크아웃 날짜"
-
-#~ msgid "Customize plugin"
-#~ msgstr "플러그인 사용자 정의"
-
-#~ msgid "Refresh"
-#~ msgstr "새로고침"
-
-#~ msgid "Update"
-#~ msgstr "업데이트"
-
-#~ msgid "Type"
-#~ msgstr "항목"
-
-#~ msgid "Format"
-#~ msgstr "형식"
-
-#~ msgid "finished"
-#~ msgstr "완료됨"
-
-#, python-brace-format
-#~ msgid "Downloading {book}"
-#~ msgstr "다운로드중 {book}"
-
-#~ msgid "Download"
-#~ msgstr "다운로드하다"
-
-#~ msgid "Add"
-#~ msgstr "추가하기"
-
-#~ msgid "Help"
-#~ msgstr "도움말"
-
-#~ msgid "Yes"
-#~ msgstr "네"
-
-#~ msgid "No"
-#~ msgstr "아니요"
-
-#~ msgid "Title"
-#~ msgstr "제목"
-
-#~ msgid "Author"
-#~ msgstr "작가"
 
 #~ msgid "Run the OverDrive Libby client UI"
 #~ msgstr "OverDrive Libby 클라이언트 UI 실행"

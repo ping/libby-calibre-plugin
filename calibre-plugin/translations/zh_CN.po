@@ -252,7 +252,7 @@ msgstr "预约"
 #: calibre-plugin/dialog/holds.py:158
 #, python-brace-format
 msgid "Holds ({n})"
-msgstr ""
+msgstr "预约({n})"
 
 #: calibre-plugin/dialog/holds.py:210
 #, python-brace-format
@@ -456,52 +456,6 @@ msgstr ""
 
 #~ msgid "Checkout Date"
 #~ msgstr "借阅日期"
-
-#~ msgid "Customize plugin"
-#~ msgstr "自定义插件"
-
-#~ msgid "Refresh"
-#~ msgstr "刷新"
-
-#~ msgid "Update"
-#~ msgstr "更新"
-
-#~ msgid "Type"
-#~ msgstr "书籍类型"
-
-#~ msgid "Format"
-#~ msgstr "格式"
-
-#~ msgid "finished"
-#~ msgstr "完成"
-
-#, python-brace-format
-#~ msgid "Downloading {book}"
-#~ msgstr "正在下载 {book}"
-
-#~ msgid "Download"
-#~ msgstr "下载"
-
-#~ msgid "Add"
-#~ msgstr "添加"
-
-#~ msgid "Help"
-#~ msgstr "帮助"
-
-#~ msgid "Yes"
-#~ msgstr "是"
-
-#~ msgid "No"
-#~ msgstr "否"
-
-#~ msgid "Title"
-#~ msgstr "书名"
-
-#~ msgid "Author"
-#~ msgstr "作者"
-
-#~ msgid "Cancel"
-#~ msgstr "取消"
 
 #~ msgid "Run the OverDrive Libby client UI"
 #~ msgstr "运行OverDrive Libby客户端用户界面"

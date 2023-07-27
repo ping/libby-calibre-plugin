@@ -227,7 +227,7 @@ class BaseDialogMixin(QDialog):
 
     def sync(self):
         if not self.client:
-            self.status_bar.showMessage("Plugin is not configured!")
+            self.status_bar.showMessage(_("Libby is not configured yet."))
             return
         if not self._sync_thread.isRunning():
             for btn in self.refresh_buttons:

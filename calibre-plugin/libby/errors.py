@@ -109,7 +109,7 @@ class ErrorHandler(object):
         :return:
         """
         # json response
-        if http_err.headers.get("content-type").startswith("application/json"):
+        if http_err.headers.get("content-type", "").startswith("application/json"):
             error = json.loads(error_response)
             if error.get("result", "") == "upstream_failure":
                 upstream = error.get("upstream", {})

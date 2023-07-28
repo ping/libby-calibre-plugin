@@ -391,7 +391,7 @@ class CustomMagazineDownload(LibbyDownload):
                 library,
                 format_id,
                 downloaded_filepath,
-                None,
+                0,
                 tags,
                 None,
                 log=log,
@@ -429,24 +429,25 @@ class CustomMagazineDownload(LibbyDownload):
                 _("Getting loan details"),
             )
         )
-        __, openbook, rosters = libby_client.process_ebook(loan)
+        download_base, openbook, rosters = libby_client.process_ebook(loan)
         cover_url = get_best_cover_url(loan)
-        cover_path = book_folder.joinpath("cover.jpg")
-        try:
-            notifications.put(
-                (
-                    (2 / meta_tasks) * meta_progress_fraction,
-                    _c("Downloading cover..."),
-                )
-            )
-            with cover_path.open("w+b") as cover_f:
-                cover_f.write(
-                    libby_client.send_request(
-                        cover_url, authenticated=False, decode_response=False
+        if cover_url:
+            cover_path: Optional[Path] = book_folder.joinpath("cover.jpg")
+            try:
+                notifications.put(
+                    (
+                        (2 / meta_tasks) * meta_progress_fraction,
+                        _c("Downloading cover..."),
                     )
                 )
-        except:  # noqa
-            cover_path = None
+                with cover_path.open("w+b") as cover_f:  # type:ignore[union-attr]
+                    cover_f.write(
+                        libby_client.send_request(
+                            cover_url, authenticated=False, decode_response=False
+                        )
+                    )
+            except:  # noqa
+                cover_path = None
 
         book_meta_name = "META-INF"
         book_content_name = "OEBPS"
@@ -604,7 +605,7 @@ class CustomMagazineDownload(LibbyDownload):
                     font_families = list(
                         set(patch_magazine_css_font_re.findall(css_content))
                     )
-                    for font_family, __ in font_families:
+                    for font_family, font_declaration in font_families:
                         new_font_css = font_family[:-1]
                         if "Serif" in font_family:
                             new_font_css += ',Charter,"Bitstream Charter","Sitka Text",Cambria,serif'
@@ -888,7 +889,7 @@ class CustomMagazineDownload(LibbyDownload):
         if cover_img_manifest_id:
             metadata = package.find("metadata")
             if metadata:
-                __ = ET.SubElement(
+                ET.SubElement(
                     metadata,
                     "meta",
                     attrib={"name": "cover", "content": cover_img_manifest_id},
@@ -928,7 +929,7 @@ class CustomMagazineDownload(LibbyDownload):
         if openbook.get("nav", {}).get("landmarks"):
             guide = ET.SubElement(package, "guide")
             for landmark in openbook["nav"]["landmarks"]:
-                __ = ET.SubElement(
+                ET.SubElement(
                     guide,
                     "reference",
                     attrib={
@@ -950,7 +951,7 @@ class CustomMagazineDownload(LibbyDownload):
             },
         )
         root_files = ET.SubElement(container, "rootfiles")
-        __ = ET.SubElement(  # noqa: F841
+        ET.SubElement(  # noqa: F841
             root_files,
             "rootfile",
             attrib={

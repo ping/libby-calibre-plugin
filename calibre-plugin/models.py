@@ -73,7 +73,7 @@ LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}
 
 
 class LibbyModel(QAbstractTableModel):
-    column_headers = []
+    column_headers: List[str] = []
     DisplaySortRole = Qt.UserRole + 1000
 
     def __init__(self, parent, synced_state=None, db=None):

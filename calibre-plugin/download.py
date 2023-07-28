@@ -114,7 +114,7 @@ class LibbyDownload:
         library: Dict,
         format_id: str,
         downloaded_file: Path,
-        book_id: int = None,
+        book_id: int = 0,
         tags: Optional[List[str]] = None,
         metadata=None,
         log=None,

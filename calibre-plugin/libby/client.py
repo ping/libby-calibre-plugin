@@ -651,7 +651,7 @@ class LibbyClient(object):
 
     @staticmethod
     def _urlretrieve(
-        endpoint: str, headers: Optional[Dict] = None, timeout: int = 15
+        endpoint: str, headers: Optional[Dict] = None, timeout: float = 15
     ) -> bytes:
         """
         Workaround for downloading an open (non-drm) epub or pdf.

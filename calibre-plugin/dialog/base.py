@@ -217,8 +217,12 @@ class BaseDialogMixin(QDialog):
         """
         for index in indices:
             data = index.data(Qt.UserRole)
-            card = model.get_card(data["cardId"])
-            library = model.get_library(model.get_website_id(card))
+            card = model.get_card(data["cardId"]) or {}
+            if not card:
+                continue
+            library = model.get_library(model.get_website_id(card)) or {}
+            if not library:
+                continue
 
             QDesktopServices.openUrl(
                 QUrl(

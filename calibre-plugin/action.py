@@ -37,7 +37,7 @@ from .dialog import (
     HoldsDialogMixin,
     MagazinesDialogMixin,
 )
-from .utils import ICON_MAP
+from .utils import ICON_MAP, PluginIcons
 
 # noinspection PyUnreachableCode
 if False:
@@ -122,7 +122,7 @@ class OverdriveLibbyAction(InterfaceAction):
             qaction_menu,
             "overdrive-libby-mr",
             _("MobileRead"),
-            "external-link.png",
+            self.icons[PluginIcons.ExternalLink],
             triggered=lambda: QDesktopServices.openUrl(
                 QUrl("https://www.mobileread.com/forums/showthread.php?t=354816")
             ),

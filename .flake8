@@ -1,7 +1,0 @@
-[flake8]
-#max-line-length = 120
-extend-ignore =
-    # let black determine line length
-    E501,
-    # ref https://github.com/psf/black/issues/1437
-    E203

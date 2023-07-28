@@ -21,6 +21,10 @@ jobs:
         with:
           submodules: true
           fetch-depth: 1
+      - name: Install ruff for linting
+        run: pip install ruff
+      - name: Lint
+        run: ruff check calibre-plugin
       - name: Install gtext
         run: sudo apt-get -y install gettext
       - name: Build .mo files

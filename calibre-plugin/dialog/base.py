@@ -13,7 +13,7 @@ from typing import Dict, List
 from calibre.constants import DEBUG
 from calibre.gui2 import info_dialog, error_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
-from calibre.gui2.widgets2 import CenteredToolButton
+from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
 from polyglot.io import PolyglotStringIO
 from qt.core import (
     Qt,

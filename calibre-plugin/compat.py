@@ -6,6 +6,10 @@ from typing import Tuple
 
 from qt.core import Qt, QPainter, QToolButton, QSlider, QHeaderView, QColor
 
+# noinspection PyUnreachableCode
+if False:
+    _ = None
+
 try:
     from calibre.utils.localization import _ as _c
 except ImportError:

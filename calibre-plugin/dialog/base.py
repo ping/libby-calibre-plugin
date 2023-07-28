@@ -40,6 +40,10 @@ from ..overdrive import OverDriveClient
 from ..utils import PluginIcons
 from ..workers import SyncDataWorker
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
+
 load_translations()
 
 
@@ -430,7 +434,7 @@ class BaseDialogMixin(QDialog):
                 from calibre.debug import print_basic_debug_info
 
                 print_basic_debug_info(out=sio)
-            except:
+            except:  # noqa
                 pass
             traceback.print_exception(err.__class__, err, err.__traceback__, file=sio)
             fe = sio.getvalue()

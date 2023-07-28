@@ -17,6 +17,10 @@ from .compat import _c
 from .download import LibbyDownload
 from .libby import LibbyClient
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = lambda x=None: x  # noqa: E731
+
 load_translations()
 
 
@@ -72,7 +76,7 @@ class CustomEbookDownload(LibbyDownload):
             try:
                 if downloaded_filepath:
                     downloaded_filepath.unlink(missing_ok=True)
-            except:
+            except:  # noqa
                 pass
 
     def _custom_download(

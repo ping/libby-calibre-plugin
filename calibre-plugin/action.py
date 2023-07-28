@@ -39,6 +39,10 @@ from .dialog import (
 )
 from .utils import ICON_MAP
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = get_resources = lambda x=None: x
+
 load_translations()
 
 

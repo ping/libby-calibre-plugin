@@ -24,6 +24,7 @@ from bs4 import BeautifulSoup, Doctype, Tag, element
 from calibre.ptempfile import PersistentTemporaryDirectory
 
 from .compat import _c
+from .download import LibbyDownload
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes, LibbyFormats
 from .magazine_download_utils import (
@@ -54,9 +55,11 @@ NAV_XHTMLTEMPLATE = """
 </html>
 """
 
-load_translations()
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
 
-from .download import LibbyDownload
+load_translations()
 
 
 def _sort_toc(toc: Dict) -> List:
@@ -398,7 +401,7 @@ class CustomMagazineDownload(LibbyDownload):
             try:
                 if downloaded_filepath:
                     downloaded_filepath.unlink(missing_ok=True)
-            except:
+            except:  # noqa
                 pass
 
     def _custom_download(
@@ -442,7 +445,7 @@ class CustomMagazineDownload(LibbyDownload):
                         cover_url, authenticated=False, decode_response=False
                     )
                 )
-        except:
+        except:  # noqa
             cover_path = None
 
         book_meta_name = "META-INF"
@@ -947,7 +950,7 @@ class CustomMagazineDownload(LibbyDownload):
             },
         )
         root_files = ET.SubElement(container, "rootfiles")
-        __ = ET.SubElement(
+        __ = ET.SubElement(  # noqa: F841
             root_files,
             "rootfile",
             attrib={

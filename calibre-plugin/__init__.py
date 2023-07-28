@@ -15,6 +15,10 @@ import sys
 from calibre.constants import DEBUG
 from calibre.customize import InterfaceActionBase
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
+
 load_translations()
 
 __version__ = (0, 1, 6)

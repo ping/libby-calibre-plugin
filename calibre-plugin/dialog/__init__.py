@@ -7,8 +7,8 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-# noqa
 
+# flake8: noqa
 from .base import BaseDialogMixin
 from .holds import HoldsDialogMixin
 from .loans import LoansDialogMixin

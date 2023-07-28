@@ -17,6 +17,10 @@ from . import logger, PLUGIN_NAME, DEMO_MODE
 from .compat import _c
 from .utils import PluginColors
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
+
 load_translations()
 
 

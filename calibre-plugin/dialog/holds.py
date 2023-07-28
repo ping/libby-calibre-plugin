@@ -45,6 +45,10 @@ from ..libby import LibbyClient
 from ..models import get_media_title, LibbyHoldsModel, LibbyModel
 from ..utils import PluginIcons
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = ngettext = lambda x=None: x
+
 load_translations()
 
 gui_libby_cancel_hold = LibbyHoldCancel()

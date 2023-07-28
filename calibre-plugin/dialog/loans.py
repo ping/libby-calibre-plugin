@@ -42,6 +42,10 @@ from ..magazine_download_utils import extract_isbn, extract_asin
 from ..models import get_media_title, LibbyLoansModel, LibbyModel
 from ..utils import PluginIcons, OD_IDENTIFIER, generate_od_identifier
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = ngettext = lambda x=None, y=None, z=None: x
+
 load_translations()
 
 gui_ebook_download = CustomEbookDownload()

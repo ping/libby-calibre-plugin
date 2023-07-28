@@ -8,6 +8,5 @@
 # information
 #
 
-# noqa
-
+# flake8: noqa
 from .client import LibbyClient, LibbyFormats, LibbyMediaTypes

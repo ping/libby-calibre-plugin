@@ -24,6 +24,10 @@ from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import extract_isbn, extract_asin
 from .utils import PluginColors, PluginIcons
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
+
 load_translations()
 
 
@@ -120,7 +124,7 @@ class LibbyModel(QAbstractTableModel):
 
     def get_library(self, website_id: int) -> Optional[Dict]:
         return next(
-            iter([l for l in self._libraries if l["websiteId"] == website_id]),
+            iter([lib for lib in self._libraries if lib["websiteId"] == website_id]),
             None,
         )
 
@@ -524,7 +528,9 @@ class LibbyMagazinesModel(LibbyModel):
         for r in sorted(
             self._rows, key=lambda t: t["estimatedReleaseDate"], reverse=True
         ):
-            r["__is_borrowed"] = bool([l for l in self._loans if l["id"] == r["id"]])
+            r["__is_borrowed"] = bool(
+                [loan for loan in self._loans if loan["id"] == r["id"]]
+            )
             if not self.filter_hide_magazines_already_in_library:
                 self.filtered_rows.append(r)
                 continue

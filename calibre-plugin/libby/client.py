@@ -334,7 +334,7 @@ class LibbyClient(object):
                 self.logger.debug(
                     "RES BODY: {0:s}".format(json.dumps(res_obj, separators=(",", ":")))
                 )
-            except:
+            except:  # noqa
                 # do nothing
                 pass
         else:

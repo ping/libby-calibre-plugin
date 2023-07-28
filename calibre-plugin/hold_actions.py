@@ -13,6 +13,10 @@ from typing import Dict
 from .libby import LibbyClient
 from .models import get_media_title
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
+
 load_translations()
 
 

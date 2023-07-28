@@ -56,6 +56,11 @@ OVERDRIVE_URL_RE = re.compile(
     r"https://(.+)?overdrive.com/(.*/)?media/(?P<title_id>\d+)\b", re.IGNORECASE
 )
 
+# noinspection PyUnreachableCode
+if False:
+    load_translations = _ = lambda x=None: x
+
+
 load_translations()
 
 gui_libby_borrow_hold = LibbyBorrowHold()

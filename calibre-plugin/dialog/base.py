@@ -260,7 +260,8 @@ class BaseDialogMixin(QDialog):
                 holds_unique_count = len(list(set([h["id"] for h in holds])))
                 self.status_bar.showMessage(
                     _(
-                        "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, and {magazines} magazines."
+                        "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
+                        "and {magazines} magazines."
                     ).format(
                         loans=len(value.get("loans", [])),
                         holds=holds_count,

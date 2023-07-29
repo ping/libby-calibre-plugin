@@ -69,6 +69,7 @@ def truncate_for_display(text, text_length=30):
     return text[:text_length] + "…"
 
 
+# not used
 LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}
 
 
@@ -233,23 +234,32 @@ class LibbyLoansModel(LibbyModel):
 
     def data(self, index, role):
         row, col = index.row(), index.column()
-        if row >= self.rowCount():
+        if row >= self.rowCount() or col >= self.columnCount():
             return None
         loan: Dict = self.filtered_rows[row]
+        # UserRole
         if role == Qt.UserRole:
             return loan
-        if col >= self.columnCount():
-            return None
-        if role == Qt.ToolTipRole and col == 0:
-            return get_media_title(loan, include_subtitle=True)
-        if role == Qt.ToolTipRole and col == 2 and loan.get("isLuckyDayCheckout"):
-            return _("A skip-the-line loan")
+        # DecorationRole
         if role == Qt.DecorationRole and col == 2 and loan.get("isLuckyDayCheckout"):
             return self.icons[PluginIcons.Clover]
+        # TextAlignmentRole
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
+        # ForegroundRole
         if role == Qt.ForegroundRole and col == 2 and LibbyClient.is_renewable(loan):
             return QColor(*hex_to_rgb(PluginColors.Red))
+        card = self.get_card(loan["cardId"])
+        # ToolTipRole
+        if role == Qt.ToolTipRole:
+            if col == 0:
+                return get_media_title(loan, include_subtitle=True)
+            if col == 2 and loan.get("isLuckyDayCheckout"):
+                return _("A skip-the-line loan")
+            if col == 3:
+                library = self.get_library(self.get_website_id(card))
+                return library["name"]
+        # DisplayRole, DisplaySortRole
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:
@@ -272,7 +282,6 @@ class LibbyLoansModel(LibbyModel):
                 )
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
-            card = self.get_card(loan["cardId"])
             if DEMO_MODE:
                 return "*" * len(card["advantageKey"])
             return card["advantageKey"]
@@ -283,7 +292,7 @@ class LibbyLoansModel(LibbyModel):
             if role == LibbyModel.DisplaySortRole:
                 return str(loan_format)
             return next(
-                iter([l for l in loan["formats"] if l["id"] == loan_format]), {}
+                iter([ln for ln in loan["formats"] if ln["id"] == loan_format]), {}
             ).get("name", None)
         return None
 
@@ -357,51 +366,60 @@ class LibbyHoldsModel(LibbyModel):
 
     def data(self, index, role):
         row, col = index.row(), index.column()
-        if row >= self.rowCount():
+        if row >= self.rowCount() or col >= self.columnCount():
             return None
         hold: Dict = self.filtered_rows[row]
         is_suspended = bool(
             hold.get("suspensionFlag") and hold.get("suspensionEnd")
         ) and not hold.get("isAvailable")
-
+        # UserRole
         if role == Qt.UserRole:
             return hold
-        if col >= self.columnCount():
-            return None
-        if role == Qt.ToolTipRole and col == 0:
-            return get_media_title(hold, include_subtitle=True)
-        if role == Qt.ToolTipRole and col == 2 and hold.get("expireDate"):
-            dt_value = dt_as_local(LibbyClient.parse_datetime(hold["expireDate"]))
-            return _("Expires {dt}").format(
-                dt=format_date(dt_value, tweaks["gui_timestamp_display_format"])
-            )
-        if role == Qt.ForegroundRole and col == 2 and hold.get("isAvailable", False):
-            return QColor(*hex_to_rgb(PluginColors.Red))
+        # TextAlignmentRole
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
-        if role == Qt.FontRole and col == 5 and hold.get("isAvailable", False):
+        hold_available = hold.get("isAvailable", False)
+        # ForegroundRole
+        if role == Qt.ForegroundRole and col == 2 and hold_available:
+            return QColor(*hex_to_rgb(PluginColors.Red))
+        # FontRole
+        if role == Qt.FontRole and col == 5 and hold_available:
             font = QFont()
             font.setBold(True)
             return font
-        if role == Qt.ToolTipRole and col == 5 and is_suspended:
-            suspended_till = dt_as_local(
-                LibbyClient.parse_datetime(hold["suspensionEnd"])
-            )
-            if (
-                hold.get("redeliveriesRequestedCount", 0) > 0
-                or hold.get("redeliveriesAutomatedCount", 0) > 0
-            ):
-                return _("Deliver after {dt}").format(
-                    dt=format_date(
-                        suspended_till, tweaks["gui_timestamp_display_format"]
-                    )
+        # ToolTipRole
+        card = self.get_card(hold["cardId"])
+        if role == Qt.ToolTipRole:
+            if col == 0:
+                return get_media_title(hold, include_subtitle=True)
+            if col == 2 and hold.get("expireDate"):
+                dt_value = dt_as_local(LibbyClient.parse_datetime(hold["expireDate"]))
+                return _("Expires {dt}").format(
+                    dt=format_date(dt_value, tweaks["gui_timestamp_display_format"])
                 )
-            else:
-                return _("Suspended till {dt}").format(
-                    dt=format_date(
-                        suspended_till, tweaks["gui_timestamp_display_format"]
-                    )
+            if col == 3:
+                library = self.get_library(self.get_website_id(card))
+                return library["name"]
+            if col == 5 and is_suspended:
+                suspended_till = dt_as_local(
+                    LibbyClient.parse_datetime(hold["suspensionEnd"])
                 )
+                if (
+                    hold.get("redeliveriesRequestedCount", 0) > 0
+                    or hold.get("redeliveriesAutomatedCount", 0) > 0
+                ):
+                    return _("Deliver after {dt}").format(
+                        dt=format_date(
+                            suspended_till, tweaks["gui_timestamp_display_format"]
+                        )
+                    )
+                else:
+                    return _("Suspended till {dt}").format(
+                        dt=format_date(
+                            suspended_till, tweaks["gui_timestamp_display_format"]
+                        )
+                    )
+        # DisplayRole, DisplaySortRole
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:
@@ -426,7 +444,6 @@ class LibbyHoldsModel(LibbyModel):
                 )
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
-            card = self.get_card(hold["cardId"])
             if DEMO_MODE:
                 return "*" * len(card["advantageKey"])
             return card["advantageKey"]
@@ -437,11 +454,9 @@ class LibbyHoldsModel(LibbyModel):
             if role == LibbyModel.DisplaySortRole:
                 return str(hold_format)
             return next(
-                iter([l for l in hold["formats"] if l["id"] == hold_format]), {}
+                iter([ln for ln in hold["formats"] if ln["id"] == hold_format]), {}
             ).get("name", None)
         if col == 5:
-            if role == LibbyModel.DisplaySortRole:
-                return -1 if is_suspended else int(hold.get("isAvailable", False))
             if is_suspended:
                 if (
                     hold.get("redeliveriesRequestedCount", 0) > 0
@@ -477,7 +492,7 @@ class LibbyCardsModel(LibbyModel):
 
     def data(self, index, role):
         row, col = index.row(), index.column()
-        if row >= self.rowCount():
+        if row >= self.rowCount() or col >= self.columnCount():
             return None
         card: Dict = self.filtered_rows[row]
         if role == Qt.UserRole:
@@ -556,22 +571,25 @@ class LibbyMagazinesModel(LibbyModel):
 
     def data(self, index, role):
         row, col = index.row(), index.column()
-        if row >= self.rowCount():
+        if row >= self.rowCount() or col >= self.columnCount():
             return None
         subscription: Dict = self.filtered_rows[row]
+        # UserRole
         if role == Qt.UserRole:
             return subscription
-        if col >= self.columnCount():
-            return None
+        # TextAlignmentRole
         if role == Qt.TextAlignmentRole and col >= 1:
             return Qt.AlignCenter
-        if role == Qt.ToolTipRole and col == 0:
-            return get_media_title(subscription, include_subtitle=True)
-        if role == Qt.ToolTipRole and col == 2:
-            card = self.get_card(subscription["cardId"])
-            if not card:
-                return "Invalid card setup"
-            return f'{card["advantageKey"]}: {card["cardName"]}'
+        # ToolTipRole
+        if role == Qt.ToolTipRole:
+            if col == 0:
+                return get_media_title(subscription, include_subtitle=True)
+            if col == 2:
+                card = self.get_card(subscription["cardId"])
+                if not card:
+                    return "Invalid card setup"
+                return f'{card["advantageKey"]}: {card["cardName"]}'
+        # DisplayRole, DisplaySortRole
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None
         if col == 0:

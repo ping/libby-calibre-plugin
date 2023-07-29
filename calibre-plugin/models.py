@@ -144,7 +144,6 @@ class LibbyLoansModel(LibbyModel):
         _c("Author"),
         _("Expire Date"),
         _("Library"),
-        _c("Type"),
         _c("Format"),
     ]
     filter_hide_books_already_in_library = False
@@ -278,14 +277,14 @@ class LibbyLoansModel(LibbyModel):
                 return "*" * len(card["advantageKey"])
             return card["advantageKey"]
         if col == 4:
-            type_id = loan.get("type", {}).get("id", "")
-            return LOAN_TYPE_TRANSLATION.get(type_id, "") or type_id
-        if col == 5:
-            return str(
-                LibbyClient.get_loan_format(
-                    loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-                )
+            loan_format = LibbyClient.get_loan_format(
+                loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
             )
+            if role == LibbyModel.DisplaySortRole:
+                return str(loan_format)
+            return next(
+                iter([l for l in loan["formats"] if l["id"] == loan_format]), {}
+            ).get("name", None)
         return None
 
 
@@ -432,11 +431,14 @@ class LibbyHoldsModel(LibbyModel):
                 return "*" * len(card["advantageKey"])
             return card["advantageKey"]
         if col == 4:
-            return str(
-                LibbyClient.get_loan_format(
-                    hold, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-                )
+            hold_format = LibbyClient.get_loan_format(
+                hold, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
             )
+            if role == LibbyModel.DisplaySortRole:
+                return str(hold_format)
+            return next(
+                iter([l for l in hold["formats"] if l["id"] == hold_format]), {}
+            ).get("name", None)
         if col == 5:
             if role == LibbyModel.DisplaySortRole:
                 return -1 if is_suspended else int(hold.get("isAvailable", False))

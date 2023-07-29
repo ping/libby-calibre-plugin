@@ -35,8 +35,10 @@ from .. import logger, __version__, DEMO_MODE
 from ..compat import _c, QToolButton_ToolButtonPopupMode_DelayedPopup
 from ..config import PREFS, PreferenceKeys, BorrowActions
 from ..libby import LibbyClient
+from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LibbyModel
 from ..overdrive import OverDriveClient
+from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
 from ..utils import PluginIcons
 from ..workers import SyncDataWorker
 
@@ -447,6 +449,17 @@ class BaseDialogMixin(QDialog):
                 msg = "<b>%s</b>: %s" % (err.__class__.__name__, msg)
             else:
                 msg = "<b>%s</b>" % err.__class__.__name__
+
+            if type(err) in (
+                LibbyConnectionError,
+                OverDriveConnectionError,
+            ):
+                msg += (
+                    "<p>"
+                    + _("Check your connection or retry in a few minutes.")
+                    + "</p>"
+                )
+
             return error_dialog(
                 self, _c("Unhandled exception"), msg, det_msg=fe, show=True
             )

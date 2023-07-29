@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-29 18:25+0800\n"
+"POT-Creation-Date: 2023-07-29 18:45+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -26,7 +26,7 @@ msgstr "OverDrive Libby 계정에서 대출 가져오기"
 msgid "Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:124 calibre-plugin/dialog/base.py:129
+#: calibre-plugin/action.py:124 calibre-plugin/dialog/base.py:131
 msgid "MobileRead"
 msgstr ""
 
@@ -106,7 +106,7 @@ msgstr ""
 msgid "Libby is configured."
 msgstr "Libby가 구성되었습니다."
 
-#: calibre-plugin/config.py:116 calibre-plugin/dialog/base.py:237
+#: calibre-plugin/config.py:116 calibre-plugin/dialog/base.py:239
 msgid "Libby is not configured yet."
 msgstr "Libby가 구성되지 않았습니다."
 
@@ -247,48 +247,52 @@ msgstr "도서관 카드"
 msgid "Borrowed"
 msgstr "대출됨"
 
-#: calibre-plugin/dialog/base.py:90
+#: calibre-plugin/dialog/base.py:92
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:242 calibre-plugin/dialog/base.py:245
+#: calibre-plugin/dialog/base.py:244 calibre-plugin/dialog/base.py:247
 msgid "Synchronizing..."
 msgstr "동기화 중..."
 
-#: calibre-plugin/dialog/base.py:267
+#: calibre-plugin/dialog/base.py:269
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:293
+#: calibre-plugin/dialog/base.py:295
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:297
+#: calibre-plugin/dialog/base.py:299
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:319 calibre-plugin/dialog/base.py:337
-#: calibre-plugin/dialog/base.py:360 calibre-plugin/dialog/base.py:376
+#: calibre-plugin/dialog/base.py:321 calibre-plugin/dialog/base.py:339
+#: calibre-plugin/dialog/base.py:362 calibre-plugin/dialog/base.py:378
 msgid "Borrow"
 msgstr "대출"
 
-#: calibre-plugin/dialog/base.py:321 calibre-plugin/dialog/base.py:335
-#: calibre-plugin/dialog/base.py:360 calibre-plugin/dialog/base.py:374
+#: calibre-plugin/dialog/base.py:323 calibre-plugin/dialog/base.py:337
+#: calibre-plugin/dialog/base.py:362 calibre-plugin/dialog/base.py:376
 msgid "Borrow and Download"
 msgstr "대여 및 다운로드"
 
-#: calibre-plugin/dialog/base.py:327 calibre-plugin/dialog/base.py:363
+#: calibre-plugin/dialog/base.py:329 calibre-plugin/dialog/base.py:365
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:329 calibre-plugin/dialog/base.py:365
+#: calibre-plugin/dialog/base.py:331 calibre-plugin/dialog/base.py:367
 msgid "Borrow and download selected title"
 msgstr ""
+
+#: calibre-plugin/dialog/base.py:459
+msgid "Check your connection or retry in a few minutes."
+msgstr "연결 상태를 확인하거나 몇 분 후 다시 시도하십시오."
 
 #: calibre-plugin/dialog/holds.py:75
 msgid "Get latest holds"

@@ -69,8 +69,20 @@ def truncate_for_display(text, text_length=30):
     return text[:text_length] + "…"
 
 
-# not used
-LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}
+LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}  # not used
+LOAN_FORMAT_TRANSLATION = {
+    "ebook-overdrive": _("Libby Book"),
+    "audiobook-overdrive": _("Libby Audiobook"),
+    "magazine-overdrive": _("Libby Magazine"),
+    "video-overdrive": _("Libby Video"),
+    "video-streaming": _("Streaming Video"),
+    "ebook-kindle": _("Kindle"),
+    "ebook-media-do": _("Media Do"),
+    "ebook-epub-open": _("EPUB"),
+    "ebook-epub-adobe": _("EPUB (DRM)"),
+    "ebook-pdf-open": _("PDF"),
+    "ebook-pdf-adobe": _("PDF (DRM)"),
+}
 
 
 class LibbyModel(QAbstractTableModel):
@@ -291,9 +303,7 @@ class LibbyLoansModel(LibbyModel):
             )
             if role == LibbyModel.DisplaySortRole:
                 return str(loan_format)
-            return next(
-                iter([ln for ln in loan["formats"] if ln["id"] == loan_format]), {}
-            ).get("name", None)
+            return _(LOAN_FORMAT_TRANSLATION.get(loan_format, loan_format))
         return None
 
 
@@ -389,13 +399,23 @@ class LibbyHoldsModel(LibbyModel):
             return font
         # ToolTipRole
         card = self.get_card(hold["cardId"])
+        placed_or_expire_dt = dt_as_local(
+            LibbyClient.parse_datetime(hold.get("expireDate") or hold["placedDate"])
+        )
         if role == Qt.ToolTipRole:
             if col == 0:
                 return get_media_title(hold, include_subtitle=True)
-            if col == 2 and hold.get("expireDate"):
-                dt_value = dt_as_local(LibbyClient.parse_datetime(hold["expireDate"]))
-                return _("Expires {dt}").format(
-                    dt=format_date(dt_value, tweaks["gui_timestamp_display_format"])
+            if col == 2:
+                if hold.get("expireDate"):
+                    return _("Expires {dt}").format(
+                        dt=format_date(
+                            placed_or_expire_dt, tweaks["gui_timestamp_display_format"]
+                        )
+                    )
+                return _("Placed on {dt}").format(
+                    dt=format_date(
+                        placed_or_expire_dt, tweaks["gui_timestamp_display_format"]
+                    )
                 )
             if col == 3:
                 library = self.get_library(self.get_website_id(card))
@@ -432,17 +452,16 @@ class LibbyHoldsModel(LibbyModel):
                 return hold.get("firstCreatorSortName", "") or creator_name
             return creator_name
         if col == 2:
-            dt_value = dt_as_local(
-                LibbyClient.parse_datetime(hold.get("expireDate") or hold["placedDate"])
-            )
             if role == LibbyModel.DisplaySortRole:
-                return dt_value.isoformat()
+                return placed_or_expire_dt.isoformat()
             if DEMO_MODE:
                 return format_date(
-                    dt_value.replace(month=1, day=1),
+                    placed_or_expire_dt.replace(month=1, day=1),
                     tweaks["gui_timestamp_display_format"],
                 )
-            return format_date(dt_value, tweaks["gui_timestamp_display_format"])
+            return format_date(
+                placed_or_expire_dt, tweaks["gui_timestamp_display_format"]
+            )
         if col == 3:
             if DEMO_MODE:
                 return "*" * len(card["advantageKey"])
@@ -453,17 +472,15 @@ class LibbyHoldsModel(LibbyModel):
             )
             if role == LibbyModel.DisplaySortRole:
                 return str(hold_format)
-            return next(
-                iter([ln for ln in hold["formats"] if ln["id"] == hold_format]), {}
-            ).get("name", None)
+            return _(LOAN_FORMAT_TRANSLATION.get(hold_format, hold_format))
         if col == 5:
             if is_suspended:
                 if (
                     hold.get("redeliveriesRequestedCount", 0) > 0
                     or hold.get("redeliveriesAutomatedCount", 0) > 0
                 ):
-                    return _("Delayed")
-                return _("Suspended")
+                    return _("Delivering Later")
+                return _("Suspended Hold")
             return _c("Yes") if hold.get("isAvailable", False) else _c("No")
 
         return None

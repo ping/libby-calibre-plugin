@@ -267,7 +267,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
 
-        edit_hold_action = menu.addAction(_("Edit hold"))
+        edit_hold_action = menu.addAction(_("Manage hold"))
         edit_hold_action.setIcon(self.icons[PluginIcons.Edit])
         edit_hold_action.triggered.connect(
             lambda: self.edit_hold_action_triggered(indices)
@@ -463,14 +463,12 @@ class SuspendHoldDialog(QDialog):
         self.cancel_btn = QPushButton(_c("Cancel"), self)
         self.cancel_btn.setIcon(self.icons[PluginIcons.Cancel])
         self.cancel_btn.setAutoDefault(False)
-        self.cancel_btn.setToolTip(_("Don't save changes"))
         self.cancel_btn.clicked.connect(lambda: self.reject())
         layout.addWidget(self.cancel_btn, widget_row_pos, 0)
 
         self.update_btn = QPushButton(_c("OK"), self)
         self.update_btn.setIcon(self.icons[PluginIcons.Okay])
         self.update_btn.setAutoDefault(False)
-        self.update_btn.setToolTip(_("Save changes"))
         self.update_btn.clicked.connect(self.update_btn_clicked)
         layout.addWidget(self.update_btn, widget_row_pos, 1)
         widget_row_pos += 1

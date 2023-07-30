@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-07-29 18:45+0800\n"
+"POT-Creation-Date: 2023-07-29 22:21+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -32,7 +32,7 @@ msgstr ""
 
 #: calibre-plugin/borrow_book.py:35
 msgid "Borrowing"
-msgstr ""
+msgstr "正在借阅"
 
 #: calibre-plugin/config.py:57 calibre-plugin/config.py:356
 msgid "Libby Setup Code"
@@ -205,7 +205,7 @@ msgstr ""
 
 #: calibre-plugin/models.py:321
 msgid "Available"
-msgstr "可藉閱"
+msgstr "可看"
 
 #: calibre-plugin/models.py:410
 #, python-brace-format
@@ -215,12 +215,12 @@ msgstr ""
 #: calibre-plugin/models.py:415
 #, python-brace-format
 msgid "Placed on {dt}"
-msgstr ""
+msgstr "已在 {dt} 預約"
 
 #: calibre-plugin/models.py:431
 #, python-brace-format
 msgid "Deliver after {dt}"
-msgstr ""
+msgstr "在 {dt} 之後傳遞"
 
 #: calibre-plugin/models.py:437
 #, python-brace-format
@@ -468,8 +468,8 @@ msgstr ""
 #: calibre-plugin/dialog/magazines.py:350
 #: calibre-plugin/dialog/magazines.py:372
 #: calibre-plugin/dialog/magazines.py:384
-#: calibre-plugin/dialog/magazines.py:399
-#: calibre-plugin/dialog/magazines.py:414
+#: calibre-plugin/dialog/magazines.py:403
+#: calibre-plugin/dialog/magazines.py:418
 msgid "Add Magazine"
 msgstr ""
 
@@ -484,15 +484,16 @@ msgid "{media} is not a downloadable magazine"
 msgstr ""
 
 #: calibre-plugin/dialog/magazines.py:385
-msgid "Library does not own this title"
-msgstr ""
+#, python-brace-format
+msgid "{library} does not own this title"
+msgstr "{library}不擁有此出版物的任何副本。"
 
-#: calibre-plugin/dialog/magazines.py:400
+#: calibre-plugin/dialog/magazines.py:404
 #, python-brace-format
 msgid "Already added {magazine}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:416
+#: calibre-plugin/dialog/magazines.py:420
 #, python-brace-format
 msgid ""
 "Added {magazine} for monitoring.\n"

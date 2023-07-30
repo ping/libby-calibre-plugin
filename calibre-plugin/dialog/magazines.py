@@ -382,7 +382,11 @@ class MagazinesDialogMixin(BaseDialogMixin):
             return error_dialog(
                 self,
                 _("Add Magazine"),
-                _("Library does not own this title"),
+                _("{library} does not own this title").format(
+                    library=self.magazines_model.get_library(
+                        self.magazines_model.get_website_id(card)
+                    )["name"]
+                ),
                 det_msg=json.dumps(media, indent=2),
                 show=True,
             )

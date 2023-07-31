@@ -18,7 +18,7 @@ from datetime import datetime
 from functools import cmp_to_key
 from pathlib import Path
 from typing import Dict, List, Optional
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup, Doctype, Tag, element
 from calibre.ptempfile import PersistentTemporaryDirectory
@@ -26,14 +26,14 @@ from calibre.ptempfile import PersistentTemporaryDirectory
 from .compat import _c
 from .download import LibbyDownload
 from .libby import LibbyClient
-from .libby.client import LibbyMediaTypes, LibbyFormats
+from .libby.client import LibbyFormats, LibbyMediaTypes
 from .magazine_download_utils import (
+    build_opf_package,
+    extract_isbn,
     get_best_cover_url,
     guess_mimetype,
-    extract_isbn,
-    slugify,
     is_windows,
-    build_opf_package,
+    slugify,
 )
 from .overdrive import OverDriveClient
 

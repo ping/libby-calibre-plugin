@@ -11,30 +11,30 @@ from typing import Optional
 
 from calibre.gui2.actions import InterfaceAction
 from qt.core import (
-    QToolButton,
-    QSize,
-    QIcon,
     QColor,
-    QPainter,
-    QXmlStreamReader,
-    QSvgRenderer,
-    QPixmap,
-    QUrl,
     QDesktopServices,
+    QIcon,
+    QPainter,
+    QPixmap,
+    QSize,
+    QSvgRenderer,
+    QToolButton,
+    QUrl,
+    QXmlStreamReader,
 )
 
-from . import logger, PLUGIN_NAME, PLUGIN_ICON
+from . import PLUGIN_ICON, PLUGIN_NAME, logger
 from .compat import (
-    _c,
-    Qt_GlobalColor_transparent,
-    QPainter_CompositionMode_CompositionMode_SourceIn,
     QColor_fromString,
+    QPainter_CompositionMode_CompositionMode_SourceIn,
+    Qt_GlobalColor_transparent,
+    _c,
 )
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,
-    LoansDialogMixin,
     HoldsDialogMixin,
+    LoansDialogMixin,
     MagazinesDialogMixin,
 )
 from .utils import ICON_MAP, PluginIcons

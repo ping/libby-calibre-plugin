@@ -11,9 +11,9 @@
 from calibre import confirm_config_name
 from calibre.gui2 import error_dialog
 from calibre.utils.config import JSONConfig
-from qt.core import Qt, QWidget, QGridLayout, QLabel, QCheckBox, QLineEdit
+from qt.core import QCheckBox, QGridLayout, QLabel, QLineEdit, QWidget, Qt
 
-from . import logger, PLUGIN_NAME, DEMO_MODE
+from . import DEMO_MODE, PLUGIN_NAME, logger
 from .compat import _c
 from .utils import PluginColors
 

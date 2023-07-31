@@ -13,11 +13,11 @@ import json
 import logging
 from http.client import HTTPException
 from io import BytesIO
-from socket import timeout as SocketTimeout, error as SocketError
+from socket import error as SocketError, timeout as SocketTimeout
 from ssl import SSLError
-from typing import Optional, Dict, List, Union
+from typing import Dict, List, Optional, Union
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin, urlencode
+from urllib.parse import urlencode, urljoin
 from urllib.request import Request, build_opener
 
 from .common import pageable

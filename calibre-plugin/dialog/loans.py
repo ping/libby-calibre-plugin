@@ -15,32 +15,32 @@ from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
 from qt.core import (
-    Qt,
-    QGridLayout,
-    QPushButton,
-    QCheckBox,
     QAbstractItemView,
-    QTableView,
-    QSortFilterProxyModel,
-    QMenu,
+    QCheckBox,
     QCursor,
+    QGridLayout,
+    QMenu,
+    QPushButton,
+    QSortFilterProxyModel,
+    QTableView,
     QWidget,
+    Qt,
 )
 
 from .base import BaseDialogMixin
 from ..compat import (
-    _c,
-    QHeaderView_ResizeMode_Stretch,
     QHeaderView_ResizeMode_ResizeToContents,
+    QHeaderView_ResizeMode_Stretch,
+    _c,
 )
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
 from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
-from ..magazine_download_utils import extract_isbn, extract_asin
-from ..models import get_media_title, LibbyLoansModel, LibbyModel
-from ..utils import PluginIcons, OD_IDENTIFIER, generate_od_identifier
+from ..magazine_download_utils import extract_asin, extract_isbn
+from ..models import LibbyLoansModel, LibbyModel, get_media_title
+from ..utils import OD_IDENTIFIER, PluginIcons, generate_od_identifier
 
 # noinspection PyUnreachableCode
 if False:

@@ -8,8 +8,8 @@
 # information
 #
 
-from functools import wraps
 from collections.abc import Callable
+from functools import wraps
 
 MAX_PAGEABLE = 100
 

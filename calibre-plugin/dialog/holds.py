@@ -15,34 +15,34 @@ from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
 from qt.core import (
-    Qt,
-    QGridLayout,
-    QPushButton,
-    QCheckBox,
     QAbstractItemView,
-    QTableView,
-    QSortFilterProxyModel,
-    QMenu,
+    QCheckBox,
     QCursor,
-    QWidget,
     QDialog,
+    QGridLayout,
     QLabel,
-    QSlider,
     QLayout,
+    QMenu,
+    QPushButton,
+    QSlider,
+    QSortFilterProxyModel,
+    QTableView,
+    QWidget,
+    Qt,
 )
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
 from ..compat import (
-    _c,
-    QHeaderView_ResizeMode_Stretch,
     QHeaderView_ResizeMode_ResizeToContents,
+    QHeaderView_ResizeMode_Stretch,
     QSlider_TickPosition_TicksBelow,
+    _c,
 )
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
-from ..models import get_media_title, LibbyHoldsModel, LibbyModel
+from ..models import LibbyHoldsModel, LibbyModel, get_media_title
 from ..utils import PluginIcons
 
 # noinspection PyUnreachableCode

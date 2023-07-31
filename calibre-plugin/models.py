@@ -9,19 +9,19 @@
 #
 from collections import namedtuple
 from datetime import datetime
-from typing import Dict, Optional, List
+from typing import Dict, List, Optional
 
 from calibre.utils.config import tweaks
-from calibre.utils.date import format_date, dt_as_local
+from calibre.utils.date import dt_as_local, format_date
 from calibre.utils.icu import lower as icu_lower
-from qt.core import Qt, QAbstractTableModel, QModelIndex, QFont, QColor
+from qt.core import QAbstractTableModel, QColor, QFont, QModelIndex, Qt
 
 from . import DEMO_MODE
 from .compat import _c, hex_to_rgb
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
-from .magazine_download_utils import extract_isbn, extract_asin
+from .magazine_download_utils import extract_asin, extract_isbn
 from .utils import PluginColors, PluginIcons
 
 # noinspection PyUnreachableCode

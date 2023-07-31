@@ -15,33 +15,33 @@ from calibre.gui2 import Dispatcher, error_dialog, info_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
 from qt.core import (
-    Qt,
-    QWidget,
+    QAbstractItemView,
+    QCheckBox,
+    QComboBox,
+    QCursor,
     QGridLayout,
     QLabel,
     QLineEdit,
-    QComboBox,
-    QPushButton,
-    QAbstractItemView,
-    QTableView,
-    QSortFilterProxyModel,
-    QCheckBox,
     QMenu,
-    QCursor,
+    QPushButton,
+    QSortFilterProxyModel,
+    QTableView,
     QThread,
+    QWidget,
+    Qt,
 )
 
 from .base import BaseDialogMixin
 from ..borrow_book import LibbyBorrowHold
 from ..compat import (
-    _c,
-    QHeaderView_ResizeMode_Stretch,
     QHeaderView_ResizeMode_ResizeToContents,
+    QHeaderView_ResizeMode_Stretch,
+    _c,
 )
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
-from ..models import get_media_title, LibbyMagazinesModel, LibbyCardsModel, LibbyModel
+from ..models import LibbyCardsModel, LibbyMagazinesModel, LibbyModel, get_media_title
 from ..overdrive import OverDriveClient
 from ..utils import PluginIcons
 from ..workers import OverDriveLibraryMediaWorker

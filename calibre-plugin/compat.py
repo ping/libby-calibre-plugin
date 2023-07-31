@@ -4,7 +4,7 @@
 import re
 from typing import Tuple
 
-from qt.core import Qt, QPainter, QToolButton, QSlider, QHeaderView, QColor
+from qt.core import QColor, QHeaderView, QPainter, QSlider, QToolButton, Qt
 
 # noinspection PyUnreachableCode
 if False:

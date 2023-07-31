@@ -11,29 +11,29 @@ import json
 from typing import Dict, List
 
 from calibre.constants import DEBUG
-from calibre.gui2 import info_dialog, error_dialog
+from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
 from polyglot.io import PolyglotStringIO
 from qt.core import (
-    Qt,
-    QDialog,
-    QGridLayout,
-    QThread,
-    QTabWidget,
+    QApplication,
     QDesktopServices,
+    QDialog,
+    QFont,
+    QGridLayout,
+    QLabel,
+    QMenu,
+    QStatusBar,
+    QTabWidget,
+    QThread,
     QUrl,
     QWidget,
-    QStatusBar,
-    QApplication,
-    QFont,
-    QMenu,
-    QLabel,
+    Qt,
 )
 
-from .. import logger, __version__, DEMO_MODE
-from ..compat import _c, QToolButton_ToolButtonPopupMode_DelayedPopup
-from ..config import PREFS, PreferenceKeys, BorrowActions
+from .. import DEMO_MODE, __version__, logger
+from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c
+from ..config import BorrowActions, PREFS, PreferenceKeys
 from ..libby import LibbyClient
 from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LibbyModel

@@ -16,13 +16,13 @@ from enum import Enum
 from http.client import HTTPException
 from http.cookiejar import CookieJar
 from io import BytesIO
-from socket import timeout as SocketTimeout, error as SocketError
+from socket import error as SocketError, timeout as SocketTimeout
 from ssl import SSLError
-from typing import Optional, Dict, List, Union, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 from urllib import request
 from urllib.error import HTTPError, URLError
-from urllib.parse import urljoin, urlencode
-from urllib.request import Request, build_opener, HTTPCookieProcessor
+from urllib.parse import urlencode, urljoin
+from urllib.request import HTTPCookieProcessor, Request, build_opener
 
 from .errors import ClientConnectionError, ErrorHandler
 

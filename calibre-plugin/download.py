@@ -10,11 +10,11 @@
 
 import time
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
-from .magazine_download_utils import extract_isbn, extract_asin
+from .magazine_download_utils import extract_asin, extract_isbn
 from .utils import OD_IDENTIFIER, generate_od_identifier
 
 

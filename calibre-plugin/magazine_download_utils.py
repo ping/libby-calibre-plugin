@@ -17,7 +17,7 @@ from mimetypes import guess_type
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from .libby.client import LibbyFormats, LibbyClient
+from .libby.client import LibbyClient, LibbyFormats
 
 MIMETYPE_MAP = {
     ".xhtml": "application/xhtml+xml",

@@ -75,10 +75,8 @@ class MagazinesDialogMixin(BaseDialogMixin):
         magazines_widget.layout = QGridLayout()
         for col_num in range(1, self.view_hspan - 2):
             magazines_widget.layout.setColumnStretch(col_num, 1)
-        magazines_widget.layout.setColumnMinimumWidth(0, self.min_button_width)
-        magazines_widget.layout.setColumnMinimumWidth(
-            self.view_hspan - 1, self.min_button_width
-        )
+        for i in (0, self.view_hspan - 1, self.view_hspan - 2):
+            magazines_widget.layout.setColumnMinimumWidth(i, self.min_button_width)
         magazines_widget.setLayout(magazines_widget.layout)
         widget_row_pos = 0
 

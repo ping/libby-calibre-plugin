@@ -80,6 +80,9 @@ class CardWidget(QWidget):
         curr_font.setPointSizeF(curr_font.pointSizeF() * 1.2)
         library_lbl.setFont(curr_font)
         library_lbl.setStyleSheet("font-weight: bold;")
+        library_lbl.doubleClicked.connect(
+            lambda: self.tab.display_debug("Library", self.library)
+        )
         library_lbl.setContextMenuPolicy(Qt.CustomContextMenu)
         library_lbl.customContextMenuRequested.connect(
             self.library_lbl_context_menu_requested

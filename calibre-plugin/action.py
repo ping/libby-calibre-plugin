@@ -33,6 +33,7 @@ from .compat import (
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,
+    CardsDialogMixin,
     HoldsDialogMixin,
     LoansDialogMixin,
     MagazinesDialogMixin,
@@ -142,7 +143,11 @@ class OverdriveLibbyAction(InterfaceAction):
 
 
 class OverdriveLibbyDialog(
-    MagazinesDialogMixin, HoldsDialogMixin, LoansDialogMixin, BaseDialogMixin
+    CardsDialogMixin,
+    MagazinesDialogMixin,
+    HoldsDialogMixin,
+    LoansDialogMixin,
+    BaseDialogMixin,
 ):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)

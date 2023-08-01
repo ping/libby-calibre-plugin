@@ -1,6 +1,7 @@
 # Changelog
 
 Unreleased
+- New: Cards tab that gives an overview of your linked cards
 - New: Display number of available holds in the Holds tab text
 - New: Last used tab will be opened by default
 - New: Disable borrow button if limits for the card has been reached

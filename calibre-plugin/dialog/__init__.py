@@ -10,6 +10,7 @@
 
 # flake8: noqa
 from .base import BaseDialogMixin
+from .cards import CardsDialogMixin
 from .holds import HoldsDialogMixin
 from .loans import LoansDialogMixin
 from .magazines import MagazinesDialogMixin

@@ -263,7 +263,11 @@ class LibbyClient(object):
         :param value:
         :return:
         """
-        formats = ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S.%fZ")
+        formats = (
+            "%Y-%m-%dT%H:%M:%SZ",
+            "%Y-%m-%dT%H:%M:%S.%fZ",
+            "%Y-%m-%dT%H:%M:%S%z",
+        )
         for i, fmt in enumerate(formats, start=1):
             try:
                 dt = datetime.strptime(value, fmt)

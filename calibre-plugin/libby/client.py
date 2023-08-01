@@ -137,6 +137,7 @@ class LibbyClient(object):
             "User-Agent": self.user_agent,
             "Accept": "application/json",
             "Accept-Encoding": "gzip",
+            "Referer": "https://libbyapp.com/",
             "Cache-Control": "no-cache",
             "Pragma": "no-cache",
         }

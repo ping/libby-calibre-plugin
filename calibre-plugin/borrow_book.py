@@ -38,4 +38,7 @@ class LibbyBorrowHold:
             "Borrowed %s successfully from %s."
             % (get_media_title(loan), card["advantageKey"])
         )
+        if "cardId" not in loan:
+            loan["cardId"] = hold["cardId"]
+            logger.warning("Loan info returned does not have cardId")
         return loan

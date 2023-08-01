@@ -127,19 +127,30 @@ class LibbyModel(QAbstractTableModel):
         self._libraries = synced_state.get("__libraries", [])
 
     def get_card(self, card_id) -> Optional[Dict]:
-        return next(
+        card = next(
             iter([c for c in self._cards if c["cardId"] == card_id]),
             None,
         )
+        if not card:
+            raise ValueError("Card is unknown: id=%s" % card_id)
+        return card
 
     def get_website_id(self, card) -> int:
+        if not card.get("library"):
+            raise ValueError(
+                "Card does not have library details: id=%s, advantageKey=%s"
+                % (card.get("cardId"), card.get("advantageKey"))
+            )
         return int(card.get("library", {}).get("websiteId", "0"))
 
     def get_library(self, website_id: int) -> Optional[Dict]:
-        return next(
+        library = next(
             iter([lib for lib in self._libraries if lib["websiteId"] == website_id]),
             None,
         )
+        if not library:
+            raise ValueError("Library is unknown: websiteId=%s" % website_id)
+        return library
 
 
 LoanMatchCondition = namedtuple(

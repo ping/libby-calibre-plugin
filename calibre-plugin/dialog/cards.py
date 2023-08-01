@@ -80,8 +80,9 @@ class CardWidget(QWidget):
         curr_font.setPointSizeF(curr_font.pointSizeF() * 1.2)
         library_lbl.setFont(curr_font)
         library_lbl.setStyleSheet("font-weight: bold;")
-        library_lbl.doubleClicked.connect(
-            lambda: self.tab.display_debug("Library", self.library)
+        library_lbl.setContextMenuPolicy(Qt.CustomContextMenu)
+        library_lbl.customContextMenuRequested.connect(
+            self.library_lbl_context_menu_requested
         )
         layout.addWidget(library_lbl, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
@@ -182,6 +183,16 @@ class CardWidget(QWidget):
         )
         layout.addWidget(holds_progressbar, widget_row_pos, 0, 1, 2)
 
+    def library_lbl_context_menu_requested(self):
+        menu = QMenu(self)
+        view_in_libby_action = menu.addAction(_("View in Libby"))
+        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.triggered.connect(self.open_libby_library)
+        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
+        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.triggered.connect(self.open_overdrive_library)
+        menu.exec(QCursor.pos())
+
     def loans_progressbar_context_menu_requested(self):
         menu = QMenu(self)
         view_in_libby_action = menu.addAction(_("View in Libby"))
@@ -207,6 +218,12 @@ class CardWidget(QWidget):
 
     def overdrive_url(self):
         return f'https://{self.library["preferredKey"]}.overdrive.com/'
+
+    def open_libby_library(self):
+        self.open_link(f'https://libbyapp.com/library/{self.library["preferredKey"]}')
+
+    def open_overdrive_library(self):
+        self.open_link(self.overdrive_url())
 
     def open_libby_loans(self):
         self.open_link(

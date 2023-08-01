@@ -245,18 +245,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 tags=tags,
             )
 
-    def download_ebook(
-        self,
-        loan: Dict,
-        format_id: str,
-        url="",
-        cookie_file=None,
-        filename="",
-        save_loc="",
-        add_to_lib=True,
-        tags=None,
-        create_browser=None,
-    ):
+    def download_ebook(self, loan: Dict, format_id: str, filename: str, tags=None):
         if not tags:
             tags = []
         card = self.loans_model.get_card(loan["cardId"])
@@ -315,7 +304,7 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         callback = Dispatcher(self.downloaded_loan)
         job = ThreadedJob(
-            "overdrive_libby_download",
+            "overdrive_libby_download_book",
             description,
             gui_ebook_download,
             (
@@ -327,34 +316,18 @@ class LoansDialogMixin(BaseDialogMixin):
                 format_id,
                 book_id,
                 mi,
-                cookie_file,
-                url,
                 filename,
-                save_loc,
-                add_to_lib,
                 tags,
-                create_browser,
             ),
             {},
             callback,
-            max_concurrent_count=2,
+            max_concurrent_count=1,
             killable=False,
         )
         self.gui.job_manager.run_threaded_job(job)
         self.gui.status_bar.show_message(description, 3000)
 
-    def download_magazine(
-        self,
-        loan: Dict,
-        format_id: str,
-        url="",
-        cookie_file=None,
-        filename="",
-        save_loc="",
-        add_to_lib=True,
-        tags=None,
-        create_browser=None,
-    ):
+    def download_magazine(self, loan: Dict, format_id: str, filename: str, tags=None):
         if not tags:
             tags = []
         card = self.loans_model.get_card(loan["cardId"])
@@ -372,24 +345,10 @@ class LoansDialogMixin(BaseDialogMixin):
 
         callback = Dispatcher(self.downloaded_loan)
         job = ThreadedJob(
-            "overdrive_libby_download",
+            "overdrive_libby_download_magazine",
             description,
             gui_magazine_download,
-            (
-                self.gui,
-                self.client,
-                loan,
-                card,
-                library,
-                format_id,
-                cookie_file,
-                url,
-                filename,
-                save_loc,
-                add_to_lib,
-                tags,
-                create_browser,
-            ),
+            (self.gui, self.client, loan, card, library, format_id, filename, tags),
             {},
             callback,
             max_concurrent_count=2,

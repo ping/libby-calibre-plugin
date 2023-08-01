@@ -1,4 +1,6 @@
+import random
 from collections import namedtuple
+from datetime import datetime
 from enum import Enum
 from typing import Dict
 
@@ -10,6 +12,33 @@ try:
     )
 except ImportError:
     OD_IDENTIFIER = "odid"
+
+
+def obfuscate_date(dt: datetime, day=None, month=None, year=None):
+    return dt.replace(day=day or 1, month=month or 1, year=year or datetime.now().year)
+
+
+def obfuscate_name(name: str, offset=5, min_word_len=1, max_word_len=8):
+    obfuscated = []
+    for n in name.split(" "):
+        min_n = max(min_word_len, len(n) - offset)
+        max_n = min(max_word_len, len(n) + offset)
+        if min_n == max_n:
+            min_n = min_word_len
+            max_n = max_word_len
+        choices = range(min_n, max_n, 1 if max_n > min_n else -1)
+        obfuscated.append(
+            "*" * random.choice(choices or range(min_word_len, max_word_len))
+        )
+    return " ".join(obfuscated)
+
+
+def obfuscate_int(value: int, offset=5, min_value=0, max_val=30):
+    return random.choice(
+        range(
+            max(min_value, min(value, max_val) - offset), min(max_val, value + offset)
+        )
+    )
 
 
 def generate_od_identifier(media: Dict, library: Dict) -> str:

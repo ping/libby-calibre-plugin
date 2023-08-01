@@ -22,7 +22,7 @@ from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import extract_asin, extract_isbn
-from .utils import PluginColors, PluginIcons
+from .utils import PluginColors, PluginIcons, obfuscate_date, obfuscate_name
 
 # noinspection PyUnreachableCode
 if False:
@@ -62,11 +62,11 @@ def get_media_title(
 
 
 def truncate_for_display(text, text_length=30):
-    if DEMO_MODE:
-        return "*" * min(len(text), text_length)
     if len(text) <= text_length:
-        return text
-    return text[:text_length] + "…"
+        return text if not DEMO_MODE else obfuscate_name(text)
+    return (
+        text[:text_length] if not DEMO_MODE else obfuscate_name(text[:text_length])
+    ) + "…"
 
 
 LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}  # not used
@@ -300,13 +300,13 @@ class LibbyLoansModel(LibbyModel):
                 return dt_value.isoformat()
             if DEMO_MODE:
                 return format_date(
-                    dt_value.replace(month=12, day=31),
+                    obfuscate_date(dt_value, day=31, month=12),
                     tweaks["gui_timestamp_display_format"],
                 )
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
         if col == 3:
             if DEMO_MODE:
-                return "*" * len(card["advantageKey"])
+                return obfuscate_name(card["advantageKey"])
             return card["advantageKey"]
         if col == 4:
             loan_format = LibbyClient.get_loan_format(
@@ -467,7 +467,7 @@ class LibbyHoldsModel(LibbyModel):
                 return placed_or_expire_dt.isoformat()
             if DEMO_MODE:
                 return format_date(
-                    placed_or_expire_dt.replace(month=1, day=1),
+                    obfuscate_date(placed_or_expire_dt, month=1, day=1),
                     tweaks["gui_timestamp_display_format"],
                 )
             return format_date(
@@ -475,7 +475,7 @@ class LibbyHoldsModel(LibbyModel):
             )
         if col == 3:
             if DEMO_MODE:
-                return "*" * len(card["advantageKey"])
+                return obfuscate_name(card["advantageKey"])
             return card["advantageKey"]
         if col == 4:
             hold_format = LibbyClient.get_loan_format(

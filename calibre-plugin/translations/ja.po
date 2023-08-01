@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-01 19:35+0800\n"
+"POT-Creation-Date: 2023-08-01 22:38+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -127,11 +127,11 @@ msgstr ""
 msgid "Returning"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:429
+#: calibre-plugin/magazine_download.py:424
 msgid "Getting loan details"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:469
+#: calibre-plugin/magazine_download.py:464
 msgid "Getting book details"
 msgstr ""
 
@@ -192,6 +192,7 @@ msgid "Expire Date"
 msgstr ""
 
 #: calibre-plugin/models.py:170 calibre-plugin/models.py:330
+#: calibre-plugin/dialog/cards.py:191
 msgid "Library"
 msgstr "ライブラリー"
 
@@ -294,44 +295,50 @@ msgstr ""
 msgid "Check your connection or retry in a few minutes."
 msgstr "接続を確認するか、数分後に再試行してください。"
 
-#: calibre-plugin/dialog/cards.py:92
+#: calibre-plugin/dialog/cards.py:87 calibre-plugin/dialog/cards.py:164
+#: calibre-plugin/dialog/cards.py:186
+msgid "Right-click for shortcuts"
+msgstr ""
+
+#: calibre-plugin/dialog/cards.py:94
 msgid "Card name"
 msgstr "カードの名前"
 
-#: calibre-plugin/dialog/cards.py:103
+#: calibre-plugin/dialog/cards.py:105
 msgid "Card account"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:114
+#: calibre-plugin/dialog/cards.py:116
 msgid "Created date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:131
+#: calibre-plugin/dialog/cards.py:133
 msgid "Verified date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:148 calibre-plugin/dialog/loans.py:154
+#: calibre-plugin/dialog/cards.py:150 calibre-plugin/dialog/cards.py:202
+#: calibre-plugin/dialog/loans.py:154
 msgid "Loans"
 msgstr "貸出中"
 
-#: calibre-plugin/dialog/cards.py:169 calibre-plugin/dialog/holds.py:155
-#: calibre-plugin/dialog/holds.py:169
+#: calibre-plugin/dialog/cards.py:172 calibre-plugin/dialog/cards.py:213
+#: calibre-plugin/dialog/holds.py:155 calibre-plugin/dialog/holds.py:169
 msgid "Holds"
 msgstr "予約中"
 
-#: calibre-plugin/dialog/cards.py:187 calibre-plugin/dialog/cards.py:197
-#: calibre-plugin/dialog/holds.py:259 calibre-plugin/dialog/loans.py:188
-#: calibre-plugin/dialog/magazines.py:260
+#: calibre-plugin/dialog/cards.py:192 calibre-plugin/dialog/cards.py:203
+#: calibre-plugin/dialog/cards.py:214 calibre-plugin/dialog/holds.py:259
+#: calibre-plugin/dialog/loans.py:188 calibre-plugin/dialog/magazines.py:260
 msgid "View in Libby"
 msgstr "Libbyで見る"
 
-#: calibre-plugin/dialog/cards.py:190 calibre-plugin/dialog/cards.py:200
-#: calibre-plugin/dialog/holds.py:264 calibre-plugin/dialog/loans.py:193
-#: calibre-plugin/dialog/magazines.py:265
+#: calibre-plugin/dialog/cards.py:195 calibre-plugin/dialog/cards.py:206
+#: calibre-plugin/dialog/cards.py:217 calibre-plugin/dialog/holds.py:264
+#: calibre-plugin/dialog/loans.py:193 calibre-plugin/dialog/magazines.py:265
 msgid "View in OverDrive"
 msgstr "OverDriveで見る"
 
-#: calibre-plugin/dialog/cards.py:253
+#: calibre-plugin/dialog/cards.py:276
 msgid "Cards"
 msgstr "ライブラリーカード"
 
@@ -441,27 +448,27 @@ msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] "借りた本を{n}冊返却する"
 
-#: calibre-plugin/dialog/loans.py:305
+#: calibre-plugin/dialog/loans.py:294
 #, python-brace-format
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:404
+#: calibre-plugin/dialog/loans.py:363
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "この本のローンを返しますか？"
 
-#: calibre-plugin/dialog/loans.py:416
+#: calibre-plugin/dialog/loans.py:375
 msgid "Return Loans"
 msgstr "図書貸出返還"
 
-#: calibre-plugin/dialog/loans.py:427
+#: calibre-plugin/dialog/loans.py:386
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "{book}を返却中"
 
-#: calibre-plugin/dialog/loans.py:448
+#: calibre-plugin/dialog/loans.py:407
 msgid "Failed to return loan"
 msgstr "図書貸出返還失敗"
 

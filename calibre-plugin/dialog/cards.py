@@ -84,6 +84,7 @@ class CardWidget(QWidget):
         library_lbl.customContextMenuRequested.connect(
             self.library_lbl_context_menu_requested
         )
+        library_lbl.setToolTip(_("Right-click for shortcuts"))
         layout.addWidget(library_lbl, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
@@ -160,6 +161,7 @@ class CardWidget(QWidget):
         loans_progressbar.customContextMenuRequested.connect(
             self.loans_progressbar_context_menu_requested
         )
+        loans_progressbar.setToolTip(_("Right-click for shortcuts"))
         layout.addWidget(loans_progressbar, widget_row_pos, 0, 1, 2)
         widget_row_pos += 1
 
@@ -181,10 +183,12 @@ class CardWidget(QWidget):
         holds_progressbar.customContextMenuRequested.connect(
             self.holds_progressbar_context_menu_requested
         )
+        holds_progressbar.setToolTip(_("Right-click for shortcuts"))
         layout.addWidget(holds_progressbar, widget_row_pos, 0, 1, 2)
 
     def library_lbl_context_menu_requested(self):
         menu = QMenu(self)
+        menu.addSection(_("Library"))
         view_in_libby_action = menu.addAction(_("View in Libby"))
         view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_library)
@@ -195,6 +199,7 @@ class CardWidget(QWidget):
 
     def loans_progressbar_context_menu_requested(self):
         menu = QMenu(self)
+        menu.addSection(_("Loans"))
         view_in_libby_action = menu.addAction(_("View in Libby"))
         view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_loans)
@@ -205,6 +210,7 @@ class CardWidget(QWidget):
 
     def holds_progressbar_context_menu_requested(self):
         menu = QMenu(self)
+        menu.addSection(_("Holds"))
         view_in_libby_action = menu.addAction(_("View in Libby"))
         view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_holds)

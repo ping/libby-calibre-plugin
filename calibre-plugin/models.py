@@ -515,7 +515,7 @@ class LibbyCardsModel(LibbyModel):
 
     def filter_rows(self):
         self.beginResetModel()
-        self.filtered_rows = sorted(self._rows, key=lambda c: c["createDate"])
+        self.filtered_rows = sorted(self._rows, key=lambda c: c["advantageKey"])
         self.endResetModel()
 
     def data(self, index, role):

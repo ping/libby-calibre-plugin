@@ -281,6 +281,7 @@ class CardsDialogMixin(BaseDialogMixin):
     def libby_cards_model_reset(self):
         for card_widget in self.card_widgets:
             self.cards_tab_widget.layout.removeWidget(card_widget)
+            card_widget.setParent(None)
             del card_widget
         self.card_widgets = []
         widget_row_pos = 0

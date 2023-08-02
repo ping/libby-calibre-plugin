@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-02 15:12+0800\n"
+"POT-Creation-Date: 2023-08-02 16:12+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -192,7 +192,7 @@ msgid "Expire Date"
 msgstr ""
 
 #: calibre-plugin/models.py:170 calibre-plugin/models.py:330
-#: calibre-plugin/dialog/cards.py:236
+#: calibre-plugin/dialog/cards.py:238
 msgid "Library"
 msgstr "ライブラリー"
 
@@ -295,8 +295,8 @@ msgstr ""
 msgid "Check your connection or retry in a few minutes."
 msgstr "接続を確認するか、数分後に再試行してください。"
 
-#: calibre-plugin/dialog/cards.py:127 calibre-plugin/dialog/cards.py:209
-#: calibre-plugin/dialog/cards.py:231
+#: calibre-plugin/dialog/cards.py:127 calibre-plugin/dialog/cards.py:211
+#: calibre-plugin/dialog/cards.py:233
 msgid "Right-click for shortcuts"
 msgstr ""
 
@@ -304,45 +304,45 @@ msgstr ""
 msgid "Card name"
 msgstr "カードの名前"
 
-#: calibre-plugin/dialog/cards.py:147
-msgid "Card account"
-msgstr ""
+#: calibre-plugin/dialog/cards.py:148
+msgid "Username/Card number"
+msgstr "ユーザー名/カード番号"
 
-#: calibre-plugin/dialog/cards.py:159
+#: calibre-plugin/dialog/cards.py:161
 msgid "Created date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:178
+#: calibre-plugin/dialog/cards.py:180
 msgid "Verified date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:195 calibre-plugin/dialog/cards.py:247
+#: calibre-plugin/dialog/cards.py:197 calibre-plugin/dialog/cards.py:249
 #: calibre-plugin/dialog/loans.py:154
 msgid "Loans"
 msgstr "貸出中"
 
-#: calibre-plugin/dialog/cards.py:217 calibre-plugin/dialog/cards.py:258
+#: calibre-plugin/dialog/cards.py:219 calibre-plugin/dialog/cards.py:260
 #: calibre-plugin/dialog/holds.py:155 calibre-plugin/dialog/holds.py:169
 msgid "Holds"
 msgstr "予約中"
 
-#: calibre-plugin/dialog/cards.py:237 calibre-plugin/dialog/cards.py:248
-#: calibre-plugin/dialog/cards.py:259 calibre-plugin/dialog/holds.py:259
+#: calibre-plugin/dialog/cards.py:239 calibre-plugin/dialog/cards.py:250
+#: calibre-plugin/dialog/cards.py:261 calibre-plugin/dialog/holds.py:259
 #: calibre-plugin/dialog/loans.py:188 calibre-plugin/dialog/magazines.py:260
 msgid "View in Libby"
 msgstr "Libbyで見る"
 
-#: calibre-plugin/dialog/cards.py:240 calibre-plugin/dialog/cards.py:251
-#: calibre-plugin/dialog/cards.py:262 calibre-plugin/dialog/holds.py:264
+#: calibre-plugin/dialog/cards.py:242 calibre-plugin/dialog/cards.py:253
+#: calibre-plugin/dialog/cards.py:264 calibre-plugin/dialog/holds.py:264
 #: calibre-plugin/dialog/loans.py:193 calibre-plugin/dialog/magazines.py:265
 msgid "View in OverDrive"
 msgstr "OverDriveで見る"
 
-#: calibre-plugin/dialog/cards.py:322 calibre-plugin/dialog/loans.py:72
+#: calibre-plugin/dialog/cards.py:324 calibre-plugin/dialog/loans.py:72
 msgid "Get latest loans"
 msgstr "最近借りた本を入手する"
 
-#: calibre-plugin/dialog/cards.py:336
+#: calibre-plugin/dialog/cards.py:338
 msgid "Cards"
 msgstr "ライブラリーカード"
 

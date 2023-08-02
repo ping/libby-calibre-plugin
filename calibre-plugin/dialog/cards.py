@@ -144,7 +144,9 @@ class CardWidget(QWidget):
             card_username = (
                 card["username"] if not DEMO_MODE else obfuscate_name(card["username"])
             )
-            card_user_lbl = QLabel("<b>" + _("Card account") + "</b>: " + card_username)
+            card_user_lbl = QLabel(
+                "<b>" + _("Username/Card number") + "</b>: " + card_username
+            )
             card_user_lbl.setTextInteractionFlags(
                 Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
             )

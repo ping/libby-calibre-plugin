@@ -1,10 +1,26 @@
+#
+# Copyright (C) 2023 github.com/ping
+#
+# This file is part of the OverDrive Libby Plugin by ping
+# OverDrive Libby Plugin for calibre / libby-calibre-plugin
+#
+# See https://github.com/ping/libby-calibre-plugin for more
+# information
+#
+
 import random
 from collections import namedtuple
 from datetime import datetime
 from enum import Enum
-from typing import Dict
+from typing import Dict, Optional
 
 from calibre.gui2 import is_dark_theme
+from qt.core import QColor, QIcon, QPainter, QPixmap, QSvgRenderer, QXmlStreamReader
+
+from .compat import (
+    QPainter_CompositionMode_CompositionMode_SourceIn,
+    Qt_GlobalColor_transparent,
+)
 
 try:
     from calibre_plugins.overdrive_link.link import (
@@ -12,6 +28,8 @@ try:
     )
 except ImportError:
     OD_IDENTIFIER = "odid"
+
+CARD_ICON = "images/card.svg"
 
 
 def obfuscate_date(dt: datetime, day=None, month=None, year=None):
@@ -64,6 +82,33 @@ def generate_od_identifier(media: Dict, library: Dict) -> str:
         return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
 
 
+def svg_to_pixmap(
+    data: bytes, color: Optional[QColor] = None, size=(64, 64)
+) -> QPixmap:
+    renderer = QSvgRenderer(QXmlStreamReader(data))
+    pixmap = QPixmap(*size)
+    pixmap.fill(Qt_GlobalColor_transparent)
+    painter = QPainter(pixmap)
+    renderer.render(painter)
+    painter.setCompositionMode(QPainter_CompositionMode_CompositionMode_SourceIn)
+    if color:
+        painter.fillRect(pixmap.rect(), color)
+    painter.end()
+    return pixmap
+
+
+def svg_to_qicon(data: bytes, color: Optional[QColor] = None, size=(64, 64)):
+    """
+    Converts an SVG to QIcon
+
+    :param data:
+    :param color:
+    :param size:
+    :return:
+    """
+    return QIcon(svg_to_pixmap(data, color, size))
+
+
 class PluginColors(str, Enum):
     Red = "#FF0F00" if is_dark_theme() else "#E70E00"
     Green = "#00D228" if is_dark_theme() else "#00BA28"
@@ -89,6 +134,7 @@ class PluginIcons(str, Enum):
     Cancel = "cancel"
     Okay = "okay"
     Clover = "clover"
+    Card = "card"
 
     def __str__(self):
         return str(self.value)

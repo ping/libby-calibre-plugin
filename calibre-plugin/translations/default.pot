@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-01 22:38+0800\n"
+"POT-Creation-Date: 2023-08-02 15:12+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: calibre-plugin/__init__.py:55 calibre-plugin/action.py:55
+#: calibre-plugin/__init__.py:55 calibre-plugin/action.py:44
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:61
+#: calibre-plugin/action.py:50
 msgid "Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:125 calibre-plugin/dialog/base.py:131
+#: calibre-plugin/action.py:101 calibre-plugin/dialog/base.py:131
 msgid "MobileRead"
 msgstr ""
 
@@ -192,7 +192,7 @@ msgid "Expire Date"
 msgstr ""
 
 #: calibre-plugin/models.py:170 calibre-plugin/models.py:330
-#: calibre-plugin/dialog/cards.py:191
+#: calibre-plugin/dialog/cards.py:236
 msgid "Library"
 msgstr ""
 
@@ -295,50 +295,54 @@ msgstr ""
 msgid "Check your connection or retry in a few minutes."
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:87 calibre-plugin/dialog/cards.py:164
-#: calibre-plugin/dialog/cards.py:186
+#: calibre-plugin/dialog/cards.py:127 calibre-plugin/dialog/cards.py:209
+#: calibre-plugin/dialog/cards.py:231
 msgid "Right-click for shortcuts"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:94
+#: calibre-plugin/dialog/cards.py:135
 msgid "Card name"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:105
+#: calibre-plugin/dialog/cards.py:147
 msgid "Card account"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:116
+#: calibre-plugin/dialog/cards.py:159
 msgid "Created date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:133
+#: calibre-plugin/dialog/cards.py:178
 msgid "Verified date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:150 calibre-plugin/dialog/cards.py:202
+#: calibre-plugin/dialog/cards.py:195 calibre-plugin/dialog/cards.py:247
 #: calibre-plugin/dialog/loans.py:154
 msgid "Loans"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:172 calibre-plugin/dialog/cards.py:213
+#: calibre-plugin/dialog/cards.py:217 calibre-plugin/dialog/cards.py:258
 #: calibre-plugin/dialog/holds.py:155 calibre-plugin/dialog/holds.py:169
 msgid "Holds"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:192 calibre-plugin/dialog/cards.py:203
-#: calibre-plugin/dialog/cards.py:214 calibre-plugin/dialog/holds.py:259
+#: calibre-plugin/dialog/cards.py:237 calibre-plugin/dialog/cards.py:248
+#: calibre-plugin/dialog/cards.py:259 calibre-plugin/dialog/holds.py:259
 #: calibre-plugin/dialog/loans.py:188 calibre-plugin/dialog/magazines.py:260
 msgid "View in Libby"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:195 calibre-plugin/dialog/cards.py:206
-#: calibre-plugin/dialog/cards.py:217 calibre-plugin/dialog/holds.py:264
+#: calibre-plugin/dialog/cards.py:240 calibre-plugin/dialog/cards.py:251
+#: calibre-plugin/dialog/cards.py:262 calibre-plugin/dialog/holds.py:264
 #: calibre-plugin/dialog/loans.py:193 calibre-plugin/dialog/magazines.py:265
 msgid "View in OverDrive"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:276
+#: calibre-plugin/dialog/cards.py:322 calibre-plugin/dialog/loans.py:72
+msgid "Get latest loans"
+msgstr ""
+
+#: calibre-plugin/dialog/cards.py:336
 msgid "Cards"
 msgstr ""
 
@@ -436,10 +440,6 @@ msgstr[1] ""
 #: calibre-plugin/dialog/holds.py:492
 #, python-brace-format
 msgid "Updating hold on {book}"
-msgstr ""
-
-#: calibre-plugin/dialog/loans.py:72
-msgid "Get latest loans"
 msgstr ""
 
 #: calibre-plugin/dialog/loans.py:143

@@ -7,29 +7,18 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-from typing import Optional
 
 from calibre.gui2.actions import InterfaceAction
 from qt.core import (
-    QColor,
     QDesktopServices,
     QIcon,
-    QPainter,
-    QPixmap,
     QSize,
-    QSvgRenderer,
     QToolButton,
     QUrl,
-    QXmlStreamReader,
 )
 
 from . import PLUGIN_ICON, PLUGIN_NAME, logger
-from .compat import (
-    QColor_fromString,
-    QPainter_CompositionMode_CompositionMode_SourceIn,
-    Qt_GlobalColor_transparent,
-    _c,
-)
+from .compat import QColor_fromString, _c
 from .config import PREFS, PreferenceKeys
 from .dialog import (
     BaseDialogMixin,
@@ -38,7 +27,7 @@ from .dialog import (
     LoansDialogMixin,
     MagazinesDialogMixin,
 )
-from .utils import ICON_MAP, PluginIcons
+from .utils import CARD_ICON, ICON_MAP, PluginIcons, svg_to_qicon
 
 # noinspection PyUnreachableCode
 if False:
@@ -61,36 +50,24 @@ class OverdriveLibbyAction(InterfaceAction):
     action_menu_clone_qaction = _("Libby")
     dont_add_to = frozenset(["context-menu-device"])
 
-    @staticmethod
-    def svg_to_qicon(data: bytes, color: Optional[QColor] = None, size=(64, 64)):
-        renderer = QSvgRenderer(QXmlStreamReader(data))
-        pixmap = QPixmap(*size)
-        pixmap.fill(Qt_GlobalColor_transparent)
-        painter = QPainter(pixmap)
-        renderer.render(painter)
-        painter.setCompositionMode(QPainter_CompositionMode_CompositionMode_SourceIn)
-        if color:
-            painter.fillRect(pixmap.rect(), color)
-        painter.end()
-        return QIcon(pixmap)
-
     def genesis(self):
         # This method is called once per plugin, do initial setup here
 
         # extract icons
         image_resources = get_resources(
-            [v.file for v in ICON_MAP.values()] + [PLUGIN_ICON]
+            [v.file for v in ICON_MAP.values()] + [PLUGIN_ICON, CARD_ICON]
         )
         self.icons = {}
         for k, v in ICON_MAP.items():
-            self.icons[k] = self.svg_to_qicon(
+            self.icons[k] = svg_to_qicon(
                 image_resources.pop(v.file), QColor_fromString(v.color)
             )
 
+        # card icon
+        self.icons[PluginIcons.Card] = image_resources.pop(CARD_ICON)
+
         # action icon
-        plugin_icon = self.svg_to_qicon(
-            image_resources.pop(PLUGIN_ICON), size=(300, 300)
-        )
+        plugin_icon = svg_to_qicon(image_resources.pop(PLUGIN_ICON), size=(300, 300))
         self.qaction.setIcon(plugin_icon)
         # set the cloned menu icon
         mini_plugin_icon = QIcon(

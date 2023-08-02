@@ -69,7 +69,6 @@ class OverdriveLibbyAction(InterfaceAction):
         painter = QPainter(pixmap)
         renderer.render(painter)
         painter.setCompositionMode(QPainter_CompositionMode_CompositionMode_SourceIn)
-        painter.setCompositionMode(painter.CompositionMode.CompositionMode_SourceIn)
         if color:
             painter.fillRect(pixmap.rect(), color)
         painter.end()

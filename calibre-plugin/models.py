@@ -14,10 +14,10 @@ from typing import Dict, List, Optional
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
 from calibre.utils.icu import lower as icu_lower
-from qt.core import QAbstractTableModel, QColor, QFont, QModelIndex, Qt
+from qt.core import QAbstractTableModel, QFont, QModelIndex, Qt
 
 from . import DEMO_MODE
-from .compat import _c, hex_to_rgb
+from .compat import QColor_fromString, _c
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
@@ -271,7 +271,7 @@ class LibbyLoansModel(LibbyModel):
             return Qt.AlignCenter
         # ForegroundRole
         if role == Qt.ForegroundRole and col == 2 and LibbyClient.is_renewable(loan):
-            return QColor(*hex_to_rgb(PluginColors.Red))
+            return QColor_fromString(PluginColors.Red)
         card = self.get_card(loan["cardId"])
         # ToolTipRole
         if role == Qt.ToolTipRole:
@@ -402,7 +402,7 @@ class LibbyHoldsModel(LibbyModel):
         hold_available = hold.get("isAvailable", False)
         # ForegroundRole
         if role == Qt.ForegroundRole and col == 2 and hold_available:
-            return QColor(*hex_to_rgb(PluginColors.Red))
+            return QColor_fromString(PluginColors.Red)
         # FontRole
         if role == Qt.FontRole and col == 5 and hold_available:
             font = QFont()

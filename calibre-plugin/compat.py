@@ -59,7 +59,7 @@ def compat_enum(obj, name):
     return getattr(getattr(obj, parent), child)
 
 
-def QColor_fromString(color: str):
+def QColor_fromString(color: str) -> QColor:
     """
     Compat helper for QColor.fromString() introduced in Qt6.4 (calibre>=6.12)
 

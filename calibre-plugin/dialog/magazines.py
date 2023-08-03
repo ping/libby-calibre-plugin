@@ -399,7 +399,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             return error_dialog(
                 self,
                 _("Add Magazine"),
-                _("Already added {magazine}").format(magazine=media["title"]),
+                _("Already monitoring {magazine}").format(magazine=media["title"]),
                 show_copy_button=False,
                 show=True,
             )

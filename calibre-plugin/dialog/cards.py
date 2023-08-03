@@ -105,12 +105,12 @@ class CardWidget(QWidget):
 
         # Library Name
         library_lbl = ClickableQLabel(
-            library["name"]
+            f'{library["name"]} ({card["advantageKey"]})'
             if not DEMO_MODE
             else (
                 "Random "
                 f'#{obfuscate_int(library["websiteId"], offset=int(library["websiteId"]/2), min_value=1, max_val=999)}'
-                " Library"
+                f' Library ({obfuscate_name(card["advantageKey"])})'
             )
         )
         curr_font = library_lbl.font()

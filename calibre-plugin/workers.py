@@ -24,13 +24,15 @@ class OverDriveLibraryMediaWorker(QObject):
     finished = pyqtSignal(dict)
     errored = pyqtSignal(Exception)
 
-    def __int__(self):
-        super().__init__()
+    def setup(self, overdrive_client: OverDriveClient, card: Dict, title_id: str):
+        self.client = overdrive_client
+        self.card = card
+        self.title_id = title_id
 
-    def run(self, overdrive_client: OverDriveClient, card: Dict, title_id: str):
+    def run(self):
         total_start = timer()
         try:
-            media = overdrive_client.library_media(card["advantageKey"], title_id)
+            media = self.client.library_media(self.card["advantageKey"], self.title_id)
             logger.info(
                 "Total OverDrive Library Media Fetch took %f seconds"
                 % (timer() - total_start)

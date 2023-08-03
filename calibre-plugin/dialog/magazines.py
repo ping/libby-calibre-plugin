@@ -415,7 +415,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             self,
             _("Add Magazine"),
             _(
-                "Added {magazine} for monitoring.\nClick OK to refresh.".format(
+                "Added {magazine} for monitoring.\nClick OK to refresh, or the ESC key to continue without.".format(
                     magazine=media["title"]
                 )
             ),
@@ -429,9 +429,10 @@ class MagazinesDialogMixin(BaseDialogMixin):
     ):
         thread = QThread()
         worker = OverDriveLibraryMediaWorker()
+        worker.setup(overdrive_client, card, title_id)
         worker.moveToThread(thread)
         thread.worker = worker
-        thread.started.connect(lambda: worker.run(overdrive_client, card, title_id))
+        thread.started.connect(worker.run)
 
         def loaded(media):
             self.found_media(media, card)

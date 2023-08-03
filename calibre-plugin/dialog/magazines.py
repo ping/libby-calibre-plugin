@@ -357,6 +357,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 self.overdrive_client, card, title_id
             )
             self.add_magazine_btn.setEnabled(False)
+            self.setCursor(Qt.WaitCursor)
             self._fetch_library_media_thread.start()
 
     def found_media(self, media, card):
@@ -436,10 +437,12 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         def loaded(media):
             self.found_media(media, card)
+            self.unsetCursor()
             self.add_magazine_btn.setEnabled(True)
             thread.quit()
 
         def errored_out(err: Exception):
+            self.unsetCursor()
             self.add_magazine_btn.setEnabled(True)
             thread.quit()
             raise err

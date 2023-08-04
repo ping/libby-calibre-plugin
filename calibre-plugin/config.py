@@ -20,6 +20,7 @@ from qt.core import (
     QLineEdit,
     QSpinBox,
     QTextEdit,
+    QVBoxLayout,
     QWidget,
     Qt,
 )
@@ -298,7 +299,6 @@ class ConfigWidget(QWidget):
         search_section = QGroupBox(_("Search"))
         search_layout = QFormLayout()
         search_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        search_layout.setRowWrapPolicy(QFormLayout.WrapLongRows)
         search_section.setLayout(search_layout)
         self.layout.addWidget(search_section, 2, 1)
 
@@ -313,16 +313,19 @@ class ConfigWidget(QWidget):
         self.search_libraries_txt.setAcceptRichText(False)
         self.search_libraries_txt.setPlaceholderText(
             _(
-                "Up to {n} libraries, comma-separated. Use the Cards tab to get the library key codes. "
+                "Up to {n} libraries, comma-separated. View your library key codes from the Cards tab. "
                 "Example: lapl,sno-isle,livebrary,kcls"
             ).format(n=MAX_SEARCH_LIBRARIES)
         )
         self.search_libraries_txt.setPlainText(
             ",".join(PREFS[PreferenceKeys.SEARCH_LIBRARIES])
         )
-        search_layout.addRow(
-            PreferenceTexts.SEARCH_LIBRARIES, self.search_libraries_txt
-        )
+        search_libraries_lbl = QLabel(PreferenceTexts.SEARCH_LIBRARIES)
+        search_libraries_lbl.setBuddy(self.search_libraries_txt)
+        search_libraries_layout = QVBoxLayout()
+        search_libraries_layout.addWidget(search_libraries_lbl)
+        search_libraries_layout.addWidget(self.search_libraries_txt)
+        search_layout.addRow(search_libraries_layout)
 
         # ------------------------------------ NETWORK ------------------------------------
         network_section = QGroupBox(_("Network"))

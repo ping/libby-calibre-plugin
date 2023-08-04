@@ -132,7 +132,9 @@ class OverDriveClient(object):
         if headers is None:
             headers = self.default_headers()
         if query:
-            endpoint_url += ("?" if "?" not in endpoint else "&") + urlencode(query)
+            endpoint_url += ("?" if "?" not in endpoint else "&") + urlencode(
+                query, doseq=True
+            )
         if not method:
             # try to set an HTTP method
             if params is None:
@@ -307,3 +309,40 @@ class OverDriveClient(object):
         return self.send_request(
             f"libraries/{library_key}/media/{title_id}", query=params
         )
+
+    @staticmethod
+    def sort_availabilities(a, b):
+        for key, default, fn in [
+            ("isAvailable", False, None),
+            ("luckyDayAvailableCopies", 0, None),
+            ("estimatedWaitDays", 9999, lambda v: -1 * v),
+            ("holdsRatio", 9999, lambda v: -1 * v),
+            ("ownedCopies", 0, None),
+        ]:
+            value_a = a.get(key, default)
+            value_b = b.get(key, default)
+            if fn:
+                value_a = fn(value_a)
+                value_b = fn(value_b)
+            if value_a > value_b:
+                return 1
+            if value_a < value_b:
+                return -1
+        return 0
+
+    def media_search(self, library_keys: List[str], query: str, **kwargs) -> List[dict]:
+        """
+        Search multiple libraries for a query.
+
+        :param library_keys: Search library key
+        :param query:
+        :param kwargs:
+            - maxItems: int
+            - format: List[str]
+            - showOnlyAvailable: true/false
+        :return:
+        """
+        params = self.default_query()
+        params.update({"libraryKey": library_keys, "query": query})
+        params.update(kwargs)
+        return self.send_request("media/search/", query=params)

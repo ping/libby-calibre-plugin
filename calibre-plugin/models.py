@@ -9,6 +9,7 @@
 #
 from collections import namedtuple
 from datetime import datetime
+from functools import cmp_to_key
 from typing import Dict, List, Optional
 
 from calibre.utils.config import tweaks
@@ -22,6 +23,7 @@ from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
 from .magazine_download_utils import extract_asin, extract_isbn
+from .overdrive import OverDriveClient
 from .utils import PluginColors, PluginIcons, obfuscate_date, obfuscate_name
 
 # noinspection PyUnreachableCode
@@ -73,6 +75,7 @@ LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}  # not 
 LOAN_FORMAT_TRANSLATION = {
     "ebook-overdrive": _("Libby Book"),
     "audiobook-overdrive": _("Libby Audiobook"),
+    "audiobook-mp3": _("MP3 Audiobook"),
     "magazine-overdrive": _("Libby Magazine"),
     "video-overdrive": _("Libby Video"),
     "video-streaming": _("Streaming Video"),
@@ -126,7 +129,7 @@ class LibbyModel(QAbstractTableModel):
         self._cards = synced_state.get("cards", [])
         self._libraries = synced_state.get("__libraries", [])
 
-    def get_card(self, card_id) -> Optional[Dict]:
+    def get_card(self, card_id) -> Dict:
         card = next(
             iter([c for c in self._cards if c["cardId"] == card_id]),
             None,
@@ -143,7 +146,7 @@ class LibbyModel(QAbstractTableModel):
             )
         return int(card.get("library", {}).get("websiteId", "0"))
 
-    def get_library(self, website_id: int) -> Optional[Dict]:
+    def get_library(self, website_id: int) -> Dict:
         library = next(
             iter([lib for lib in self._libraries if lib["websiteId"] == website_id]),
             None,
@@ -639,4 +642,152 @@ class LibbyMagazinesModel(LibbyModel):
             if role == LibbyModel.DisplaySortRole:
                 return int(is_borrowed)
             return _c("Yes") if is_borrowed else _c("No")
+        return None
+
+
+class LibbySearchModel(LibbyModel):
+    """
+    Underlying data model for the Search table view
+    """
+
+    column_headers = [
+        _c("Title"),
+        _c("Author"),
+        _c("Published"),
+        _c("Publisher"),
+        _c("Format"),
+        _("Library"),
+    ]
+    filter_hide_magazines_already_in_library = False
+
+    def __init__(self, parent, synced_state=None, db=None):
+        super().__init__(parent, synced_state, db)
+        self._search_results: List[Dict] = []
+        self.sync(synced_state)
+        self._holds = []
+        self._loans = []
+
+    def has_loan(self, title_id, card_id):
+        return bool(
+            [
+                loan
+                for loan in self._loans
+                if loan["id"] == title_id and loan["cardId"] == card_id
+            ]
+        )
+
+    def has_hold(self, title_id, card_id):
+        return bool(
+            [
+                hold
+                for hold in self._holds
+                if hold["id"] == title_id and hold["cardId"] == card_id
+            ]
+        )
+
+    def library_keys(self) -> List[str]:
+        return list(set([c["advantageKey"] for c in self._cards]))
+
+    def get_cards_for_library_key(self, key):
+        cards = [c for c in self._cards if c["advantageKey"] == key]
+        if not cards:
+            # use websiteId
+            website_ids = [
+                str(s["websiteId"]) for s in self._libraries if s["preferredKey"] == key
+            ]
+            cards = [c for c in self._cards if c["websiteId"] in website_ids]
+        return sorted(cards, key=lambda c: c.get("counts", {}).get("loan", 0))
+
+    def sync(self, synced_state: Optional[Dict] = None):
+        if not synced_state:
+            synced_state = {}
+        if "cards" in synced_state and "__libraries" in synced_state:
+            super().sync(synced_state)
+            self._holds = synced_state.get("holds", [])
+            self._loans = synced_state.get("loans", [])
+
+        if "search_results" not in synced_state:
+            return
+        self.beginResetModel()
+        self.filtered_rows = []
+        for r in synced_state["search_results"]:
+            try:
+                LibbyClient.get_loan_format(r)
+                if LibbyClient.is_downloadable_ebook_loan(
+                    r
+                ) or LibbyClient.is_downloadable_magazine_loan(r):
+                    self.filtered_rows.append(r)
+            except ValueError:
+                pass
+        self.endResetModel()
+
+    def data(self, index, role):
+        row, col = index.row(), index.column()
+        if row >= self.rowCount() or col >= self.columnCount():
+            return None
+        media: Dict = self.filtered_rows[row]
+        # UserRole
+        if role == Qt.UserRole:
+            return media
+        # TextAlignmentRole
+        if role == Qt.TextAlignmentRole and col >= 2:
+            return Qt.AlignCenter
+        # ToolTipRole
+        available_sites = []
+        for k, v in media.get("siteAvailabilities", {}).items():
+            v["advantageKey"] = k
+            available_sites.append(v)
+        available_sites = sorted(
+            available_sites,
+            key=cmp_to_key(OverDriveClient.sort_availabilities),
+            reverse=True,
+        )
+        if role == Qt.ToolTipRole:
+            if col == 0:
+                return get_media_title(media, include_subtitle=True)
+            if col == 1:
+                return media.get("firstCreatorName", "")
+            if col == 3:
+                return media.get("publisher", {}).get("name")
+            if col == 5:
+                return ", ".join([s["advantageKey"] for s in available_sites])
+        # DisplayRole, DisplaySortRole
+        if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
+            return None
+        if col == 0:
+            if role == LibbyModel.DisplaySortRole:
+                return get_media_title(media, for_sorting=True)
+            return get_media_title(media)
+        if col == 1:
+            creator_name = media.get("firstCreatorName", "")
+            if role == LibbyModel.DisplaySortRole:
+                return media.get("firstCreatorSortName", "") or creator_name
+            if DEMO_MODE:
+                return creator_name
+            return truncate_for_display(creator_name, text_length=20)
+        if col == 2:
+            if media.get("publishDate"):
+                dt_value = datetime.strptime(media["publishDate"], "%Y-%m-%dT%H:%M:%SZ")
+                if role == LibbyModel.DisplaySortRole:
+                    return dt_value.isoformat()
+                return dt_value.year
+        if col == 3:
+            if DEMO_MODE:
+                return media.get("publisher", {}).get("name", "")
+            return truncate_for_display(
+                media.get("publisher", {}).get("name", ""), text_length=20
+            )
+        if col == 4:
+            loan_format = LibbyClient.get_loan_format(
+                media, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+            )
+            if role == LibbyModel.DisplaySortRole:
+                return str(loan_format)
+            return _(LOAN_FORMAT_TRANSLATION.get(loan_format, str(loan_format)))
+        if col == 5:
+            if role == LibbyModel.DisplaySortRole:
+                return len(available_sites)
+            return truncate_for_display(
+                ", ".join([s["advantageKey"] for s in available_sites]), text_length=15
+            )
         return None

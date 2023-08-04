@@ -26,6 +26,7 @@ from .dialog import (
     HoldsDialogMixin,
     LoansDialogMixin,
     MagazinesDialogMixin,
+    SearchDialogMixin,
 )
 from .utils import CARD_ICON, ICON_MAP, PluginIcons, svg_to_qicon
 
@@ -119,6 +120,7 @@ class OverdriveLibbyAction(InterfaceAction):
 
 
 class OverdriveLibbyDialog(
+    SearchDialogMixin,
     CardsDialogMixin,
     MagazinesDialogMixin,
     HoldsDialogMixin,

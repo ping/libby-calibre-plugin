@@ -9,6 +9,7 @@
 #
 import json
 import math
+from functools import cmp_to_key
 
 from overdrive import OverDriveClient
 
@@ -180,3 +181,77 @@ class OverDriveClientTests(BaseTests):
         for k in ("title", "isOwned", "isAvailable"):
             with self.subTest("library media response", k=k):
                 self.assertTrue(title.get(k))
+
+    def test_sort_availabilities(self):
+        for a, b in [
+            (
+                {"id": "a", "isAvailable": True, "estimatedWaitDays": 1},
+                {"id": "b", "isAvailable": False, "estimatedWaitDays": 7},
+            ),
+            (
+                {
+                    "id": "a",
+                    "isAvailable": True,
+                    "estimatedWaitDays": 1,
+                    "ownedCopies": 10,
+                },
+                {
+                    "id": "b",
+                    "isAvailable": True,
+                    "estimatedWaitDays": 1,
+                    "ownedCopies": 1,
+                },
+            ),
+            (
+                {
+                    "id": "a",
+                    "isAvailable": False,
+                    "estimatedWaitDays": 1,
+                    "holdsRatio": 2,
+                    "ownedCopies": 9,
+                },
+                {
+                    "id": "b",
+                    "isAvailable": False,
+                    "estimatedWaitDays": 1,
+                    "holdsRatio": 2,
+                    "ownedCopies": 2,
+                },
+            ),
+            (
+                {"id": "a", "isAvailable": False, "estimatedWaitDays": 3},
+                {"id": "b", "isAvailable": False, "estimatedWaitDays": 7},
+            ),
+            (
+                {
+                    "id": "a",
+                    "isAvailable": False,
+                    "luckyDayAvailableCopies": 1,
+                    "estimatedWaitDays": 7,
+                },
+                {"id": "b", "isAvailable": False, "estimatedWaitDays": 3},
+            ),
+        ]:
+            results = sorted(
+                [a, b],
+                key=cmp_to_key(OverDriveClient.sort_availabilities),
+                reverse=True,
+            )
+            self.assertEqual(results[0]["id"], "a")
+
+    def test_media_search(self):
+        medias = self.client.media_search(
+            library_keys=["lapl", "sno-isle"],
+            query="harry potter chamber secrets",
+            format=["ebook-epub-adobe"],
+            maxItems=1,
+        )
+        for media in medias:
+            sites = []
+            for k, v in media.get("siteAvailabilities", {}).items():
+                v["advantageKey"] = k
+                sites.append(v)
+            sites = sorted(
+                sites, key=cmp_to_key(OverDriveClient.sort_availabilities), reverse=True
+            )
+            print(media["title"], sites[0]["advantageKey"])

@@ -52,3 +52,24 @@ class LibbyHoldUpdate:
         hold = libby_client.suspend_hold(hold, days_to_suspend)
         logger.info("Updated hold for %s successfully." % get_media_title(hold))
         return hold
+
+
+class LibbyHoldCreate:
+    def __call__(
+        self,
+        gui,
+        libby_client: LibbyClient,
+        media: Dict,
+        card: Dict,
+        log=None,
+        abort=None,
+        notifications=None,
+    ):
+        logger = log
+        notifications.put((0.5, _("Creating hold")))
+        hold = libby_client.create_hold(media["id"], card["cardId"])
+        logger.info(
+            "Created hold for %s at %s successfully."
+            % (get_media_title(hold), card["advantageKey"])
+        )
+        return hold

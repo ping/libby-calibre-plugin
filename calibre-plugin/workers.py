@@ -10,7 +10,7 @@
 
 import math
 from timeit import default_timer as timer
-from typing import Dict
+from typing import Dict, List
 
 from qt.core import QObject, pyqtSignal
 
@@ -18,6 +18,45 @@ from . import logger
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .overdrive import OverDriveClient
+
+
+class OverDriveMediaSearchWorker(QObject):
+    finished = pyqtSignal(list)
+    errored = pyqtSignal(Exception)
+
+    def setup(
+        self,
+        overdrive_client: OverDriveClient,
+        query: str,
+        library_keys: List[str],
+        formats: List[str],
+        max_items: int = 20,
+    ):
+        self.client = overdrive_client
+        self.query = query
+        self.library_keys = library_keys
+        self.formats = formats
+        self.max_items = max_items
+
+    def run(self):
+        total_start = timer()
+        try:
+            results = self.client.media_search(
+                self.library_keys,
+                self.query,
+                maxItems=self.max_items,
+                format=self.formats,
+            )
+            logger.info(
+                "OverDrive Media Search took %f seconds" % (timer() - total_start)
+            )
+            self.finished.emit(results)
+        except Exception as err:
+            logger.info(
+                "OverDrive Media Search failed after %f seconds"
+                % (timer() - total_start)
+            )
+            self.errored.emit(err)
 
 
 class OverDriveLibraryMediaWorker(QObject):

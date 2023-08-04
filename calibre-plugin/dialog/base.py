@@ -8,12 +8,13 @@
 # information
 #
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from calibre.constants import DEBUG
 from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
+from lxml import etree
 from polyglot.io import PolyglotStringIO
 from qt.core import (
     QApplication,
@@ -23,6 +24,7 @@ from qt.core import (
     QGridLayout,
     QLabel,
     QMenu,
+    QPixmapCache,
     QStatusBar,
     QTabWidget,
     QThread,
@@ -39,7 +41,7 @@ from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LibbyModel
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
-from ..utils import PluginIcons
+from ..utils import PluginIcons, svg_to_pixmap
 from ..workers import SyncDataWorker
 
 # noinspection PyUnreachableCode
@@ -199,35 +201,41 @@ class BaseDialogMixin(QDialog):
         if index > -1:
             PREFS[PreferenceKeys.LAST_SELECTED_TAB] = index
 
-    def view_in_libby_action_triggered(self, indices, model):
+    def view_in_libby_action_triggered(
+        self, indices, model: LibbyModel, card: Optional[Dict] = None
+    ):
         """
         Open title in Libby
 
         :param indices:
         :param model:
+        :param card:
         :return:
         """
         for index in indices:
             data = index.data(Qt.UserRole)
-            library_key = model.get_card(data["cardId"])["advantageKey"]
+            library_key = (card or model.get_card(data["cardId"]))["advantageKey"]
             QDesktopServices.openUrl(
                 QUrl(LibbyClient.libby_title_permalink(library_key, data["id"]))
             )
 
-    def view_in_overdrive_action_triggered(self, indices, model: LibbyModel):
+    def view_in_overdrive_action_triggered(
+        self, indices, model: LibbyModel, card: Optional[Dict] = None
+    ):
         """
         Open title in library OverDrive site
 
         :param indices:
         :param model:
+        :param card:
         :return:
         """
         for index in indices:
             data = index.data(Qt.UserRole)
-            card = model.get_card(data["cardId"]) or {}
-            if not card:
+            card_ = card or model.get_card(data["cardId"]) or {}
+            if not card_:
                 continue
-            library = model.get_library(model.get_website_id(card)) or {}
+            library = model.get_library(model.get_website_id(card_)) or {}
             if not library:
                 continue
 
@@ -423,6 +431,31 @@ class BaseDialogMixin(QDialog):
                 det_msg=json.dumps(data, indent=2),
                 show=True,
             )
+
+    def get_card_pixmap(self, library, size=(40, 30)):
+        """
+        Generate a card image for a library
+
+        :param library:
+        :param size:
+        :return:
+        """
+        card_pixmap_cache_id = (
+            f'card_website_{library["websiteId"]}_{size[0]}x{size[1]}'
+        )
+        card_pixmap = QPixmapCache.find(card_pixmap_cache_id)
+        if not QPixmapCache.find(card_pixmap_cache_id):
+            svg_root = etree.fromstring(self.icons[PluginIcons.Card])
+            if not DEMO_MODE:
+                stop1 = svg_root.find('.//stop[@class="stop1"]', svg_root.nsmap)
+                stop1.attrib["stop-color"] = library["settings"]["primaryColor"]["hex"]
+                stop2 = svg_root.find('.//stop[@class="stop2"]', svg_root.nsmap)
+                stop2.attrib["stop-color"] = library["settings"]["secondaryColor"][
+                    "hex"
+                ]
+            card_pixmap = svg_to_pixmap(etree.tostring(svg_root), size=size)
+            QPixmapCache.insert(card_pixmap_cache_id, card_pixmap)
+        return card_pixmap
 
     def unhandled_exception(self, err, msg=None):
         """

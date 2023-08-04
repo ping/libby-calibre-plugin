@@ -11,7 +11,6 @@ from urllib.parse import urljoin
 
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
-from lxml import etree
 from qt.core import (
     QCursor,
     QDesktopServices,
@@ -21,7 +20,6 @@ from qt.core import (
     QMenu,
     QMouseEvent,
     QPalette,
-    QPixmapCache,
     QProgressBar,
     QPushButton,
     QScrollArea,
@@ -43,7 +41,6 @@ from ..utils import (
     obfuscate_date,
     obfuscate_int,
     obfuscate_name,
-    svg_to_pixmap,
 )
 
 # noinspection PyUnreachableCode
@@ -84,23 +81,7 @@ class CardWidget(QWidget):
 
         # Library Card Icon
         library_card_lbl = QLabel(self)
-        # render pixmap
-        card_pixmap_cache_id = f'card_website_{library["websiteId"]}'
-        card_pixmap = QPixmapCache.find(card_pixmap_cache_id)
-        if not QPixmapCache.find(card_pixmap_cache_id):
-            svg_root = etree.fromstring(self.icons[PluginIcons.Card])
-            if not DEMO_MODE:
-                stop1 = svg_root.find('.//stop[@class="stop1"]', svg_root.nsmap)
-                stop1.attrib["stop-color"] = library["settings"]["primaryColor"]["hex"]
-                stop2 = svg_root.find('.//stop[@class="stop2"]', svg_root.nsmap)
-                stop2.attrib["stop-color"] = library["settings"]["secondaryColor"][
-                    "hex"
-                ]
-            card_pixmap = svg_to_pixmap(
-                etree.tostring(svg_root), size=(40, 30)
-            )  # original size=(80, 60)
-            QPixmapCache.insert(card_pixmap_cache_id, card_pixmap)
-        library_card_lbl.setPixmap(card_pixmap)
+        library_card_lbl.setPixmap(self.tab.get_card_pixmap(library))
         layout.addWidget(library_card_lbl, widget_row_pos, 0)
 
         # Library Name

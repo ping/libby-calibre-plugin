@@ -315,6 +315,30 @@ class LibbyClient(object):
         """
         return f"https://share.libbyapp.com/title/{title_id}"
 
+    @staticmethod
+    def can_borrow(card):
+        """
+        Checks if card can be used to make a new loan.
+
+        :param card:
+        :return:
+        """
+        loan_limit = card.get("limits", {}).get("loan", 0)
+        loan_count = card.get("counts", {}).get("loan", 0)
+        return loan_limit > loan_count
+
+    @staticmethod
+    def can_place_hold(card):
+        """
+        Checks if a card can be used to place a hold.
+
+        :param card:
+        :return:
+        """
+        hold_limit = card.get("limits", {}).get("hold", 0)
+        hold_count = card.get("counts", {}).get("hold", 0)
+        return hold_limit > hold_count
+
     def _read_response(self, response, decode: bool = True) -> Union[bytes, str]:
         """
         Extract the response body from a http response.
@@ -871,3 +895,18 @@ class LibbyClient(object):
         :return:
         """
         return self.suspend_hold_title(hold["cardId"], hold["id"], days_to_suspend)
+
+    def create_hold(self, title_id: str, card_id: str) -> Dict:
+        """
+        Create a hold on the title.
+
+        :param title_id:
+        :param card_id:
+        :return:
+        """
+        return self.send_request(
+            f"card/{card_id}/hold/{title_id}",
+            params={"days_to_suspend": 0, "email_address": ""},
+            method="POST",
+            is_form=False,
+        )

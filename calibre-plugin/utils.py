@@ -135,6 +135,7 @@ class PluginIcons(str, Enum):
     Okay = "okay"
     Clover = "clover"
     Card = "card"
+    Search = "search"
 
     def __str__(self):
         return str(self.value)
@@ -180,5 +181,8 @@ ICON_MAP = {
     ),
     PluginIcons.Clover: IconDefinition(
         file="images/clover.svg", color=PluginColors.Green
+    ),
+    PluginIcons.Search: IconDefinition(
+        file="images/search-line.svg", color=PluginColors.Gray
     ),
 }

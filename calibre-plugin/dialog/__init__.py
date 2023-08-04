@@ -14,3 +14,4 @@ from .cards import CardsDialogMixin
 from .holds import HoldsDialogMixin
 from .loans import LoansDialogMixin
 from .magazines import MagazinesDialogMixin
+from .search import SearchDialogMixin

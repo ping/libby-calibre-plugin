@@ -88,7 +88,7 @@ class PreferenceTexts:
     OVERDRIVELINK_INTEGRATION = _("Enable OverDrive Link Plugin integration")
     MARK_UPDATED_BOOKS = _("Mark updated books")
     ALWAYS_DOWNLOAD_AS_NEW = _("Always download as a new book")
-    NETWORK_TIMEOUT = _c("Timeout for connection")
+    NETWORK_TIMEOUT = _("Connection timeout")
     NETWORK_RETRY = _c("Retry attempts")
     SEARCH_RESULTS_MAX = _("Maximum search results")
     SEARCH_LIBRARIES = _("Library Keys (comma-separated, max: {n})").format(

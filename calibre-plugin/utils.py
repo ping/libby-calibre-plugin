@@ -33,11 +33,15 @@ CARD_ICON = "images/card.svg"
 
 
 def obfuscate_date(dt: datetime, day=None, month=None, year=None):
+    if not dt:
+        return dt
     return dt.replace(day=day or 1, month=month or 1, year=year or datetime.now().year)
 
 
 def obfuscate_name(name: str, offset=5, min_word_len=1, max_word_len=8):
     obfuscated = []
+    if not name:
+        return name
     for n in name.split(" "):
         min_n = max(min_word_len, len(n) - offset)
         max_n = min(max_word_len, len(n) + offset)

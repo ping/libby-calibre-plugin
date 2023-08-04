@@ -284,7 +284,7 @@ class SearchDialogMixin(BaseDialogMixin):
                     card_action = menu.addAction(
                         QIcon(self.get_card_pixmap(site["__library"])),
                         truncate_for_display(
-                            f'{card["advantageKey"]}: {card["cardName"]}'
+                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
                         ),
                     )
                     card_action.setToolTip(self.borrow_tooltip(media, site))
@@ -316,7 +316,7 @@ class SearchDialogMixin(BaseDialogMixin):
                     card_action = menu.addAction(
                         QIcon(self.get_card_pixmap(site["__library"])),
                         truncate_for_display(
-                            f'{card["advantageKey"]}: {card["cardName"]}'
+                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
                         ),
                     )
                     card_action.setToolTip(self.hold_tooltip(media, site))

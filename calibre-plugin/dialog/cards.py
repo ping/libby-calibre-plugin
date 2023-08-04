@@ -150,7 +150,7 @@ class CardWidget(QWidget):
             card_user_lbl.setTextInteractionFlags(
                 Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
             )
-            layout.addWidget(card_user_lbl, widget_row_pos, 2, 1, 2)
+            layout.addWidget(card_user_lbl, widget_row_pos, 2)
         widget_row_pos += 1
 
         # Card Created Date
@@ -187,7 +187,7 @@ class CardWidget(QWidget):
                     )
                 )
                 card_auth_lbl.setTextFormat(Qt.RichText)
-                layout.addWidget(card_auth_lbl, widget_row_pos, 2, 1, 2)
+                layout.addWidget(card_auth_lbl, widget_row_pos, 2)
             widget_row_pos += 1
 
         # loans limits

@@ -106,10 +106,15 @@ class BaseDialogMixin(QDialog):
         libby_token = PREFS[PreferenceKeys.LIBBY_TOKEN]
         if libby_token:
             self.client = LibbyClient(
-                identity_token=libby_token, max_retries=1, timeout=30, logger=logger
+                identity_token=libby_token,
+                max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
+                timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
+                logger=logger,
             )
         self.overdrive_client = OverDriveClient(
-            max_retries=1, timeout=30, logger=logger
+            max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
+            timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
+            logger=logger,
         )
 
         layout = QGridLayout()

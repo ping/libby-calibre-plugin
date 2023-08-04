@@ -65,7 +65,10 @@ class SyncDataWorker(QObject):
             # Fetch libby sync state
             start = timer()
             libby_client = LibbyClient(
-                identity_token=libby_token, max_retries=1, timeout=30, logger=logger
+                identity_token=libby_token,
+                max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
+                timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
+                logger=logger,
             )
             synced_state = libby_client.sync()
             logger.info("Libby Sync request took %f seconds" % (timer() - start))
@@ -76,7 +79,11 @@ class SyncDataWorker(QObject):
             all_website_ids = [c["library"]["websiteId"] for c in cards]
 
             logger.info("Fetching %d libraries" % len(all_website_ids))
-            od_client = OverDriveClient(max_retries=1, timeout=30, logger=logger)
+            od_client = OverDriveClient(
+                max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
+                timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
+                logger=logger,
+            )
             max_per_page = 24
             total_pages = math.ceil(len(all_website_ids) / max_per_page)
             libraries = []

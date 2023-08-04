@@ -11,7 +11,19 @@
 from calibre import confirm_config_name
 from calibre.gui2 import error_dialog
 from calibre.utils.config import JSONConfig
-from qt.core import QCheckBox, QGridLayout, QLabel, QLineEdit, QWidget, Qt
+from qt.core import (
+    QCheckBox,
+    QFormLayout,
+    QGridLayout,
+    QGroupBox,
+    QLabel,
+    QLineEdit,
+    QSpinBox,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+    Qt,
+)
 
 from . import DEMO_MODE, PLUGIN_NAME, logger
 from .compat import _c
@@ -22,6 +34,8 @@ if False:
     load_translations = _ = lambda x=None: x
 
 load_translations()
+
+MAX_SEARCH_LIBRARIES = 24
 
 
 class PreferenceKeys:
@@ -46,6 +60,10 @@ class PreferenceKeys:
     LAST_BORROW_ACTION = "last_borrow_action"
     LAST_SELECTED_TAB = "last_selected_tab"
     ALWAYS_DOWNLOAD_AS_NEW = "always_download_new"
+    NETWORK_TIMEOUT = "network_timeout"
+    NETWORK_RETRY = "network_retry"
+    SEARCH_RESULTS_MAX = "search_results_max"
+    SEARCH_LIBRARIES = "search_libraries"
 
 
 class BorrowActions:
@@ -71,6 +89,12 @@ class PreferenceTexts:
     OVERDRIVELINK_INTEGRATION = _("Enable OverDrive Link Plugin integration")
     MARK_UPDATED_BOOKS = _("Mark updated books")
     ALWAYS_DOWNLOAD_AS_NEW = _("Always download as a new book")
+    NETWORK_TIMEOUT = _c("Timeout for connection")
+    NETWORK_RETRY = _c("Retry attempts")
+    SEARCH_RESULTS_MAX = _("Maximum search results")
+    SEARCH_LIBRARIES = _("Library Keys (comma-separated, max: {n})").format(
+        n=MAX_SEARCH_LIBRARIES
+    )
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -90,6 +114,10 @@ PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
 PREFS.defaults[PreferenceKeys.OVERDRIVELINK_INTEGRATION] = True
 PREFS.defaults[PreferenceKeys.MARK_UPDATED_BOOKS] = True
 PREFS.defaults[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW] = False
+PREFS.defaults[PreferenceKeys.NETWORK_TIMEOUT] = 30
+PREFS.defaults[PreferenceKeys.NETWORK_RETRY] = 1
+PREFS.defaults[PreferenceKeys.SEARCH_RESULTS_MAX] = 20
+PREFS.defaults[PreferenceKeys.SEARCH_LIBRARIES] = []
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
@@ -102,13 +130,18 @@ class ConfigWidget(QWidget):
         super().__init__()
         self.layout = QGridLayout()
         self.setLayout(self.layout)
-        label_column_widths = []
-        widget_row_pos = 0
 
         # Setup Status
         is_configured = bool(PREFS[PreferenceKeys.LIBBY_TOKEN])
         if DEMO_MODE:
             is_configured = False
+
+        # ------------------------------------ LIBBY ------------------------------------
+        libby_section = QGroupBox(_("Libby"))
+        libby_layout = QFormLayout()
+        libby_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        libby_section.setLayout(libby_layout)
+        self.layout.addWidget(libby_section, 0, 0, 1, 2)
 
         self.libby_setup_status_lbl = QLabel(
             _("Libby is configured.")
@@ -123,11 +156,7 @@ class ConfigWidget(QWidget):
         self.libby_setup_status_lbl.setStyleSheet(
             f"font-weight: bold; color: {PluginColors.Green if is_configured else PluginColors.Red};"
         )
-        self.layout.addWidget(self.libby_setup_status_lbl, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
-        widget_row_pos += 1
+        libby_layout.addRow(self.libby_setup_status_lbl)
 
         # Libby Setup Code
         self.libby_setup_code_lbl = QLabel(
@@ -137,10 +166,7 @@ class ConfigWidget(QWidget):
         )
         self.libby_setup_code_lbl.setTextFormat(Qt.RichText)
         self.libby_setup_code_lbl.setOpenExternalLinks(True)
-        self.layout.addWidget(self.libby_setup_code_lbl, widget_row_pos, 0)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
+        self.libby_setup_code_lbl.setMinimumWidth(150)
         self.libby_setup_code_txt = QLineEdit(self)
         self.libby_setup_code_txt.setPlaceholderText(
             PreferenceTexts.LIBBY_SETUP_CODE_DESC
@@ -148,63 +174,24 @@ class ConfigWidget(QWidget):
         self.libby_setup_code_txt.setInputMask("99999999")
         if not DEMO_MODE:
             self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
-        self.layout.addWidget(self.libby_setup_code_txt, widget_row_pos, 1, 1, 1)
-        self.libby_setup_code_lbl.setBuddy(self.libby_setup_code_txt)
-        widget_row_pos += 1
+        libby_layout.addRow(self.libby_setup_code_lbl, self.libby_setup_code_txt)
 
-        # Tag Ebooks
-        self.tag_ebooks_lbl = QLabel(PreferenceTexts.TAG_EBOOKS)
-        self.layout.addWidget(self.tag_ebooks_lbl, widget_row_pos, 0, 1, 1)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
-        self.tag_ebooks_txt = QLineEdit(self)
-        self.tag_ebooks_txt.setPlaceholderText(PreferenceTexts.TAG_EBOOKS_PLACEHOLDER)
-        if not DEMO_MODE:
-            self.tag_ebooks_txt.setText(PREFS[PreferenceKeys.TAG_EBOOKS])
-        self.layout.addWidget(self.tag_ebooks_txt, widget_row_pos, 1, 1, 1)
-        self.tag_ebooks_lbl.setBuddy(self.tag_ebooks_txt)
-        widget_row_pos += 1
-
-        # Tag Magazines
-        self.tag_magazines_lbl = QLabel(PreferenceTexts.TAG_MAGAZINES)
-        self.layout.addWidget(self.tag_magazines_lbl, widget_row_pos, 0, 1, 1)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
-        self.tag_magazines_txt = QLineEdit(self)
-        self.tag_magazines_txt.setPlaceholderText(
-            PreferenceTexts.TAG_MAGAZINES_PLACEHOLDER
-        )
-        if not DEMO_MODE:
-            self.tag_magazines_txt.setText(PREFS[PreferenceKeys.TAG_MAGAZINES])
-        self.layout.addWidget(self.tag_magazines_txt, widget_row_pos, 1, 1, 1)
-        self.tag_magazines_lbl.setBuddy(self.tag_magazines_txt)
-        widget_row_pos += 1
+        # ------------------------------------ LOANS ------------------------------------
+        loans_section = QGroupBox(_("Loans"))
+        loan_layout = QFormLayout()
+        loan_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        loans_section.setLayout(loan_layout)
+        self.layout.addWidget(loans_section, 1, 0, 3, 1)
 
         # Hide Ebooks
         self.hide_ebooks_checkbox = QCheckBox(PreferenceTexts.HIDE_EBOOKS, self)
         self.hide_ebooks_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_EBOOKS])
-        self.layout.addWidget(self.hide_ebooks_checkbox, widget_row_pos, 0, 1, 2)
-        widget_row_pos += 1
+        loan_layout.addRow(self.hide_ebooks_checkbox)
 
         # Hide Magazine
         self.hide_magazines_checkbox = QCheckBox(PreferenceTexts.HIDE_MAGAZINES, self)
         self.hide_magazines_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_MAGAZINES])
-        self.layout.addWidget(self.hide_magazines_checkbox, widget_row_pos, 0, 1, 2)
-        widget_row_pos += 1
-
-        # Prefer Open Formats
-        self.prefer_open_formats_checkbox = QCheckBox(
-            PreferenceTexts.PREFER_OPEN_FORMATS, self
-        )
-        self.prefer_open_formats_checkbox.setChecked(
-            PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-        )
-        self.layout.addWidget(
-            self.prefer_open_formats_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
+        loan_layout.addRow(self.hide_magazines_checkbox)
 
         # Hide books already in library
         self.hide_books_already_in_lib_checkbox = QCheckBox(
@@ -213,10 +200,7 @@ class ConfigWidget(QWidget):
         self.hide_books_already_in_lib_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
         )
-        self.layout.addWidget(
-            self.hide_books_already_in_lib_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
+        loan_layout.addRow(self.hide_books_already_in_lib_checkbox)
 
         # Exclude empty books when hiding titles already in library
         self.exclude_empty_books_checkbox = QCheckBox(
@@ -225,42 +209,23 @@ class ConfigWidget(QWidget):
         self.exclude_empty_books_checkbox.setChecked(
             PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
         )
-        self.layout.addWidget(
-            self.exclude_empty_books_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
-
-        # Hide unavailable holds
-        self.hide_holds_unavailable_checkbox = QCheckBox(
-            PreferenceTexts.HIDE_HOLDS_UNAVAILABLE, self
-        )
-        self.hide_holds_unavailable_checkbox.setChecked(
-            PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
-        )
-        self.layout.addWidget(
-            self.hide_holds_unavailable_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
+        loan_layout.addRow(self.exclude_empty_books_checkbox)
 
         # Always confirm returns
         self.confirm_returns_checkbox = QCheckBox(PreferenceTexts.CONFIRM_RETURNS, self)
         self.confirm_returns_checkbox.setChecked(
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)]
         )
-        self.layout.addWidget(self.confirm_returns_checkbox, widget_row_pos, 0, 1, 2)
-        widget_row_pos += 1
+        loan_layout.addRow(self.confirm_returns_checkbox)
 
-        # Always confirm cancelations
-        self.confirm_cancel_hold_checkbox = QCheckBox(
-            PreferenceTexts.CONFIRM_CANCELLATIONS, self
+        # Prefer Open Formats
+        self.prefer_open_formats_checkbox = QCheckBox(
+            PreferenceTexts.PREFER_OPEN_FORMATS, self
         )
-        self.confirm_cancel_hold_checkbox.setChecked(
-            PREFS[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)]
+        self.prefer_open_formats_checkbox.setChecked(
+            PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
-        self.layout.addWidget(
-            self.confirm_cancel_hold_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
+        loan_layout.addRow(self.prefer_open_formats_checkbox)
 
         # Enable OverDrive Link plugin integration
         self.enable_overdrive_link_checkbox = QCheckBox(
@@ -269,10 +234,7 @@ class ConfigWidget(QWidget):
         self.enable_overdrive_link_checkbox.setChecked(
             PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
         )
-        self.layout.addWidget(
-            self.enable_overdrive_link_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
+        loan_layout.addRow(self.enable_overdrive_link_checkbox)
 
         # Mark updated books
         self.mark_updated_books_checkbox = QCheckBox(
@@ -281,8 +243,7 @@ class ConfigWidget(QWidget):
         self.mark_updated_books_checkbox.setChecked(
             PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]
         )
-        self.layout.addWidget(self.mark_updated_books_checkbox, widget_row_pos, 0, 1, 2)
-        widget_row_pos += 1
+        loan_layout.addRow(self.mark_updated_books_checkbox)
 
         # Always download as a new book
         self.always_download_as_new_checkbox = QCheckBox(
@@ -291,11 +252,99 @@ class ConfigWidget(QWidget):
         self.always_download_as_new_checkbox.setChecked(
             PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]
         )
-        self.layout.addWidget(
-            self.always_download_as_new_checkbox, widget_row_pos, 0, 1, 2
-        )
-        widget_row_pos += 1
+        loan_layout.addRow(self.always_download_as_new_checkbox)
 
+        # Tag Ebooks
+        self.tag_ebooks_txt = QLineEdit(self)
+        self.tag_ebooks_txt.setPlaceholderText(PreferenceTexts.TAG_EBOOKS_PLACEHOLDER)
+        if not DEMO_MODE:
+            self.tag_ebooks_txt.setText(PREFS[PreferenceKeys.TAG_EBOOKS])
+        loan_layout.addRow(PreferenceTexts.TAG_EBOOKS, self.tag_ebooks_txt)
+
+        # Tag Magazines
+        self.tag_magazines_txt = QLineEdit(self)
+        self.tag_magazines_txt.setPlaceholderText(
+            PreferenceTexts.TAG_MAGAZINES_PLACEHOLDER
+        )
+        if not DEMO_MODE:
+            self.tag_magazines_txt.setText(PREFS[PreferenceKeys.TAG_MAGAZINES])
+        loan_layout.addRow(PreferenceTexts.TAG_MAGAZINES, self.tag_magazines_txt)
+
+        # ------------------------------------ Holds ------------------------------------
+        holds_section = QGroupBox(_("Holds"))
+        holds_layout = QFormLayout()
+        holds_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        holds_section.setLayout(holds_layout)
+        self.layout.addWidget(holds_section, 1, 1)
+
+        # Hide unavailable holds
+        self.hide_holds_unavailable_checkbox = QCheckBox(
+            PreferenceTexts.HIDE_HOLDS_UNAVAILABLE, self
+        )
+        self.hide_holds_unavailable_checkbox.setChecked(
+            PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
+        )
+        holds_layout.addRow(self.hide_holds_unavailable_checkbox)
+
+        # Always confirm cancellations
+        self.confirm_cancel_hold_checkbox = QCheckBox(
+            PreferenceTexts.CONFIRM_CANCELLATIONS, self
+        )
+        self.confirm_cancel_hold_checkbox.setChecked(
+            PREFS[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)]
+        )
+        holds_layout.addRow(self.confirm_cancel_hold_checkbox)
+
+        # ------------------------------------ SEARCH ------------------------------------
+        search_section = QGroupBox(_("Search"))
+        search_layout = QFormLayout()
+        search_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        search_layout.setRowWrapPolicy(QFormLayout.WrapLongRows)
+        search_section.setLayout(search_layout)
+        self.layout.addWidget(search_section, 2, 1)
+
+        self.search_results_max_txt = QSpinBox(self)
+        self.search_results_max_txt.setRange(20, 60)
+        self.search_results_max_txt.setSingleStep(10)
+        self.search_results_max_txt.setValue(PREFS[PreferenceKeys.SEARCH_RESULTS_MAX])
+        search_layout.addRow(
+            PreferenceTexts.SEARCH_RESULTS_MAX, self.search_results_max_txt
+        )
+        self.search_libraries_txt = QTextEdit(self)
+        self.search_libraries_txt.setAcceptRichText(False)
+        self.search_libraries_txt.setPlaceholderText(
+            _(
+                "Up to {n} libraries, comma-separated. Use the Cards tab to get the library key codes. "
+                "Example: lapl,sno-isle,livebrary,kcls"
+            ).format(n=MAX_SEARCH_LIBRARIES)
+        )
+        self.search_libraries_txt.setPlainText(
+            ",".join(PREFS[PreferenceKeys.SEARCH_LIBRARIES])
+        )
+        search_layout.addRow(
+            PreferenceTexts.SEARCH_LIBRARIES, self.search_libraries_txt
+        )
+
+        # ------------------------------------ NETWORK ------------------------------------
+        network_section = QGroupBox(_("Network"))
+        network_layout = QFormLayout()
+        network_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        network_section.setLayout(network_layout)
+        self.layout.addWidget(network_section, 3, 1)
+
+        self.network_timeout_txt = QSpinBox(self)
+        self.network_timeout_txt.setSuffix(_c(" seconds"))
+        self.network_timeout_txt.setRange(10, 180)
+        self.network_timeout_txt.setSingleStep(10)
+        self.network_timeout_txt.setValue(PREFS[PreferenceKeys.NETWORK_TIMEOUT])
+        network_layout.addRow(PreferenceTexts.NETWORK_TIMEOUT, self.network_timeout_txt)
+
+        self.network_retry_txt = QSpinBox(self)
+        self.network_retry_txt.setRange(0, 5)
+        self.network_retry_txt.setValue(PREFS[PreferenceKeys.NETWORK_RETRY])
+        network_layout.addRow(PreferenceTexts.NETWORK_RETRY, self.network_retry_txt)
+
+        # Help label
         self.help_lbl = QLabel(
             '<a style="padding: 0 4px;" href="https://github.com/ping/libby-calibre-plugin#setup">'
             + _c("Help")
@@ -304,13 +353,7 @@ class ConfigWidget(QWidget):
         self.help_lbl.setAlignment(Qt.AlignRight)
         self.help_lbl.setTextFormat(Qt.RichText)
         self.help_lbl.setOpenExternalLinks(True)
-        self.layout.addWidget(self.help_lbl, widget_row_pos, 0, 1, 2)
-        label_column_widths.append(
-            self.layout.itemAtPosition(widget_row_pos, 0).sizeHint().width()
-        )
-
-        label_column_width = max(label_column_widths)
-        self.layout.setColumnMinimumWidth(1, label_column_width)
+        self.layout.addWidget(self.help_lbl, 4, 0, 1, 2)
 
     def save_settings(self):
         if DEMO_MODE:
@@ -343,6 +386,26 @@ class ConfigWidget(QWidget):
         PREFS[
             PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW
         ] = self.always_download_as_new_checkbox.isChecked()
+        PREFS[PreferenceKeys.NETWORK_TIMEOUT] = int(
+            self.network_timeout_txt.cleanText().strip()
+        )
+        PREFS[PreferenceKeys.NETWORK_RETRY] = int(
+            self.network_retry_txt.cleanText().strip()
+        )
+        PREFS[PreferenceKeys.SEARCH_RESULTS_MAX] = int(
+            self.search_results_max_txt.cleanText().strip()
+        )
+        PREFS[PreferenceKeys.SEARCH_LIBRARIES] = list(
+            set(
+                [
+                    lib_key.strip().lower()
+                    for lib_key in self.search_libraries_txt.toPlainText()
+                    .strip()
+                    .split(",")
+                    if lib_key.strip()
+                ]
+            )
+        )[:MAX_SEARCH_LIBRARIES]
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:
@@ -358,7 +421,11 @@ class ConfigWidget(QWidget):
                     show=True,
                 )
 
-            libby_client = LibbyClient(logger=logger)
+            libby_client = LibbyClient(
+                logger=logger,
+                timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
+                max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
+            )
             chip_res = libby_client.get_chip()
             libby_client.clone_by_code(setup_code)
             if libby_client.is_logged_in():

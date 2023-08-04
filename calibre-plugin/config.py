@@ -20,7 +20,6 @@ from qt.core import (
     QLineEdit,
     QSpinBox,
     QTextEdit,
-    QVBoxLayout,
     QWidget,
     Qt,
 )

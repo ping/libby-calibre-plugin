@@ -27,10 +27,12 @@ from qt.core import (
     QThread,
     QWidget,
     Qt,
+    QApplication,
+    QFont,
 )
 
 from .base import BaseDialogMixin
-from .. import DEMO_MODE, logger
+from .. import DEMO_MODE
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
     QHeaderView_ResizeMode_Stretch,
@@ -126,23 +128,67 @@ class SearchDialogMixin(BaseDialogMixin):
             self.view_vspan,
             self.view_hspan,
         )
-        # set last col's min width (button)
-        search_widget.layout.setColumnMinimumWidth(
-            search_widget.layout.columnCount() - 1, self.min_button_width
+        widget_row_pos += 1
+
+        borrow_action_default_is_borrow = PREFS[
+            PreferenceKeys.LAST_BORROW_ACTION
+        ] == BorrowActions.BORROW or not hasattr(self, "download_loan")
+
+        button_font = QFont(QApplication.font())  # make it bigger
+        button_style = "padding: 2px 16px"
+        self.borrow_btn = QPushButton(
+            _("Borrow")
+            if borrow_action_default_is_borrow
+            else _("Borrow and Download"),
+            self,
         )
-        for col_num in range(0, search_widget.layout.columnCount() - 1):
+        self.borrow_btn.setIcon(self.icons[PluginIcons.Add])
+        self.borrow_btn.setStyleSheet(button_style)
+        self.borrow_btn.setFont(button_font)
+        search_widget.layout.addWidget(
+            self.borrow_btn, widget_row_pos, self.view_hspan - 1
+        )
+        self.hold_btn = QPushButton(_("Place Hold"), self)
+        self.hold_btn.setStyleSheet(button_style)
+        self.hold_btn.setFont(button_font)
+        search_widget.layout.addWidget(
+            self.hold_btn, widget_row_pos, self.view_hspan - 2
+        )
+        # set last 2 col's min width (buttons)
+        for i in (1, 2):
+            search_widget.layout.setColumnMinimumWidth(
+                search_widget.layout.columnCount() - i, self.min_button_width
+            )
+        for col_num in range(0, search_widget.layout.columnCount() - 2):
             search_widget.layout.setColumnStretch(col_num, 1)
         self.search_tab_index = self.add_tab(search_widget, _c("Search"))
 
-    def search_results_view_selection_model_selectionchanged(self):
-        selection_model = self.search_results_view.selectionModel()
-        if not selection_model.hasSelection():
-            return
-        indices = selection_model.selectedRows()
-        media = indices[-1].data(Qt.UserRole)
-        self.status_bar.showMessage(get_media_title(media, include_subtitle=True), 3000)
+    def _get_available_sites(self, media):
+        available_sites = []
+        for k, site in media.get("siteAvailabilities", {}).items():
+            site["advantageKey"] = k
+            if site.get("ownedCopies") or site.get("isAvailable"):
+                _card = next(
+                    iter(
+                        self.search_model.get_cards_for_library_key(
+                            site["advantageKey"]
+                        )
+                    ),
+                    None,
+                )
+                site["__card"] = _card
+                library = self.search_model.get_library(
+                    self.search_model.get_website_id(_card)
+                )
+                site["__library"] = library
+                available_sites.append(site)
+        return sorted(
+            available_sites,
+            key=cmp_to_key(OverDriveClient.sort_availabilities),
+            reverse=True,
+        )
 
-    def borrow_tooltip(self, media, site_availability):
+    def _borrow_tooltip(self, media, site_availability):
         available_copies = site_availability.get("availableCopies", 0)
         owned_copies = site_availability.get("ownedCopies", 0)
         texts = [site_availability["__library"]["name"]]
@@ -160,7 +206,7 @@ class SearchDialogMixin(BaseDialogMixin):
             )
         return "\n".join(texts)
 
-    def hold_tooltip(self, media, site_availability):
+    def _hold_tooltip(self, media, site_availability):
         owned_copies = site_availability.get("ownedCopies", 0)
         texts = [
             site_availability["__library"]["name"],
@@ -180,43 +226,122 @@ class SearchDialogMixin(BaseDialogMixin):
         ]
         return "\n".join(texts)
 
-    def search_results_view_context_menu_requested(self, pos):
+    def search_results_view_selection_model_selectionchanged(self):
         selection_model = self.search_results_view.selectionModel()
         if not selection_model.hasSelection():
             return
-        mi = self.search_results_view.indexAt(pos)
+        indices = selection_model.selectedRows()
+        media = indices[-1].data(Qt.UserRole)
+        self.status_bar.showMessage(get_media_title(media, include_subtitle=True), 3000)
 
         borrow_action_default_is_borrow = PREFS[
             PreferenceKeys.LAST_BORROW_ACTION
         ] == BorrowActions.BORROW or not hasattr(self, "download_loan")
 
+        available_sites = self._get_available_sites(media)
+
+        borrow_sites = [
+            s
+            for s in available_sites
+            if s.get("isAvailable") or s.get("luckyDayAvailableCopies")
+        ]
+        hold_sites = [
+            s
+            for s in available_sites
+            if not (s.get("isAvailable") or s.get("luckyDayAvailableCopies"))
+        ]
+        if borrow_sites:
+            borrow_menu = QMenu()
+            borrow_menu.setToolTipsVisible(True)
+            for site in borrow_sites:
+                cards = self.search_model.get_cards_for_library_key(
+                    site["advantageKey"]
+                )
+                for card in cards:
+                    card_action = borrow_menu.addAction(
+                        QIcon(self.get_card_pixmap(site["__library"])),
+                        truncate_for_display(
+                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
+                        ),
+                    )
+                    if not LibbyClient.can_borrow(card):
+                        card_action.setToolTip("Card is out of loan limits")
+                        card_action.setEnabled(False)
+                        continue
+
+                    if self.search_model.has_loan(media["id"], card["cardId"]):
+                        card_action.setToolTip("Loan already exists")
+                        card_action.setEnabled(False)
+                        continue
+
+                    card_action.setToolTip(self._borrow_tooltip(media, site))
+                    media_for_borrow = copy.deepcopy(media)
+                    media_for_borrow["cardId"] = card["cardId"]
+                    card_action.triggered.connect(
+                        # this is from the holds tab
+                        lambda checked, m=media_for_borrow: self.borrow_hold(
+                            m, do_download=not borrow_action_default_is_borrow
+                        )
+                    )
+            self.borrow_btn.setEnabled(True)
+            self.borrow_btn.borrow_menu = borrow_menu
+            self.borrow_btn.setMenu(borrow_menu)
+        else:
+            self.borrow_btn.borrow_menu = None
+            self.borrow_btn.setMenu(None)
+            self.borrow_btn.setEnabled(False)
+
+        if hold_sites:
+            hold_menu = QMenu()
+            hold_menu.setToolTipsVisible(True)
+            for site in hold_sites:
+                cards = self.search_model.get_cards_for_library_key(
+                    site["advantageKey"]
+                )
+                for card in cards:
+                    card_action = hold_menu.addAction(
+                        QIcon(self.get_card_pixmap(site["__library"])),
+                        truncate_for_display(
+                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
+                        ),
+                    )
+                    if not LibbyClient.can_place_hold(card):
+                        card_action.setToolTip("Card is out of hold limits")
+                        card_action.setEnabled(False)
+                        continue
+                    if self.search_model.has_hold(media["id"], card["cardId"]):
+                        card_action.setToolTip("Hold already exists")
+                        card_action.setEnabled(False)
+                        continue
+
+                    card_action.setToolTip(self._hold_tooltip(media, site))
+                    card_action.triggered.connect(
+                        lambda checked, m=media, c=card: self.create_hold(m, c)
+                    )
+            self.hold_btn.setEnabled(True)
+            self.hold_btn.hold_menu = hold_menu
+            self.hold_btn.setMenu(hold_menu)
+        else:
+            self.hold_btn.borrow_menu = None
+            self.hold_btn.setMenu(None)
+            self.hold_btn.setEnabled(False)
+
+    def search_results_view_context_menu_requested(self, pos):
+        selection_model = self.search_results_view.selectionModel()
+        if not selection_model.hasSelection():
+            return
+        mi = self.search_results_view.indexAt(pos)
         media = mi.data(Qt.UserRole)
 
         menu = QMenu(self)
         menu.setToolTipsVisible(True)
-        available_sites = []
-        for k, v in media.get("siteAvailabilities", {}).items():
-            v["advantageKey"] = k
-            if v.get("ownedCopies") or v.get("isAvailable"):
-                available_sites.append(v)
-        available_sites = sorted(
-            available_sites,
-            key=cmp_to_key(OverDriveClient.sort_availabilities),
-            reverse=True,
-        )
+        available_sites = self._get_available_sites(media)
         view_in_libby_menu = QMenu(_("View in Libby"))
         view_in_libby_menu.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_menu.setToolTipsVisible(True)
         for site in available_sites:
-            _card = next(
-                iter(self.search_model.get_cards_for_library_key(site["advantageKey"])),
-                None,
-            )
-            site["__card"] = _card
-            library = self.search_model.get_library(
-                self.search_model.get_website_id(_card)
-            )
-            site["__library"] = library
+            _card = site["__card"]
+            library = site["__library"]
             libby_action = view_in_libby_menu.addAction(
                 QIcon(self.get_card_pixmap(site["__library"])),
                 _card["advantageKey"]
@@ -249,81 +374,6 @@ class SearchDialogMixin(BaseDialogMixin):
                 )
             )
         menu.addMenu(view_in_overdrive_menu)
-
-        borrow_sites = [
-            s
-            for s in available_sites
-            if s.get("isAvailable") or s.get("luckyDayAvailableCopies")
-        ]
-        hold_sites = [
-            s
-            for s in available_sites
-            if not (s.get("isAvailable") or s.get("luckyDayAvailableCopies"))
-        ]
-        if borrow_sites:
-            menu.addSection(
-                _("Borrow with")
-                if borrow_action_default_is_borrow
-                else _("Borrow and Download with"),
-            )
-            for site in borrow_sites:
-                cards = self.search_model.get_cards_for_library_key(
-                    site["advantageKey"]
-                )
-                for card in cards:
-                    if not LibbyClient.can_borrow(card):
-                        logger.debug(
-                            f"Card is out of loan limits: {card['cardName']} @ {card['advantageKey']}"
-                        )
-                        continue
-                    if self.search_model.has_loan(media["id"], card["cardId"]):
-                        logger.debug(
-                            f"Loan already exists for {media['title']} @ {card['advantageKey']}"
-                        )
-                        continue
-                    card_action = menu.addAction(
-                        QIcon(self.get_card_pixmap(site["__library"])),
-                        truncate_for_display(
-                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
-                        ),
-                    )
-                    card_action.setToolTip(self.borrow_tooltip(media, site))
-                    media_for_borrow = copy.deepcopy(media)
-                    media_for_borrow["cardId"] = card["cardId"]
-                    card_action.triggered.connect(
-                        # this is from the holds tab
-                        lambda checked, m=media_for_borrow: self.borrow_hold(
-                            m, do_download=not borrow_action_default_is_borrow
-                        )
-                    )
-        if hold_sites:
-            menu.addSection(_("Place Hold with"))
-            for site in hold_sites:
-                cards = self.search_model.get_cards_for_library_key(
-                    site["advantageKey"]
-                )
-                for card in cards:
-                    if not LibbyClient.can_place_hold(card):
-                        logger.debug(
-                            f"Card is out of hold limits: {card['cardName']} @ {card['advantageKey']}"
-                        )
-                        continue
-                    if self.search_model.has_hold(media["id"], card["cardId"]):
-                        logger.debug(
-                            f"Hold already exists for {media['title']} @ {card['advantageKey']}"
-                        )
-                        continue
-                    card_action = menu.addAction(
-                        QIcon(self.get_card_pixmap(site["__library"])),
-                        truncate_for_display(
-                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
-                        ),
-                    )
-                    card_action.setToolTip(self.hold_tooltip(media, site))
-                    card_action.triggered.connect(
-                        lambda checked, m=media, c=card: self.create_hold(m, c)
-                    )
-
         menu.exec(QCursor.pos())
 
     def create_hold(self, media, card):
@@ -354,9 +404,18 @@ class SearchDialogMixin(BaseDialogMixin):
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
+    def _reset_borrow_hold_buttons(self):
+        self.borrow_btn.borrow_menu = None
+        self.borrow_btn.setMenu(None)
+        self.borrow_btn.setEnabled(True)
+        self.hold_btn.hold_menu = None
+        self.hold_btn.setMenu(None)
+        self.hold_btn.setEnabled(True)
+
     def search_btn_clicked(self):
         self.search_model.sync({"search_results": []})
         self.search_results_view.sortByColumn(-1, Qt.AscendingOrder)
+        self._reset_borrow_hold_buttons()
         search_query = self.query_txt.text().strip()
         if not search_query:
             return

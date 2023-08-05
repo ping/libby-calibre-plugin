@@ -163,6 +163,12 @@ class SearchDialogMixin(BaseDialogMixin):
             search_widget.layout.setColumnStretch(col_num, 1)
         self.search_tab_index = self.add_tab(search_widget, _c("Search"))
 
+    def search_for(self, text: str):
+        self.tabs.setCurrentIndex(self.search_tab_index)
+        self.query_txt.setText(text)
+        self.search_btn.setFocus(Qt.OtherFocusReason)
+        self.search_btn.animateClick()
+
     def _get_available_sites(self, media):
         available_sites = []
         for k, site in media.get("siteAvailabilities", {}).items():

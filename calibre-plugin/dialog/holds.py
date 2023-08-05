@@ -42,7 +42,7 @@ from ..compat import (
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
-from ..models import LibbyHoldsModel, LibbyModel, get_media_title
+from ..models import LibbyHoldsModel, LibbyModel, get_media_title, truncate_for_display
 from ..utils import PluginIcons
 
 # noinspection PyUnreachableCode
@@ -266,6 +266,20 @@ class HoldsDialogMixin(BaseDialogMixin):
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
+
+        if hasattr(self, "search_for"):
+            hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
+            search_action = menu.addAction(
+                _('Search for "{book}"').format(
+                    book=truncate_for_display(get_media_title(hold))
+                )
+            )
+            search_action.setIcon(self.icons[PluginIcons.Search])
+            search_action.triggered.connect(
+                lambda: self.search_for(
+                    f'{get_media_title(hold)} {hold.get("firstCreatorName", "")}'
+                )
+            )
 
         edit_hold_action = menu.addAction(_("Manage hold"))
         edit_hold_action.setIcon(self.icons[PluginIcons.Edit])

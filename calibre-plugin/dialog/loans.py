@@ -39,7 +39,7 @@ from ..libby import LibbyClient
 from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
 from ..magazine_download_utils import extract_asin, extract_isbn
-from ..models import LibbyLoansModel, LibbyModel, get_media_title
+from ..models import LibbyLoansModel, LibbyModel, get_media_title, truncate_for_display
 from ..utils import OD_IDENTIFIER, PluginIcons, generate_od_identifier
 
 # noinspection PyUnreachableCode
@@ -192,6 +192,21 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
         view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+
+        if hasattr(self, "search_for"):
+            loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
+            search_action = menu.addAction(
+                _('Search for "{book}"').format(
+                    book=truncate_for_display(get_media_title(loan))
+                )
+            )
+            search_action.setIcon(self.icons[PluginIcons.Search])
+            search_action.triggered.connect(
+                lambda: self.search_for(
+                    f'{get_media_title(loan)} {loan.get("firstCreatorName", "")}'
+                )
+            )
+
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
         )

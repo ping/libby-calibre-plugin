@@ -86,8 +86,6 @@ class BaseDialogMixin(QDialog):
         self.db = gui.current_db.new_api
         self.client = None
         self._sync_thread = QThread()  # main sync thread
-        self._curr_width = 0  # for persisting dialog size
-        self._curr_height = 0  # for persisting dialog size
         self.logger = logger
 
         self.setWindowTitle(
@@ -152,34 +150,17 @@ class BaseDialogMixin(QDialog):
         self.models: List[LibbyModel] = []
         self.loading_overlay = CustomLoadingOverlay(self)
 
-    def resizeEvent(self, e):
-        # Because resizeEvent is called *multiple* times during a resize,
-        # we will save the new window size only when the differential is
-        # greater than min_diff.
-        # This does not completely debounce the saves, but it does reduce
-        # it reasonably imo.
-        new_size = e.size()
-        self.loading_overlay.resize(new_size)
-        new_width = new_size.width()
-        new_height = new_size.height()
-        min_diff = 5
-        if (
-            new_width
-            and new_width > 0
-            and abs(new_width - self._curr_width) >= min_diff
-            and new_width != PREFS[PreferenceKeys.MAIN_UI_WIDTH]
-        ):
-            PREFS[PreferenceKeys.MAIN_UI_WIDTH] = new_width
-            self._curr_width = new_width
+        self.finished.connect(self.dialog_finished)
+
+    def dialog_finished(self):
+        dialog_size = self.size()
+        new_width = dialog_size.width()
+        new_height = dialog_size.height()
+        if PREFS[PreferenceKeys.MAIN_UI_WIDTH] != new_width:
+            PREFS[PreferenceKeys.MAIN_UI_HEIGHT] = new_width
             logger.debug("Saved new UI width preference: %d", new_width)
-        if (
-            new_height
-            and new_height > 0
-            and abs(new_height - self._curr_height) >= min_diff
-            and new_height != PREFS[PreferenceKeys.MAIN_UI_HEIGHT]
-        ):
+        if PREFS[PreferenceKeys.MAIN_UI_HEIGHT] != new_height:
             PREFS[PreferenceKeys.MAIN_UI_HEIGHT] = new_height
-            self._curr_height = new_height
             logger.debug("Saved new UI height preference: %d", new_height)
 
     def add_tab(self, widget, label) -> int:

@@ -150,10 +150,6 @@ class OverdriveLibbyDialog(
         logger.debug("Resizing window to: (%d, %d)", w, h)
         self.resize(QSize(w, h))
 
-        # for pseudo-debouncing resizeEvent
-        self._curr_width = self.size().width()
-        self._curr_height = self.size().height()
-
         if (
             PREFS[PreferenceKeys.LAST_SELECTED_TAB]
             and self.tabs.count() > PREFS[PreferenceKeys.LAST_SELECTED_TAB]

@@ -271,12 +271,26 @@ class SearchDialogMixin(BaseDialogMixin):
                         ),
                     )
                     if not LibbyClient.can_borrow(card):
-                        card_action.setToolTip("Card is out of loan limits")
+                        card_action.setToolTip(
+                            "\n".join(
+                                [
+                                    site["__library"]["name"],
+                                    _("This card is out of loans."),
+                                ]
+                            )
+                        )
                         card_action.setEnabled(False)
                         continue
 
                     if self.search_model.has_loan(media["id"], card["cardId"]):
-                        card_action.setToolTip("Loan already exists")
+                        card_action.setToolTip(
+                            "\n".join(
+                                [
+                                    site["__library"]["name"],
+                                    _("You already have a loan for this title."),
+                                ]
+                            )
+                        )
                         card_action.setEnabled(False)
                         continue
 
@@ -312,11 +326,25 @@ class SearchDialogMixin(BaseDialogMixin):
                         ),
                     )
                     if not LibbyClient.can_place_hold(card):
-                        card_action.setToolTip("Card is out of hold limits")
+                        card_action.setToolTip(
+                            "\n".join(
+                                [
+                                    site["__library"]["name"],
+                                    _("This card is out of holds."),
+                                ]
+                            )
+                        )
                         card_action.setEnabled(False)
                         continue
                     if self.search_model.has_hold(media["id"], card["cardId"]):
-                        card_action.setToolTip("Hold already exists")
+                        card_action.setToolTip(
+                            "\n".join(
+                                [
+                                    site["__library"]["name"],
+                                    _("You already have a hold for this title."),
+                                ]
+                            )
+                        )
                         card_action.setEnabled(False)
                         continue
 

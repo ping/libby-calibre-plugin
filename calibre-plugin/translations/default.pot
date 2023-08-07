@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-05 18:01+0800\n"
+"POT-Creation-Date: 2023-08-07 11:27+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -368,14 +368,14 @@ msgstr ""
 #: calibre-plugin/dialog/cards.py:222 calibre-plugin/dialog/cards.py:233
 #: calibre-plugin/dialog/cards.py:244 calibre-plugin/dialog/holds.py:259
 #: calibre-plugin/dialog/loans.py:188 calibre-plugin/dialog/magazines.py:260
-#: calibre-plugin/dialog/search.py:345
+#: calibre-plugin/dialog/search.py:373
 msgid "View in Libby"
 msgstr ""
 
 #: calibre-plugin/dialog/cards.py:225 calibre-plugin/dialog/cards.py:236
 #: calibre-plugin/dialog/cards.py:247 calibre-plugin/dialog/holds.py:264
 #: calibre-plugin/dialog/loans.py:193 calibre-plugin/dialog/magazines.py:265
-#: calibre-plugin/dialog/search.py:364
+#: calibre-plugin/dialog/search.py:392
 msgid "View in OverDrive"
 msgstr ""
 
@@ -605,11 +605,27 @@ msgstr[1] ""
 msgid "You will be number {n} in line."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:387
+#: calibre-plugin/dialog/search.py:278
+msgid "This card is out of loans."
+msgstr ""
+
+#: calibre-plugin/dialog/search.py:290
+msgid "You already have a loan for this title."
+msgstr ""
+
+#: calibre-plugin/dialog/search.py:333
+msgid "This card is out of holds."
+msgstr ""
+
+#: calibre-plugin/dialog/search.py:344
+msgid "You already have a hold for this title."
+msgstr ""
+
+#: calibre-plugin/dialog/search.py:415
 #, python-brace-format
 msgid "Placing hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:408
+#: calibre-plugin/dialog/search.py:436
 msgid "Failed to create hold"
 msgstr ""

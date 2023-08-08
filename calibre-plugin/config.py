@@ -14,7 +14,7 @@ from calibre.utils.config import JSONConfig
 
 try:
     from calibre.gui2.preferences.create_custom_column import CreateNewCustomColumn
-except:
+except:  # noqa
     CreateNewCustomColumn = None
 
 from qt.core import (

@@ -301,6 +301,7 @@ class ConfigWidget(QWidget):
             self.borrow_date_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE]
                 if self.db.field_metadata.has_key(self.custom_column_name("borrowed"))
+                and not DEMO_MODE
                 else ""
             )
             borrow_date_col_lbl.setBuddy(self.borrow_date_col_text)
@@ -313,6 +314,7 @@ class ConfigWidget(QWidget):
             self.due_date_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_DUE_DATE]
                 if self.db.field_metadata.has_key(self.custom_column_name("due"))
+                and not DEMO_MODE
                 else ""
             )
             due_date_col_lbl.setBuddy(self.due_date_col_text)

@@ -106,6 +106,35 @@ class LibbyDownload:
 
         return metadata
 
+    def update_custom_columns(self, book_id, loan, db, log):
+        """
+        Update custom columns from loan.
+
+        :param book_id:
+        :param loan:
+        :param db:
+        :param log:
+        :return:
+        """
+        try:
+            if PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] and loan.get("checkoutDate"):
+                borrowed_date = LibbyClient.parse_datetime(loan["checkoutDate"])
+                db.set_field(
+                    PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE],
+                    {book_id: borrowed_date},
+                )
+        except Exception as err:
+            log.exception("Error updating Borrowed Date: {err}".format(err=err))
+        try:
+            if PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] and loan.get("expireDate"):
+                due_date = LibbyClient.parse_datetime(loan["expireDate"])
+                db.set_field(
+                    PREFS[PreferenceKeys.CUSTCOL_DUE_DATE],
+                    {book_id: due_date},
+                )
+        except Exception as err:
+            log.exception("Error updating Due Date: {err}".format(err=err))
+
     def add(
         self,
         gui,
@@ -152,6 +181,7 @@ class LibbyDownload:
                     gui, loan, library, format_id, metadata, tags
                 )
                 db.set_metadata(book_id, metadata)
+                self.update_custom_columns(book_id, loan, db, log)
 
                 if PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]:
                     gui.current_db.set_marked_ids([book_id])  # mark updated book
@@ -181,5 +211,6 @@ class LibbyDownload:
             gui.library_view.model().db.add_format_with_hooks(
                 book_id, new_ext.upper(), new_path, index_is_id=True
             )
+            self.update_custom_columns(book_id, loan, db, log)
             gui.library_view.model().books_added(1)
             gui.library_view.model().count_changed()

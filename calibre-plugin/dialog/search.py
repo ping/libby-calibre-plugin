@@ -194,6 +194,9 @@ class SearchDialogMixin(BaseDialogMixin):
             reverse=True,
         )
 
+    def _wrap_for_rich_text(self, txt):
+        return f"<p>{txt}</p>"
+
     def _borrow_tooltip(self, media, site_availability):
         available_copies = site_availability.get(
             "luckyDayAvailableCopies", 0
@@ -201,11 +204,13 @@ class SearchDialogMixin(BaseDialogMixin):
         owned_copies = site_availability.get(
             "luckyDayOwnedCopies", 0
         ) + site_availability.get("ownedCopies", 0)
-        texts = [site_availability["__library"]["name"]]
+        texts = [f'<b>{site_availability["__library"]["name"]}</b>']
         if available_copies:
             texts.append(
                 ngettext(
-                    "{n} copy available.", "{n} copies available.", available_copies
+                    "<b>{n}</b> copy available.",
+                    "<b>{n}</b> copies available.",
+                    available_copies,
                 ).format(n=available_copies)
             )
         if owned_copies:
@@ -214,13 +219,13 @@ class SearchDialogMixin(BaseDialogMixin):
                     n=owned_copies
                 )
             )
-        return "\n".join(texts)
+        return self._wrap_for_rich_text("<br>".join(texts))
 
     def _hold_tooltip(self, media, site_availability):
         owned_copies = site_availability.get("ownedCopies", 0)
         texts = [
-            site_availability["__library"]["name"],
-            _("Estimated wait days: {n}.").format(
+            f'<b>{site_availability["__library"]["name"]}</b>',
+            _("Estimated wait days: <b>{n}</b>.").format(
                 n=site_availability.get("estimatedWaitDays", 0) or _c("Unknown")
             ),
             _("You will be number {n} in line.").format(
@@ -234,7 +239,7 @@ class SearchDialogMixin(BaseDialogMixin):
                 "{n} copy in use.", "{n} copies in use.", owned_copies
             ).format(n=owned_copies),
         ]
-        return "\n".join(texts)
+        return self._wrap_for_rich_text("<br>".join(texts))
 
     def search_results_view_selection_model_selectionchanged(self):
         selection_model = self.search_results_view.selectionModel()
@@ -276,11 +281,13 @@ class SearchDialogMixin(BaseDialogMixin):
                     )
                     if not LibbyClient.can_borrow(card):
                         card_action.setToolTip(
-                            "\n".join(
-                                [
-                                    site["__library"]["name"],
-                                    _("This card is out of loans."),
-                                ]
+                            self._wrap_for_rich_text(
+                                "<br>".join(
+                                    [
+                                        f'<b>{site["__library"]["name"]}</b>',
+                                        _("This card is out of loans."),
+                                    ]
+                                )
                             )
                         )
                         card_action.setEnabled(False)
@@ -288,11 +295,13 @@ class SearchDialogMixin(BaseDialogMixin):
 
                     if self.search_model.has_loan(media["id"], card["cardId"]):
                         card_action.setToolTip(
-                            "\n".join(
-                                [
-                                    site["__library"]["name"],
-                                    _("You already have a loan for this title."),
-                                ]
+                            self._wrap_for_rich_text(
+                                "<br>".join(
+                                    [
+                                        f'<b>{site["__library"]["name"]}</b>',
+                                        _("You already have a loan for this title."),
+                                    ]
+                                )
                             )
                         )
                         card_action.setEnabled(False)
@@ -331,22 +340,26 @@ class SearchDialogMixin(BaseDialogMixin):
                     )
                     if not LibbyClient.can_place_hold(card):
                         card_action.setToolTip(
-                            "\n".join(
-                                [
-                                    site["__library"]["name"],
-                                    _("This card is out of holds."),
-                                ]
+                            self._wrap_for_rich_text(
+                                "<br>".join(
+                                    [
+                                        f'<b>{site["__library"]["name"]}</b>',
+                                        _("This card is out of holds."),
+                                    ]
+                                )
                             )
                         )
                         card_action.setEnabled(False)
                         continue
                     if self.search_model.has_hold(media["id"], card["cardId"]):
                         card_action.setToolTip(
-                            "\n".join(
-                                [
-                                    site["__library"]["name"],
-                                    _("You already have a hold for this title."),
-                                ]
+                            self._wrap_for_rich_text(
+                                "<br>".join(
+                                    [
+                                        f'<b>{site["__library"]["name"]}</b>',
+                                        _("You already have a hold for this title."),
+                                    ]
+                                )
                             )
                         )
                         card_action.setEnabled(False)

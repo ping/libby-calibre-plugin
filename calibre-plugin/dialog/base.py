@@ -182,6 +182,9 @@ class BaseDialogMixin(QDialog):
         if index > -1:
             PREFS[PreferenceKeys.LAST_SELECTED_TAB] = index
 
+    def open_link(self, link):
+        QDesktopServices.openUrl(QUrl(link))
+
     def view_in_libby_action_triggered(
         self, indices, model: LibbyModel, card: Optional[Dict] = None
     ):
@@ -196,9 +199,7 @@ class BaseDialogMixin(QDialog):
         for index in indices:
             data = index.data(Qt.UserRole)
             library_key = (card or model.get_card(data["cardId"]))["advantageKey"]
-            QDesktopServices.openUrl(
-                QUrl(LibbyClient.libby_title_permalink(library_key, data["id"]))
-            )
+            self.open_link(LibbyClient.libby_title_permalink(library_key, data["id"]))
 
     def view_in_overdrive_action_triggered(
         self, indices, model: LibbyModel, card: Optional[Dict] = None
@@ -220,11 +221,9 @@ class BaseDialogMixin(QDialog):
             if not library:
                 continue
 
-            QDesktopServices.openUrl(
-                QUrl(
-                    OverDriveClient.library_title_permalink(
-                        library["preferredKey"], data["id"]
-                    )
+            self.open_link(
+                OverDriveClient.library_title_permalink(
+                    library["preferredKey"], data["id"]
                 )
             )
 

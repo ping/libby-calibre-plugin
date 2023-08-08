@@ -13,7 +13,6 @@ from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
 from qt.core import (
     QCursor,
-    QDesktopServices,
     QFrame,
     QGridLayout,
     QLabel,
@@ -24,7 +23,6 @@ from qt.core import (
     QPushButton,
     QScrollArea,
     QSizePolicy,
-    QUrl,
     QWidget,
     Qt,
     pyqtSignal,
@@ -248,9 +246,6 @@ class CardWidget(QWidget):
         view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_overdrive_action.triggered.connect(self.open_overdrive_holds)
         menu.exec(QCursor.pos())
-
-    def open_link(self, link):
-        QDesktopServices.openUrl(QUrl(link))
 
     def overdrive_url(self):
         return f'https://{self.library["preferredKey"]}.overdrive.com/'

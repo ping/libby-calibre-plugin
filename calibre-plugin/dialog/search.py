@@ -195,8 +195,12 @@ class SearchDialogMixin(BaseDialogMixin):
         )
 
     def _borrow_tooltip(self, media, site_availability):
-        available_copies = site_availability.get("availableCopies", 0)
-        owned_copies = site_availability.get("ownedCopies", 0)
+        available_copies = site_availability.get(
+            "luckyDayAvailableCopies", 0
+        ) + site_availability.get("availableCopies", 0)
+        owned_copies = site_availability.get(
+            "luckyDayOwnedCopies", 0
+        ) + site_availability.get("ownedCopies", 0)
         texts = [site_availability["__library"]["name"]]
         if available_copies:
             texts.append(

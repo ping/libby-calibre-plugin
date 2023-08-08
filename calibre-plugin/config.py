@@ -9,15 +9,24 @@
 #
 
 from calibre import confirm_config_name
-from calibre.gui2 import error_dialog
+from calibre.gui2 import error_dialog, show_restart_warning
 from calibre.utils.config import JSONConfig
+
+try:
+    from calibre.gui2.preferences.create_custom_column import CreateNewCustomColumn
+except:
+    CreateNewCustomColumn = None
+
 from qt.core import (
     QCheckBox,
     QFormLayout,
     QGridLayout,
     QGroupBox,
+    QHBoxLayout,
+    QIcon,
     QLabel,
     QLineEdit,
+    QPushButton,
     QSpinBox,
     QTextEdit,
     QVBoxLayout,
@@ -64,6 +73,8 @@ class PreferenceKeys:
     NETWORK_RETRY = "network_retry"
     SEARCH_RESULTS_MAX = "search_results_max"
     SEARCH_LIBRARIES = "search_libraries"
+    CUSTCOL_BORROWED_DATE = "custcol_borrowed_dt"
+    CUSTCOL_DUE_DATE = "custcol_due_dt"
 
 
 class BorrowActions:
@@ -95,6 +106,8 @@ class PreferenceTexts:
     SEARCH_LIBRARIES = _("Library Keys (comma-separated, max: {n})").format(
         n=MAX_SEARCH_LIBRARIES
     )
+    CUSTCOL_BORROWED_DATE = _("Custom column for Borrowed Date")
+    CUSTCOL_DUE_DATE = _("Custom column for Due Date")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -118,6 +131,8 @@ PREFS.defaults[PreferenceKeys.NETWORK_TIMEOUT] = 30
 PREFS.defaults[PreferenceKeys.NETWORK_RETRY] = 1
 PREFS.defaults[PreferenceKeys.SEARCH_RESULTS_MAX] = 20
 PREFS.defaults[PreferenceKeys.SEARCH_LIBRARIES] = []
+PREFS.defaults[PreferenceKeys.CUSTCOL_BORROWED_DATE] = ""
+PREFS.defaults[PreferenceKeys.CUSTCOL_DUE_DATE] = ""
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
@@ -131,10 +146,15 @@ class ConfigWidget(QWidget):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
 
+        self.gui = plugin_action.gui
+        self.db = self.gui.current_db.new_api
         # Setup Status
         is_configured = bool(PREFS[PreferenceKeys.LIBBY_TOKEN])
         if DEMO_MODE:
             is_configured = False
+        self.custom_column_creator = (
+            CreateNewCustomColumn(self.gui) if CreateNewCustomColumn else None
+        )
 
         # ------------------------------------ LIBBY ------------------------------------
         libby_section = QGroupBox(_("Libby"))
@@ -270,6 +290,77 @@ class ConfigWidget(QWidget):
             self.tag_magazines_txt.setText(PREFS[PreferenceKeys.TAG_MAGAZINES])
         loan_layout.addRow(PreferenceTexts.TAG_MAGAZINES, self.tag_magazines_txt)
 
+        if self.custom_column_creator:
+            # set custom columns to store borrow and due dates
+            borrow_date_col_layout = QHBoxLayout()
+            due_date_col_layout = QHBoxLayout()
+
+            borrow_date_col_lbl = QLabel(PreferenceTexts.CUSTCOL_BORROWED_DATE)
+            self.borrow_date_col_text = QLineEdit(self)
+            self.borrow_date_col_text.setClearButtonEnabled(True)
+            self.borrow_date_col_text.setText(
+                PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE]
+                if self.db.field_metadata.has_key(self.custom_column_name("borrowed"))
+                else ""
+            )
+            borrow_date_col_lbl.setBuddy(self.borrow_date_col_text)
+            borrow_date_col_layout.addWidget(borrow_date_col_lbl)
+            borrow_date_col_layout.addWidget(self.borrow_date_col_text)
+
+            due_date_col_lbl = QLabel(PreferenceTexts.CUSTCOL_DUE_DATE)
+            self.due_date_col_text = QLineEdit(self)
+            self.due_date_col_text.setClearButtonEnabled(True)
+            self.due_date_col_text.setText(
+                PREFS[PreferenceKeys.CUSTCOL_DUE_DATE]
+                if self.db.field_metadata.has_key(self.custom_column_name("due"))
+                else ""
+            )
+            due_date_col_lbl.setBuddy(self.due_date_col_text)
+            due_date_col_layout.addWidget(due_date_col_lbl)
+            due_date_col_layout.addWidget(self.due_date_col_text)
+
+            label_min_width = max(
+                due_date_col_lbl.sizeHint().width(),
+                borrow_date_col_lbl.sizeHint().width(),
+            )
+            due_date_col_lbl.setMinimumWidth(label_min_width)
+            borrow_date_col_lbl.setMinimumWidth(label_min_width)
+
+            custom_col_buttons = []
+            self.borrow_date_col_add_btn = None
+            if not self.borrow_date_col_text.text():
+                self.borrow_date_col_add_btn = QPushButton("", self)
+                self.borrow_date_col_add_btn.clicked.connect(
+                    lambda: self.create_custom_column(
+                        self.borrow_date_col_text,
+                        "borrowed",
+                        {"description": _("Loan's borrowed/checkout date")},
+                    )
+                )
+                custom_col_buttons.append(self.borrow_date_col_add_btn)
+            self.due_date_col_add_btn = None
+            if not self.due_date_col_text.text():
+                self.due_date_col_add_btn = QPushButton("", self)
+                self.due_date_col_add_btn.clicked.connect(
+                    lambda: self.create_custom_column(
+                        self.due_date_col_text,
+                        "due",
+                        {"description": _("Loan's due/expiry date")},
+                    )
+                )
+                custom_col_buttons.append(self.due_date_col_add_btn)
+            for btn in custom_col_buttons:
+                btn.setIcon(QIcon.ic("plus.png"))
+                btn.setToolTip(_c("Create a custom column"))
+            if self.borrow_date_col_add_btn:
+                borrow_date_col_layout.addWidget(self.borrow_date_col_add_btn)
+            if self.due_date_col_add_btn:
+                due_date_col_layout.addWidget(self.due_date_col_add_btn)
+            for layout in (borrow_date_col_layout, due_date_col_layout):
+                layout.setStretch(1, 1)
+            loan_layout.addRow(borrow_date_col_layout)
+            loan_layout.addRow(due_date_col_layout)
+
         # ------------------------------------ Holds ------------------------------------
         holds_section = QGroupBox(_("Holds"))
         holds_layout = QFormLayout()
@@ -357,6 +448,42 @@ class ConfigWidget(QWidget):
         self.help_lbl.setOpenExternalLinks(True)
         self.layout.addWidget(self.help_lbl, 4, 0, 1, 2)
 
+        self.resize(self.sizeHint())
+
+    def custom_column_name(self, col_type: str):
+        return (
+            f"{self.db.field_metadata.custom_field_prefix}libby_{col_type.lower()}_date"
+        )
+
+    def create_custom_column(self, txt_widget, col_type: str, display=None):
+        """
+        Launch calibre's create custom column UI for plugins.
+
+        :param txt_widget:
+        :param col_type:
+        :param display:
+        :return:
+        """
+        if not display:
+            display = {}
+        lookup_name = self.custom_column_name(col_type)
+        result = self.custom_column_creator.create_column(
+            lookup_name=lookup_name,
+            column_heading=f"Libby {col_type.title()} Date",
+            datatype="datetime",
+            is_multiple=False,
+            display=display,
+            freeze_lookup_name=False,
+        )
+        if result[0] == self.custom_column_creator.Result.CANCELED:
+            return
+        if result[0] == self.custom_column_creator.Result.COLUMN_ADDED:
+            txt_widget.setText(result[1])
+        elif result[0] == self.custom_column_creator.Result.DUPLICATE_KEY:
+            txt_widget.setText(lookup_name)
+        else:
+            return error_dialog(self, str(result[0]), result[1], show=True)
+
     def save_settings(self):
         if DEMO_MODE:
             return
@@ -408,6 +535,39 @@ class ConfigWidget(QWidget):
                 ]
             )
         )[:MAX_SEARCH_LIBRARIES]
+        if (
+            self.custom_column_creator
+            and hasattr(self, "borrow_date_col_text")
+            and hasattr(self, "due_date_col_text")
+        ):
+            borrowed_date_custcol_name = (
+                self.borrow_date_col_text.text() or ""
+            ).strip()
+            due_date_custcol_name = (self.due_date_col_text.text() or "").strip()
+            if (
+                borrowed_date_custcol_name
+                and not borrowed_date_custcol_name.startswith(
+                    self.db.field_metadata.custom_field_prefix
+                )
+            ) or (
+                due_date_custcol_name
+                and not due_date_custcol_name.startswith(
+                    self.db.field_metadata.custom_field_prefix
+                )
+            ):
+                # We could validate more, but we'll just be replicating more
+                # calibre code. Field updates failures are silently caught
+                # and do not break the download job.
+                return error_dialog(
+                    self,
+                    _c("Custom columns"),
+                    _c("The lookup name must begin with a '#'"),
+                    show=True,
+                )
+            PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] = (
+                self.borrow_date_col_text.text() or ""
+            )
+            PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] = self.due_date_col_text.text() or ""
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:
@@ -433,3 +593,13 @@ class ConfigWidget(QWidget):
             if libby_client.is_logged_in():
                 PREFS[PreferenceKeys.LIBBY_SETUP_CODE] = setup_code
                 PREFS[PreferenceKeys.LIBBY_TOKEN] = chip_res["identity"]
+
+        if self.custom_column_creator and (
+            self.custom_column_creator.gui.must_restart_before_config
+            or self.custom_column_creator.must_restart()
+        ):
+            msg = _c(
+                "Some of the changes you made require a restart."
+                " Please restart calibre as soon as possible."
+            )
+            return show_restart_warning(msg, self)

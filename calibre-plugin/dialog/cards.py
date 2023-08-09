@@ -247,6 +247,9 @@ class CardWidget(QWidget):
         view_in_overdrive_action.triggered.connect(self.open_overdrive_holds)
         menu.exec(QCursor.pos())
 
+    def open_link(self, link):
+        self.tab.open_link(link)
+
     def overdrive_url(self):
         return f'https://{self.library["preferredKey"]}.overdrive.com/'
 

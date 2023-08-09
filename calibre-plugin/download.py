@@ -135,6 +135,17 @@ class LibbyDownload:
         except Exception as err:
             log.exception("Error updating Due Date: {err}".format(err=err))
 
+        try:
+            if PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE] and loan.get("type", {}).get(
+                "id"
+            ):
+                db.set_field(
+                    PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE],
+                    {book_id: loan["type"]["id"]},
+                )
+        except Exception as err:
+            log.exception("Error updating Loan Type: {err}".format(err=err))
+
     def add(
         self,
         gui,

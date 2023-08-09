@@ -75,6 +75,7 @@ class PreferenceKeys:
     SEARCH_LIBRARIES = "search_libraries"
     CUSTCOL_BORROWED_DATE = "custcol_borrowed_dt"
     CUSTCOL_DUE_DATE = "custcol_due_dt"
+    CUSTCOL_LOAN_TYPE = "custcol_loan_type"
 
 
 class BorrowActions:
@@ -108,6 +109,7 @@ class PreferenceTexts:
     )
     CUSTCOL_BORROWED_DATE = _("Custom column for Borrowed Date")
     CUSTCOL_DUE_DATE = _("Custom column for Due Date")
+    CUSTCOL_LOAN_TYPE = _("Custom column for Loan Type")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -133,6 +135,7 @@ PREFS.defaults[PreferenceKeys.SEARCH_RESULTS_MAX] = 20
 PREFS.defaults[PreferenceKeys.SEARCH_LIBRARIES] = []
 PREFS.defaults[PreferenceKeys.CUSTCOL_BORROWED_DATE] = ""
 PREFS.defaults[PreferenceKeys.CUSTCOL_DUE_DATE] = ""
+PREFS.defaults[PreferenceKeys.CUSTCOL_LOAN_TYPE] = ""
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
@@ -294,13 +297,16 @@ class ConfigWidget(QWidget):
             # set custom columns to store borrow and due dates
             borrow_date_col_layout = QHBoxLayout()
             due_date_col_layout = QHBoxLayout()
+            loan_type_col_layout = QHBoxLayout()
 
             borrow_date_col_lbl = QLabel(PreferenceTexts.CUSTCOL_BORROWED_DATE)
             self.borrow_date_col_text = QLineEdit(self)
             self.borrow_date_col_text.setClearButtonEnabled(True)
             self.borrow_date_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE]
-                if self.db.field_metadata.has_key(self.custom_column_name("borrowed"))
+                if self.db.field_metadata.has_key(
+                    self.custom_column_name("borrowed date")
+                )
                 and not DEMO_MODE
                 else ""
             )
@@ -313,7 +319,7 @@ class ConfigWidget(QWidget):
             self.due_date_col_text.setClearButtonEnabled(True)
             self.due_date_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_DUE_DATE]
-                if self.db.field_metadata.has_key(self.custom_column_name("due"))
+                if self.db.field_metadata.has_key(self.custom_column_name("due date"))
                 and not DEMO_MODE
                 else ""
             )
@@ -321,12 +327,27 @@ class ConfigWidget(QWidget):
             due_date_col_layout.addWidget(due_date_col_lbl)
             due_date_col_layout.addWidget(self.due_date_col_text)
 
+            loan_type_col_lbl = QLabel(PreferenceTexts.CUSTCOL_LOAN_TYPE)
+            self.loan_type_col_text = QLineEdit(self)
+            self.loan_type_col_text.setClearButtonEnabled(True)
+            self.loan_type_col_text.setText(
+                PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE]
+                if self.db.field_metadata.has_key(self.custom_column_name("loan type"))
+                and not DEMO_MODE
+                else ""
+            )
+            loan_type_col_lbl.setBuddy(self.loan_type_col_text)
+            loan_type_col_layout.addWidget(loan_type_col_lbl)
+            loan_type_col_layout.addWidget(self.loan_type_col_text)
+
             label_min_width = max(
                 due_date_col_lbl.sizeHint().width(),
                 borrow_date_col_lbl.sizeHint().width(),
+                loan_type_col_lbl.sizeHint().width(),
             )
             due_date_col_lbl.setMinimumWidth(label_min_width)
             borrow_date_col_lbl.setMinimumWidth(label_min_width)
+            loan_type_col_lbl.setMinimumWidth(label_min_width)
 
             custom_col_buttons = []
             self.borrow_date_col_add_btn = None
@@ -335,7 +356,8 @@ class ConfigWidget(QWidget):
                 self.borrow_date_col_add_btn.clicked.connect(
                     lambda: self.create_custom_column(
                         self.borrow_date_col_text,
-                        "borrowed",
+                        "borrowed date",
+                        "datetime",
                         {"description": _("Loan's borrowed/checkout date")},
                     )
                 )
@@ -346,11 +368,28 @@ class ConfigWidget(QWidget):
                 self.due_date_col_add_btn.clicked.connect(
                     lambda: self.create_custom_column(
                         self.due_date_col_text,
-                        "due",
+                        "due date",
+                        "datetime",
                         {"description": _("Loan's due/expiry date")},
                     )
                 )
                 custom_col_buttons.append(self.due_date_col_add_btn)
+            self.loan_type_col_add_btn = None
+            if not self.loan_type_col_text.text():
+                self.loan_type_col_add_btn = QPushButton("", self)
+                self.loan_type_col_add_btn.clicked.connect(
+                    lambda: self.create_custom_column(
+                        self.loan_type_col_text,
+                        "loan type",
+                        "text",
+                        {
+                            "description": _(
+                                "Loan type, e.g. ebook, audiobook, magazine"
+                            )
+                        },
+                    )
+                )
+                custom_col_buttons.append(self.loan_type_col_add_btn)
             for btn in custom_col_buttons:
                 btn.setIcon(QIcon.ic("plus.png"))
                 btn.setToolTip(_c("Create a custom column"))
@@ -358,10 +397,15 @@ class ConfigWidget(QWidget):
                 borrow_date_col_layout.addWidget(self.borrow_date_col_add_btn)
             if self.due_date_col_add_btn:
                 due_date_col_layout.addWidget(self.due_date_col_add_btn)
-            for layout in (borrow_date_col_layout, due_date_col_layout):
+            if self.loan_type_col_add_btn:
+                loan_type_col_layout.addWidget(self.loan_type_col_add_btn)
+            for layout in (
+                borrow_date_col_layout,
+                due_date_col_layout,
+                loan_type_col_layout,
+            ):
                 layout.setStretch(1, 1)
-            loan_layout.addRow(borrow_date_col_layout)
-            loan_layout.addRow(due_date_col_layout)
+                loan_layout.addRow(layout)
 
         # ------------------------------------ Holds ------------------------------------
         holds_section = QGroupBox(_("Holds"))
@@ -453,16 +497,19 @@ class ConfigWidget(QWidget):
         self.resize(self.sizeHint())
 
     def custom_column_name(self, col_type: str):
-        return (
-            f"{self.db.field_metadata.custom_field_prefix}libby_{col_type.lower()}_date"
-        )
+        for c in (" ",):
+            col_type = col_type.replace(c, "_")
+        return f"{self.db.field_metadata.custom_field_prefix}libby_{col_type.lower()}"
 
-    def create_custom_column(self, txt_widget, col_type: str, display=None):
+    def create_custom_column(
+        self, txt_widget, col_type: str, data_type: str, display=None
+    ):
         """
         Launch calibre's create custom column UI for plugins.
 
         :param txt_widget:
         :param col_type:
+        :param data_type:
         :param display:
         :return:
         """
@@ -471,8 +518,8 @@ class ConfigWidget(QWidget):
         lookup_name = self.custom_column_name(col_type)
         result = self.custom_column_creator.create_column(
             lookup_name=lookup_name,
-            column_heading=f"Libby {col_type.title()} Date",
-            datatype="datetime",
+            column_heading=f"Libby {col_type.title()}",
+            datatype=data_type,
             is_multiple=False,
             display=display,
             freeze_lookup_name=False,
@@ -541,20 +588,31 @@ class ConfigWidget(QWidget):
             self.custom_column_creator
             and hasattr(self, "borrow_date_col_text")
             and hasattr(self, "due_date_col_text")
+            and hasattr(self, "loan_type_col_text")
         ):
             borrowed_date_custcol_name = (
                 self.borrow_date_col_text.text() or ""
             ).strip()
             due_date_custcol_name = (self.due_date_col_text.text() or "").strip()
+            loan_type_custcol_name = (self.loan_type_col_text.text() or "").strip()
             if (
-                borrowed_date_custcol_name
-                and not borrowed_date_custcol_name.startswith(
-                    self.db.field_metadata.custom_field_prefix
+                (
+                    borrowed_date_custcol_name
+                    and not borrowed_date_custcol_name.startswith(
+                        self.db.field_metadata.custom_field_prefix
+                    )
                 )
-            ) or (
-                due_date_custcol_name
-                and not due_date_custcol_name.startswith(
-                    self.db.field_metadata.custom_field_prefix
+                or (
+                    due_date_custcol_name
+                    and not due_date_custcol_name.startswith(
+                        self.db.field_metadata.custom_field_prefix
+                    )
+                )
+                or (
+                    loan_type_custcol_name
+                    and not loan_type_custcol_name.startswith(
+                        self.db.field_metadata.custom_field_prefix
+                    )
                 )
             ):
                 # We could validate more, but we'll just be replicating more
@@ -566,10 +624,9 @@ class ConfigWidget(QWidget):
                     _c("The lookup name must begin with a '#'"),
                     show=True,
                 )
-            PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] = (
-                self.borrow_date_col_text.text() or ""
-            )
-            PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] = self.due_date_col_text.text() or ""
+            PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] = borrowed_date_custcol_name
+            PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] = due_date_custcol_name
+            PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE] = loan_type_custcol_name
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:

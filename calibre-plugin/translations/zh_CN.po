@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-08 13:33+0800\n"
+"POT-Creation-Date: 2023-08-09 17:47+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "从您的OverDrive Libby账户导入已借作品"
 
-#: calibre-plugin/action.py:51 calibre-plugin/config.py:160
+#: calibre-plugin/action.py:51 calibre-plugin/config.py:163
 msgid "Libby"
 msgstr ""
 
@@ -34,138 +34,146 @@ msgstr ""
 msgid "Borrowing"
 msgstr "正在借阅"
 
-#: calibre-plugin/config.py:86 calibre-plugin/config.py:581
+#: calibre-plugin/config.py:87 calibre-plugin/config.py:640
 msgid "Libby Setup Code"
 msgstr "Libby设置代码"
 
-#: calibre-plugin/config.py:87
+#: calibre-plugin/config.py:88
 msgid "8-digit setup code"
 msgstr "8位代码"
 
-#: calibre-plugin/config.py:88
+#: calibre-plugin/config.py:89
 msgid "Hide Magazines"
 msgstr "隐藏杂志"
 
-#: calibre-plugin/config.py:89
+#: calibre-plugin/config.py:90
 msgid "Hide Ebooks"
 msgstr "隐藏电子书"
 
-#: calibre-plugin/config.py:90
+#: calibre-plugin/config.py:91
 msgid "Hide titles already in library"
 msgstr "隐藏书库中已有的书籍"
 
-#: calibre-plugin/config.py:91
+#: calibre-plugin/config.py:92
 msgid "Exclude empty books when hiding titles already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:92
+#: calibre-plugin/config.py:93
 msgid "Hide unavailable holds"
 msgstr ""
 
-#: calibre-plugin/config.py:93
+#: calibre-plugin/config.py:94
 msgid "Prefer Open Formats"
 msgstr "偏好开放格式"
 
-#: calibre-plugin/config.py:94
+#: calibre-plugin/config.py:95
 msgid "Tag downloaded ebooks with"
 msgstr "将下载的电子书标记为"
 
-#: calibre-plugin/config.py:95
+#: calibre-plugin/config.py:96
 msgid "Example: library,books"
 msgstr "示例：图书馆,书籍"
 
-#: calibre-plugin/config.py:96
+#: calibre-plugin/config.py:97
 msgid "Tag downloaded magazines with"
 msgstr "将下载的杂志标记为"
 
-#: calibre-plugin/config.py:97
+#: calibre-plugin/config.py:98
 msgid "Example: library,magazines"
 msgstr "示例：图书馆,杂志"
 
-#: calibre-plugin/config.py:98
+#: calibre-plugin/config.py:99
 msgid "Always confirm returns"
 msgstr "始终确认还书"
 
-#: calibre-plugin/config.py:99
+#: calibre-plugin/config.py:100
 msgid "Always confirm holds cancellation"
 msgstr ""
 
-#: calibre-plugin/config.py:100
+#: calibre-plugin/config.py:101
 msgid "Enable OverDrive Link Plugin integration"
 msgstr ""
 
-#: calibre-plugin/config.py:101
+#: calibre-plugin/config.py:102
 msgid "Mark updated books"
 msgstr ""
 
-#: calibre-plugin/config.py:102
+#: calibre-plugin/config.py:103
 msgid "Always download as a new book"
 msgstr ""
 
-#: calibre-plugin/config.py:103
+#: calibre-plugin/config.py:104
 msgid "Connection timeout"
 msgstr "连接超时"
 
-#: calibre-plugin/config.py:105
+#: calibre-plugin/config.py:106
 msgid "Maximum search results"
 msgstr ""
 
-#: calibre-plugin/config.py:106
+#: calibre-plugin/config.py:107
 #, python-brace-format
 msgid "Library Keys (comma-separated, max: {n})"
 msgstr ""
 
-#: calibre-plugin/config.py:109
+#: calibre-plugin/config.py:110
 msgid "Custom column for Borrowed Date"
 msgstr ""
 
-#: calibre-plugin/config.py:110
+#: calibre-plugin/config.py:111
 msgid "Custom column for Due Date"
 msgstr ""
 
-#: calibre-plugin/config.py:167
+#: calibre-plugin/config.py:112
+msgid "Custom column for Loan Type"
+msgstr ""
+
+#: calibre-plugin/config.py:170
 msgid "Libby is configured."
 msgstr "Libby已配置。"
 
-#: calibre-plugin/config.py:169 calibre-plugin/dialog/base.py:233
+#: calibre-plugin/config.py:172 calibre-plugin/dialog/base.py:232
 msgid "Libby is not configured yet."
 msgstr "Libby未配置。"
 
-#: calibre-plugin/config.py:200 calibre-plugin/dialog/cards.py:180
-#: calibre-plugin/dialog/cards.py:232 calibre-plugin/dialog/loans.py:154
+#: calibre-plugin/config.py:203 calibre-plugin/dialog/cards.py:178
+#: calibre-plugin/dialog/cards.py:230 calibre-plugin/dialog/loans.py:154
 msgid "Loans"
 msgstr "已借作品"
 
-#: calibre-plugin/config.py:337
+#: calibre-plugin/config.py:361
 msgid "Loan's borrowed/checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:348
+#: calibre-plugin/config.py:373
 msgid "Loan's due/expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:365 calibre-plugin/dialog/cards.py:202
-#: calibre-plugin/dialog/cards.py:243 calibre-plugin/dialog/holds.py:155
+#: calibre-plugin/config.py:387
+msgid "Loan type, e.g. ebook, audiobook, magazine"
+msgstr ""
+
+#: calibre-plugin/config.py:411 calibre-plugin/dialog/cards.py:200
+#: calibre-plugin/dialog/cards.py:241 calibre-plugin/dialog/holds.py:155
 #: calibre-plugin/dialog/holds.py:169
 msgid "Holds"
 msgstr "预约"
 
-#: calibre-plugin/config.py:390
+#: calibre-plugin/config.py:436
 msgid "Search"
 msgstr ""
 
-#: calibre-plugin/config.py:407
+#: calibre-plugin/config.py:453
 #, python-brace-format
 msgid ""
 "Up to {n} libraries, comma-separated. View your library key codes from the "
 "Cards tab. Example: lapl,sno-isle,livebrary,kcls"
 msgstr ""
 
-#: calibre-plugin/config.py:422
+#: calibre-plugin/config.py:468
 msgid "Network"
 msgstr ""
 
-#: calibre-plugin/config.py:582
+#: calibre-plugin/config.py:641
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""
@@ -186,11 +194,11 @@ msgstr ""
 msgid "Returning"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:424
+#: calibre-plugin/magazine_download.py:423
 msgid "Getting loan details"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:464
+#: calibre-plugin/magazine_download.py:463
 msgid "Getting book details"
 msgstr ""
 
@@ -255,7 +263,7 @@ msgid "Expire Date"
 msgstr ""
 
 #: calibre-plugin/models.py:173 calibre-plugin/models.py:333
-#: calibre-plugin/models.py:663 calibre-plugin/dialog/cards.py:221
+#: calibre-plugin/models.py:663 calibre-plugin/dialog/cards.py:219
 msgid "Library"
 msgstr "图书馆"
 
@@ -316,90 +324,90 @@ msgstr "已借阅"
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:238 calibre-plugin/dialog/base.py:241
+#: calibre-plugin/dialog/base.py:237 calibre-plugin/dialog/base.py:240
 msgid "Synchronizing..."
 msgstr "同步中..."
 
-#: calibre-plugin/dialog/base.py:263
+#: calibre-plugin/dialog/base.py:262
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:289
+#: calibre-plugin/dialog/base.py:288
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:293
+#: calibre-plugin/dialog/base.py:292
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:315 calibre-plugin/dialog/base.py:333
-#: calibre-plugin/dialog/base.py:356 calibre-plugin/dialog/base.py:372
+#: calibre-plugin/dialog/base.py:314 calibre-plugin/dialog/base.py:332
+#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:371
 #: calibre-plugin/dialog/search.py:140
 msgid "Borrow"
 msgstr "借阅"
 
-#: calibre-plugin/dialog/base.py:317 calibre-plugin/dialog/base.py:331
-#: calibre-plugin/dialog/base.py:356 calibre-plugin/dialog/base.py:370
+#: calibre-plugin/dialog/base.py:316 calibre-plugin/dialog/base.py:330
+#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:369
 #: calibre-plugin/dialog/search.py:142
 msgid "Borrow and Download"
 msgstr "借阅并下载"
 
-#: calibre-plugin/dialog/base.py:323 calibre-plugin/dialog/base.py:359
+#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:358
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:325 calibre-plugin/dialog/base.py:361
+#: calibre-plugin/dialog/base.py:324 calibre-plugin/dialog/base.py:360
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:478
+#: calibre-plugin/dialog/base.py:477
 msgid "Check your connection or retry in a few minutes."
 msgstr "检查您的连接或在几分钟后重试。"
 
-#: calibre-plugin/dialog/cards.py:108 calibre-plugin/dialog/cards.py:194
-#: calibre-plugin/dialog/cards.py:216
+#: calibre-plugin/dialog/cards.py:106 calibre-plugin/dialog/cards.py:192
+#: calibre-plugin/dialog/cards.py:214
 msgid "Right-click for shortcuts"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:118
+#: calibre-plugin/dialog/cards.py:116
 msgid "Card name"
 msgstr "读者卡名称"
 
-#: calibre-plugin/dialog/cards.py:131
+#: calibre-plugin/dialog/cards.py:129
 msgid "Username/Card number"
 msgstr "用户名/卡号"
 
-#: calibre-plugin/dialog/cards.py:144
+#: calibre-plugin/dialog/cards.py:142
 msgid "Created date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:163
+#: calibre-plugin/dialog/cards.py:161
 msgid "Verified date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:222 calibre-plugin/dialog/cards.py:233
-#: calibre-plugin/dialog/cards.py:244 calibre-plugin/dialog/holds.py:259
+#: calibre-plugin/dialog/cards.py:220 calibre-plugin/dialog/cards.py:231
+#: calibre-plugin/dialog/cards.py:242 calibre-plugin/dialog/holds.py:259
 #: calibre-plugin/dialog/loans.py:188 calibre-plugin/dialog/magazines.py:260
 #: calibre-plugin/dialog/search.py:390
 msgid "View in Libby"
 msgstr "在Libby中查看"
 
-#: calibre-plugin/dialog/cards.py:225 calibre-plugin/dialog/cards.py:236
-#: calibre-plugin/dialog/cards.py:247 calibre-plugin/dialog/holds.py:264
+#: calibre-plugin/dialog/cards.py:223 calibre-plugin/dialog/cards.py:234
+#: calibre-plugin/dialog/cards.py:245 calibre-plugin/dialog/holds.py:264
 #: calibre-plugin/dialog/loans.py:193 calibre-plugin/dialog/magazines.py:265
 #: calibre-plugin/dialog/search.py:409
 msgid "View in OverDrive"
 msgstr "在OverDrive中查看"
 
-#: calibre-plugin/dialog/cards.py:307 calibre-plugin/dialog/loans.py:72
+#: calibre-plugin/dialog/cards.py:305 calibre-plugin/dialog/loans.py:72
 msgid "Get latest loans"
 msgstr "获取最新借阅的书籍"
 
-#: calibre-plugin/dialog/cards.py:321
+#: calibre-plugin/dialog/cards.py:319
 msgid "Cards"
 msgstr "借书证"
 

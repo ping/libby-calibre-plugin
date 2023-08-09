@@ -30,7 +30,6 @@ from .libby.client import LibbyFormats, LibbyMediaTypes
 from .magazine_download_utils import (
     build_opf_package,
     extract_isbn,
-    get_best_cover_url,
     guess_mimetype,
     is_windows,
     slugify,
@@ -425,7 +424,7 @@ class CustomMagazineDownload(LibbyDownload):
             )
         )
         download_base, openbook, rosters = libby_client.process_ebook(loan)
-        cover_url = get_best_cover_url(loan)
+        cover_url = OverDriveClient.get_best_cover_url(loan)
         if cover_url:
             cover_path: Optional[Path] = book_folder.joinpath("cover.jpg")
             try:

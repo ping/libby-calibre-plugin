@@ -78,22 +78,6 @@ def slugify(value: str, allow_unicode: bool = False) -> str:
     return re.sub(r"[-\s]+", "-", value)
 
 
-def get_best_cover_url(loan: Dict) -> Optional[str]:
-    """
-    Extracts the highest resolution cover image for the loan
-
-    :param loan:
-    :return:
-    """
-    covers: List[Dict] = sorted(
-        list(loan.get("covers", []).values()),
-        key=lambda c: c.get("width", 0),
-        reverse=True,
-    )
-    cover_highest_res: Optional[Dict] = next(iter(covers), None)
-    return cover_highest_res["href"] if cover_highest_res else None
-
-
 def extract_asin(formats: List[Dict]) -> str:
     """
     Extract Amazon's ASIN from media_info["formats"]

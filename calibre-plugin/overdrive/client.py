@@ -250,6 +250,22 @@ class OverDriveClient(object):
         """
         return f"https://{library_key}.overdrive.com/media/{title_id}"
 
+    @staticmethod
+    def get_best_cover_url(media: Dict) -> Optional[str]:
+        """
+        Extracts the highest resolution cover image for the media
+
+        :param media:
+        :return:
+        """
+        covers: List[Dict] = sorted(
+            list(media.get("covers", []).values()),
+            key=lambda c: c.get("width", 0),
+            reverse=True,
+        )
+        cover_highest_res: Optional[Dict] = next(iter(covers), None)
+        return cover_highest_res["href"] if cover_highest_res else None
+
     def media(self, title_id: str, **kwargs) -> Dict:
         """
         Retrieve a title.

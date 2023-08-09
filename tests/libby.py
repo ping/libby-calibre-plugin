@@ -115,6 +115,19 @@ class LibbyClientTests(BaseTests):
                 }
             )
         self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookKindle, "isLockedIn": True},
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                        {"id": LibbyFormats.EBookEPubAdobe, "isLockedIn": False},
+                    ]
+                },
+                raise_if_not_downloadable=False,
+            ),
+            LibbyFormats.EBookKindle,
+        )
+        self.assertEqual(
             str(context.exception),
             f'Loan is locked to a non-downloadable format "{LibbyFormats.EBookKindle}"',
         )
@@ -226,4 +239,25 @@ class LibbyClientTests(BaseTests):
                 }
             ),
             LibbyFormats.MagazineOverDrive,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.AudioBookMP3, "isLockedIn": False},
+                        {"id": LibbyFormats.AudioBookOverDrive, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.AudioBookMP3,
+        )
+        self.assertEqual(
+            LibbyClient.get_loan_format(
+                {
+                    "formats": [
+                        {"id": LibbyFormats.EBookOverdrive, "isLockedIn": False},
+                    ]
+                }
+            ),
+            LibbyFormats.EBookOverdrive,
         )

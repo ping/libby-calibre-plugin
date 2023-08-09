@@ -209,12 +209,25 @@ class LibbyClient(object):
         )
 
     @staticmethod
-    def get_loan_format(loan: Dict, prefer_open_format: bool = True) -> str:
+    def get_loan_format(
+        loan: Dict, prefer_open_format: bool = True, raise_if_not_downloadable=True
+    ) -> str:
+        """
+
+        :param loan:
+        :param prefer_open_format:
+        :param raise_if_not_downloadable: If True, raise ValueError if format is not a downloadable format
+        :return:
+        """
+        formats = loan.get("formats", [])
         locked_in_format = next(
-            iter([f["id"] for f in loan["formats"] if f.get("isLockedIn")]), None
+            iter([f["id"] for f in formats if f.get("isLockedIn")]), None
         )
         if locked_in_format:
-            if locked_in_format in DOWNLOADABLE_FORMATS:
+            if (
+                locked_in_format in DOWNLOADABLE_FORMATS
+                or not raise_if_not_downloadable
+            ):
                 return locked_in_format
             raise ValueError(
                 f'Loan is locked to a non-downloadable format "{locked_in_format}"'
@@ -253,16 +266,21 @@ class LibbyClient(object):
             ) and LibbyClient.has_format(loan, LibbyFormats.EBookPDFAdobe):
                 return LibbyFormats.EBookPDFAdobe
 
+        if len(formats) == 1:
+            return formats[0]["id"]
         raise ValueError("Unable to find a downloadable format")
 
     @staticmethod
-    def parse_datetime(value: str) -> datetime:  # type: ignore[return]
+    def parse_datetime(value: str) -> Optional[datetime]:  # type: ignore[return]
         """
         Parses a datetime string from the API into a datetime.
 
         :param value:
         :return:
         """
+        if not value:
+            return None
+
         formats = (
             "%Y-%m-%dT%H:%M:%SZ",
             "%Y-%m-%dT%H:%M:%S.%fZ",

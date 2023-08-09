@@ -604,4 +604,6 @@ class ConfigWidget(QWidget):
                 "Some of the changes you made require a restart."
                 " Please restart calibre as soon as possible."
             )
-            return show_restart_warning(msg, self)
+            do_restart = show_restart_warning(msg, self)
+            if do_restart:
+                self.gui.quit(restart=True)

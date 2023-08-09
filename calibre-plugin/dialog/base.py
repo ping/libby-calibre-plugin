@@ -31,6 +31,7 @@ from qt.core import (
     QUrl,
     QWidget,
     Qt,
+    pyqtSignal,
 )
 
 from .. import DEMO_MODE, __version__, logger
@@ -76,6 +77,8 @@ class BaseDialogMixin(QDialog):
     """
     Base mixin class for the main QDialog
     """
+
+    last_borrow_action_changed = pyqtSignal(str)
 
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui)
@@ -390,10 +393,7 @@ class BaseDialogMixin(QDialog):
         )
         if PREFS[PreferenceKeys.LAST_BORROW_ACTION] != borrow_action:
             PREFS[PreferenceKeys.LAST_BORROW_ACTION] = borrow_action
-            if hasattr(self, "rebind_magazines_download_button_and_menu"):
-                self.rebind_magazines_download_button_and_menu(borrow_action)
-            if hasattr(self, "rebind_holds_download_button_and_menu"):
-                self.rebind_holds_download_button_and_menu(borrow_action)
+            self.last_borrow_action_changed.emit(borrow_action)
 
     def display_debug(self, text, data):
         """

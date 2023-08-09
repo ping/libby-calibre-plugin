@@ -153,6 +153,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.holds_tab_index = self.add_tab(widget, _("Holds"))
+        self.last_borrow_action_changed.connect(
+            self.rebind_holds_download_button_and_menu
+        )
 
     def holds_model_changed(self):
         available_holds_count = 0

@@ -119,7 +119,10 @@ class PluginColors(str, Enum):
     Blue = "#6EA8FE" if is_dark_theme() else "#0E6EFD"
     Purple = "#C0A4FF" if is_dark_theme() else "#7B47D1"
     Turquoise = "#07CAF0" if is_dark_theme() else "#07B0D3"
-    Gray = "#cccccc" if is_dark_theme() else "#333333"
+    Gray = "#CCCCCC" if is_dark_theme() else "#333333"
+    Gray2 = "#9DB2BF" if is_dark_theme() else "#526D82"
+    OrangeYellow = "#FFC107" if is_dark_theme() else "#FD7E14"
+    ThemeGreen = "#63CBC1" if is_dark_theme() else "#25B0A7"
 
     def __str__(self):
         return str(self.value)
@@ -158,8 +161,7 @@ ICON_MAP = {
         file="images/external-link-line.svg", color=PluginColors.Purple
     ),
     PluginIcons.Refresh: IconDefinition(
-        file="images/refresh-line.svg",
-        color="#FFC107" if is_dark_theme() else "#FD7E14",
+        file="images/refresh-line.svg", color=PluginColors.OrangeYellow
     ),
     PluginIcons.Add: IconDefinition(
         file="images/file-add-line.svg", color=PluginColors.Blue
@@ -187,6 +189,6 @@ ICON_MAP = {
         file="images/clover.svg", color=PluginColors.Green
     ),
     PluginIcons.Search: IconDefinition(
-        file="images/search-line.svg", color=PluginColors.Gray
+        file="images/search-line.svg", color=PluginColors.Gray2
     ),
 }

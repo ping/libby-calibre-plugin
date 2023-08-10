@@ -254,4 +254,67 @@ class OverDriveClientTests(BaseTests):
             sites = sorted(
                 sites, key=cmp_to_key(OverDriveClient.sort_availabilities), reverse=True
             )
-            print(media["title"], sites[0]["advantageKey"])
+            self.assertTrue(media["title"])
+            self.assertTrue(sites[0]["advantageKey"])
+
+    def test_extract_isbn(self):
+        formats = [
+            {
+                "identifiers": [
+                    {"value": "9980000000000", "type": "ISBN"},
+                    {"value": "tantor_audio#9980000000000", "type": "8"},
+                    {"value": "9980000000001", "type": "LibraryISBN"},
+                ],
+                "isbn": "9780000000001",
+                "id": "ebook-kindle",
+            },
+            {
+                "identifiers": [
+                    {"value": "9780000000000", "type": "ISBN"},
+                    {"value": "publisher#9780000000000", "type": "8"},
+                    {"value": "9780000000001", "type": "LibraryISBN"},
+                ],
+                "isbn": "9780000000001",
+                "id": "ebook-epub-adobe",
+            },
+        ]
+        self.assertEqual(
+            OverDriveClient.extract_isbn(formats, ["ebook-epub-adobe"]), "9780000000001"
+        )
+        formats = [
+            {
+                "identifiers": [
+                    {"value": "9780000000000", "type": "ISBN"},
+                    {"value": "9780000000001", "type": "LibraryISBN"},
+                ],
+                "id": "ebook-epub-adobe",
+            }
+        ]
+        self.assertEqual(
+            OverDriveClient.extract_isbn(formats, ["ebook-epub-adobe"]), "9780000000001"
+        )
+        formats = [
+            {
+                "identifiers": [
+                    {"value": "9780000000000", "type": "ISBN"},
+                    {"value": "9780000000001", "type": "X"},
+                ],
+                "id": "ebook-epub-adobe",
+            }
+        ]
+        self.assertEqual(
+            OverDriveClient.extract_isbn(formats, ["ebook-epub-adobe"]), "9780000000000"
+        )
+        self.assertEqual(OverDriveClient.extract_isbn(formats, []), "9780000000000")
+
+    def test_extract_asin(self):
+        formats = [
+            {
+                "identifiers": [
+                    {"value": "9780000000000", "type": "ISBN"},
+                    {"value": "9780000000001", "type": "LibraryISBN"},
+                    {"value": "B123456789", "type": "ASIN"},
+                ],
+            }
+        ]
+        self.assertEqual(OverDriveClient.extract_asin(formats), "B123456789")

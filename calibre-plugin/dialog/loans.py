@@ -38,8 +38,8 @@ from ..ebook_download import CustomEbookDownload
 from ..libby import LibbyClient
 from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
-from ..magazine_download_utils import extract_asin, extract_isbn
 from ..models import LibbyLoansModel, LibbyModel, get_media_title, truncate_for_display
+from ..overdrive import OverDriveClient
 from ..utils import OD_IDENTIFIER, PluginIcons, generate_od_identifier
 
 # noinspection PyUnreachableCode
@@ -275,16 +275,17 @@ class LoansDialogMixin(BaseDialogMixin):
         card = self.loans_model.get_card(loan["cardId"])
         library = self.loans_model.get_library(self.loans_model.get_website_id(card))
 
-        # We will handle the downloading of the files ourselves
-
+    def match_existing_book(self, loan, library, format_id):
         book_id = None
         mi = None
         if not PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]:
-            # Matching an empty book:
-            # If we find a book without formats and matches isbn/asin and odid (if enabled),
-            # add the new file as a format to the existing book record
-            loan_isbn = extract_isbn(loan.get("formats", []), [format_id])
-            loan_asin = extract_asin(loan.get("formats", []))
+            loan_isbn = OverDriveClient.extract_isbn(
+                loan.get("formats", []), [format_id] if format_id else []
+            )
+            if format_id and not loan_isbn:
+                # try again without format_id
+                loan_isbn = OverDriveClient.extract_isbn(loan.get("formats", []), [])
+            loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
             identifier_conditions: List[str] = []
             if loan_isbn:
                 identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
@@ -309,7 +310,17 @@ class LoansDialogMixin(BaseDialogMixin):
                 book_ids = list(self.db.search(search_query, restriction=restriction))
                 book_id = book_ids[0] if book_ids else 0
                 mi = self.db.get_metadata(book_id) if book_id else None
+        return book_id, mi
 
+    def download_ebook(self, loan: Dict, format_id: str, filename: str, tags=None):
+        if not tags:
+            tags = []
+        card = self.loans_model.get_card(loan["cardId"])
+        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
+
+        # We will handle the downloading of the files ourselves
+
+        book_id, mi = self.match_existing_book(loan, library, format_id)
         if mi and book_id:
             self.logger.debug("Matched existing empty book: %s", mi.title)
 

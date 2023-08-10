@@ -29,7 +29,6 @@ from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
 from .magazine_download_utils import (
     build_opf_package,
-    extract_isbn,
     guess_mimetype,
     is_windows,
     slugify,
@@ -108,7 +107,7 @@ def _build_ncx(media_info: Dict, openbook: Dict, nav_page: str) -> ET.Element:
     # Version 3: https://www.w3.org/TR/epub-33/#sec-package-doc
 
     publication_identifier = (
-        extract_isbn(
+        OverDriveClient.extract_isbn(
             media_info["formats"],
             [LibbyFormats.EBookOverdrive, LibbyFormats.MagazineOverDrive],
         )
@@ -800,7 +799,7 @@ class CustomMagazineDownload(LibbyDownload):
             )
             if ncx_manifest_entry:
                 expected_book_identifier = (
-                    extract_isbn(
+                    OverDriveClient.extract_isbn(
                         media_info["formats"],
                         format_types=[
                             LibbyFormats.MagazineOverDrive

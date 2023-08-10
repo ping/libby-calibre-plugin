@@ -22,7 +22,6 @@ from .compat import QColor_fromString, _c
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyMediaTypes
-from .magazine_download_utils import extract_asin, extract_isbn
 from .overdrive import OverDriveClient
 from .utils import PluginColors, PluginIcons, obfuscate_date, obfuscate_name
 
@@ -231,8 +230,10 @@ class LibbyLoansModel(LibbyModel):
             loan_title2 = icu_lower(
                 get_media_title(loan, include_subtitle=True).strip()
             )
-            loan_isbn = extract_isbn(loan.get("formats", []), [loan_format])
-            loan_asin = extract_asin(loan.get("formats", []))
+            loan_isbn = OverDriveClient.extract_isbn(
+                loan.get("formats", []), [loan_format] if loan_format else []
+            )
+            loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
             for book_id, title in iter(self.all_book_ids_titles.items()):
                 book_identifiers = self.all_book_ids_identifiers.get(book_id) or {}
                 book_in_library = (

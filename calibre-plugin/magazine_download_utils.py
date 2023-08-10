@@ -15,9 +15,10 @@ import unicodedata
 import xml.etree.ElementTree as ET
 from mimetypes import guess_type
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from .libby.client import LibbyClient, LibbyFormats
+from .overdrive import OverDriveClient
 
 MIMETYPE_MAP = {
     ".xhtml": "application/xhtml+xml",
@@ -76,75 +77,6 @@ def slugify(value: str, allow_unicode: bool = False) -> str:
     )
     value = re.sub(r"[^\w\s-]", "", value).strip().lower()
     return re.sub(r"[-\s]+", "-", value)
-
-
-def extract_asin(formats: List[Dict]) -> str:
-    """
-    Extract Amazon's ASIN from media_info["formats"]
-
-    :param formats:
-    :return:
-    """
-    for media_format in [
-        f
-        for f in formats
-        if [i for i in f.get("identifiers", []) if i["type"] == "ASIN"]
-    ]:
-        asin = next(
-            iter(
-                [
-                    identifier["value"]
-                    for identifier in media_format.get("identifiers", [])
-                    if identifier["type"] == "ASIN"
-                ]
-            ),
-            "",
-        )
-        if asin:
-            return asin
-    return ""
-
-
-def extract_isbn(formats: List[Dict], format_types: List[str]) -> str:
-    """
-    Extract ISBN from media_info["formats"]
-
-    :param formats:
-    :param format_types:
-    :return:
-    """
-    # a format can contain 2 different "ISBN"s.. one type "ISBN", and another "LibraryISBN"
-    # in format["identifiers"]
-    # format["isbn"] reflects the "LibraryISBN" value
-
-    isbn = next(
-        iter([f["isbn"] for f in formats if f["id"] in format_types and f.get("isbn")]),
-        "",
-    )
-    if isbn:
-        return isbn
-
-    for isbn_type in ("LibraryISBN", "ISBN"):
-        for media_format in [
-            f
-            for f in formats
-            if f["id"] in format_types
-            and [i for i in f.get("identifiers", []) if i["type"] == isbn_type]
-        ]:
-            isbn = next(
-                iter(
-                    [
-                        identifier["value"]
-                        for identifier in media_format.get("identifiers", [])
-                        if identifier["type"] == isbn_type
-                    ]
-                ),
-                "",
-            )
-            if isbn:
-                return isbn
-
-    return ""
 
 
 def build_opf_package(
@@ -224,7 +156,9 @@ def build_opf_package(
     identifier = ET.SubElement(metadata, "dc:identifier")
     identifier.set("id", "publication-id")
 
-    isbn = extract_isbn(media_info["formats"], format_types=[loan_format])
+    isbn = OverDriveClient.extract_isbn(
+        media_info["formats"], format_types=[loan_format]
+    )
     if isbn:
         identifier.text = isbn
         if version == "2.0":
@@ -249,7 +183,7 @@ def build_opf_package(
         if version == "3.0":
             identifier.text = media_info["id"]
 
-    asin = extract_asin(media_info["formats"])
+    asin = OverDriveClient.extract_asin(media_info["formats"])
     if asin:
         asin_tag = ET.SubElement(metadata, "dc:identifier")
         asin_tag.text = asin

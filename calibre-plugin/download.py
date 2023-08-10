@@ -14,7 +14,7 @@ from typing import Dict, List, Optional
 
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
-from .magazine_download_utils import extract_asin, extract_isbn
+from .overdrive import OverDriveClient
 from .utils import OD_IDENTIFIER, generate_od_identifier
 
 
@@ -47,8 +47,12 @@ class LibbyDownload:
             tags = []
         metadata.tags.extend(tags)
 
-        isbn = extract_isbn(loan.get("formats", []), [format_id])
-        asin = extract_asin(loan.get("formats", []))
+        isbn = OverDriveClient.extract_isbn(
+            loan.get("formats", []), [format_id] if format_id else []
+        )
+        if format_id and not isbn:
+            isbn = OverDriveClient.extract_isbn(loan.get("formats", []), [])
+        asin = OverDriveClient.extract_asin(loan.get("formats", []))
         odid_identifier = generate_od_identifier(loan, library)
 
         identifiers = metadata.get_identifiers()

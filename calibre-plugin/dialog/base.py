@@ -8,7 +8,7 @@
 # information
 #
 import json
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 from calibre.constants import DEBUG
 from calibre.gui2 import error_dialog, info_dialog

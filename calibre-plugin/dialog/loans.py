@@ -269,12 +269,6 @@ class LoansDialogMixin(BaseDialogMixin):
                 tags=tags,
             )
 
-    def download_ebook(self, loan: Dict, format_id: str, filename: str, tags=None):
-        if not tags:
-            tags = []
-        card = self.loans_model.get_card(loan["cardId"])
-        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
-
     def match_existing_book(self, loan, library, format_id):
         book_id = None
         mi = None

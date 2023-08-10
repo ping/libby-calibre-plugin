@@ -266,6 +266,84 @@ class OverDriveClient(object):
         cover_highest_res: Optional[Dict] = next(iter(covers), None)
         return cover_highest_res["href"] if cover_highest_res else None
 
+    @staticmethod
+    def extract_asin(formats: List[Dict]) -> str:
+        """
+        Extract Amazon's ASIN from media_info["formats"]
+
+        :param formats:
+        :return:
+        """
+        for media_format in [
+            f
+            for f in formats
+            if [i for i in f.get("identifiers", []) if i["type"] == "ASIN"]
+        ]:
+            asin = next(
+                iter(
+                    [
+                        identifier["value"]
+                        for identifier in media_format.get("identifiers", [])
+                        if identifier["type"] == "ASIN"
+                    ]
+                ),
+                "",
+            )
+            if asin:
+                return asin
+        return ""
+
+    @staticmethod
+    def extract_isbn(formats: List[Dict], format_types: List[str]) -> str:
+        """
+        Extract ISBN from media_info["formats"]
+
+        :param formats:
+        :param format_types:
+        :return:
+        """
+        # a format can contain 2 different "ISBN"s.. one type "ISBN", and another "LibraryISBN"
+        # in format["identifiers"]
+        # format["isbn"] reflects the "LibraryISBN" value
+
+        if not format_types:
+            # use any
+            format_types = [f["id"] for f in formats]
+        isbn = next(
+            iter(
+                [
+                    f["isbn"]
+                    for f in formats
+                    if f.get("isbn") and f["id"] in format_types
+                ]
+            ),
+            "",
+        )
+        if isbn:
+            return isbn
+
+        for isbn_type in ("LibraryISBN", "ISBN"):
+            for media_format in [
+                f
+                for f in formats
+                if f["id"] in format_types
+                and [i for i in f.get("identifiers", []) if i["type"] == isbn_type]
+            ]:
+                isbn = next(
+                    iter(
+                        [
+                            identifier["value"]
+                            for identifier in media_format.get("identifiers", [])
+                            if identifier["type"] == isbn_type
+                        ]
+                    ),
+                    "",
+                )
+                if isbn:
+                    return isbn
+
+        return ""
+
     def media(self, title_id: str, **kwargs) -> Dict:
         """
         Retrieve a title.

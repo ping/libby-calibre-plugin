@@ -208,6 +208,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
         self.sync_starting.connect(self.base_sync_starting_magazines)
         self.sync_ended.connect(self.base_sync_ended_magazines)
+        self.hide_title_already_in_lib_pref_changed.connect(
+            self.hide_title_already_in_lib_pref_changed_magazines
+        )
 
     def base_sync_starting_magazines(self):
         self.magazines_refresh_btn.setEnabled(False)
@@ -235,6 +238,10 @@ class MagazinesDialogMixin(BaseDialogMixin):
             sub = index.data(Qt.UserRole)
             self.borrow_magazine(sub, do_download=do_download)
 
+    def hide_title_already_in_lib_pref_changed_magazines(self, checked):
+        if self.hide_mag_already_in_lib_checkbox.isChecked() != checked:
+            self.hide_mag_already_in_lib_checkbox.setChecked(checked)
+
     def hide_mag_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_mag_already_in_lib_checkbox.isChecked()
         self.magazines_model.set_filter_hide_magazines_already_in_library(checked)
@@ -243,12 +250,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
     def hide_mag_already_in_lib_checkbox_clicked(self, checked: bool):
         if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] != checked:
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
-        # toggle the other checkbox on the loans tab
-        if (
-            hasattr(self, "hide_book_already_in_lib_checkbox")
-            and self.hide_book_already_in_lib_checkbox.isChecked() != checked
-        ):
-            self.hide_book_already_in_lib_checkbox.setChecked(checked)
+            self.hide_title_already_in_lib_pref_changed.emit(checked)
 
     def magazines_view_selection_model_selectionchanged(self):
         # enables/disables borrow button

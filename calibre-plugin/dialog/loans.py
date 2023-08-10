@@ -151,6 +151,9 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_tab_index = self.add_tab(widget, _("Loans"))
         self.sync_starting.connect(self.base_sync_starting_loans)
         self.sync_ended.connect(self.base_sync_ended_loans)
+        self.hide_title_already_in_lib_pref_changed.connect(
+            self.hide_title_already_in_lib_pref_changed_loans
+        )
 
     def base_sync_starting_loans(self):
         self.loans_refresh_btn.setEnabled(False)
@@ -162,6 +165,10 @@ class LoansDialogMixin(BaseDialogMixin):
         self.download_btn.setEnabled(True)
         self.loans_model.sync(value)
 
+    def hide_title_already_in_lib_pref_changed_loans(self, checked):
+        if self.hide_book_already_in_lib_checkbox.isChecked() != checked:
+            self.hide_book_already_in_lib_checkbox.setChecked(checked)
+
     def hide_book_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_book_already_in_lib_checkbox.isChecked()
         self.loans_model.set_filter_hide_books_already_in_library(checked)
@@ -170,12 +177,7 @@ class LoansDialogMixin(BaseDialogMixin):
     def hide_book_already_in_lib_checkbox_state_clicked(self, checked):
         if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] != checked:
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
-        # toggle the other checkbox on the magazines tab
-        if (
-            hasattr(self, "hide_mag_already_in_lib_checkbox")
-            and self.hide_mag_already_in_lib_checkbox.isChecked() != checked
-        ):
-            self.hide_mag_already_in_lib_checkbox.setChecked(checked)
+            self.hide_title_already_in_lib_pref_changed.emit(checked)
 
     def loans_refresh_btn_clicked(self):
         self.sync()

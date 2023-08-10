@@ -79,6 +79,7 @@ class BaseDialogMixin(QDialog):
     """
 
     last_borrow_action_changed = pyqtSignal(str)
+    hide_title_already_in_lib_pref_changed = pyqtSignal(bool)
     sync_starting = pyqtSignal()
     sync_ended = pyqtSignal(dict)
 

@@ -79,6 +79,8 @@ class BaseDialogMixin(QDialog):
     """
 
     last_borrow_action_changed = pyqtSignal(str)
+    sync_starting = pyqtSignal()
+    sync_ended = pyqtSignal(dict)
 
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui)
@@ -149,8 +151,6 @@ class BaseDialogMixin(QDialog):
         self.status_bar.addPermanentWidget(help_lbl)
         layout.addWidget(self.status_bar, 1, 0)
 
-        self.refresh_buttons: List[QWidget] = []
-        self.models: List[LibbyModel] = []
         self.loading_overlay = CustomLoadingOverlay(self)
 
         self.finished.connect(self.dialog_finished)
@@ -235,12 +235,9 @@ class BaseDialogMixin(QDialog):
             self.status_bar.showMessage(_("Libby is not configured yet."))
             return
         if not self._sync_thread.isRunning():
-            for btn in self.refresh_buttons:
-                btn.setEnabled(False)
             self.status_bar.showMessage(_("Synchronizing..."))
-            for model in self.models:
-                model.sync({})
             self.loading_overlay(_("Synchronizing..."))
+            self.sync_starting.emit()
             self._sync_thread = self._get_sync_thread()
             self._sync_thread.start()
 
@@ -252,11 +249,9 @@ class BaseDialogMixin(QDialog):
         thread.started.connect(worker.run)
 
         def loaded(value: Dict):
+            self.sync_ended.emit(value)
             self.loading_overlay.hide()
             try:
-                for btn in self.refresh_buttons:
-                    btn.setEnabled(True)
-
                 holds = value.get("holds", [])
                 holds_count = len(holds)
                 holds_unique_count = len(list(set([h["id"] for h in holds])))
@@ -275,8 +270,6 @@ class BaseDialogMixin(QDialog):
                     else "",
                     5000,
                 )
-                for model in self.models:
-                    model.sync(value)
             except RuntimeError as err:
                 # most likely because the UI has been closed before syncing was completed
                 logger.warning("Error processing sync results: %s", err)
@@ -284,14 +277,13 @@ class BaseDialogMixin(QDialog):
                 thread.quit()
 
         def errored_out(err: Exception):
+            self.sync_ended.emit({})
             try:
                 thread.quit()
                 self.loading_overlay.hide()
                 self.status_bar.showMessage(
                     _("An error occured during sync: {err}").format(err=str(err))
                 )
-                for btn in self.refresh_buttons:
-                    btn.setEnabled(True)
                 return self.unhandled_exception(err, msg=_("Error synchronizing data"))
             except RuntimeError as err:
                 # most likely because the UI has been closed before syncing was completed

@@ -280,9 +280,6 @@ class CardsDialogMixin(BaseDialogMixin):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
 
-        self.libby_cards_model = LibbyCardsModel(None, [], self.db)  # model
-        self.models.append(self.libby_cards_model)
-
         self.card_widgets = []
         self.cards_tab_widget = QWidget()
         self.cards_tab_widget.layout = QGridLayout()
@@ -307,16 +304,23 @@ class CardsDialogMixin(BaseDialogMixin):
         btn_size = self.cards_refresh_btn.size()
         self.cards_refresh_btn.setMaximumSize(self.min_button_width, btn_size.height())
         self.cards_tab_widget.layout.addWidget(self.cards_refresh_btn, 0, 0, 1, 3)
-        self.refresh_buttons.append(self.cards_refresh_btn)
         widget_row_pos += 1
 
         self.libby_cards_model = LibbyCardsModel(None, [], self.db)  # model
-        self.models.append(self.libby_cards_model)
-
         self.libby_cards_model.modelReset.connect(
             lambda: self.libby_cards_model_reset(widget_row_pos)
         )
         self.cards_tab_index = self.add_tab(self.cards_scroll_area, _("Cards"))
+        self.sync_starting.connect(self.base_sync_starting_cards)
+        self.sync_ended.connect(self.base_sync_ended_cards)
+
+    def base_sync_starting_cards(self):
+        self.cards_refresh_btn.setEnabled(False)
+        self.libby_cards_model.sync({})
+
+    def base_sync_ended_cards(self, value):
+        self.cards_refresh_btn.setEnabled(True)
+        self.libby_cards_model.sync(value)
 
     def cards_refresh_btn_clicked(self):
         self.sync()

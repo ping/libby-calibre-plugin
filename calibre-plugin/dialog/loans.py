@@ -72,7 +72,6 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
         widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
-        self.refresh_buttons.append(self.loans_refresh_btn)
         widget_row_pos += 1
 
         self.loans_model = LibbyLoansModel(None, [], self.db, self.icons)
@@ -81,7 +80,6 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_search_proxy_model.setFilterKeyColumn(-1)
         self.loans_search_proxy_model.setSourceModel(self.loans_model)
         self.loans_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
-        self.models.append(self.loans_model)
 
         # The main loan list
         self.loans_view = QTableView(self)
@@ -148,10 +146,21 @@ class LoansDialogMixin(BaseDialogMixin):
             widget_row_pos,
             self.view_hspan - 1,
         )
-        self.refresh_buttons.append(self.download_btn)
         widget_row_pos += 1
 
         self.loans_tab_index = self.add_tab(widget, _("Loans"))
+        self.sync_starting.connect(self.base_sync_starting_loans)
+        self.sync_ended.connect(self.base_sync_ended_loans)
+
+    def base_sync_starting_loans(self):
+        self.loans_refresh_btn.setEnabled(False)
+        self.download_btn.setEnabled(False)
+        self.loans_model.sync({})
+
+    def base_sync_ended_loans(self, value):
+        self.loans_refresh_btn.setEnabled(True)
+        self.download_btn.setEnabled(True)
+        self.loans_model.sync(value)
 
     def hide_book_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_book_already_in_lib_checkbox.isChecked()

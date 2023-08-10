@@ -89,7 +89,6 @@ class SearchDialogMixin(BaseDialogMixin):
         self.search_proxy_model.setFilterKeyColumn(-1)
         self.search_proxy_model.setSourceModel(self.search_model)
         self.search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
-        self.models.append(self.search_model)
 
         # The main search results list
         self.search_results_view = QTableView(self)
@@ -136,17 +135,17 @@ class SearchDialogMixin(BaseDialogMixin):
 
         button_font = QFont(QApplication.font())  # make it bigger
         button_style = "padding: 2px 16px"
-        self.borrow_btn = QPushButton(
+        self.search_borrow_btn = QPushButton(
             _("Borrow")
             if borrow_action_default_is_borrow
             else _("Borrow and Download"),
             self,
         )
-        self.borrow_btn.setIcon(self.icons[PluginIcons.Add])
-        self.borrow_btn.setStyleSheet(button_style)
-        self.borrow_btn.setFont(button_font)
+        self.search_borrow_btn.setIcon(self.icons[PluginIcons.Add])
+        self.search_borrow_btn.setStyleSheet(button_style)
+        self.search_borrow_btn.setFont(button_font)
         search_widget.layout.addWidget(
-            self.borrow_btn, widget_row_pos, self.view_hspan - 1
+            self.search_borrow_btn, widget_row_pos, self.view_hspan - 1
         )
         self.hold_btn = QPushButton(_("Place Hold"), self)
         self.hold_btn.setStyleSheet(button_style)
@@ -162,6 +161,29 @@ class SearchDialogMixin(BaseDialogMixin):
         for col_num in range(0, search_widget.layout.columnCount() - 2):
             search_widget.layout.setColumnStretch(col_num, 1)
         self.search_tab_index = self.add_tab(search_widget, _c("Search"))
+        self.last_borrow_action_changed.connect(self.rebind_search_borrow_btn)
+        self.sync_starting.connect(self.base_sync_starting_search)
+        self.sync_ended.connect(self.base_sync_ended_search)
+
+    def base_sync_starting_search(self):
+        self.search_borrow_btn.setEnabled(False)
+        self.search_model.sync({})
+
+    def base_sync_ended_search(self, value):
+        self.search_borrow_btn.setEnabled(True)
+        self.search_model.sync(value)
+
+    def rebind_search_borrow_btn(self, last_borrow_action: str):
+        borrow_action_default_is_borrow = (
+            last_borrow_action == BorrowActions.BORROW
+            or not hasattr(self, "download_loan")
+        )
+        self.search_borrow_btn.setText(
+            _("Borrow") if borrow_action_default_is_borrow else _("Borrow and Download")
+        )
+        self.search_borrow_btn.borrow_menu = None
+        self.search_borrow_btn.setMenu(None)
+        self.search_results_view.selectionModel().clearSelection()
 
     def search_for(self, text: str):
         self.tabs.setCurrentIndex(self.search_tab_index)
@@ -316,13 +338,13 @@ class SearchDialogMixin(BaseDialogMixin):
                             m, do_download=not borrow_action_default_is_borrow
                         )
                     )
-            self.borrow_btn.setEnabled(True)
-            self.borrow_btn.borrow_menu = borrow_menu
-            self.borrow_btn.setMenu(borrow_menu)
+            self.search_borrow_btn.setEnabled(True)
+            self.search_borrow_btn.borrow_menu = borrow_menu
+            self.search_borrow_btn.setMenu(borrow_menu)
         else:
-            self.borrow_btn.borrow_menu = None
-            self.borrow_btn.setMenu(None)
-            self.borrow_btn.setEnabled(False)
+            self.search_borrow_btn.borrow_menu = None
+            self.search_borrow_btn.setMenu(None)
+            self.search_borrow_btn.setEnabled(False)
 
         if hold_sites:
             hold_menu = QMenu()
@@ -456,9 +478,9 @@ class SearchDialogMixin(BaseDialogMixin):
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def _reset_borrow_hold_buttons(self):
-        self.borrow_btn.borrow_menu = None
-        self.borrow_btn.setMenu(None)
-        self.borrow_btn.setEnabled(True)
+        self.search_borrow_btn.borrow_menu = None
+        self.search_borrow_btn.setMenu(None)
+        self.search_borrow_btn.setEnabled(True)
         self.hold_btn.hold_menu = None
         self.hold_btn.setMenu(None)
         self.hold_btn.setEnabled(True)

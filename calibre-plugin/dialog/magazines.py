@@ -105,7 +105,6 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         # Libraries combobox
         self.cards_model = LibbyCardsModel(None, [], self.db)  # model
-        self.models.append(self.cards_model)
         self.cards_cbbox = QComboBox(self)  # combobox
         self.cards_cbbox.setModel(self.cards_model)
         self.cards_cbbox.setModelColumn(0)
@@ -139,7 +138,6 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_search_proxy_model.setFilterKeyColumn(-1)
         self.magazines_search_proxy_model.setSourceModel(self.magazines_model)
         self.magazines_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
-        self.models.append(self.magazines_model)
 
         # The main magazines list
         self.magazines_view = QTableView(self)
@@ -202,13 +200,24 @@ class MagazinesDialogMixin(BaseDialogMixin):
         magazines_widget.layout.addWidget(
             self.magazines_borrow_btn, widget_row_pos, self.view_hspan - 1
         )
-        self.refresh_buttons.append(self.magazines_borrow_btn)
         widget_row_pos += 1
 
         self.magazines_tab_index = self.add_tab(magazines_widget, _("Magazines"))
         self.last_borrow_action_changed.connect(
             self.rebind_magazines_download_button_and_menu
         )
+        self.sync_starting.connect(self.base_sync_starting_magazines)
+        self.sync_ended.connect(self.base_sync_ended_magazines)
+
+    def base_sync_starting_magazines(self):
+        self.magazines_refresh_btn.setEnabled(False)
+        self.magazines_model.sync({})
+        self.cards_model.sync({})
+
+    def base_sync_ended_magazines(self, value):
+        self.magazines_refresh_btn.setEnabled(True)
+        self.magazines_model.sync(value)
+        self.cards_model.sync(value)
 
     def rebind_magazines_download_button_and_menu(self, borrow_action):
         self.rebind_borrow_btn(

@@ -75,7 +75,6 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
         widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
-        self.refresh_buttons.append(self.holds_refresh_btn)
         widget_row_pos += 1
 
         self.holds_model = LibbyHoldsModel(None, [], self.db)
@@ -84,7 +83,6 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_search_proxy_model.setFilterKeyColumn(-1)
         self.holds_search_proxy_model.setSourceModel(self.holds_model)
         self.holds_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
-        self.models.append(self.holds_model)
 
         self.holds_model.modelReset.connect(self.holds_model_changed)
         self.holds_model.rowsRemoved.connect(self.holds_model_changed)
@@ -149,13 +147,24 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget.layout.addWidget(
             self.holds_borrow_btn, widget_row_pos, self.view_hspan - 1
         )
-        self.refresh_buttons.append(self.holds_borrow_btn)
         widget_row_pos += 1
 
         self.holds_tab_index = self.add_tab(widget, _("Holds"))
         self.last_borrow_action_changed.connect(
             self.rebind_holds_download_button_and_menu
         )
+        self.sync_starting.connect(self.base_sync_starting_holds)
+        self.sync_ended.connect(self.base_sync_ended_holds)
+
+    def base_sync_starting_holds(self):
+        self.holds_refresh_btn.setEnabled(False)
+        self.holds_borrow_btn.setEnabled(False)
+        self.holds_model.sync({})
+
+    def base_sync_ended_holds(self, value):
+        self.holds_refresh_btn.setEnabled(True)
+        self.holds_borrow_btn.setEnabled(True)
+        self.holds_model.sync(value)
 
     def holds_model_changed(self):
         available_holds_count = 0

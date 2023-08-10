@@ -209,6 +209,12 @@ class LibbyClient(object):
         )
 
     @staticmethod
+    def get_locked_in_format(loan: Dict):
+        return next(
+            iter([f["id"] for f in loan["formats"] if f.get("isLockedIn")]), None
+        )
+
+    @staticmethod
     def get_loan_format(
         loan: Dict, prefer_open_format: bool = True, raise_if_not_downloadable=True
     ) -> str:
@@ -220,6 +226,9 @@ class LibbyClient(object):
         :return:
         """
         formats = loan.get("formats", [])
+        if not formats:
+            raise ValueError("No formats found")
+
         locked_in_format = next(
             iter([f["id"] for f in formats if f.get("isLockedIn")]), None
         )
@@ -265,6 +274,13 @@ class LibbyClient(object):
                 loan
             ) and LibbyClient.has_format(loan, LibbyFormats.EBookPDFAdobe):
                 return LibbyFormats.EBookPDFAdobe
+            # no epub format available, prioritised in this sequence
+            elif LibbyClient.has_format(loan, LibbyFormats.EBookKindle):
+                return LibbyFormats.EBookKindle
+            elif LibbyClient.has_format(loan, LibbyFormats.EBookOverdrive):
+                return LibbyFormats.EBookOverdrive
+            elif LibbyClient.has_format(loan, LibbyFormats.EBookKobo):
+                return LibbyFormats.EBookKobo
 
         if len(formats) == 1:
             return formats[0]["id"]

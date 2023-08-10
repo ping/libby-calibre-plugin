@@ -21,6 +21,10 @@ from .overdrive import OverDriveClient
 
 
 class OverDriveMediaSearchWorker(QObject):
+    """
+    Search media
+    """
+
     finished = pyqtSignal(list)
     errored = pyqtSignal(Exception)
 
@@ -29,7 +33,7 @@ class OverDriveMediaSearchWorker(QObject):
         overdrive_client: OverDriveClient,
         query: str,
         library_keys: List[str],
-        formats: List[str],
+        formats: List[LibbyFormats],
         max_items: int = 20,
     ):
         self.client = overdrive_client
@@ -60,6 +64,10 @@ class OverDriveMediaSearchWorker(QObject):
 
 
 class OverDriveLibraryMediaWorker(QObject):
+    """
+    Fetches a library's media detail (for Magazines tab)
+    """
+
     finished = pyqtSignal(dict)
     errored = pyqtSignal(Exception)
 
@@ -86,6 +94,10 @@ class OverDriveLibraryMediaWorker(QObject):
 
 
 class SyncDataWorker(QObject):
+    """
+    Main sync worker
+    """
+
     finished = pyqtSignal(dict)
     errored = pyqtSignal(Exception)
 

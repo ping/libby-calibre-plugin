@@ -480,11 +480,11 @@ class SuspendHoldDialog(QDialog):
         )
         self.days_slider.setValue(7)
         if hold.get("suspensionEnd"):
-            suspend_interval = LibbyClient.parse_datetime(
-                hold["suspensionEnd"]
-            ) - datetime.now(tz=timezone.utc)
-            if suspend_interval.days >= 0:
-                self.days_slider.setValue(suspend_interval.days + 1)
+            suspension_end = LibbyClient.parse_datetime(hold["suspensionEnd"])
+            if suspension_end:
+                suspend_interval = suspension_end - datetime.now(tz=timezone.utc)
+                if suspend_interval.days >= 0:
+                    self.days_slider.setValue(suspend_interval.days + 1)
 
         self.cancel_btn = QPushButton(_c("Cancel"), self)
         self.cancel_btn.setIcon(self.icons[PluginIcons.Cancel])

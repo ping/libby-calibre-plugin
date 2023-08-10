@@ -16,7 +16,7 @@ from qt.core import QObject, pyqtSignal
 
 from . import logger
 from .config import PREFS, PreferenceKeys
-from .libby import LibbyClient
+from .libby import LibbyClient, LibbyFormats
 from .overdrive import OverDriveClient
 
 

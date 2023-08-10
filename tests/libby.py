@@ -261,3 +261,14 @@ class LibbyClientTests(BaseTests):
             ),
             LibbyFormats.EBookOverdrive,
         )
+
+    def test_parse_datetime(self):
+        for value in (
+            "2017-06-06T04:00:00Z",  # estimatedReleaseDate, publishDate
+            "2023-08-10T23:00:01.000Z",  # expireDate
+            "2023-07-31T08:00:01.000+00:00",  # placedDate
+            "2023-08-01T10:00:01.000Z",  # placedDate
+            "05/30/2023",
+        ):
+            with self.subTest(value=value):
+                LibbyClient.parse_datetime(value)

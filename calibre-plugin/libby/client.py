@@ -301,6 +301,8 @@ class LibbyClient(object):
             "%Y-%m-%dT%H:%M:%SZ",
             "%Y-%m-%dT%H:%M:%S.%fZ",
             "%Y-%m-%dT%H:%M:%S%z",
+            "%Y-%m-%dT%H:%M:%S.%f%z",
+            "%m/%d/%Y",  # publishDateText
         )
         for i, fmt in enumerate(formats, start=1):
             try:

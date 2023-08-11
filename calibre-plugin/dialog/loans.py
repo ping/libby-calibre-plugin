@@ -242,10 +242,6 @@ class LoansDialogMixin(BaseDialogMixin):
                     self.loans_model.removeRow(
                         self.loans_search_proxy_model.mapToSource(row).row()
                     )
-        # else:
-        #     return error_dialog(
-        #         self, _("Download"), _("Please select at least 1 loan."), show=True
-        #     )
 
     def download_loan(self, loan: Dict):
         # do actual downloading of the loan

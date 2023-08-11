@@ -435,7 +435,7 @@ class BaseDialogMixin(QDialog):
         Use this to handle unexpected job/sync errors instead of letting calibre's main window do it,
         so that it doesn't go behind our modal plugin window.
 
-        Adapter from
+        Adapted from
         https://github.com/kovidgoyal/calibre/blob/ffcaf382a277bd980771d36ce915cc451ef30b25/src/calibre/gui2/main_window.py#L216-L243
 
         :param err:

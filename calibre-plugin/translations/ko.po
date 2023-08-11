@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-09 17:47+0800\n"
+"POT-Creation-Date: 2023-08-11 11:28+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -22,11 +22,11 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr "OverDrive Libby 계정에서 대출 가져오기"
 
-#: calibre-plugin/action.py:51 calibre-plugin/config.py:163
+#: calibre-plugin/action.py:51 calibre-plugin/config.py:166
 msgid "Libby"
 msgstr ""
 
-#: calibre-plugin/action.py:102 calibre-plugin/dialog/base.py:136
+#: calibre-plugin/action.py:102 calibre-plugin/dialog/base.py:142
 msgid "MobileRead"
 msgstr ""
 
@@ -34,146 +34,150 @@ msgstr ""
 msgid "Borrowing"
 msgstr "대출하기"
 
-#: calibre-plugin/config.py:87 calibre-plugin/config.py:640
+#: calibre-plugin/config.py:88 calibre-plugin/config.py:655
 msgid "Libby Setup Code"
 msgstr "Libby설정 코드"
 
-#: calibre-plugin/config.py:88
+#: calibre-plugin/config.py:89
 msgid "8-digit setup code"
 msgstr "8자리 코드"
 
-#: calibre-plugin/config.py:89
+#: calibre-plugin/config.py:90
 msgid "Hide Magazines"
 msgstr "매거진 숨기기"
 
-#: calibre-plugin/config.py:90
+#: calibre-plugin/config.py:91
 msgid "Hide Ebooks"
 msgstr "eBook 숨기기"
 
-#: calibre-plugin/config.py:91
-msgid "Hide titles already in library"
-msgstr "서재에서 이미 있는 책 숨기기"
-
 #: calibre-plugin/config.py:92
-msgid "Exclude empty books when hiding titles already in library"
+msgid "Include titles without downloadable formats"
 msgstr ""
 
 #: calibre-plugin/config.py:93
+msgid "Hide titles already in library"
+msgstr "서재에서 이미 있는 책 숨기기"
+
+#: calibre-plugin/config.py:94
+msgid "Exclude empty books when hiding titles already in library"
+msgstr ""
+
+#: calibre-plugin/config.py:95
 msgid "Hide unavailable holds"
 msgstr ""
 
-#: calibre-plugin/config.py:94
+#: calibre-plugin/config.py:96
 msgid "Prefer Open Formats"
 msgstr "오픈 포맷 선호"
 
-#: calibre-plugin/config.py:95
+#: calibre-plugin/config.py:97
 msgid "Tag downloaded ebooks with"
 msgstr "다운로드한 전자책에 태그 지정"
 
-#: calibre-plugin/config.py:96
+#: calibre-plugin/config.py:98
 msgid "Example: library,books"
 msgstr "예: 도서관,책"
 
-#: calibre-plugin/config.py:97
+#: calibre-plugin/config.py:99
 msgid "Tag downloaded magazines with"
 msgstr "다운로드한 잡지에 태그 지정"
 
-#: calibre-plugin/config.py:98
+#: calibre-plugin/config.py:100
 msgid "Example: library,magazines"
 msgstr "예: 도서관,잡지"
 
-#: calibre-plugin/config.py:99
+#: calibre-plugin/config.py:101
 msgid "Always confirm returns"
 msgstr "항상 반품 확인"
 
-#: calibre-plugin/config.py:100
+#: calibre-plugin/config.py:102
 msgid "Always confirm holds cancellation"
 msgstr ""
 
-#: calibre-plugin/config.py:101
+#: calibre-plugin/config.py:103
 msgid "Enable OverDrive Link Plugin integration"
 msgstr ""
 
-#: calibre-plugin/config.py:102
+#: calibre-plugin/config.py:104
 msgid "Mark updated books"
 msgstr ""
 
-#: calibre-plugin/config.py:103
+#: calibre-plugin/config.py:105
 msgid "Always download as a new book"
 msgstr ""
 
-#: calibre-plugin/config.py:104
+#: calibre-plugin/config.py:106
 msgid "Connection timeout"
 msgstr "연결 대기시간 초과"
 
-#: calibre-plugin/config.py:106
+#: calibre-plugin/config.py:108
 msgid "Maximum search results"
 msgstr ""
 
-#: calibre-plugin/config.py:107
+#: calibre-plugin/config.py:109
 #, python-brace-format
 msgid "Library Keys (comma-separated, max: {n})"
 msgstr ""
 
-#: calibre-plugin/config.py:110
+#: calibre-plugin/config.py:112
 msgid "Custom column for Borrowed Date"
 msgstr ""
 
-#: calibre-plugin/config.py:111
+#: calibre-plugin/config.py:113
 msgid "Custom column for Due Date"
 msgstr ""
 
-#: calibre-plugin/config.py:112
+#: calibre-plugin/config.py:114
 msgid "Custom column for Loan Type"
 msgstr ""
 
-#: calibre-plugin/config.py:170
+#: calibre-plugin/config.py:173
 msgid "Libby is configured."
 msgstr "Libby가 구성되었습니다."
 
-#: calibre-plugin/config.py:172 calibre-plugin/dialog/base.py:232
+#: calibre-plugin/config.py:175 calibre-plugin/dialog/base.py:236
 msgid "Libby is not configured yet."
 msgstr "Libby가 구성되지 않았습니다."
 
-#: calibre-plugin/config.py:203 calibre-plugin/dialog/cards.py:178
-#: calibre-plugin/dialog/cards.py:230 calibre-plugin/dialog/loans.py:154
+#: calibre-plugin/config.py:206 calibre-plugin/dialog/cards.py:178
+#: calibre-plugin/dialog/cards.py:230 calibre-plugin/dialog/loans.py:153
 msgid "Loans"
 msgstr "대출"
 
-#: calibre-plugin/config.py:361
+#: calibre-plugin/config.py:373
 msgid "Loan's borrowed/checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:373
+#: calibre-plugin/config.py:385
 msgid "Loan's due/expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:387
+#: calibre-plugin/config.py:399
 msgid "Loan type, e.g. ebook, audiobook, magazine"
 msgstr ""
 
-#: calibre-plugin/config.py:411 calibre-plugin/dialog/cards.py:200
-#: calibre-plugin/dialog/cards.py:241 calibre-plugin/dialog/holds.py:155
-#: calibre-plugin/dialog/holds.py:169
+#: calibre-plugin/config.py:423 calibre-plugin/dialog/cards.py:200
+#: calibre-plugin/dialog/cards.py:241 calibre-plugin/dialog/holds.py:152
+#: calibre-plugin/dialog/holds.py:181
 msgid "Holds"
 msgstr "예약"
 
-#: calibre-plugin/config.py:436
+#: calibre-plugin/config.py:448
 msgid "Search"
 msgstr ""
 
-#: calibre-plugin/config.py:453
+#: calibre-plugin/config.py:465
 #, python-brace-format
 msgid ""
 "Up to {n} libraries, comma-separated. View your library key codes from the "
 "Cards tab. Example: lapl,sno-isle,livebrary,kcls"
 msgstr ""
 
-#: calibre-plugin/config.py:468
+#: calibre-plugin/config.py:480
 msgid "Network"
 msgstr ""
 
-#: calibre-plugin/config.py:641
+#: calibre-plugin/config.py:656
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""
@@ -194,177 +198,177 @@ msgstr ""
 msgid "Returning"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:423
+#: calibre-plugin/magazine_download.py:422
 msgid "Getting loan details"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:463
+#: calibre-plugin/magazine_download.py:462
 msgid "Getting book details"
 msgstr ""
 
-#: calibre-plugin/models.py:74
+#: calibre-plugin/models.py:73
 msgid "ebook"
 msgstr "책"
 
-#: calibre-plugin/models.py:74
+#: calibre-plugin/models.py:73
 msgid "magazine"
 msgstr "매거진"
 
-#: calibre-plugin/models.py:76
+#: calibre-plugin/models.py:75
 msgid "Libby Book"
 msgstr "Libby 책"
 
-#: calibre-plugin/models.py:77
+#: calibre-plugin/models.py:76
 msgid "Libby Audiobook"
 msgstr "Libby 오디오북"
 
-#: calibre-plugin/models.py:78
+#: calibre-plugin/models.py:77
 msgid "MP3 Audiobook"
 msgstr ""
 
-#: calibre-plugin/models.py:79
+#: calibre-plugin/models.py:78
 msgid "Libby Magazine"
 msgstr "Libby 잡지"
 
-#: calibre-plugin/models.py:80
+#: calibre-plugin/models.py:79
 msgid "Libby Video"
 msgstr "Libby 동영상"
 
-#: calibre-plugin/models.py:81
+#: calibre-plugin/models.py:80
 msgid "Streaming Video"
 msgstr "스트리밍 동영상"
 
-#: calibre-plugin/models.py:82
+#: calibre-plugin/models.py:81
 msgid "Kindle"
 msgstr ""
 
-#: calibre-plugin/models.py:83
+#: calibre-plugin/models.py:82
 msgid "Media Do"
 msgstr ""
 
-#: calibre-plugin/models.py:84
+#: calibre-plugin/models.py:83
 msgid "EPUB"
 msgstr ""
 
-#: calibre-plugin/models.py:85
+#: calibre-plugin/models.py:84
 msgid "EPUB (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:86
+#: calibre-plugin/models.py:85
 msgid "PDF"
 msgstr ""
 
-#: calibre-plugin/models.py:87
+#: calibre-plugin/models.py:86
 msgid "PDF (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:172
+#: calibre-plugin/models.py:171
 msgid "Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:173 calibre-plugin/models.py:333
-#: calibre-plugin/models.py:663 calibre-plugin/dialog/cards.py:219
+#: calibre-plugin/models.py:172 calibre-plugin/models.py:342
+#: calibre-plugin/models.py:681 calibre-plugin/dialog/cards.py:219
 msgid "Library"
 msgstr "도서관"
 
-#: calibre-plugin/models.py:284
+#: calibre-plugin/models.py:291
 msgid "A skip-the-line loan"
 msgstr "대기 없는 인기 자료 대출."
 
-#: calibre-plugin/models.py:332
+#: calibre-plugin/models.py:341
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:335
+#: calibre-plugin/models.py:344
 msgid "Available"
 msgstr "이용 가능"
 
-#: calibre-plugin/models.py:424
+#: calibre-plugin/models.py:440
 #, python-brace-format
 msgid "Expires {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:429
+#: calibre-plugin/models.py:445
 #, python-brace-format
 msgid "Placed on {dt}"
 msgstr "예약일: {dt}"
 
-#: calibre-plugin/models.py:445
+#: calibre-plugin/models.py:461
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr "{dt} 이후 전송"
 
-#: calibre-plugin/models.py:451
+#: calibre-plugin/models.py:467
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:496
+#: calibre-plugin/models.py:514
 msgid "Delivering Later"
 msgstr "나중에 전송 예정"
 
-#: calibre-plugin/models.py:497
+#: calibre-plugin/models.py:515
 msgid "Suspended Hold"
 msgstr "보류된 예약"
 
-#: calibre-plugin/models.py:545
+#: calibre-plugin/models.py:563
 msgid "Release Date"
 msgstr "발행일"
 
-#: calibre-plugin/models.py:545
+#: calibre-plugin/models.py:563
 msgid "Library Card"
 msgstr "도서관 카드"
 
-#: calibre-plugin/models.py:545
+#: calibre-plugin/models.py:563
 msgid "Borrowed"
 msgstr "대출됨"
 
-#: calibre-plugin/dialog/base.py:92
+#: calibre-plugin/dialog/base.py:98
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:237 calibre-plugin/dialog/base.py:240
+#: calibre-plugin/dialog/base.py:239 calibre-plugin/dialog/base.py:240
 msgid "Synchronizing..."
 msgstr "동기화 중..."
 
-#: calibre-plugin/dialog/base.py:262
+#: calibre-plugin/dialog/base.py:261
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:288
+#: calibre-plugin/dialog/base.py:286
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:292
+#: calibre-plugin/dialog/base.py:288
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:314 calibre-plugin/dialog/base.py:332
-#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:371
-#: calibre-plugin/dialog/search.py:140
+#: calibre-plugin/dialog/base.py:310 calibre-plugin/dialog/base.py:328
+#: calibre-plugin/dialog/base.py:351 calibre-plugin/dialog/base.py:367
+#: calibre-plugin/dialog/search.py:139 calibre-plugin/dialog/search.py:182
 msgid "Borrow"
 msgstr "대출"
 
-#: calibre-plugin/dialog/base.py:316 calibre-plugin/dialog/base.py:330
-#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:369
-#: calibre-plugin/dialog/search.py:142
+#: calibre-plugin/dialog/base.py:312 calibre-plugin/dialog/base.py:326
+#: calibre-plugin/dialog/base.py:351 calibre-plugin/dialog/base.py:365
+#: calibre-plugin/dialog/search.py:141 calibre-plugin/dialog/search.py:182
 msgid "Borrow and Download"
 msgstr "대여 및 다운로드"
 
-#: calibre-plugin/dialog/base.py:322 calibre-plugin/dialog/base.py:358
+#: calibre-plugin/dialog/base.py:318 calibre-plugin/dialog/base.py:354
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:324 calibre-plugin/dialog/base.py:360
+#: calibre-plugin/dialog/base.py:320 calibre-plugin/dialog/base.py:356
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:477
+#: calibre-plugin/dialog/base.py:470
 msgid "Check your connection or retry in a few minutes."
 msgstr "연결 상태를 확인하거나 몇 분 후 다시 시도하십시오."
 
@@ -390,24 +394,24 @@ msgid "Verified date"
 msgstr ""
 
 #: calibre-plugin/dialog/cards.py:220 calibre-plugin/dialog/cards.py:231
-#: calibre-plugin/dialog/cards.py:242 calibre-plugin/dialog/holds.py:259
-#: calibre-plugin/dialog/loans.py:188 calibre-plugin/dialog/magazines.py:260
-#: calibre-plugin/dialog/search.py:390
+#: calibre-plugin/dialog/cards.py:242 calibre-plugin/dialog/holds.py:271
+#: calibre-plugin/dialog/loans.py:201 calibre-plugin/dialog/magazines.py:274
+#: calibre-plugin/dialog/search.py:412
 msgid "View in Libby"
 msgstr "Libby에서 보기"
 
 #: calibre-plugin/dialog/cards.py:223 calibre-plugin/dialog/cards.py:234
-#: calibre-plugin/dialog/cards.py:245 calibre-plugin/dialog/holds.py:264
-#: calibre-plugin/dialog/loans.py:193 calibre-plugin/dialog/magazines.py:265
-#: calibre-plugin/dialog/search.py:409
+#: calibre-plugin/dialog/cards.py:245 calibre-plugin/dialog/holds.py:276
+#: calibre-plugin/dialog/loans.py:206 calibre-plugin/dialog/magazines.py:279
+#: calibre-plugin/dialog/search.py:431
 msgid "View in OverDrive"
 msgstr "OverDrive에서 보기"
 
-#: calibre-plugin/dialog/cards.py:305 calibre-plugin/dialog/loans.py:72
+#: calibre-plugin/dialog/cards.py:302 calibre-plugin/dialog/loans.py:74
 msgid "Get latest loans"
 msgstr "최신 도서 대출 받기"
 
-#: calibre-plugin/dialog/cards.py:319
+#: calibre-plugin/dialog/cards.py:313
 msgid "Cards"
 msgstr "도서관 카드"
 
@@ -415,95 +419,95 @@ msgstr "도서관 카드"
 msgid "Get latest holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:166
+#: calibre-plugin/dialog/holds.py:178
 #, python-brace-format
 msgid "Holds ({n})"
 msgstr "예약({n})"
 
-#: calibre-plugin/dialog/holds.py:218
+#: calibre-plugin/dialog/holds.py:230
 #, python-brace-format
 msgid "Estimated wait days: {n}."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:221
+#: calibre-plugin/dialog/holds.py:233
 #, python-brace-format
 msgid "You are number {n} in line."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:225 calibre-plugin/dialog/search.py:234
+#: calibre-plugin/dialog/holds.py:237 calibre-plugin/dialog/search.py:256
 #, python-brace-format
 msgid "{n} copy ordered."
 msgid_plural "{n} copies ordered."
 msgstr[0] ""
 
-#: calibre-plugin/dialog/holds.py:229 calibre-plugin/dialog/search.py:239
+#: calibre-plugin/dialog/holds.py:241 calibre-plugin/dialog/search.py:261
 #, python-brace-format
 msgid "{n} copy in use."
 msgid_plural "{n} copies in use."
 msgstr[0] ""
 
-#: calibre-plugin/dialog/holds.py:245
+#: calibre-plugin/dialog/holds.py:257
 msgid ""
 "You have reached your loan limit for this card. To update limits, click on "
 "Refresh."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:273 calibre-plugin/dialog/loans.py:199
+#: calibre-plugin/dialog/holds.py:285 calibre-plugin/dialog/loans.py:212
 #, python-brace-format
 msgid "Search for \"{book}\""
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:284
+#: calibre-plugin/dialog/holds.py:296
 msgid "Manage hold"
 msgstr "예약 관리"
 
-#: calibre-plugin/dialog/holds.py:290
+#: calibre-plugin/dialog/holds.py:302
 msgid "Cancel hold"
 msgstr "예약 취소"
 
-#: calibre-plugin/dialog/holds.py:306 calibre-plugin/dialog/magazines.py:301
+#: calibre-plugin/dialog/holds.py:318 calibre-plugin/dialog/magazines.py:315
 #, python-brace-format
 msgid "Borrowing {book}"
 msgstr "대출하기: {book}"
 
-#: calibre-plugin/dialog/holds.py:329
+#: calibre-plugin/dialog/holds.py:341
 msgid "Failed to borrow book"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:343
+#: calibre-plugin/dialog/holds.py:355
 msgid "Cancel this hold?"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:353
+#: calibre-plugin/dialog/holds.py:365
 msgid "Cancel Holds"
 msgstr "예약 취소"
 
-#: calibre-plugin/dialog/holds.py:365
+#: calibre-plugin/dialog/holds.py:377
 #, python-brace-format
 msgid "Cancelling hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:386
+#: calibre-plugin/dialog/holds.py:398
 msgid "Failed to cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:395
+#: calibre-plugin/dialog/holds.py:407
 msgid "Failed to update hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:443 calibre-plugin/dialog/holds.py:460
+#: calibre-plugin/dialog/holds.py:455 calibre-plugin/dialog/holds.py:472
 #, python-brace-format
 msgid "Deliver after {n} day"
 msgid_plural "Deliver after {n} days"
 msgstr[0] "{n}일 후 전송"
 
-#: calibre-plugin/dialog/holds.py:445 calibre-plugin/dialog/holds.py:464
+#: calibre-plugin/dialog/holds.py:457 calibre-plugin/dialog/holds.py:476
 #, python-brace-format
 msgid "Suspend for {n} day"
 msgid_plural "Suspend for {n} days"
 msgstr[0] "{n}일 동안 보류"
 
-#: calibre-plugin/dialog/holds.py:506
+#: calibre-plugin/dialog/holds.py:518
 #, python-brace-format
 msgid "Updating hold on {book}"
 msgstr ""
@@ -512,35 +516,40 @@ msgstr ""
 msgid "Download selected loans"
 msgstr "선택한 도서 대출 다운로드"
 
-#: calibre-plugin/dialog/loans.py:214
+#: calibre-plugin/dialog/loans.py:227
 #, python-brace-format
 msgid "Return {n} loan"
 msgid_plural "Return {n} loans"
 msgstr[0] "{n} 도서 대출 반환"
 
-#: calibre-plugin/dialog/loans.py:309
+#: calibre-plugin/dialog/loans.py:342
 #, python-brace-format
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:378
+#: calibre-plugin/dialog/loans.py:411
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "이 도서 대출을 반환하시겠습니까?"
 
-#: calibre-plugin/dialog/loans.py:390
+#: calibre-plugin/dialog/loans.py:423
 msgid "Return Loans"
 msgstr "도서 대출 반환"
 
-#: calibre-plugin/dialog/loans.py:401
+#: calibre-plugin/dialog/loans.py:434
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "{book}를 반환하는 중"
 
-#: calibre-plugin/dialog/loans.py:422
+#: calibre-plugin/dialog/loans.py:455
 msgid "Failed to return loan"
 msgstr "도서 대출 반환 실패"
+
+#: calibre-plugin/dialog/loans.py:475
+#, python-brace-format
+msgid "Downloading empty book for {book}"
+msgstr ""
 
 #: calibre-plugin/dialog/magazines.py:86
 msgid ""
@@ -549,105 +558,105 @@ msgid ""
 "Click on the Add button to monitor this title for new issues."
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:120
+#: calibre-plugin/dialog/magazines.py:119
 msgid "Add to monitor for new issues"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:131
+#: calibre-plugin/dialog/magazines.py:130
 msgid "Get latest magazines"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:208
+#: calibre-plugin/dialog/magazines.py:205
 msgid "Magazines"
 msgstr "잡지"
 
-#: calibre-plugin/dialog/magazines.py:326
+#: calibre-plugin/dialog/magazines.py:340
 msgid "Failed to borrow magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:348
-#: calibre-plugin/dialog/magazines.py:371
-#: calibre-plugin/dialog/magazines.py:383
-#: calibre-plugin/dialog/magazines.py:402
-#: calibre-plugin/dialog/magazines.py:417
+#: calibre-plugin/dialog/magazines.py:362
+#: calibre-plugin/dialog/magazines.py:385
+#: calibre-plugin/dialog/magazines.py:397
+#: calibre-plugin/dialog/magazines.py:416
+#: calibre-plugin/dialog/magazines.py:431
 msgid "Add Magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:349
+#: calibre-plugin/dialog/magazines.py:363
 #, python-brace-format
 msgid "Invalid URL {url}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:373
+#: calibre-plugin/dialog/magazines.py:387
 #, python-brace-format
 msgid "{media} is not a downloadable magazine"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:384
+#: calibre-plugin/dialog/magazines.py:398
 #, python-brace-format
 msgid "{library} does not own this title"
 msgstr "{library}은 이 타이틀의 사본을 소유하지 않습니다."
 
-#: calibre-plugin/dialog/magazines.py:403
+#: calibre-plugin/dialog/magazines.py:417
 #, python-brace-format
 msgid "Already monitoring {magazine}"
 msgstr ""
 
-#: calibre-plugin/dialog/magazines.py:419
+#: calibre-plugin/dialog/magazines.py:433
 #, python-brace-format
 msgid ""
 "Added {magazine} for monitoring.\n"
 "Click OK to refresh, or the ESC key to continue without."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:151
+#: calibre-plugin/dialog/search.py:150
 msgid "Place Hold"
 msgstr "예약"
 
-#: calibre-plugin/dialog/search.py:211
+#: calibre-plugin/dialog/search.py:233
 #, python-brace-format
 msgid "<b>{n}</b> copy available."
 msgid_plural "<b>{n}</b> copies available."
 msgstr[0] ""
 
-#: calibre-plugin/dialog/search.py:218
+#: calibre-plugin/dialog/search.py:240
 #, python-brace-format
 msgid "{n} copy owned."
 msgid_plural "{n} copies owned."
 msgstr[0] ""
 
-#: calibre-plugin/dialog/search.py:228
+#: calibre-plugin/dialog/search.py:250
 #, python-brace-format
 msgid "Estimated wait days: <b>{n}</b>."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:231
+#: calibre-plugin/dialog/search.py:253
 #, python-brace-format
 msgid "You will be number {n} in line."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:288
+#: calibre-plugin/dialog/search.py:310
 msgid "This card is out of loans."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:302
+#: calibre-plugin/dialog/search.py:324
 msgid "You already have a loan for this title."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:347
+#: calibre-plugin/dialog/search.py:369
 msgid "This card is out of holds."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:360
+#: calibre-plugin/dialog/search.py:382
 msgid "You already have a hold for this title."
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:432
+#: calibre-plugin/dialog/search.py:454
 #, python-brace-format
 msgid "Placing hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/search.py:453
+#: calibre-plugin/dialog/search.py:475
 msgid "Failed to create hold"
 msgstr ""
 

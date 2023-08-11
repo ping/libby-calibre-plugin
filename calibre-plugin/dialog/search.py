@@ -518,18 +518,17 @@ class SearchDialogMixin(BaseDialogMixin):
     ):
         thread = QThread()
         worker = OverDriveMediaSearchWorker()
-        worker.setup(
-            overdrive_client,
-            query,
-            library_keys,
-            [
+        formats = []
+        if not PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
+            formats = [
                 LibbyFormats.EBookEPubAdobe,
                 LibbyFormats.EBookPDFAdobe,
                 LibbyFormats.EBookEPubOpen,
                 LibbyFormats.EBookPDFOpen,
                 LibbyFormats.MagazineOverDrive,
-            ],
-            max_items=max_items,
+            ]
+        worker.setup(
+            overdrive_client, query, library_keys, formats, max_items=max_items
         )
         worker.moveToThread(thread)
         thread.worker = worker

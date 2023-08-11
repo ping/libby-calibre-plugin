@@ -1,6 +1,7 @@
 # Changelog
 
 Unreleased
+- New: If enabled, plugin will create an Empty Book for a loan that does not have a supported downloadable format
 - New: Search tab that provides a basic search function across your libraries
 - New: Cards tab that gives an overview of your linked cards
 - New: Custom columns to store borrowed/due dates, and loan type

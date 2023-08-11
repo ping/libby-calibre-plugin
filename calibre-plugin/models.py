@@ -209,15 +209,21 @@ class LibbyLoansModel(LibbyModel):
                     LibbyClient.is_downloadable_magazine_loan(loan)
                     and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
                 )
+                or (
+                    PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+                    and not (
+                        LibbyClient.is_downloadable_magazine_loan(loan)
+                        or LibbyClient.is_downloadable_ebook_loan(loan)
+                    )
+                )
             ):
                 continue
 
-            try:
-                loan_format = LibbyClient.get_loan_format(
-                    loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-                )
-            except ValueError:
-                continue
+            loan_format = LibbyClient.get_loan_format(
+                loan,
+                PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
+                raise_if_not_downloadable=False,
+            )
 
             if not self.filter_hide_books_already_in_library:
                 # hide lib books filter is not enabled
@@ -314,7 +320,9 @@ class LibbyLoansModel(LibbyModel):
             return card["advantageKey"]
         if col == 4:
             loan_format = LibbyClient.get_loan_format(
-                loan, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+                loan,
+                PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
+                raise_if_not_downloadable=False,
             )
             if role == LibbyModel.DisplaySortRole:
                 return str(loan_format)
@@ -372,6 +380,13 @@ class LibbyHoldsModel(LibbyModel):
             or (
                 not PREFS[PreferenceKeys.HIDE_MAGAZINES]
                 and LibbyClient.is_downloadable_magazine_loan(h)
+            )
+            or (
+                PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+                and not (
+                    LibbyClient.is_downloadable_magazine_loan(h)
+                    or LibbyClient.is_downloadable_ebook_loan(h)
+                )
             )
         ]:
             if hold.get("isAvailable", False) or not self.filter_hide_unavailable_holds:
@@ -483,7 +498,9 @@ class LibbyHoldsModel(LibbyModel):
             return card["advantageKey"]
         if col == 4:
             hold_format = LibbyClient.get_loan_format(
-                hold, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+                hold,
+                PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
+                raise_if_not_downloadable=False,
             )
             if role == LibbyModel.DisplaySortRole:
                 return str(hold_format)
@@ -717,10 +734,17 @@ class LibbySearchModel(LibbyModel):
         self.filtered_rows = []
         for r in synced_state["search_results"]:
             try:
-                LibbyClient.get_loan_format(r)
-                if LibbyClient.is_downloadable_ebook_loan(
-                    r
-                ) or LibbyClient.is_downloadable_magazine_loan(r):
+                if (
+                    LibbyClient.is_downloadable_ebook_loan(r)
+                    or LibbyClient.is_downloadable_magazine_loan(r)
+                    or (
+                        PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+                        and not (
+                            LibbyClient.is_downloadable_magazine_loan(r)
+                            or LibbyClient.is_downloadable_ebook_loan(r)
+                        )
+                    )
+                ):
                     self.filtered_rows.append(r)
             except ValueError:
                 pass
@@ -783,12 +807,26 @@ class LibbySearchModel(LibbyModel):
                 media.get("publisher", {}).get("name", ""), text_length=20
             )
         if col == 4:
-            loan_format = LibbyClient.get_loan_format(
-                media, PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-            )
-            if role == LibbyModel.DisplaySortRole:
-                return str(loan_format)
-            return _(LOAN_FORMAT_TRANSLATION.get(loan_format, str(loan_format)))
+            try:
+                media_format = LibbyClient.get_loan_format(
+                    media,
+                    PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
+                    raise_if_not_downloadable=False,
+                )
+                if role == LibbyModel.DisplaySortRole:
+                    return str(media_format)
+                return _(LOAN_FORMAT_TRANSLATION.get(media_format, str(media_format)))
+            except ValueError:
+                return ", ".join(
+                    [
+                        _(
+                            LOAN_FORMAT_TRANSLATION.get(
+                                media_format["id"], str(media_format["id"])
+                            )
+                        )
+                        for media_format in media.get("formats", [])
+                    ]
+                )
         if col == 5:
             if role == LibbyModel.DisplaySortRole:
                 return len(available_sites)

@@ -35,6 +35,7 @@ from ..compat import (
 )
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
+from ..empty_download import EmptyBookDownload
 from ..libby import LibbyClient
 from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
@@ -50,6 +51,7 @@ load_translations()
 
 gui_ebook_download = CustomEbookDownload()
 gui_magazine_download = CustomMagazineDownload()
+guid_empty_download = EmptyBookDownload()
 gui_libby_return = LibbyLoanReturn()
 
 
@@ -247,14 +249,27 @@ class LoansDialogMixin(BaseDialogMixin):
 
     def download_loan(self, loan: Dict):
         # do actual downloading of the loan
-        format_id = LibbyClient.get_loan_format(
-            loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
-        )
+
+        try:
+            format_id = LibbyClient.get_loan_format(
+                loan, prefer_open_format=PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
+            )
+        except ValueError:
+            # kindle
+            tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_EBOOKS].split(",")]
+            format_id = LibbyClient.get_locked_in_format(loan)
+            if format_id:
+                # create empty book
+                return self.download_empty_book(loan, format_id, tags)
+
+        if LibbyClient.is_downloadable_audiobook_loan(loan):
+            return self.download_empty_book(loan, format_id)
+
         if LibbyClient.is_downloadable_ebook_loan(loan):
             show_download_info(get_media_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_EBOOKS].split(",")]
 
-            self.download_ebook(
+            return self.download_ebook(
                 loan,
                 format_id,
                 filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',
@@ -264,12 +279,14 @@ class LoansDialogMixin(BaseDialogMixin):
         if LibbyClient.is_downloadable_magazine_loan(loan):
             show_download_info(get_media_title(loan), self)
             tags = [t.strip() for t in PREFS[PreferenceKeys.TAG_MAGAZINES].split(",")]
-            self.download_magazine(
+            return self.download_magazine(
                 loan,
                 format_id,
                 filename=f'{loan["id"]}.{LibbyClient.get_file_extension(format_id)}',
                 tags=tags,
             )
+
+        return self.download_empty_book(loan, format_id)
 
     def match_existing_book(self, loan, library, format_id):
         book_id = None
@@ -446,3 +463,39 @@ class LoansDialogMixin(BaseDialogMixin):
             self.unhandled_exception(job.exception, msg=_c("Failed to download e-book"))
 
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
+
+    def download_empty_book(self, loan, format_id, tags=None):
+        if not tags:
+            tags = []
+        card = self.loans_model.get_card(loan["cardId"])
+        library = self.loans_model.get_library(self.loans_model.get_website_id(card))
+
+        book_id, mi = self.match_existing_book(loan, library, format_id)
+        description = _(
+            "Downloading empty book for {book}".format(
+                book=as_unicode(get_media_title(loan), errors="replace")
+            )
+        )
+        callback = Dispatcher(self.downloaded_loan)
+        job = ThreadedJob(
+            "overdrive_libby_download_book",
+            description,
+            guid_empty_download,
+            (
+                self.gui,
+                self.overdrive_client,
+                loan,
+                card,
+                library,
+                format_id,
+                book_id,
+                mi,
+                tags,
+            ),
+            {},
+            callback,
+            max_concurrent_count=1,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)

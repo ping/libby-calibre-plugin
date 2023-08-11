@@ -52,6 +52,7 @@ class PreferenceKeys:
     LIBBY_TOKEN = "libby_token"
     HIDE_MAGAZINES = "hide_magazines"
     HIDE_EBOOKS = "hide_ebooks"
+    INCL_NONDOWNLOADABLE_TITLES = "incl_nondownloadable"
     HIDE_BOOKS_ALREADY_IN_LIB = "hide_books_in_already_lib"
     EXCLUDE_EMPTY_BOOKS = "exclude_empty_books"
     HIDE_HOLDS_UNAVAILABLE = "hide_holds_unavailable"
@@ -88,6 +89,7 @@ class PreferenceTexts:
     LIBBY_SETUP_CODE_DESC = _("8-digit setup code")
     HIDE_MAGAZINES = _("Hide Magazines")
     HIDE_EBOOKS = _("Hide Ebooks")
+    INCL_NONDOWNLOADABLE_TITLES = _("Include titles without downloadable formats")
     HIDE_BOOKS_ALREADY_IN_LIB = _("Hide titles already in library")
     EXCLUDE_EMPTY_BOOKS = _("Exclude empty books when hiding titles already in library")
     HIDE_HOLDS_UNAVAILABLE = _("Hide unavailable holds")
@@ -119,6 +121,7 @@ PREFS.defaults[PreferenceKeys.LIBBY_TOKEN] = ""
 PREFS.defaults[PreferenceKeys.HIDE_MAGAZINES] = False
 PREFS.defaults[PreferenceKeys.HIDE_EBOOKS] = False
 PREFS.defaults[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = False
+PREFS.defaults[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES] = False
 PREFS.defaults[PreferenceKeys.EXCLUDE_EMPTY_BOOKS] = True
 PREFS.defaults[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = True
 PREFS.defaults[PreferenceKeys.PREFER_OPEN_FORMATS] = True
@@ -215,6 +218,15 @@ class ConfigWidget(QWidget):
         self.hide_magazines_checkbox = QCheckBox(PreferenceTexts.HIDE_MAGAZINES, self)
         self.hide_magazines_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_MAGAZINES])
         loan_layout.addRow(self.hide_magazines_checkbox)
+
+        # Include non-downloadables
+        self.incl_nondownloadable_checkbox = QCheckBox(
+            PreferenceTexts.INCL_NONDOWNLOADABLE_TITLES
+        )
+        self.incl_nondownloadable_checkbox.setChecked(
+            PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+        )
+        loan_layout.addRow(self.incl_nondownloadable_checkbox)
 
         # Hide books already in library
         self.hide_books_already_in_lib_checkbox = QCheckBox(
@@ -538,6 +550,9 @@ class ConfigWidget(QWidget):
             return
         PREFS[PreferenceKeys.HIDE_MAGAZINES] = self.hide_magazines_checkbox.isChecked()
         PREFS[PreferenceKeys.HIDE_EBOOKS] = self.hide_ebooks_checkbox.isChecked()
+        PREFS[
+            PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES
+        ] = self.incl_nondownloadable_checkbox.isChecked()
         PREFS[
             PreferenceKeys.PREFER_OPEN_FORMATS
         ] = self.prefer_open_formats_checkbox.isChecked()

@@ -152,6 +152,7 @@ class ConfigWidget(QWidget):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
 
+        self.plugin_action = plugin_action
         self.gui = plugin_action.gui
         self.db = self.gui.current_db.new_api
         # Setup Status
@@ -679,3 +680,8 @@ class ConfigWidget(QWidget):
             do_restart = show_restart_warning(msg, self)
             if do_restart:
                 self.gui.quit(restart=True)
+
+        try:
+            self.plugin_action.apply_settings()
+        except Exception as err:
+            logger.warning(f"Error applying settings: {err}")

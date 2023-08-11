@@ -50,6 +50,7 @@ class OverdriveLibbyAction(InterfaceAction):
     action_add_menu = True
     action_menu_clone_qaction = _("Libby")
     dont_add_to = frozenset(["context-menu-device"])
+    main_dialog = None
 
     def genesis(self):
         # This method is called once per plugin, do initial setup here
@@ -106,17 +107,25 @@ class OverdriveLibbyAction(InterfaceAction):
             ),
         )
 
+    def main_dialog_finished(self):
+        self.main_dialog = None
+
     def show_dialog(self):
         base_plugin_object = self.interface_action_base_plugin
         do_user_config = base_plugin_object.do_user_config
-        d = OverdriveLibbyDialog(
-            self.gui, self.qaction.icon(), do_user_config, self.icons
-        )
-        d.setModal(True)
-        d.show()
+        if not self.main_dialog:
+            self.main_dialog = OverdriveLibbyDialog(
+                self.gui, self.qaction.icon(), do_user_config, self.icons
+            )
+            self.main_dialog.finished.connect(self.main_dialog_finished)
+        self.main_dialog.show()
+        self.main_dialog.raise_()
+        self.main_dialog.activateWindow()
 
     def apply_settings(self):
-        pass
+        if self.main_dialog:
+            # close off main UI to make sure everything is consistent
+            self.main_dialog.close()
 
 
 class OverdriveLibbyDialog(

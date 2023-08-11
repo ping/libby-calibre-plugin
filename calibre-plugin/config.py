@@ -13,6 +13,7 @@ from calibre.gui2 import error_dialog, show_restart_warning
 from calibre.utils.config import JSONConfig
 
 try:
+    # calibre >= 5.35.0
     from calibre.gui2.preferences.create_custom_column import CreateNewCustomColumn
 except:  # noqa
     CreateNewCustomColumn = None

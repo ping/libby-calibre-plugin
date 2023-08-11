@@ -93,6 +93,38 @@ class OverDriveLibraryMediaWorker(QObject):
             self.errored.emit(err)
 
 
+class LibbyFulfillLoanWorker(QObject):
+    """
+    Fetches loan fulfilment detail for a Kindle loan
+    """
+
+    finished = pyqtSignal(dict)
+    errored = pyqtSignal(Exception)
+
+    def setup(self, libby_client: LibbyClient, loan: Dict, format_id: str):
+        self.client = libby_client
+        self.loan = loan
+        self.format_id = format_id
+
+    def run(self):
+        total_start = timer()
+        try:
+            fulfilment_details = self.client.fulfill_loan_file(
+                self.loan["id"], self.loan["cardId"], self.format_id
+            )
+            logger.info(
+                "Total Libby Fulfilment Details Fetch took %f seconds"
+                % (timer() - total_start)
+            )
+            self.finished.emit(fulfilment_details)
+        except Exception as err:
+            logger.info(
+                "Libby Fulfilment Details Fetch failed after %f seconds"
+                % (timer() - total_start)
+            )
+            self.errored.emit(err)
+
+
 class SyncDataWorker(QObject):
     """
     Main sync worker

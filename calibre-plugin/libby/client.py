@@ -762,8 +762,14 @@ class LibbyClient(object):
         :param format_id:
         :return:
         """
-        if format_id not in DOWNLOADABLE_FORMATS:
+        if format_id not in DOWNLOADABLE_FORMATS + (LibbyFormats.EBookKindle,):
             raise ValueError(f"Unsupported format_id: {format_id}")
+
+        if format_id == LibbyFormats.EBookKindle:
+            # used to get the Read with Kindle redirect link
+            return self.send_request(
+                f"card/{card_id}/loan/{loan_id}/fulfill/{format_id}"
+            )
 
         headers = self.default_headers()
         headers["Accept"] = "*/*"

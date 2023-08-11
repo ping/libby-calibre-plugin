@@ -23,6 +23,7 @@ from qt.core import (
     QPushButton,
     QSortFilterProxyModel,
     QTableView,
+    QThread,
     QWidget,
     Qt,
 )
@@ -36,12 +37,13 @@ from ..compat import (
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..empty_download import EmptyBookDownload
-from ..libby import LibbyClient
+from ..libby import LibbyClient, LibbyFormats
 from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
 from ..models import LibbyLoansModel, LibbyModel, get_media_title, truncate_for_display
 from ..overdrive import OverDriveClient
 from ..utils import OD_IDENTIFIER, PluginIcons, generate_od_identifier
+from ..workers import LibbyFulfillLoanWorker
 
 # noinspection PyUnreachableCode
 if False:
@@ -58,6 +60,8 @@ gui_libby_return = LibbyLoanReturn()
 class LoansDialogMixin(BaseDialogMixin):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
+        self._readwithkindle_thread = QThread()
+
         widget = QWidget()
         widget.layout = QGridLayout()
         for col_num in range(1, self.view_hspan - 2):
@@ -198,6 +202,7 @@ class LoansDialogMixin(BaseDialogMixin):
             return
         indices = selection_model.selectedRows()
         menu = QMenu(self)
+        menu.setToolTipsVisible(True)
         view_in_libby_action = menu.addAction(_("View in Libby"))
         view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
         view_in_libby_action.triggered.connect(
@@ -206,17 +211,49 @@ class LoansDialogMixin(BaseDialogMixin):
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
         view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
 
+        selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
+        if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
+            # Read with Kindle
+            locked_in_format = LibbyClient.get_locked_in_format(selected_loan)
+            if (locked_in_format == LibbyFormats.EBookKindle) or (
+                # not yet locked into any format
+                LibbyClient.has_format(selected_loan, LibbyFormats.EBookKindle)
+                and not locked_in_format
+            ):
+                read_with_kindle_action = menu.addAction(
+                    _('Read "{book}" with Kindle').format(
+                        book=truncate_for_display(get_media_title(selected_loan))
+                    )
+                )
+                read_with_kindle_action.setIcon(self.icons[PluginIcons.Amazon])
+                if (
+                    LibbyClient.is_downloadable_ebook_loan(selected_loan)
+                    and not locked_in_format
+                ):
+                    read_with_kindle_action.setToolTip(
+                        "<p>"
+                        + _(
+                            "If you choose to Read with Kindle, this loan will be <u>format-locked</u> "
+                            "and not downloadable."
+                        )
+                        + "</p>"
+                    )
+                read_with_kindle_action.triggered.connect(
+                    lambda: self.read_with_kindle_action_triggered(
+                        selected_loan, LibbyFormats.EBookKindle
+                    )
+                )
+
         if hasattr(self, "search_for"):
-            loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
             search_action = menu.addAction(
                 _('Search for "{book}"').format(
-                    book=truncate_for_display(get_media_title(loan))
+                    book=truncate_for_display(get_media_title(selected_loan))
                 )
             )
             search_action.setIcon(self.icons[PluginIcons.Search])
             search_action.triggered.connect(
                 lambda: self.search_for(
-                    f'{get_media_title(loan)} {loan.get("firstCreatorName", "")}'
+                    f'{get_media_title(selected_loan)} {selected_loan.get("firstCreatorName", "")}'
                 )
             )
 
@@ -495,3 +532,54 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         self.gui.job_manager.run_threaded_job(job)
         self.gui.status_bar.show_message(description, 3000)
+
+    def read_with_kindle_action_triggered(self, loan: Dict, format_id: str):
+        require_confirmation = LibbyClient.is_downloadable_ebook_loan(
+            loan
+        ) and not LibbyClient.get_locked_in_format(loan)
+
+        if (not require_confirmation) or confirm(
+            "<p>"
+            + _(
+                "If you choose to Read with Kindle, this loan will be <u>format-locked</u> "
+                "and not downloadable."
+            )
+            + "</p></p>"
+            + _("Do you wish to continue?")
+            + "</p>",
+            name=PreferenceKeys.CONFIRM_READ_WITH_KINDLE,
+            parent=self,
+            title=_("Read with Kindle"),
+            config_set=PREFS,
+        ):
+            if not self._readwithkindle_thread.isRunning():
+                self._readwithkindle_thread = self._get_readwithkindle_thread(
+                    self.client, loan, format_id
+                )
+                self.setCursor(Qt.WaitCursor)
+                self._readwithkindle_thread.start()
+
+    def _get_readwithkindle_thread(self, libby_client, loan: Dict, format_id: str):
+        thread = QThread()
+        worker = LibbyFulfillLoanWorker()
+        worker.setup(libby_client, loan, format_id)
+        worker.moveToThread(thread)
+        thread.worker = worker
+        thread.started.connect(worker.run)
+
+        def loaded(fulfilment_details):
+            fulfilment_link = fulfilment_details.get("fulfill", {}).get("href")
+            if fulfilment_link:
+                self.open_link(fulfilment_link)
+            self.unsetCursor()
+            thread.quit()
+
+        def errored_out(err: Exception):
+            self.unsetCursor()
+            thread.quit()
+            raise err
+
+        worker.finished.connect(lambda details: loaded(details))
+        worker.errored.connect(lambda err: errored_out(err))
+
+        return thread

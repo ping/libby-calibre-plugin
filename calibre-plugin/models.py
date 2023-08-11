@@ -21,7 +21,7 @@ from . import DEMO_MODE
 from .compat import QColor_fromString, _c
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
-from .libby.client import LibbyMediaTypes
+from .libby.client import LibbyFormats, LibbyMediaTypes
 from .overdrive import OverDriveClient
 from .utils import PluginColors, PluginIcons, obfuscate_date, obfuscate_name
 
@@ -274,8 +274,16 @@ class LibbyLoansModel(LibbyModel):
         if role == Qt.UserRole:
             return loan
         # DecorationRole
-        if role == Qt.DecorationRole and col == 2 and loan.get("isLuckyDayCheckout"):
-            return self.icons[PluginIcons.Clover]
+        if role == Qt.DecorationRole:
+            if col == 2 and loan.get("isLuckyDayCheckout"):
+                return self.icons[PluginIcons.Clover]
+            if (
+                col == 4
+                and loan.get("type", {}).get("id", "") == LibbyMediaTypes.EBook
+                and LibbyClient.has_format(loan, LibbyFormats.EBookKindle)
+                and not LibbyClient.get_locked_in_format(loan)
+            ):
+                return self.icons[PluginIcons.Unlock]
         # TextAlignmentRole
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter
@@ -292,6 +300,35 @@ class LibbyLoansModel(LibbyModel):
             if col == 3:
                 library = self.get_library(self.get_website_id(card))
                 return library["name"]
+            if col == 4:
+                locked_in_format = LibbyClient.get_locked_in_format(loan)
+                tooltip_text = (
+                    _("This loan is not format-locked.")
+                    if not locked_in_format
+                    else _("This loan is format-locked.")
+                )
+                if LibbyClient.is_downloadable_magazine_loan(loan):
+                    is_empty_book = False
+                elif LibbyClient.is_downloadable_audiobook_loan(loan):
+                    is_empty_book = True
+                else:
+                    try:
+                        LibbyClient.get_loan_format(
+                            loan,
+                            prefer_open_format=PREFS[
+                                PreferenceKeys.PREFER_OPEN_FORMATS
+                            ],
+                        )
+                        is_empty_book = False
+                    except ValueError:
+                        # kindle
+                        is_empty_book = True
+                if is_empty_book:
+                    tooltip_text += "<br/>"
+                    tooltip_text += _("This loan will be downloaded as an empty book.")
+
+                return f"<p>{tooltip_text}</p>"
+
         # DisplayRole, DisplaySortRole
         if role not in (Qt.DisplayRole, LibbyModel.DisplaySortRole):
             return None

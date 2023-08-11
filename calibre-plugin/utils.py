@@ -143,6 +143,8 @@ class PluginIcons(str, Enum):
     Clover = "clover"
     Card = "card"
     Search = "search"
+    Amazon = "amazon"
+    Unlock = "unlock"
 
     def __str__(self):
         return str(self.value)
@@ -190,5 +192,12 @@ ICON_MAP = {
     ),
     PluginIcons.Search: IconDefinition(
         file="images/search-line.svg", color=PluginColors.Gray2
+    ),
+    PluginIcons.Amazon: IconDefinition(
+        file="images/brand-amazon.svg",
+        color="#FF9900" if is_dark_theme() else "#FD9700",
+    ),
+    PluginIcons.Unlock: IconDefinition(
+        file="images/lock-unlock-line.svg", color=PluginColors.Green
     ),
 }

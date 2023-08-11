@@ -63,6 +63,7 @@ class PreferenceKeys:
     TAG_MAGAZINES = "tag_magazines"
     CONFIRM_RETURNS = "confirm_returns"
     CONFIRM_CANCELLATIONS = "confirm_cancels"
+    CONFIRM_READ_WITH_KINDLE = "confirm_read_with_kindle"
     OVERDRIVELINK_INTEGRATION = "enable_overdrivelink_integration"
     MARK_UPDATED_BOOKS = "mark_updated_books"
     MAGAZINE_SUBSCRIPTIONS = "magazine_subscriptions"
@@ -100,6 +101,7 @@ class PreferenceTexts:
     TAG_MAGAZINES_PLACEHOLDER = _("Example: library,magazines")
     CONFIRM_RETURNS = _("Always confirm returns")
     CONFIRM_CANCELLATIONS = _("Always confirm holds cancellation")
+    CONFIRM_READ_WITH_KINDLE = _("Always confirm Read with Kindle")
     OVERDRIVELINK_INTEGRATION = _("Enable OverDrive Link Plugin integration")
     MARK_UPDATED_BOOKS = _("Mark updated books")
     ALWAYS_DOWNLOAD_AS_NEW = _("Always download as a new book")
@@ -129,6 +131,7 @@ PREFS.defaults[PreferenceKeys.TAG_EBOOKS] = ""
 PREFS.defaults[PreferenceKeys.TAG_MAGAZINES] = ""
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)] = True
 PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)] = True
+PREFS.defaults[confirm_config_name(PreferenceKeys.CONFIRM_READ_WITH_KINDLE)] = True
 PREFS.defaults[PreferenceKeys.OVERDRIVELINK_INTEGRATION] = True
 PREFS.defaults[PreferenceKeys.MARK_UPDATED_BOOKS] = True
 PREFS.defaults[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW] = False
@@ -253,6 +256,15 @@ class ConfigWidget(QWidget):
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)]
         )
         loan_layout.addRow(self.confirm_returns_checkbox)
+
+        # Always confirm Read with Kindle
+        self.confirm_readwithkindle_checkbox = QCheckBox(
+            PreferenceTexts.CONFIRM_READ_WITH_KINDLE, self
+        )
+        self.confirm_readwithkindle_checkbox.setChecked(
+            PREFS[confirm_config_name(PreferenceKeys.CONFIRM_READ_WITH_KINDLE)]
+        )
+        loan_layout.addRow(self.confirm_readwithkindle_checkbox)
 
         # Prefer Open Formats
         self.prefer_open_formats_checkbox = QCheckBox(
@@ -571,6 +583,9 @@ class ConfigWidget(QWidget):
         PREFS[
             confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)
         ] = self.confirm_returns_checkbox.isChecked()
+        PREFS[
+            confirm_config_name(PreferenceKeys.CONFIRM_READ_WITH_KINDLE)
+        ] = self.confirm_readwithkindle_checkbox.isChecked()
         PREFS[
             PreferenceKeys.OVERDRIVELINK_INTEGRATION
         ] = self.enable_overdrive_link_checkbox.isChecked()

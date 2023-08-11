@@ -272,3 +272,6 @@ class LibbyClientTests(BaseTests):
         ):
             with self.subTest(value=value):
                 LibbyClient.parse_datetime(value)
+
+        with self.assertRaises(ValueError):
+            LibbyClient.parse_datetime("2023/05/30 23:01:14")

@@ -311,8 +311,9 @@ class LibbyClient(object):
                     dt = dt.replace(tzinfo=timezone.utc)
                 return dt
             except ValueError:
-                if i == len(formats):
-                    raise
+                pass
+
+        raise ValueError(f"time data '{value}' does not match known formats {formats}")
 
     @staticmethod
     def is_renewable(loan: Dict) -> bool:

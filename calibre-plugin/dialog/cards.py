@@ -30,7 +30,6 @@ from qt.core import (
 
 from .base import BaseDialogMixin
 from .. import DEMO_MODE
-from ..borrow_book import LibbyBorrowHold
 from ..compat import _c
 from ..libby import LibbyClient
 from ..models import LibbyCardsModel
@@ -47,8 +46,6 @@ if False:
 
 
 load_translations()
-
-gui_libby_borrow_hold = LibbyBorrowHold()
 
 
 class ClickableQLabel(QLabel):

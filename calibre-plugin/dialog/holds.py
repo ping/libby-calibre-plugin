@@ -32,7 +32,7 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
-from ..borrow_book import LibbyBorrowHold
+from ..borrow_book import LibbyBorrowMedia
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
     QHeaderView_ResizeMode_Stretch,
@@ -52,7 +52,7 @@ if False:
 load_translations()
 
 gui_libby_cancel_hold = LibbyHoldCancel()
-gui_libby_borrow_hold = LibbyBorrowHold()
+gui_libby_borrow_hold = LibbyBorrowMedia()
 gui_libby_update_hold = LibbyHoldUpdate()
 
 
@@ -312,7 +312,17 @@ class HoldsDialogMixin(BaseDialogMixin):
             d.setModal(True)
             d.open()
 
-    def borrow_hold(self, hold, do_download=False):
+    def borrow_hold(self, hold, availability=None, do_download=False):
+
+        if not availability:
+            # this is supplied from the search tab
+            availability = {}
+
+        is_lucky_day_loan = bool(
+            availability.get("luckyDayAvailableCopies", 0)
+            and not availability.get("availableCopies", 0)
+        )
+
         # do the actual borrowing
         card = self.holds_model.get_card(hold["cardId"])
         description = _("Borrowing {book}").format(
@@ -325,7 +335,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             "overdrive_libby_borrow_book",
             description,
             gui_libby_borrow_hold,
-            (self.gui, self.client, hold, card),
+            (self.gui, self.client, hold, card, is_lucky_day_loan),
             {},
             callback,
             max_concurrent_count=2,

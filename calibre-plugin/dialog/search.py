@@ -334,8 +334,10 @@ class SearchDialogMixin(BaseDialogMixin):
                     media_for_borrow["cardId"] = card["cardId"]
                     card_action.triggered.connect(
                         # this is from the holds tab
-                        lambda checked, m=media_for_borrow: self.borrow_hold(
-                            m, do_download=not borrow_action_default_is_borrow
+                        lambda checked, m=media_for_borrow, s=site: self.borrow_hold(
+                            m,
+                            availability=s,
+                            do_download=not borrow_action_default_is_borrow,
                         )
                     )
             self.search_borrow_btn.setEnabled(True)

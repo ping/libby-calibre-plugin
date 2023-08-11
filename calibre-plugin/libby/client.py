@@ -842,7 +842,12 @@ class LibbyClient(object):
         self.cancel_hold_title(hold["id"], hold["cardId"])
 
     def borrow_title(
-        self, title_id: str, title_format: str, card_id: str, days: int = 21
+        self,
+        title_id: str,
+        title_format: str,
+        card_id: str,
+        days: int = 21,
+        is_lucky_day_loan: bool = False,
     ) -> Dict:
         """
         Return a title.
@@ -851,6 +856,7 @@ class LibbyClient(object):
         :param title_format: Type ID
         :param card_id:
         :param days:
+        :param is_lucky_day_loan:
         :return:
         """
         if days <= 0:
@@ -858,7 +864,7 @@ class LibbyClient(object):
         data = {
             "period": days,
             "units": "days",
-            "lucky_day": None,
+            "lucky_day": 1 if is_lucky_day_loan else None,
             "title_format": title_format,
         }
 
@@ -867,17 +873,20 @@ class LibbyClient(object):
         )
         return res
 
-    def borrow_hold(self, hold: Dict, card: Optional[Dict] = None) -> Dict:
+    def borrow_media(
+        self, media: Dict, card: Optional[Dict] = None, is_lucky_day_loan: bool = False
+    ) -> Dict:
         """
-        Borrow a hold.
+        Borrow a media (or hold).
 
         :param card:
-        :param hold:
+        :param media:
+        :param is_lucky_day_loan:
         :return:
         """
         if card:
             # map ebook -> book
-            lending_period_type = {"ebook": "book"}.get(hold["type"]["id"]) or hold[
+            lending_period_type = {"ebook": "book"}.get(media["type"]["id"]) or media[
                 "type"
             ]["id"]
             days = (
@@ -886,9 +895,18 @@ class LibbyClient(object):
                 .get("preference", [0, "days"])[0]
             )
             return self.borrow_title(
-                hold["id"], hold["type"]["id"], hold["cardId"], days=days
+                media["id"],
+                media["type"]["id"],
+                media["cardId"],
+                days=days,
+                is_lucky_day_loan=is_lucky_day_loan,
             )
-        return self.borrow_title(hold["id"], hold["type"]["id"], hold["cardId"])
+        return self.borrow_title(
+            media["id"],
+            media["type"]["id"],
+            media["cardId"],
+            is_lucky_day_loan=is_lucky_day_loan,
+        )
 
     def suspend_hold_title(self, card_id, title_id, days_to_suspend: int = 7, **kwargs):
         """

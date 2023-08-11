@@ -32,7 +32,7 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
-from ..borrow_book import LibbyBorrowHold
+from ..borrow_book import LibbyBorrowMedia
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
     QHeaderView_ResizeMode_Stretch,
@@ -63,7 +63,7 @@ if False:
 
 load_translations()
 
-gui_libby_borrow_hold = LibbyBorrowHold()
+gui_libby_borrow_hold = LibbyBorrowMedia()
 
 
 class MagazinesDialogMixin(BaseDialogMixin):
@@ -324,7 +324,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
             "overdrive_libby_borrow_book",
             description,
             gui_libby_borrow_hold,
-            (self.gui, self.client, magazine, card),
+            (self.gui, self.client, magazine, card, False),
             {},
             callback,
             max_concurrent_count=2,

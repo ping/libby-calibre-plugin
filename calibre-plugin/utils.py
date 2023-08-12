@@ -147,7 +147,7 @@ class PluginIcons(str, Enum):
     Amazon = "amazon"
     Unlock = "unlock"
     CoverPlaceholder = "cover-placeholder"
-    Eye = "eye"
+    Information = "information"
 
     def __str__(self):
         return str(self.value)
@@ -203,7 +203,7 @@ ICON_MAP = {
     PluginIcons.Unlock: IconDefinition(
         file="images/lock-unlock-line.svg", color=PluginColors.Green
     ),
-    PluginIcons.Eye: IconDefinition(
-        file="images/eye-line.svg", color=PluginColors.Gray
+    PluginIcons.Information: IconDefinition(
+        file="images/information-line.svg", color=PluginColors.Blue
     ),
 }

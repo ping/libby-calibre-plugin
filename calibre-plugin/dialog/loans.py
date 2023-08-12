@@ -217,7 +217,7 @@ class LoansDialogMixin(BaseDialogMixin):
         selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
         # preview
         preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.icons[PluginIcons.Eye])
+        preview_action.setIcon(self.icons[PluginIcons.Information])
         preview_action.triggered.connect(lambda: self.show_preview(selected_loan))
 
         if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:

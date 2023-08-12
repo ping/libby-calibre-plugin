@@ -53,7 +53,7 @@ from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LibbyModel, get_media_title, LOAN_TYPE_TRANSLATION
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
-from ..utils import PluginIcons, svg_to_pixmap
+from ..utils import PluginImages, svg_to_pixmap
 from ..workers import SyncDataWorker, OverDriveMediaWorker
 
 # noinspection PyUnreachableCode
@@ -94,12 +94,12 @@ class BaseDialogMixin(QDialog):
     sync_starting = pyqtSignal()
     sync_ended = pyqtSignal(dict)
 
-    def __init__(self, gui, icon, do_user_config, icons):
+    def __init__(self, gui, icon, do_user_config, resources):
         super().__init__(gui)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.gui = gui
         self.do_user_config = do_user_config
-        self.icons = icons
+        self.resources = resources
         self.db = gui.current_db.new_api
         self.client = None
         self._sync_thread = QThread()  # main sync thread
@@ -321,7 +321,7 @@ class BaseDialogMixin(QDialog):
             _("Borrow")
             if borrow_action_default_is_borrow
             else _("Borrow and Download"),
-            self.icons[PluginIcons.Add],
+            self.resources[PluginImages.Add],
             lambda: borrow_function(do_download=not borrow_action_default_is_borrow),
             self,
         )
@@ -429,7 +429,7 @@ class BaseDialogMixin(QDialog):
         )
         card_pixmap = QPixmapCache.find(card_pixmap_cache_id)
         if not QPixmapCache.find(card_pixmap_cache_id):
-            svg_root = etree.fromstring(self.icons[PluginIcons.Card])
+            svg_root = etree.fromstring(self.resources[PluginImages.Card])
             if not DEMO_MODE:
                 stop1 = svg_root.find('.//stop[@class="stop1"]', svg_root.nsmap)
                 stop1.attrib["stop-color"] = library["settings"]["primaryColor"]["hex"]
@@ -443,7 +443,7 @@ class BaseDialogMixin(QDialog):
 
     def show_preview(self, media):
         preview_dialog = BookPreviewDialog(
-            self, self.gui, self.icons, self.overdrive_client, media
+            self, self.gui, self.resources, self.overdrive_client, media
         )
         preview_dialog.setModal(True)
         preview_dialog.open()
@@ -526,13 +526,13 @@ class BookPreviewDialog(QDialog):
         self,
         parent: BaseDialogMixin,
         gui,
-        icons: Dict,
+        resources: Dict,
         client: OverDriveClient,
         media: Dict,
     ):
         super().__init__(parent)
         self.gui = gui
-        self.icons = icons
+        self.resources = resources
         self.client = client
         self.media = media
         self.setWindowFlag(Qt.Sheet)
@@ -557,7 +557,7 @@ class BookPreviewDialog(QDialog):
         self.widget_row_pos += 1
 
         self.image_lbl = ClickableQLabel(self)
-        self.image_lbl.setPixmap(self.icons[PluginIcons.CoverPlaceholder])
+        self.image_lbl.setPixmap(self.resources[PluginImages.CoverPlaceholder])
         self.image_lbl.setScaledContents(True)
         self.image_lbl.setMaximumSize(150, 200)
         layout.addWidget(self.image_lbl, self.widget_row_pos, 0, alignment=Qt.AlignTop)
@@ -567,7 +567,7 @@ class BookPreviewDialog(QDialog):
         layout.addWidget(type_lbl, self.widget_row_pos + 1, 0, alignment=Qt.AlignTop)
 
         self.close_btn = QPushButton(_c("Close"), self)
-        self.close_btn.setIcon(self.icons[PluginIcons.Cancel])
+        self.close_btn.setIcon(self.resources[PluginImages.Cancel])
         self.close_btn.setAutoDefault(False)
         self.close_btn.setMinimumWidth(parent.min_button_width)
         self.close_btn.clicked.connect(lambda: self.reject())

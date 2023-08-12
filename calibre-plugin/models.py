@@ -23,7 +23,7 @@ from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
 from .overdrive import OverDriveClient
-from .utils import PluginColors, PluginIcons, obfuscate_date, obfuscate_name
+from .utils import PluginColors, PluginImages, obfuscate_date, obfuscate_name
 
 # noinspection PyUnreachableCode
 if False:
@@ -178,9 +178,9 @@ class LibbyLoansModel(LibbyModel):
     ]
     filter_hide_books_already_in_library = False
 
-    def __init__(self, parent, synced_state=None, db=None, icons=None):
+    def __init__(self, parent, synced_state=None, db=None, resources=None):
         super().__init__(parent, synced_state, db)
-        self.icons = icons
+        self.resources = resources
         self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
         self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self.all_book_ids_identifiers = self.db.fields["identifiers"].table.book_col_map
@@ -280,14 +280,14 @@ class LibbyLoansModel(LibbyModel):
         # DecorationRole
         if role == Qt.DecorationRole:
             if col == 2 and loan.get("isLuckyDayCheckout"):
-                return self.icons[PluginIcons.Clover]
+                return self.resources[PluginImages.Clover]
             if (
                 col == 4
                 and loan.get("type", {}).get("id", "") == LibbyMediaTypes.EBook
                 and LibbyClient.has_format(loan, LibbyFormats.EBookKindle)
                 and not LibbyClient.get_locked_in_format(loan)
             ):
-                return self.icons[PluginIcons.Unlock]
+                return self.resources[PluginImages.Unlock]
         # TextAlignmentRole
         if role == Qt.TextAlignmentRole and col >= 2:
             return Qt.AlignCenter

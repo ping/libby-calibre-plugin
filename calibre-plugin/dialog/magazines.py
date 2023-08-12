@@ -44,7 +44,7 @@ from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
 from ..models import LibbyCardsModel, LibbyMagazinesModel, LibbyModel, get_media_title
 from ..overdrive import OverDriveClient
-from ..utils import PluginIcons
+from ..utils import PluginImages
 from ..workers import OverDriveLibraryMediaWorker
 
 LIBBY_SHARE_URL_RE = re.compile(
@@ -115,7 +115,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         # Add Magazine button
         self.add_magazine_btn = QPushButton(_c("Add"), self)
-        self.add_magazine_btn.setIcon(self.icons[PluginIcons.AddMagazine])
+        self.add_magazine_btn.setIcon(self.resources[PluginImages.AddMagazine])
         self.add_magazine_btn.setAutoDefault(False)
         self.add_magazine_btn.setToolTip(_("Add to monitor for new issues"))
         self.add_magazine_btn.clicked.connect(self.add_magazine_btn_clicked)
@@ -126,7 +126,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
         # Refresh button
         self.magazines_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.magazines_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
+        self.magazines_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
         self.magazines_refresh_btn.setAutoDefault(False)
         self.magazines_refresh_btn.setToolTip(_("Get latest magazines"))
         self.magazines_refresh_btn.clicked.connect(self.magazines_refresh_btn_clicked)
@@ -275,12 +275,12 @@ class MagazinesDialogMixin(BaseDialogMixin):
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.magazines_model)
         )
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(
                 indices, self.magazines_model
@@ -290,11 +290,11 @@ class MagazinesDialogMixin(BaseDialogMixin):
         selected_magazine = self.magazines_view.indexAt(pos).data(Qt.UserRole)
         # preview
         preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.icons[PluginIcons.Information])
+        preview_action.setIcon(self.resources[PluginImages.Information])
         preview_action.triggered.connect(lambda: self.show_preview(selected_magazine))
 
         unsub_action = menu.addAction(_c("Cancel"))
-        unsub_action.setIcon(self.icons[PluginIcons.CancelMagazine])
+        unsub_action.setIcon(self.resources[PluginImages.CancelMagazine])
         unsub_action.triggered.connect(lambda: self.unsub_action_triggered(indices))
         menu.exec(QCursor.pos())
 

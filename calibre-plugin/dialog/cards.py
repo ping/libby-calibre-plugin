@@ -32,7 +32,7 @@ from ..compat import _c
 from ..libby import LibbyClient
 from ..models import LibbyCardsModel
 from ..utils import (
-    PluginIcons,
+    PluginImages,
     obfuscate_date,
     obfuscate_int,
     obfuscate_name,
@@ -52,7 +52,7 @@ class CardWidget(QWidget):
         self.card = card
         self.library = library
         self.tab = tab
-        self.icons = self.tab.icons
+        self.resources = self.tab.resources
         layout = QGridLayout()
         layout.setColumnStretch(1, 1)
         self.setLayout(layout)
@@ -199,10 +199,10 @@ class CardWidget(QWidget):
         menu = QMenu(self)
         menu.addSection(_("Library"))
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_library)
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_overdrive_action.triggered.connect(self.open_overdrive_library)
         menu.exec(QCursor.pos())
 
@@ -210,10 +210,10 @@ class CardWidget(QWidget):
         menu = QMenu(self)
         menu.addSection(_("Loans"))
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_loans)
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_overdrive_action.triggered.connect(self.open_overdrive_loans)
         menu.exec(QCursor.pos())
 
@@ -221,10 +221,10 @@ class CardWidget(QWidget):
         menu = QMenu(self)
         menu.addSection(_("Holds"))
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_holds)
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_overdrive_action.triggered.connect(self.open_overdrive_holds)
         menu.exec(QCursor.pos())
 
@@ -278,7 +278,7 @@ class CardsDialogMixin(BaseDialogMixin):
 
         # Refresh button
         self.cards_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.cards_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
+        self.cards_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
         self.cards_refresh_btn.setAutoDefault(False)
         self.cards_refresh_btn.setToolTip(_("Get latest loans"))
         self.cards_refresh_btn.clicked.connect(self.cards_refresh_btn_clicked)

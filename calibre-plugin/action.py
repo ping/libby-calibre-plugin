@@ -29,7 +29,7 @@ from .dialog import (
     MagazinesDialogMixin,
     SearchDialogMixin,
 )
-from .utils import CARD_ICON, ICON_MAP, PluginIcons, svg_to_qicon, COVER_PLACEHOLDER
+from .utils import CARD_ICON, ICON_MAP, PluginImages, svg_to_qicon, COVER_PLACEHOLDER
 
 # noinspection PyUnreachableCode
 if False:
@@ -61,20 +61,20 @@ class OverdriveLibbyAction(InterfaceAction):
             [v.file for v in ICON_MAP.values()]
             + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER]
         )
-        self.icons = {}
+        self.resources = {}
         for k, v in ICON_MAP.items():
-            self.icons[k] = svg_to_qicon(
+            self.resources[k] = svg_to_qicon(
                 image_resources.pop(v.file), QColor_fromString(v.color)
             )
 
         # card icon
-        self.icons[PluginIcons.Card] = image_resources.pop(CARD_ICON)
+        self.resources[PluginImages.Card] = image_resources.pop(CARD_ICON)
 
         # book cover placeholder
         cover_pixmap = QPixmap(150, 200)
         cover_pixmap.loadFromData(image_resources.pop(COVER_PLACEHOLDER))
         cover_pixmap.setDevicePixelRatio(self.gui.devicePixelRatio())
-        self.icons[PluginIcons.CoverPlaceholder] = cover_pixmap
+        self.resources[PluginImages.CoverPlaceholder] = cover_pixmap
 
         # action icon
         plugin_icon = svg_to_qicon(image_resources.pop(PLUGIN_ICON), size=(300, 300))
@@ -109,7 +109,7 @@ class OverdriveLibbyAction(InterfaceAction):
             qaction_menu,
             "overdrive-libby-mr",
             _("MobileRead"),
-            self.icons[PluginIcons.ExternalLink],
+            self.resources[PluginImages.ExternalLink],
             triggered=lambda: QDesktopServices.openUrl(
                 QUrl("https://www.mobileread.com/forums/showthread.php?t=354816")
             ),
@@ -123,7 +123,7 @@ class OverdriveLibbyAction(InterfaceAction):
         do_user_config = base_plugin_object.do_user_config
         if not self.main_dialog:
             self.main_dialog = OverdriveLibbyDialog(
-                self.gui, self.qaction.icon(), do_user_config, self.icons
+                self.gui, self.qaction.icon(), do_user_config, self.resources
             )
             self.main_dialog.finished.connect(self.main_dialog_finished)
         self.main_dialog.show()

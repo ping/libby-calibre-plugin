@@ -43,7 +43,7 @@ from ..loan_actions import LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
 from ..models import LibbyLoansModel, LibbyModel, get_media_title, truncate_for_display
 from ..overdrive import OverDriveClient
-from ..utils import OD_IDENTIFIER, PluginIcons, generate_od_identifier
+from ..utils import OD_IDENTIFIER, PluginImages, generate_od_identifier
 from ..workers import LibbyFulfillLoanWorker
 
 # noinspection PyUnreachableCode
@@ -74,14 +74,14 @@ class LoansDialogMixin(BaseDialogMixin):
 
         # Refresh button
         self.loans_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.loans_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
+        self.loans_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
         self.loans_refresh_btn.setAutoDefault(False)
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
         widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
         widget_row_pos += 1
 
-        self.loans_model = LibbyLoansModel(None, [], self.db, self.icons)
+        self.loans_model = LibbyLoansModel(None, [], self.db, self.resources)
         self.loans_search_proxy_model = QSortFilterProxyModel(self)
         self.loans_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.loans_search_proxy_model.setFilterKeyColumn(-1)
@@ -145,7 +145,7 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         # Download button
         self.download_btn = QPushButton(_c("Download"), self)
-        self.download_btn.setIcon(self.icons[PluginIcons.Download])
+        self.download_btn.setIcon(self.resources[PluginImages.Download])
         self.download_btn.setAutoDefault(False)
         self.download_btn.setToolTip(_("Download selected loans"))
         self.download_btn.setStyleSheet("padding: 4px 16px")
@@ -207,17 +207,17 @@ class LoansDialogMixin(BaseDialogMixin):
         menu = QMenu(self)
         menu.setToolTipsVisible(True)
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.loans_model)
         )
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
 
         selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
         # preview
         preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.icons[PluginIcons.Information])
+        preview_action.setIcon(self.resources[PluginImages.Information])
         preview_action.triggered.connect(lambda: self.show_preview(selected_loan))
 
         if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
@@ -233,7 +233,7 @@ class LoansDialogMixin(BaseDialogMixin):
                         book=truncate_for_display(get_media_title(selected_loan))
                     )
                 )
-                read_with_kindle_action.setIcon(self.icons[PluginIcons.Amazon])
+                read_with_kindle_action.setIcon(self.resources[PluginImages.Amazon])
                 if (
                     LibbyClient.is_downloadable_ebook_loan(selected_loan)
                     and not locked_in_format
@@ -258,7 +258,7 @@ class LoansDialogMixin(BaseDialogMixin):
                     book=truncate_for_display(get_media_title(selected_loan))
                 )
             )
-            search_action.setIcon(self.icons[PluginIcons.Search])
+            search_action.setIcon(self.resources[PluginImages.Search])
             search_action.triggered.connect(
                 lambda: self.search_for(
                     f'{get_media_title(selected_loan)} {selected_loan.get("firstCreatorName", "")}'
@@ -273,7 +273,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 n=len(indices)
             )
         )
-        return_action.setIcon(self.icons[PluginIcons.Return])
+        return_action.setIcon(self.resources[PluginImages.Return])
         return_action.triggered.connect(lambda: self.return_action_triggered(indices))
         menu.exec(QCursor.pos())
 

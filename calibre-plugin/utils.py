@@ -129,7 +129,7 @@ class PluginColors(str, Enum):
         return str(self.value)
 
 
-class PluginIcons(str, Enum):
+class PluginImages(str, Enum):
     Return = "return"
     Download = "download"
     ExternalLink = "ext-link"
@@ -156,54 +156,54 @@ class PluginIcons(str, Enum):
 IconDefinition = namedtuple("IconDefinition", ["file", "color"])
 
 ICON_MAP = {
-    PluginIcons.Return: IconDefinition(
+    PluginImages.Return: IconDefinition(
         file="images/arrow-go-back-line.svg", color=PluginColors.Red
     ),
-    PluginIcons.Download: IconDefinition(
+    PluginImages.Download: IconDefinition(
         file="images/download-line.svg", color=PluginColors.Blue
     ),
-    PluginIcons.ExternalLink: IconDefinition(
+    PluginImages.ExternalLink: IconDefinition(
         file="images/external-link-line.svg", color=PluginColors.Purple
     ),
-    PluginIcons.Refresh: IconDefinition(
+    PluginImages.Refresh: IconDefinition(
         file="images/refresh-line.svg", color=PluginColors.OrangeYellow
     ),
-    PluginIcons.Add: IconDefinition(
+    PluginImages.Add: IconDefinition(
         file="images/file-add-line.svg", color=PluginColors.Blue
     ),
-    PluginIcons.Delete: IconDefinition(
+    PluginImages.Delete: IconDefinition(
         file="images/delete-bin-line.svg", color=PluginColors.Red
     ),
-    PluginIcons.AddMagazine: IconDefinition(
+    PluginImages.AddMagazine: IconDefinition(
         file="images/heart-add-line.svg",
         color="#EA868E" if is_dark_theme() else "#D63284",
     ),
-    PluginIcons.CancelMagazine: IconDefinition(
+    PluginImages.CancelMagazine: IconDefinition(
         file="images/dislike-line.svg", color=PluginColors.Red
     ),
-    PluginIcons.Edit: IconDefinition(
+    PluginImages.Edit: IconDefinition(
         file="images/pencil-line.svg", color=PluginColors.Turquoise
     ),
-    PluginIcons.Cancel: IconDefinition(
+    PluginImages.Cancel: IconDefinition(
         file="images/close-line.svg", color=PluginColors.Gray
     ),
-    PluginIcons.Okay: IconDefinition(
+    PluginImages.Okay: IconDefinition(
         file="images/check-line.svg", color=PluginColors.Green
     ),
-    PluginIcons.Clover: IconDefinition(
+    PluginImages.Clover: IconDefinition(
         file="images/clover.svg", color=PluginColors.Green
     ),
-    PluginIcons.Search: IconDefinition(
+    PluginImages.Search: IconDefinition(
         file="images/search-line.svg", color=PluginColors.Gray2
     ),
-    PluginIcons.Amazon: IconDefinition(
+    PluginImages.Amazon: IconDefinition(
         file="images/brand-amazon.svg",
         color="#FF9900" if is_dark_theme() else "#FD9700",
     ),
-    PluginIcons.Unlock: IconDefinition(
+    PluginImages.Unlock: IconDefinition(
         file="images/lock-unlock-line.svg", color=PluginColors.Green
     ),
-    PluginIcons.Information: IconDefinition(
+    PluginImages.Information: IconDefinition(
         file="images/information-line.svg", color=PluginColors.Blue
     ),
 }

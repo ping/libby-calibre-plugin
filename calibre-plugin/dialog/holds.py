@@ -44,7 +44,7 @@ from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
 from ..models import LibbyHoldsModel, LibbyModel, get_media_title, truncate_for_display
-from ..utils import PluginIcons
+from ..utils import PluginImages
 
 # noinspection PyUnreachableCode
 if False:
@@ -71,7 +71,7 @@ class HoldsDialogMixin(BaseDialogMixin):
 
         # Refresh button
         self.holds_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.holds_refresh_btn.setIcon(self.icons[PluginIcons.Refresh])
+        self.holds_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
         self.holds_refresh_btn.setAutoDefault(False)
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
@@ -272,12 +272,12 @@ class HoldsDialogMixin(BaseDialogMixin):
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(
             lambda: self.view_in_libby_action_triggered(indices, self.holds_model)
         )
         view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_overdrive_action.triggered.connect(
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
@@ -285,7 +285,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         selected_hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
         # preview
         preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.icons[PluginIcons.Information])
+        preview_action.setIcon(self.resources[PluginImages.Information])
         preview_action.triggered.connect(lambda: self.show_preview(selected_hold))
 
         if hasattr(self, "search_for"):
@@ -294,7 +294,7 @@ class HoldsDialogMixin(BaseDialogMixin):
                     book=truncate_for_display(get_media_title(selected_hold))
                 )
             )
-            search_action.setIcon(self.icons[PluginIcons.Search])
+            search_action.setIcon(self.resources[PluginImages.Search])
             search_action.triggered.connect(
                 lambda: self.search_for(
                     f'{get_media_title(selected_hold)} {selected_hold.get("firstCreatorName", "")}'
@@ -302,13 +302,13 @@ class HoldsDialogMixin(BaseDialogMixin):
             )
 
         edit_hold_action = menu.addAction(_("Manage hold"))
-        edit_hold_action.setIcon(self.icons[PluginIcons.Edit])
+        edit_hold_action.setIcon(self.resources[PluginImages.Edit])
         edit_hold_action.triggered.connect(
             lambda: self.edit_hold_action_triggered(indices)
         )
 
         cancel_action = menu.addAction(_("Cancel hold"))
-        cancel_action.setIcon(self.icons[PluginIcons.Delete])
+        cancel_action.setIcon(self.resources[PluginImages.Delete])
         cancel_action.triggered.connect(lambda: self.cancel_action_triggered(indices))
         menu.exec(QCursor.pos())
 
@@ -316,7 +316,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         for index in reversed(indices):
             hold = index.data(Qt.UserRole)
             # open dialog
-            d = SuspendHoldDialog(self, self.gui, self.icons, self.client, hold)
+            d = SuspendHoldDialog(self, self.gui, self.resources, self.client, hold)
             d.setModal(True)
             d.open()
 
@@ -444,13 +444,13 @@ class SuspendHoldDialog(QDialog):
         self,
         parent: HoldsDialogMixin,
         gui,
-        icons: Dict,
+        resources: Dict,
         client: LibbyClient,
         hold: Dict,
     ):
         super().__init__(parent)
         self.gui = gui
-        self.icons = icons
+        self.resources = resources
         self.client = client
         self.hold = hold
         self.setWindowFlag(Qt.Sheet)
@@ -505,13 +505,13 @@ class SuspendHoldDialog(QDialog):
                     self.days_slider.setValue(suspend_interval.days + 1)
 
         self.cancel_btn = QPushButton(_c("Cancel"), self)
-        self.cancel_btn.setIcon(self.icons[PluginIcons.Cancel])
+        self.cancel_btn.setIcon(self.resources[PluginImages.Cancel])
         self.cancel_btn.setAutoDefault(False)
         self.cancel_btn.clicked.connect(lambda: self.reject())
         layout.addWidget(self.cancel_btn, widget_row_pos, 0)
 
         self.update_btn = QPushButton(_c("OK"), self)
-        self.update_btn.setIcon(self.icons[PluginIcons.Okay])
+        self.update_btn.setIcon(self.resources[PluginImages.Okay])
         self.update_btn.setAutoDefault(False)
         self.update_btn.clicked.connect(self.update_btn_clicked)
         layout.addWidget(self.update_btn, widget_row_pos, 1)

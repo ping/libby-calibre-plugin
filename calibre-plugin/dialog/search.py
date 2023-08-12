@@ -44,7 +44,7 @@ from ..hold_actions import LibbyHoldCreate
 from ..libby import LibbyClient, LibbyFormats
 from ..models import LibbyModel, LibbySearchModel, get_media_title, truncate_for_display
 from ..overdrive import OverDriveClient
-from ..utils import PluginIcons, obfuscate_name
+from ..utils import PluginImages, obfuscate_name
 from ..workers import OverDriveMediaSearchWorker
 
 # noinspection PyUnreachableCode
@@ -76,7 +76,7 @@ class SearchDialogMixin(BaseDialogMixin):
 
         # Search button
         self.search_btn = QPushButton(_c("Search"), self)
-        self.search_btn.setIcon(self.icons[PluginIcons.Search])
+        self.search_btn.setIcon(self.resources[PluginImages.Search])
         # self.search_btn.setAutoDefault(False)
         self.search_btn.clicked.connect(self.search_btn_clicked)
         search_widget.layout.addWidget(
@@ -144,7 +144,7 @@ class SearchDialogMixin(BaseDialogMixin):
             else _("Borrow and Download"),
             self,
         )
-        self.search_borrow_btn.setIcon(self.icons[PluginIcons.Add])
+        self.search_borrow_btn.setIcon(self.resources[PluginImages.Add])
         self.search_borrow_btn.setStyleSheet(button_style)
         self.search_borrow_btn.setFont(button_font)
         search_widget.layout.addWidget(
@@ -415,7 +415,7 @@ class SearchDialogMixin(BaseDialogMixin):
         menu.setToolTipsVisible(True)
         available_sites = self._get_available_sites(media)
         view_in_libby_menu = QMenu(_("View in Libby"))
-        view_in_libby_menu.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_libby_menu.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_menu.setToolTipsVisible(True)
         for site in available_sites:
             _card = site["__card"]
@@ -434,7 +434,7 @@ class SearchDialogMixin(BaseDialogMixin):
             )
         menu.addMenu(view_in_libby_menu)
         view_in_overdrive_menu = QMenu(_("View in OverDrive"))
-        view_in_overdrive_menu.setIcon(self.icons[PluginIcons.ExternalLink])
+        view_in_overdrive_menu.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_overdrive_menu.setToolTipsVisible(True)
         for site in available_sites:
             _card = site["__card"]
@@ -456,7 +456,7 @@ class SearchDialogMixin(BaseDialogMixin):
         selected_search = self.search_results_view.indexAt(pos).data(Qt.UserRole)
         # preview
         preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.icons[PluginIcons.Information])
+        preview_action.setIcon(self.resources[PluginImages.Information])
         preview_action.triggered.connect(lambda: self.show_preview(selected_search))
 
         menu.exec(QCursor.pos())

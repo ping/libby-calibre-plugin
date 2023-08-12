@@ -8,13 +8,15 @@ from qt.core import QColor, QHeaderView, QPainter, QSlider, QToolButton, Qt
 
 # noinspection PyUnreachableCode
 if False:
-    _ = None
+    ngettext = _ = lambda x=None, y=None, z=None: x
 
 try:
     from calibre.utils.localization import _ as _c
+    from calibre.utils.localization import ngettext as ngettext_c
 except ImportError:
     # fallback to global _ for calibre<6.12
     _c = _
+    ngettext_c = ngettext
 
 COLOR_HEX_RE = re.compile("^#[0-9a-f]{3,6}$", re.IGNORECASE)
 

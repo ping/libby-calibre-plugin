@@ -70,7 +70,11 @@ def truncate_for_display(text, text_length=30):
     ) + "…"
 
 
-LOAN_TYPE_TRANSLATION = {"ebook": _("ebook"), "magazine": _("magazine")}  # not used
+LOAN_TYPE_TRANSLATION = {
+    LibbyMediaTypes.EBook: _("Book"),
+    LibbyMediaTypes.Magazine: _("Magazine"),
+    LibbyMediaTypes.Audiobook: _("Audiobook"),
+}
 LOAN_FORMAT_TRANSLATION = {
     "ebook-overdrive": _("Libby Book"),
     "audiobook-overdrive": _("Libby Audiobook"),

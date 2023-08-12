@@ -9,6 +9,7 @@
 #
 from typing import Dict, List
 
+from calibre.constants import DEBUG
 from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
@@ -118,6 +119,8 @@ class LoansDialogMixin(BaseDialogMixin):
         # add debug trigger
         self.loans_view.doubleClicked.connect(
             lambda mi: self.display_debug("Loan", mi.data(Qt.UserRole))
+            if DEBUG and mi.column() == self.loans_model.columnCount() - 1
+            else self.show_preview(mi.data(Qt.UserRole))
         )
         widget.layout.addWidget(
             self.loans_view, widget_row_pos, 0, self.view_vspan, self.view_hspan
@@ -212,6 +215,11 @@ class LoansDialogMixin(BaseDialogMixin):
         view_in_overdrive_action.setIcon(self.icons[PluginIcons.ExternalLink])
 
         selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
+        # preview
+        preview_action = menu.addAction(_c("Book details"))
+        preview_action.setIcon(self.icons[PluginIcons.Eye])
+        preview_action.triggered.connect(lambda: self.show_preview(selected_loan))
+
         if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
             # Read with Kindle
             locked_in_format = LibbyClient.get_locked_in_format(selected_loan)

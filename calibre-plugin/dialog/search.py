@@ -11,6 +11,7 @@ import copy
 from functools import cmp_to_key
 from typing import List
 
+from calibre.constants import DEBUG
 from calibre.gui2 import Dispatcher
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
@@ -119,6 +120,8 @@ class SearchDialogMixin(BaseDialogMixin):
         # debug display
         self.search_results_view.doubleClicked.connect(
             lambda mi: self.display_debug("Search Result", mi.data(Qt.UserRole))
+            if DEBUG and mi.column() == self.search_model.columnCount() - 1
+            else self.show_preview(mi.data(Qt.UserRole))
         )
         search_widget.layout.addWidget(
             self.search_results_view,
@@ -449,6 +452,13 @@ class SearchDialogMixin(BaseDialogMixin):
                 )
             )
         menu.addMenu(view_in_overdrive_menu)
+
+        selected_search = self.search_results_view.indexAt(pos).data(Qt.UserRole)
+        # preview
+        preview_action = menu.addAction(_c("Book details"))
+        preview_action.setIcon(self.icons[PluginIcons.Eye])
+        preview_action.triggered.connect(lambda: self.show_preview(selected_search))
+
         menu.exec(QCursor.pos())
 
     def create_hold(self, media, card):

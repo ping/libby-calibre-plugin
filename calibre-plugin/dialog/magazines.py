@@ -11,6 +11,7 @@ import json
 import re
 from typing import Dict
 
+from calibre.constants import DEBUG
 from calibre.gui2 import Dispatcher, error_dialog, info_dialog
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
@@ -167,6 +168,8 @@ class MagazinesDialogMixin(BaseDialogMixin):
         # add debug trigger
         self.magazines_view.doubleClicked.connect(
             lambda mi: self.display_debug("Magazine", mi.data(Qt.UserRole))
+            if DEBUG and mi.column() == self.magazines_model.columnCount() - 1
+            else self.show_preview(mi.data(Qt.UserRole))
         )
         magazines_view_selection_model = self.magazines_view.selectionModel()
         magazines_view_selection_model.selectionChanged.connect(
@@ -283,6 +286,12 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 indices, self.magazines_model
             )
         )
+
+        selected_magazine = self.magazines_view.indexAt(pos).data(Qt.UserRole)
+        # preview
+        preview_action = menu.addAction(_c("Book details"))
+        preview_action.setIcon(self.icons[PluginIcons.Eye])
+        preview_action.triggered.connect(lambda: self.show_preview(selected_magazine))
 
         unsub_action = menu.addAction(_c("Cancel"))
         unsub_action.setIcon(self.icons[PluginIcons.CancelMagazine])

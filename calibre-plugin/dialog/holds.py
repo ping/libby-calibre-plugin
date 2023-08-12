@@ -10,6 +10,7 @@
 from datetime import datetime, timezone
 from typing import Dict
 
+from calibre.constants import DEBUG
 from calibre.gui2 import Dispatcher
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.threaded_jobs import ThreadedJob
@@ -111,6 +112,8 @@ class HoldsDialogMixin(BaseDialogMixin):
         # add debug trigger
         self.holds_view.doubleClicked.connect(
             lambda mi: self.display_debug("Hold", mi.data(Qt.UserRole))
+            if DEBUG and mi.column() == self.holds_model.columnCount() - 1
+            else self.show_preview(mi.data(Qt.UserRole))
         )
         # add context menu
         self.holds_view.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -279,17 +282,22 @@ class HoldsDialogMixin(BaseDialogMixin):
             lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
         )
 
+        selected_hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
+        # preview
+        preview_action = menu.addAction(_c("Book details"))
+        preview_action.setIcon(self.icons[PluginIcons.Eye])
+        preview_action.triggered.connect(lambda: self.show_preview(selected_hold))
+
         if hasattr(self, "search_for"):
-            hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
             search_action = menu.addAction(
                 _('Search for "{book}"').format(
-                    book=truncate_for_display(get_media_title(hold))
+                    book=truncate_for_display(get_media_title(selected_hold))
                 )
             )
             search_action.setIcon(self.icons[PluginIcons.Search])
             search_action.triggered.connect(
                 lambda: self.search_for(
-                    f'{get_media_title(hold)} {hold.get("firstCreatorName", "")}'
+                    f'{get_media_title(selected_hold)} {selected_hold.get("firstCreatorName", "")}'
                 )
             )
 

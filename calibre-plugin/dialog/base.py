@@ -8,12 +8,15 @@
 # information
 #
 import json
+from collections import OrderedDict
 from typing import Dict, Optional
 
 from calibre.constants import DEBUG
 from calibre.gui2 import error_dialog, info_dialog
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
+from calibre.utils.config import tweaks
+from calibre.utils.date import dt_as_local, format_date
 from lxml import etree
 from polyglot.io import PolyglotStringIO
 from qt.core import (
@@ -32,18 +35,26 @@ from qt.core import (
     QWidget,
     Qt,
     pyqtSignal,
+    QPushButton,
+    QPixmap,
+    QScrollArea,
+    QPalette,
+    QFrame,
+    QVBoxLayout,
+    QMouseEvent,
+    QSizePolicy,
 )
 
 from .. import DEMO_MODE, __version__, logger
-from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c
+from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
 from ..config import BorrowActions, PREFS, PreferenceKeys
 from ..libby import LibbyClient
 from ..libby.errors import ClientConnectionError as LibbyConnectionError
-from ..models import LibbyModel
+from ..models import LibbyModel, get_media_title, LOAN_TYPE_TRANSLATION
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
 from ..utils import PluginIcons, svg_to_pixmap
-from ..workers import SyncDataWorker
+from ..workers import SyncDataWorker, OverDriveMediaWorker
 
 # noinspection PyUnreachableCode
 if False:
@@ -430,6 +441,13 @@ class BaseDialogMixin(QDialog):
             QPixmapCache.insert(card_pixmap_cache_id, card_pixmap)
         return card_pixmap
 
+    def show_preview(self, media):
+        preview_dialog = BookPreviewDialog(
+            self, self.gui, self.icons, self.overdrive_client, media
+        )
+        preview_dialog.setModal(True)
+        preview_dialog.open()
+
     def unhandled_exception(self, err, msg=None):
         """
         Use this to handle unexpected job/sync errors instead of letting calibre's main window do it,
@@ -487,3 +505,190 @@ class CustomLoadingOverlay(LoadingOverlay):
         except RuntimeError as err:
             # most likely because the UI has been closed before loading was completed
             logger.warning("Error hiding loading overlay: %s", err)
+
+
+class ClickableQLabel(QLabel):
+    clicked = pyqtSignal(QMouseEvent)
+    doubleClicked = pyqtSignal(QMouseEvent)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def mousePressEvent(self, ev):
+        self.clicked.emit(ev)
+
+    def mouseDoubleClickEvent(self, ev):
+        self.doubleClicked.emit(ev)
+
+
+class BookPreviewDialog(QDialog):
+    def __init__(
+        self,
+        parent: BaseDialogMixin,
+        gui,
+        icons: Dict,
+        client: OverDriveClient,
+        media: Dict,
+    ):
+        super().__init__(parent)
+        self.gui = gui
+        self.icons = icons
+        self.client = client
+        self.media = media
+        self.setWindowFlag(Qt.Sheet)
+        self.setAttribute(Qt.WA_DeleteOnClose)
+
+        self._media_info_thread = QThread()
+
+        layout = QGridLayout()
+        self.layout = layout
+        self.setLayout(layout)
+        self.widget_row_pos = 0
+
+        title = f"<b>{get_media_title(media)}</b>"
+        if media.get("subtitle"):
+            title += f': {media["subtitle"]}'
+        self.title_lbl = QLabel(title)
+        self.title_lbl.setWordWrap(True)
+        curr_font = self.title_lbl.font()
+        curr_font.setPointSizeF(curr_font.pointSizeF() * 1.2)
+        self.title_lbl.setFont(curr_font)
+        layout.addWidget(self.title_lbl, 0, 0, 1, 2)
+        self.widget_row_pos += 1
+
+        self.image_lbl = ClickableQLabel(self)
+        self.image_lbl.setPixmap(self.icons[PluginIcons.CoverPlaceholder])
+        self.image_lbl.setScaledContents(True)
+        self.image_lbl.setMaximumSize(150, 200)
+        layout.addWidget(self.image_lbl, self.widget_row_pos, 0, alignment=Qt.AlignTop)
+
+        media_type = media.get("type", {}).get("id", "")
+        type_lbl = QLabel(LOAN_TYPE_TRANSLATION.get(media_type, media_type))
+        layout.addWidget(type_lbl, self.widget_row_pos + 1, 0, alignment=Qt.AlignTop)
+
+        self.close_btn = QPushButton(_c("Close"), self)
+        self.close_btn.setIcon(self.icons[PluginIcons.Cancel])
+        self.close_btn.setAutoDefault(False)
+        self.close_btn.setMinimumWidth(parent.min_button_width)
+        self.close_btn.clicked.connect(lambda: self.reject())
+        layout.addWidget(
+            self.close_btn, self.widget_row_pos + 2, 0, 1, 2, alignment=Qt.AlignCenter
+        )
+
+        if not self._media_info_thread.isRunning():
+            self._media_info_thread = self._get_media_info_thread(
+                self.client, self.media["id"]
+            )
+            self.setCursor(Qt.WaitCursor)
+            self._media_info_thread.start()
+
+    def _get_media_info_thread(self, overdrive_client, title_id):
+        thread = QThread()
+        worker = OverDriveMediaWorker()
+        worker.setup(overdrive_client, title_id)
+        worker.moveToThread(thread)
+        thread.worker = worker
+        thread.started.connect(worker.run)
+
+        def loaded(media):
+            try:
+                self.unsetCursor()
+                if media.get("_cover_data"):
+                    cover_pixmap = QPixmap()
+                    cover_pixmap.loadFromData(media["_cover_data"])
+                    self.image_lbl.setPixmap(cover_pixmap)
+                    del media["_cover_data"]
+
+                self.image_lbl.doubleClicked.connect(
+                    lambda: self.parent().display_debug("Media", media)
+                )
+
+                det_layout = QVBoxLayout()
+                det_widget = QWidget(self)
+                det_widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
+                det_widget.setLayout(det_layout)
+                det_scroll_area = QScrollArea()
+                det_scroll_area.setAlignment(Qt.AlignTop)
+                det_scroll_area.setBackgroundRole(QPalette.Window)
+                det_scroll_area.setFrameShadow(QFrame.Plain)
+                det_scroll_area.setFrameShape(QFrame.StyledPanel)
+                det_scroll_area.setWidgetResizable(True)
+                det_scroll_area.setMinimumWidth(480)
+                det_scroll_area.setWidget(det_widget)
+
+                detail_labels = []
+                creators = OrderedDict()
+                # group creators by role
+                for creator in media.get("creators", []):
+                    creators.setdefault(creator["role"], []).append(creator["name"])
+                for role, creator_names in creators.items():
+                    detail_labels.append(
+                        QLabel("<b>" + _c(role) + f'</b>: {", ".join(creator_names)}')
+                    )
+                if media.get("series"):
+                    detail_labels.append(
+                        QLabel(
+                            "<b>"
+                            + ngettext_c("Series", "Series", 1)
+                            + f'</b>: {media["series"]}'
+                        )
+                    )
+                for lang in media.get("languages", []):
+                    detail_labels.append(
+                        QLabel("<b>" + _c("Language") + f'</b>: {lang["name"]}')
+                    )
+                if media.get("publisher", {}).get("name"):
+                    detail_labels.append(
+                        QLabel(
+                            "<b>"
+                            + _c("Publisher")
+                            + f'</b>: {media["publisher"]["name"]}'
+                        )
+                    )
+                publish_date_txt = self.media.get("publishDate") or media.get(
+                    "publishDate"
+                )
+                if publish_date_txt:
+                    pub_date = dt_as_local(LibbyClient.parse_datetime(publish_date_txt))
+                    detail_labels.append(
+                        QLabel(
+                            "<b>"
+                            + _c("Published")
+                            + f'</b>: {format_date(pub_date, tweaks["gui_timestamp_display_format"])}'
+                        )
+                    )
+
+                description = (
+                    media.get("description")
+                    or media.get("fullDescription")
+                    or media.get("shortDescription")
+                )
+                if description:
+                    description_lbl = QLabel(description)
+                    description_lbl.setTextFormat(Qt.RichText)
+                    detail_labels.append(description_lbl)
+
+                for lbl in detail_labels:
+                    lbl.setWordWrap(True)
+                    det_layout.addWidget(lbl, alignment=Qt.AlignTop)
+
+                self.layout.addWidget(det_scroll_area, self.widget_row_pos, 1, 2, 1)
+            except RuntimeError as runtime_err:
+                # most likely because the UI has been closed before fetch was completed
+                logger.warning("Error displaying media results: %s", runtime_err)
+            finally:
+                thread.quit()
+
+        def errored_out(err: Exception):
+            try:
+                self.unsetCursor()
+            except RuntimeError:
+                pass
+            finally:
+                thread.quit()
+            raise err
+
+        worker.finished.connect(lambda media: loaded(media))
+        worker.errored.connect(lambda err: errored_out(err))
+
+        return thread

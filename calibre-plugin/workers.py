@@ -10,8 +10,9 @@
 
 import math
 from timeit import default_timer as timer
-from typing import Dict, List
+from typing import Dict, List, Optional
 
+from calibre import browser
 from qt.core import QObject, pyqtSignal
 
 from . import logger
@@ -58,6 +59,48 @@ class OverDriveMediaSearchWorker(QObject):
         except Exception as err:
             logger.info(
                 "OverDrive Media Search failed after %f seconds"
+                % (timer() - total_start)
+            )
+            self.errored.emit(err)
+
+
+class OverDriveMediaWorker(QObject):
+    """
+    Fetches a media detail (for preview)
+    """
+
+    finished = pyqtSignal(dict)
+    errored = pyqtSignal(Exception)
+
+    def setup(self, overdrive_client: OverDriveClient, title_id: str):
+        self.client = overdrive_client
+        self.title_id = title_id
+
+    def run(self):
+        total_start = timer()
+        try:
+            media = self.client.media(self.title_id)
+            try:
+                covers: List[Dict] = sorted(
+                    list(media.get("covers", []).values()),
+                    key=lambda c: c.get("width", 0),
+                )
+                covers_lowest_res: Optional[Dict] = next(iter(covers), None)
+                cover_url = covers_lowest_res["href"] if covers_lowest_res else None
+                if cover_url:
+                    logger.debug(f"Downloading cover: {cover_url}")
+                    br = browser()
+                    cover_res = br.open_novisit(cover_url, timeout=self.client.timeout)
+                    media["_cover_data"] = cover_res.read()
+            except Exception as cover_err:
+                logger.warning(f"Error loading cover: {cover_err}")
+            logger.info(
+                "OverDrive Media Fetch took %f seconds" % (timer() - total_start)
+            )
+            self.finished.emit(media)
+        except Exception as err:
+            logger.info(
+                "OverDrive Media Fetch failed after %f seconds"
                 % (timer() - total_start)
             )
             self.errored.emit(err)

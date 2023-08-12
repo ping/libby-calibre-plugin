@@ -15,6 +15,7 @@ from qt.core import (
     QSize,
     QToolButton,
     QUrl,
+    QPixmap,
 )
 
 from . import PLUGIN_ICON, PLUGIN_NAME, logger
@@ -28,7 +29,7 @@ from .dialog import (
     MagazinesDialogMixin,
     SearchDialogMixin,
 )
-from .utils import CARD_ICON, ICON_MAP, PluginIcons, svg_to_qicon
+from .utils import CARD_ICON, ICON_MAP, PluginIcons, svg_to_qicon, COVER_PLACEHOLDER
 
 # noinspection PyUnreachableCode
 if False:
@@ -57,7 +58,8 @@ class OverdriveLibbyAction(InterfaceAction):
 
         # extract icons
         image_resources = get_resources(
-            [v.file for v in ICON_MAP.values()] + [PLUGIN_ICON, CARD_ICON]
+            [v.file for v in ICON_MAP.values()]
+            + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER]
         )
         self.icons = {}
         for k, v in ICON_MAP.items():
@@ -67,6 +69,12 @@ class OverdriveLibbyAction(InterfaceAction):
 
         # card icon
         self.icons[PluginIcons.Card] = image_resources.pop(CARD_ICON)
+
+        # book cover placeholder
+        cover_pixmap = QPixmap(150, 200)
+        cover_pixmap.loadFromData(image_resources.pop(COVER_PLACEHOLDER))
+        cover_pixmap.setDevicePixelRatio(self.gui.devicePixelRatio())
+        self.icons[PluginIcons.CoverPlaceholder] = cover_pixmap
 
         # action icon
         plugin_icon = svg_to_qicon(image_resources.pop(PLUGIN_ICON), size=(300, 300))

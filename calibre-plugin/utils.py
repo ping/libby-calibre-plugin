@@ -30,6 +30,7 @@ except ImportError:
     OD_IDENTIFIER = "odid"
 
 CARD_ICON = "images/card.svg"
+COVER_PLACEHOLDER = "images/placeholder.png"
 
 
 def obfuscate_date(dt: datetime, day=None, month=None, year=None):
@@ -145,6 +146,8 @@ class PluginIcons(str, Enum):
     Search = "search"
     Amazon = "amazon"
     Unlock = "unlock"
+    CoverPlaceholder = "cover-placeholder"
+    Eye = "eye"
 
     def __str__(self):
         return str(self.value)
@@ -199,5 +202,8 @@ ICON_MAP = {
     ),
     PluginIcons.Unlock: IconDefinition(
         file="images/lock-unlock-line.svg", color=PluginColors.Green
+    ),
+    PluginIcons.Eye: IconDefinition(
+        file="images/eye-line.svg", color=PluginColors.Gray
     ),
 }

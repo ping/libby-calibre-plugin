@@ -17,7 +17,6 @@ from qt.core import (
     QGridLayout,
     QLabel,
     QMenu,
-    QMouseEvent,
     QPalette,
     QProgressBar,
     QPushButton,
@@ -25,10 +24,9 @@ from qt.core import (
     QSizePolicy,
     QWidget,
     Qt,
-    pyqtSignal,
 )
 
-from .base import BaseDialogMixin
+from .base import BaseDialogMixin, ClickableQLabel
 from .. import DEMO_MODE
 from ..compat import _c
 from ..libby import LibbyClient
@@ -46,20 +44,6 @@ if False:
 
 
 load_translations()
-
-
-class ClickableQLabel(QLabel):
-    clicked = pyqtSignal(QMouseEvent)
-    doubleClicked = pyqtSignal(QMouseEvent)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def mousePressEvent(self, ev):
-        self.clicked.emit(ev)
-
-    def mouseDoubleClickEvent(self, ev):
-        self.doubleClicked.emit(ev)
 
 
 class CardWidget(QWidget):

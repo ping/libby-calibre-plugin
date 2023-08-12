@@ -9,7 +9,7 @@
 #
 import json
 from collections import OrderedDict
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from calibre.constants import DEBUG
 from calibre.gui2 import error_dialog, info_dialog
@@ -53,7 +53,7 @@ from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LibbyModel, get_media_title, LOAN_TYPE_TRANSLATION
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
-from ..utils import PluginImages, svg_to_pixmap
+from ..utils import OD_IDENTIFIER, PluginImages, svg_to_pixmap
 from ..workers import SyncDataWorker, OverDriveMediaWorker
 
 # noinspection PyUnreachableCode
@@ -246,6 +246,33 @@ class BaseDialogMixin(QDialog):
         preview_action = menu.addAction(_c("Book details"))
         preview_action.setIcon(self.resources[PluginImages.Information])
         preview_action.triggered.connect(lambda: self.show_preview(media))
+
+    def show_preview(self, media):
+        preview_dialog = BookPreviewDialog(
+            self, self.gui, self.resources, self.overdrive_client, media
+        )
+        preview_dialog.setModal(True)
+        preview_dialog.open()
+
+    def add_find_library_match_menu_action(self, menu, media):
+        preview_action = menu.addAction(_("Search in calibre library"))
+        preview_action.setIcon(self.resources[PluginImages.Search])
+        preview_action.triggered.connect(lambda: self.find_library_matches(media))
+
+    def find_library_matches(self, media):
+        loan_isbn = OverDriveClient.extract_isbn(media.get("formats", []), [])
+        loan_asin = OverDriveClient.extract_asin(media.get("formats", []))
+        search_conditions: List[str] = [f'title:"""{get_media_title(media)}"""']
+        if loan_isbn:
+            search_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
+        if loan_asin:
+            search_conditions.append(f'identifiers:"=asin:{loan_asin}"')
+            search_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
+        if PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]:
+            search_conditions.append(
+                rf'identifiers:"={OD_IDENTIFIER}:~^{media["id"]}\@"'
+            )
+        self.gui.search.set_search_string(" or ".join(search_conditions))
 
     def sync(self):
         if not self.client:
@@ -445,13 +472,6 @@ class BaseDialogMixin(QDialog):
             card_pixmap = svg_to_pixmap(etree.tostring(svg_root), size=size)
             QPixmapCache.insert(card_pixmap_cache_id, card_pixmap)
         return card_pixmap
-
-    def show_preview(self, media):
-        preview_dialog = BookPreviewDialog(
-            self, self.gui, self.resources, self.overdrive_client, media
-        )
-        preview_dialog.setModal(True)
-        preview_dialog.open()
 
     def unhandled_exception(self, err, msg=None):
         """

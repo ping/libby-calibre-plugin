@@ -290,6 +290,8 @@ class MagazinesDialogMixin(BaseDialogMixin):
         selected_magazine = self.magazines_view.indexAt(pos).data(Qt.UserRole)
         # view book details
         self.add_view_book_details_menu_action(menu, selected_magazine)
+        # find calibre matches
+        self.add_find_library_match_menu_action(menu, selected_magazine)
 
         unsub_action = menu.addAction(_c("Cancel"))
         unsub_action.setIcon(self.resources[PluginImages.CancelMagazine])

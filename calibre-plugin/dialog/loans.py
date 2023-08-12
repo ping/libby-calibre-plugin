@@ -217,6 +217,8 @@ class LoansDialogMixin(BaseDialogMixin):
         selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
         # view book details
         self.add_view_book_details_menu_action(menu, selected_loan)
+        # find calibre matches
+        self.add_find_library_match_menu_action(menu, selected_loan)
 
         if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
             # Read with Kindle

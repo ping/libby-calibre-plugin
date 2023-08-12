@@ -242,6 +242,11 @@ class BaseDialogMixin(QDialog):
                 )
             )
 
+    def add_view_book_details_menu_action(self, menu, media):
+        preview_action = menu.addAction(_c("Book details"))
+        preview_action.setIcon(self.resources[PluginImages.Information])
+        preview_action.triggered.connect(lambda: self.show_preview(media))
+
     def sync(self):
         if not self.client:
             self.status_bar.showMessage(_("Libby is not configured yet."))

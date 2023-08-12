@@ -288,10 +288,8 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
 
         selected_magazine = self.magazines_view.indexAt(pos).data(Qt.UserRole)
-        # preview
-        preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.resources[PluginImages.Information])
-        preview_action.triggered.connect(lambda: self.show_preview(selected_magazine))
+        # view book details
+        self.add_view_book_details_menu_action(menu, selected_magazine)
 
         unsub_action = menu.addAction(_c("Cancel"))
         unsub_action.setIcon(self.resources[PluginImages.CancelMagazine])

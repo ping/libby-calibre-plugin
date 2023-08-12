@@ -454,10 +454,8 @@ class SearchDialogMixin(BaseDialogMixin):
         menu.addMenu(view_in_overdrive_menu)
 
         selected_search = self.search_results_view.indexAt(pos).data(Qt.UserRole)
-        # preview
-        preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.resources[PluginImages.Information])
-        preview_action.triggered.connect(lambda: self.show_preview(selected_search))
+        # view book details
+        self.add_view_book_details_menu_action(menu, selected_search)
 
         menu.exec(QCursor.pos())
 

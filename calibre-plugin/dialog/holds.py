@@ -283,10 +283,8 @@ class HoldsDialogMixin(BaseDialogMixin):
         )
 
         selected_hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
-        # preview
-        preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.resources[PluginImages.Information])
-        preview_action.triggered.connect(lambda: self.show_preview(selected_hold))
+        # view book details
+        self.add_view_book_details_menu_action(menu, selected_hold)
 
         if hasattr(self, "search_for"):
             search_action = menu.addAction(

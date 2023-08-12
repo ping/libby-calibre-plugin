@@ -215,10 +215,8 @@ class LoansDialogMixin(BaseDialogMixin):
         view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
 
         selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
-        # preview
-        preview_action = menu.addAction(_c("Book details"))
-        preview_action.setIcon(self.resources[PluginImages.Information])
-        preview_action.triggered.connect(lambda: self.show_preview(selected_loan))
+        # view book details
+        self.add_view_book_details_menu_action(menu, selected_loan)
 
         if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
             # Read with Kindle

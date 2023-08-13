@@ -540,7 +540,7 @@ class ConfigWidget(QWidget):
         self.help_lbl.setAlignment(Qt.AlignRight)
         self.help_lbl.setTextFormat(Qt.RichText)
         self.help_lbl.setOpenExternalLinks(True)
-        self.layout.addWidget(self.help_lbl, 4, 0, 1, 2)
+        self.layout.addWidget(self.help_lbl, loans_sect_row_span, 0, 1, 2)
 
         self.resize(self.sizeHint())
 

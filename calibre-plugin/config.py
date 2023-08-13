@@ -218,17 +218,22 @@ class ConfigWidget(QWidget):
 
         # Hide Ebooks
         self.hide_ebooks_checkbox = QCheckBox(PreferenceTexts.HIDE_EBOOKS, self)
+        self.hide_ebooks_checkbox.setToolTip(_("Don't list ebook loans"))
         self.hide_ebooks_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_EBOOKS])
         loan_layout.addRow(self.hide_ebooks_checkbox)
 
         # Hide Magazine
         self.hide_magazines_checkbox = QCheckBox(PreferenceTexts.HIDE_MAGAZINES, self)
+        self.hide_magazines_checkbox.setToolTip(_("Don't list magazine loans"))
         self.hide_magazines_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_MAGAZINES])
         loan_layout.addRow(self.hide_magazines_checkbox)
 
         # Hide books already in library
         self.hide_books_already_in_lib_checkbox = QCheckBox(
             PreferenceTexts.HIDE_BOOKS_ALREADY_IN_LIB, self
+        )
+        self.hide_books_already_in_lib_checkbox.setToolTip(
+            _("Hide loans that are already in your calibre library")
         )
         self.hide_books_already_in_lib_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]
@@ -239,6 +244,11 @@ class ConfigWidget(QWidget):
         self.exclude_empty_books_checkbox = QCheckBox(
             PreferenceTexts.EXCLUDE_EMPTY_BOOKS, self
         )
+        self.exclude_empty_books_checkbox.setToolTip(
+            _(
+                "When enabled, empty books are excluded when hiding titles already in your library"
+            )
+        )
         self.exclude_empty_books_checkbox.setChecked(
             PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
         )
@@ -246,6 +256,9 @@ class ConfigWidget(QWidget):
 
         # Always confirm returns
         self.confirm_returns_checkbox = QCheckBox(PreferenceTexts.CONFIRM_RETURNS, self)
+        self.confirm_returns_checkbox.setToolTip(
+            _("Toggle the confirmation prompt before returning loans")
+        )
         self.confirm_returns_checkbox.setChecked(
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_RETURNS)]
         )
@@ -254,6 +267,11 @@ class ConfigWidget(QWidget):
         # Always confirm Read with Kindle
         self.confirm_readwithkindle_checkbox = QCheckBox(
             PreferenceTexts.CONFIRM_READ_WITH_KINDLE, self
+        )
+        self.confirm_readwithkindle_checkbox.setToolTip(
+            _(
+                "Toggle the confirmation prompt before chosing to Read with Kindle a title that is not format-locked"
+            )
         )
         self.confirm_readwithkindle_checkbox.setChecked(
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_READ_WITH_KINDLE)]
@@ -264,6 +282,9 @@ class ConfigWidget(QWidget):
         self.prefer_open_formats_checkbox = QCheckBox(
             PreferenceTexts.PREFER_OPEN_FORMATS, self
         )
+        self.prefer_open_formats_checkbox.setToolTip(
+            _("Choose DRM-free formats if available")
+        )
         self.prefer_open_formats_checkbox.setChecked(
             PREFS[PreferenceKeys.PREFER_OPEN_FORMATS]
         )
@@ -272,6 +293,11 @@ class ConfigWidget(QWidget):
         # Enable OverDrive Link plugin integration
         self.enable_overdrive_link_checkbox = QCheckBox(
             PreferenceTexts.OVERDRIVELINK_INTEGRATION, self
+        )
+        self.enable_overdrive_link_checkbox.setToolTip(
+            _(
+                "If enabled, the plugin will attempt to find a matching OverDrive-linked book that does not have any formats and add the new download as an EPUB to the book record. Newly downloaded books will also have the `odid` identifier added."
+            )
         )
         self.enable_overdrive_link_checkbox.setChecked(
             PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]
@@ -282,6 +308,11 @@ class ConfigWidget(QWidget):
         self.mark_updated_books_checkbox = QCheckBox(
             PreferenceTexts.MARK_UPDATED_BOOKS, self
         )
+        self.mark_updated_books_checkbox.setToolTip(
+            _(
+                "If enabled, book records that were updated with a new format will be marked."
+            )
+        )
         self.mark_updated_books_checkbox.setChecked(
             PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]
         )
@@ -291,6 +322,11 @@ class ConfigWidget(QWidget):
         self.always_download_as_new_checkbox = QCheckBox(
             PreferenceTexts.ALWAYS_DOWNLOAD_AS_NEW, self
         )
+        self.always_download_as_new_checkbox.setToolTip(
+            _(
+                "Never update an existing empty book. Always create a new book entry for a download."
+            )
+        )
         self.always_download_as_new_checkbox.setChecked(
             PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]
         )
@@ -298,6 +334,7 @@ class ConfigWidget(QWidget):
 
         # Tag Ebooks
         self.tag_ebooks_txt = QLineEdit(self)
+        self.tag_ebooks_txt.setToolTip(_("Add specified tags to the ebooks downloaded"))
         self.tag_ebooks_txt.setPlaceholderText(PreferenceTexts.TAG_EBOOKS_PLACEHOLDER)
         if not DEMO_MODE:
             self.tag_ebooks_txt.setText(PREFS[PreferenceKeys.TAG_EBOOKS])
@@ -305,6 +342,9 @@ class ConfigWidget(QWidget):
 
         # Tag Magazines
         self.tag_magazines_txt = QLineEdit(self)
+        self.tag_magazines_txt.setToolTip(
+            _("Add specified tags to the magazines downloaded")
+        )
         self.tag_magazines_txt.setPlaceholderText(
             PreferenceTexts.TAG_MAGAZINES_PLACEHOLDER
         )
@@ -320,6 +360,11 @@ class ConfigWidget(QWidget):
 
             borrow_date_col_lbl = QLabel(PreferenceTexts.CUSTCOL_BORROWED_DATE)
             self.borrow_date_col_text = QLineEdit(self)
+            self.borrow_date_col_text.setToolTip(
+                _(
+                    "If specified, this column will be updated with the loan checkout date"
+                )
+            )
             self.borrow_date_col_text.setClearButtonEnabled(True)
             self.borrow_date_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE]
@@ -335,6 +380,9 @@ class ConfigWidget(QWidget):
 
             due_date_col_lbl = QLabel(PreferenceTexts.CUSTCOL_DUE_DATE)
             self.due_date_col_text = QLineEdit(self)
+            self.due_date_col_text.setToolTip(
+                _("If specified, this column will be updated with the loan expiry date")
+            )
             self.due_date_col_text.setClearButtonEnabled(True)
             self.due_date_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_DUE_DATE]
@@ -348,6 +396,11 @@ class ConfigWidget(QWidget):
 
             loan_type_col_lbl = QLabel(PreferenceTexts.CUSTCOL_LOAN_TYPE)
             self.loan_type_col_text = QLineEdit(self)
+            self.loan_type_col_text.setToolTip(
+                _(
+                    "If specified, this column will be updated with the loan type, e.g. ebook / magazine / audiobook."
+                )
+            )
             self.loan_type_col_text.setClearButtonEnabled(True)
             self.loan_type_col_text.setText(
                 PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE]
@@ -439,6 +492,9 @@ class ConfigWidget(QWidget):
         self.hide_holds_unavailable_checkbox = QCheckBox(
             PreferenceTexts.HIDE_HOLDS_UNAVAILABLE, self
         )
+        self.hide_holds_unavailable_checkbox.setToolTip(
+            _("Hide holds that are not yet available")
+        )
         self.hide_holds_unavailable_checkbox.setChecked(
             PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE]
         )
@@ -447,6 +503,9 @@ class ConfigWidget(QWidget):
         # Always confirm cancellations
         self.confirm_cancel_hold_checkbox = QCheckBox(
             PreferenceTexts.CONFIRM_CANCELLATIONS, self
+        )
+        self.confirm_cancel_hold_checkbox.setToolTip(
+            _("Toggle the confirmation prompt before cancelling a hold")
         )
         self.confirm_cancel_hold_checkbox.setChecked(
             PREFS[confirm_config_name(PreferenceKeys.CONFIRM_CANCELLATIONS)]
@@ -462,6 +521,9 @@ class ConfigWidget(QWidget):
         loans_sect_row_span += 1
 
         self.search_results_max_txt = QSpinBox(self)
+        self.search_results_max_txt.setToolTip(
+            _("Limit the number of search results returned")
+        )
         self.search_results_max_txt.setRange(20, 60)
         self.search_results_max_txt.setSingleStep(10)
         self.search_results_max_txt.setValue(PREFS[PreferenceKeys.SEARCH_RESULTS_MAX])
@@ -469,6 +531,9 @@ class ConfigWidget(QWidget):
             PreferenceTexts.SEARCH_RESULTS_MAX, self.search_results_max_txt
         )
         self.search_libraries_txt = QTextEdit(self)
+        self.search_libraries_txt.setToolTip(
+            _("This determines the libraries that will be used for search.")
+        )
         self.search_libraries_txt.setAcceptRichText(False)
         self.search_libraries_txt.setPlaceholderText(
             _(
@@ -498,6 +563,12 @@ class ConfigWidget(QWidget):
         self.incl_nondownloadable_checkbox = QCheckBox(
             PreferenceTexts.INCL_NONDOWNLOADABLE_TITLES
         )
+        self.incl_nondownloadable_checkbox.setToolTip(
+            _(
+                "Include titles that do not have a supported downloadable format, "
+                "e.g. Kindle, audiobook loans"
+            )
+        )
         self.incl_nondownloadable_checkbox.setChecked(
             PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
         )
@@ -505,6 +576,9 @@ class ConfigWidget(QWidget):
 
         # Use best cover
         self.use_best_cover_checkbox = QCheckBox(PreferenceTexts.USE_BEST_COVER, self)
+        self.use_best_cover_checkbox.setToolTip(
+            _("Use the best quality cover in book details. Maybe slower.")
+        )
         self.use_best_cover_checkbox.setChecked(PREFS[PreferenceKeys.USE_BEST_COVER])
         general_layout.addRow(self.use_best_cover_checkbox)
 
@@ -517,6 +591,11 @@ class ConfigWidget(QWidget):
         loans_sect_row_span += 1
 
         self.network_timeout_txt = QSpinBox(self)
+        self.network_timeout_txt.setToolTip(
+            _(
+                "The maximum interval to wait on a connection. You can increase this value if you have a slow connection."
+            )
+        )
         self.network_timeout_txt.setSuffix(_c(" seconds"))
         self.network_timeout_txt.setRange(10, 180)
         self.network_timeout_txt.setSingleStep(10)
@@ -524,6 +603,9 @@ class ConfigWidget(QWidget):
         network_layout.addRow(PreferenceTexts.NETWORK_TIMEOUT, self.network_timeout_txt)
 
         self.network_retry_txt = QSpinBox(self)
+        self.network_retry_txt.setToolTip(
+            _("The number of retries upon connection failures")
+        )
         self.network_retry_txt.setRange(0, 5)
         self.network_retry_txt.setValue(PREFS[PreferenceKeys.NETWORK_RETRY])
         network_layout.addRow(PreferenceTexts.NETWORK_RETRY, self.network_retry_txt)

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-13 16:28+0800\n"
+"POT-Creation-Date: 2023-08-13 17:19+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,7 +38,7 @@ msgstr ""
 msgid "Borrowing"
 msgstr "貸し出し中"
 
-#: calibre-plugin/config.py:91 calibre-plugin/config.py:696
+#: calibre-plugin/config.py:91 calibre-plugin/config.py:778
 msgid "Libby Setup Code"
 msgstr "Libby セットアップコード"
 
@@ -156,44 +156,153 @@ msgstr "Libbyが構成されていません。"
 msgid "Loans"
 msgstr "貸出中"
 
-#: calibre-plugin/config.py:380
+#: calibre-plugin/config.py:221
+msgid "Don't list ebook loans"
+msgstr ""
+
+#: calibre-plugin/config.py:227
+msgid "Don't list magazine loans"
+msgstr ""
+
+#: calibre-plugin/config.py:236
+msgid "Hide loans that are already in your calibre library"
+msgstr ""
+
+#: calibre-plugin/config.py:249
+msgid ""
+"When enabled, empty books are excluded when hiding titles already in your "
+"library"
+msgstr ""
+
+#: calibre-plugin/config.py:260
+msgid "Toggle the confirmation prompt before returning loans"
+msgstr ""
+
+#: calibre-plugin/config.py:273
+msgid ""
+"Toggle the confirmation prompt before chosing to Read with Kindle a title "
+"that is not format-locked"
+msgstr ""
+
+#: calibre-plugin/config.py:286
+msgid "Choose DRM-free formats if available"
+msgstr ""
+
+#: calibre-plugin/config.py:299
+msgid ""
+"If enabled, the plugin will attempt to find a matching OverDrive-linked book "
+"that does not have any formats and add the new download as an EPUB to the "
+"book record. Newly downloaded books will also have the `odid` identifier "
+"added."
+msgstr ""
+
+#: calibre-plugin/config.py:313
+msgid ""
+"If enabled, book records that were updated with a new format will be marked."
+msgstr ""
+
+#: calibre-plugin/config.py:327
+msgid ""
+"Never update an existing empty book. Always create a new book entry for a "
+"download."
+msgstr ""
+
+#: calibre-plugin/config.py:337
+msgid "Add specified tags to the ebooks downloaded"
+msgstr ""
+
+#: calibre-plugin/config.py:346
+msgid "Add specified tags to the magazines downloaded"
+msgstr ""
+
+#: calibre-plugin/config.py:365
+msgid "If specified, this column will be updated with the loan checkout date"
+msgstr ""
+
+#: calibre-plugin/config.py:384
+msgid "If specified, this column will be updated with the loan expiry date"
+msgstr ""
+
+#: calibre-plugin/config.py:401
+msgid ""
+"If specified, this column will be updated with the loan type, e.g. ebook / "
+"magazine / audiobook."
+msgstr ""
+
+#: calibre-plugin/config.py:433
 msgid "Loan's borrowed/checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:392
+#: calibre-plugin/config.py:445
 msgid "Loan's due/expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:406
+#: calibre-plugin/config.py:459
 msgid "Loan type, e.g. ebook, audiobook, magazine"
 msgstr ""
 
-#: calibre-plugin/config.py:431 calibre-plugin/dialog/cards.py:181
+#: calibre-plugin/config.py:484 calibre-plugin/dialog/cards.py:181
 #: calibre-plugin/dialog/cards.py:222 calibre-plugin/dialog/holds.py:155
 #: calibre-plugin/dialog/holds.py:184
 msgid "Holds"
 msgstr "予約中"
 
-#: calibre-plugin/config.py:457
+#: calibre-plugin/config.py:496
+msgid "Hide holds that are not yet available"
+msgstr ""
+
+#: calibre-plugin/config.py:508
+msgid "Toggle the confirmation prompt before cancelling a hold"
+msgstr ""
+
+#: calibre-plugin/config.py:516
 msgid "Search"
 msgstr ""
 
-#: calibre-plugin/config.py:475
+#: calibre-plugin/config.py:525
+msgid "Limit the number of search results returned"
+msgstr ""
+
+#: calibre-plugin/config.py:535
+msgid "This determines the libraries that will be used for search."
+msgstr ""
+
+#: calibre-plugin/config.py:540
 #, python-brace-format
 msgid ""
 "Up to {n} libraries, comma-separated. View your library key codes from the "
 "Cards tab. Example: lapl,sno-isle,livebrary,kcls"
 msgstr ""
 
-#: calibre-plugin/config.py:490
+#: calibre-plugin/config.py:555
 msgid "General"
 msgstr ""
 
-#: calibre-plugin/config.py:512
+#: calibre-plugin/config.py:568
+msgid ""
+"Include titles that do not have a supported downloadable format, e.g. "
+"Kindle, audiobook loans"
+msgstr ""
+
+#: calibre-plugin/config.py:580
+msgid "Use the best quality cover in book details. Maybe slower."
+msgstr ""
+
+#: calibre-plugin/config.py:586
 msgid "Network"
 msgstr ""
 
-#: calibre-plugin/config.py:697
+#: calibre-plugin/config.py:596
+msgid ""
+"The maximum interval to wait on a connection. You can increase this value if "
+"you have a slow connection."
+msgstr ""
+
+#: calibre-plugin/config.py:607
+msgid "The number of retries upon connection failures"
+msgstr ""
+
+#: calibre-plugin/config.py:779
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""

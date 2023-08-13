@@ -24,25 +24,25 @@ from qt.core import (
     QDesktopServices,
     QDialog,
     QFont,
+    QFrame,
     QGridLayout,
     QLabel,
     QMenu,
+    QMouseEvent,
+    QPalette,
+    QPixmap,
     QPixmapCache,
+    QPushButton,
+    QScrollArea,
+    QSizePolicy,
     QStatusBar,
     QTabWidget,
     QThread,
     QUrl,
+    QVBoxLayout,
     QWidget,
     Qt,
     pyqtSignal,
-    QPushButton,
-    QPixmap,
-    QScrollArea,
-    QPalette,
-    QFrame,
-    QVBoxLayout,
-    QMouseEvent,
-    QSizePolicy,
 )
 
 from .. import DEMO_MODE, __version__, logger
@@ -50,11 +50,11 @@ from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_
 from ..config import BorrowActions, PREFS, PreferenceKeys
 from ..libby import LibbyClient
 from ..libby.errors import ClientConnectionError as LibbyConnectionError
-from ..models import LibbyModel, get_media_title, LOAN_TYPE_TRANSLATION
+from ..models import LOAN_TYPE_TRANSLATION, LibbyModel, get_media_title
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
 from ..utils import OD_IDENTIFIER, PluginImages, svg_to_pixmap
-from ..workers import SyncDataWorker, OverDriveMediaWorker
+from ..workers import OverDriveMediaWorker, SyncDataWorker
 
 # noinspection PyUnreachableCode
 if False:
@@ -562,6 +562,7 @@ class BookPreviewDialog(QDialog):
         self.media = media
         self.setWindowFlag(Qt.Sheet)
         self.setAttribute(Qt.WA_DeleteOnClose)
+        self.setWindowTitle(_c("Book details"))
 
         self._media_info_thread = QThread()
 

@@ -113,7 +113,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_view.doubleClicked.connect(
             lambda mi: self.display_debug("Hold", mi.data(Qt.UserRole))
             if DEBUG and mi.column() == self.holds_model.columnCount() - 1
-            else self.show_preview(mi.data(Qt.UserRole))
+            else self.show_book_details(mi.data(Qt.UserRole))
         )
         # add context menu
         self.holds_view.setContextMenuPolicy(Qt.CustomContextMenu)

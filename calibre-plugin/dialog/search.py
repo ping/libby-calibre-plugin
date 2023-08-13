@@ -121,7 +121,7 @@ class SearchDialogMixin(BaseDialogMixin):
         self.search_results_view.doubleClicked.connect(
             lambda mi: self.display_debug("Search Result", mi.data(Qt.UserRole))
             if DEBUG and mi.column() == self.search_model.columnCount() - 1
-            else self.show_preview(mi.data(Qt.UserRole))
+            else self.show_book_details(mi.data(Qt.UserRole))
         )
         search_widget.layout.addWidget(
             self.search_results_view,

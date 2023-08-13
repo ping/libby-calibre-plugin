@@ -120,7 +120,7 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_view.doubleClicked.connect(
             lambda mi: self.display_debug("Loan", mi.data(Qt.UserRole))
             if DEBUG and mi.column() == self.loans_model.columnCount() - 1
-            else self.show_preview(mi.data(Qt.UserRole))
+            else self.show_book_details(mi.data(Qt.UserRole))
         )
         widget.layout.addWidget(
             self.loans_view, widget_row_pos, 0, self.view_vspan, self.view_hspan

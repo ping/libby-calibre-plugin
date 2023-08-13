@@ -169,7 +169,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_view.doubleClicked.connect(
             lambda mi: self.display_debug("Magazine", mi.data(Qt.UserRole))
             if DEBUG and mi.column() == self.magazines_model.columnCount() - 1
-            else self.show_preview(mi.data(Qt.UserRole))
+            else self.show_book_details(mi.data(Qt.UserRole))
         )
         magazines_view_selection_model = self.magazines_view.selectionModel()
         magazines_view_selection_model.selectionChanged.connect(

@@ -245,9 +245,9 @@ class BaseDialogMixin(QDialog):
     def add_view_book_details_menu_action(self, menu, media):
         preview_action = menu.addAction(_c("Book details"))
         preview_action.setIcon(self.resources[PluginImages.Information])
-        preview_action.triggered.connect(lambda: self.show_preview(media))
+        preview_action.triggered.connect(lambda: self.show_book_details(media))
 
-    def show_preview(self, media):
+    def show_book_details(self, media):
         preview_dialog = BookPreviewDialog(
             self, self.gui, self.resources, self.overdrive_client, media
         )

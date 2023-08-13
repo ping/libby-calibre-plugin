@@ -107,6 +107,17 @@ class OverdriveLibbyAction(InterfaceAction):
         )
         self.create_menu_action(
             qaction_menu,
+            "overdrive-libby-changelog",
+            _("What's New"),
+            self.resources[PluginImages.Information],
+            triggered=lambda: QDesktopServices.openUrl(
+                QUrl(
+                    "https://github.com/ping/libby-calibre-plugin/blob/main/CHANGELOG.md"
+                )
+            ),
+        )
+        self.create_menu_action(
+            qaction_menu,
             "overdrive-libby-mr",
             _("MobileRead"),
             self.resources[PluginImages.ExternalLink],

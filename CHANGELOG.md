@@ -4,6 +4,7 @@ Unreleased
 - New: If "Include titles without downloadable formats" is enabled, titles that do not have a downloadable format will be shown. In addition, when the title is chosen for download, the plugin will create an Empty Book
 - New: Read with Kindle option is available for loans that are available as Kindle books and not already format-locked
 - New: Search tab that provides a basic search function across your libraries
+- New: View book details by double-clicking on the row
 - New: Cards tab that gives an overview of your linked cards
 - New: Custom columns to store borrowed/due dates, and loan type (calibre>=5.35.0)
 - New: Display number of available holds in the Holds tab text

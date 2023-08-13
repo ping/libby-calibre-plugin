@@ -10,7 +10,7 @@
 
 import math
 from timeit import default_timer as timer
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from calibre import browser
 from qt.core import QObject, pyqtSignal

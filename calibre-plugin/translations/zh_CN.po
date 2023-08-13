@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-13 17:19+0800\n"
+"POT-Creation-Date: 2023-08-13 17:28+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -38,7 +38,7 @@ msgstr ""
 msgid "Borrowing"
 msgstr "正在借阅"
 
-#: calibre-plugin/config.py:91 calibre-plugin/config.py:778
+#: calibre-plugin/config.py:91 calibre-plugin/config.py:782
 msgid "Libby Setup Code"
 msgstr "Libby设置代码"
 
@@ -151,158 +151,162 @@ msgstr "Libby已配置。"
 msgid "Libby is not configured yet."
 msgstr "Libby未配置。"
 
-#: calibre-plugin/config.py:214 calibre-plugin/dialog/cards.py:159
+#: calibre-plugin/config.py:206
+msgid "Enter the 8-digit Libby setup code generated from another device"
+msgstr ""
+
+#: calibre-plugin/config.py:217 calibre-plugin/dialog/cards.py:159
 #: calibre-plugin/dialog/cards.py:211 calibre-plugin/dialog/loans.py:160
 msgid "Loans"
 msgstr "已借作品"
 
-#: calibre-plugin/config.py:221
+#: calibre-plugin/config.py:224
 msgid "Don't list ebook loans"
 msgstr ""
 
-#: calibre-plugin/config.py:227
+#: calibre-plugin/config.py:230
 msgid "Don't list magazine loans"
 msgstr ""
 
-#: calibre-plugin/config.py:236
+#: calibre-plugin/config.py:239
 msgid "Hide loans that are already in your calibre library"
 msgstr ""
 
-#: calibre-plugin/config.py:249
+#: calibre-plugin/config.py:252
 msgid ""
 "When enabled, empty books are excluded when hiding titles already in your "
 "library"
 msgstr ""
 
-#: calibre-plugin/config.py:260
+#: calibre-plugin/config.py:263
 msgid "Toggle the confirmation prompt before returning loans"
 msgstr ""
 
-#: calibre-plugin/config.py:273
+#: calibre-plugin/config.py:276
 msgid ""
 "Toggle the confirmation prompt before chosing to Read with Kindle a title "
 "that is not format-locked"
 msgstr ""
 
-#: calibre-plugin/config.py:286
+#: calibre-plugin/config.py:289
 msgid "Choose DRM-free formats if available"
 msgstr ""
 
-#: calibre-plugin/config.py:299
+#: calibre-plugin/config.py:302
 msgid ""
 "If enabled, the plugin will attempt to find a matching OverDrive-linked book "
 "that does not have any formats and add the new download as an EPUB to the "
-"book record. Newly downloaded books will also have the `odid` identifier "
+"book record.<br>Newly downloaded books will also have the `odid` identifier "
 "added."
 msgstr ""
 
-#: calibre-plugin/config.py:313
+#: calibre-plugin/config.py:317
 msgid ""
 "If enabled, book records that were updated with a new format will be marked."
 msgstr ""
 
-#: calibre-plugin/config.py:327
+#: calibre-plugin/config.py:331
 msgid ""
 "Never update an existing empty book. Always create a new book entry for a "
 "download."
 msgstr ""
 
-#: calibre-plugin/config.py:337
+#: calibre-plugin/config.py:341
 msgid "Add specified tags to the ebooks downloaded"
 msgstr ""
 
-#: calibre-plugin/config.py:346
+#: calibre-plugin/config.py:350
 msgid "Add specified tags to the magazines downloaded"
 msgstr ""
 
-#: calibre-plugin/config.py:365
+#: calibre-plugin/config.py:369
 msgid "If specified, this column will be updated with the loan checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:384
+#: calibre-plugin/config.py:388
 msgid "If specified, this column will be updated with the loan expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:401
+#: calibre-plugin/config.py:405
 msgid ""
 "If specified, this column will be updated with the loan type, e.g. ebook / "
 "magazine / audiobook."
 msgstr ""
 
-#: calibre-plugin/config.py:433
+#: calibre-plugin/config.py:437
 msgid "Loan's borrowed/checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:445
+#: calibre-plugin/config.py:449
 msgid "Loan's due/expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:459
+#: calibre-plugin/config.py:463
 msgid "Loan type, e.g. ebook, audiobook, magazine"
 msgstr ""
 
-#: calibre-plugin/config.py:484 calibre-plugin/dialog/cards.py:181
+#: calibre-plugin/config.py:488 calibre-plugin/dialog/cards.py:181
 #: calibre-plugin/dialog/cards.py:222 calibre-plugin/dialog/holds.py:155
 #: calibre-plugin/dialog/holds.py:184
 msgid "Holds"
 msgstr "预约"
 
-#: calibre-plugin/config.py:496
+#: calibre-plugin/config.py:500
 msgid "Hide holds that are not yet available"
 msgstr ""
 
-#: calibre-plugin/config.py:508
+#: calibre-plugin/config.py:512
 msgid "Toggle the confirmation prompt before cancelling a hold"
 msgstr ""
 
-#: calibre-plugin/config.py:516
+#: calibre-plugin/config.py:520
 msgid "Search"
 msgstr ""
 
-#: calibre-plugin/config.py:525
+#: calibre-plugin/config.py:529
 msgid "Limit the number of search results returned"
 msgstr ""
 
-#: calibre-plugin/config.py:535
+#: calibre-plugin/config.py:539
 msgid "This determines the libraries that will be used for search."
 msgstr ""
 
-#: calibre-plugin/config.py:540
+#: calibre-plugin/config.py:544
 #, python-brace-format
 msgid ""
 "Up to {n} libraries, comma-separated. View your library key codes from the "
 "Cards tab. Example: lapl,sno-isle,livebrary,kcls"
 msgstr ""
 
-#: calibre-plugin/config.py:555
+#: calibre-plugin/config.py:559
 msgid "General"
 msgstr ""
 
-#: calibre-plugin/config.py:568
+#: calibre-plugin/config.py:572
 msgid ""
 "Include titles that do not have a supported downloadable format, e.g. "
 "Kindle, audiobook loans"
 msgstr ""
 
-#: calibre-plugin/config.py:580
+#: calibre-plugin/config.py:584
 msgid "Use the best quality cover in book details. Maybe slower."
 msgstr ""
 
-#: calibre-plugin/config.py:586
+#: calibre-plugin/config.py:590
 msgid "Network"
 msgstr ""
 
-#: calibre-plugin/config.py:596
+#: calibre-plugin/config.py:600
 msgid ""
 "The maximum interval to wait on a connection. You can increase this value if "
 "you have a slow connection."
 msgstr ""
 
-#: calibre-plugin/config.py:607
+#: calibre-plugin/config.py:611
 msgid "The number of retries upon connection failures"
 msgstr ""
 
-#: calibre-plugin/config.py:779
+#: calibre-plugin/config.py:783
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""

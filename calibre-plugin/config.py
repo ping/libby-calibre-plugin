@@ -202,6 +202,9 @@ class ConfigWidget(QWidget):
         self.libby_setup_code_lbl.setOpenExternalLinks(True)
         self.libby_setup_code_lbl.setMinimumWidth(150)
         self.libby_setup_code_txt = QLineEdit(self)
+        self.libby_setup_code_txt.setToolTip(
+            _("Enter the 8-digit Libby setup code generated from another device")
+        )
         self.libby_setup_code_txt.setPlaceholderText(
             PreferenceTexts.LIBBY_SETUP_CODE_DESC
         )
@@ -296,7 +299,8 @@ class ConfigWidget(QWidget):
         )
         self.enable_overdrive_link_checkbox.setToolTip(
             _(
-                "If enabled, the plugin will attempt to find a matching OverDrive-linked book that does not have any formats and add the new download as an EPUB to the book record. Newly downloaded books will also have the `odid` identifier added."
+                "If enabled, the plugin will attempt to find a matching OverDrive-linked book that does not have any formats and add the new download as an EPUB to the book record."
+                "<br>Newly downloaded books will also have the `odid` identifier added."
             )
         )
         self.enable_overdrive_link_checkbox.setChecked(

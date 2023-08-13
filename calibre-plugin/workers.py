@@ -81,12 +81,7 @@ class OverDriveMediaWorker(QObject):
         try:
             media = self.client.media(self.title_id)
             try:
-                covers: List[Dict] = sorted(
-                    list(media.get("covers", []).values()),
-                    key=lambda c: c.get("width", 0),
-                )
-                covers_lowest_res: Optional[Dict] = next(iter(covers), None)
-                cover_url = covers_lowest_res["href"] if covers_lowest_res else None
+                cover_url = OverDriveClient.get_best_cover_url(media, rank=-1)
                 if cover_url:
                     logger.debug(f"Downloading cover: {cover_url}")
                     br = browser()

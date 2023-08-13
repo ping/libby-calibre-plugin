@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-12 17:08+0800\n"
+"POT-Creation-Date: 2023-08-13 09:42+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -139,7 +139,7 @@ msgstr ""
 msgid "Libby is configured."
 msgstr "Libbyが構成されました。"
 
-#: calibre-plugin/config.py:180 calibre-plugin/dialog/base.py:247
+#: calibre-plugin/config.py:180 calibre-plugin/dialog/base.py:279
 msgid "Libby is not configured yet."
 msgstr "Libbyが構成されていません。"
 
@@ -348,47 +348,51 @@ msgstr "借り"
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:250 calibre-plugin/dialog/base.py:251
+#: calibre-plugin/dialog/base.py:258
+msgid "Search in calibre library"
+msgstr ""
+
+#: calibre-plugin/dialog/base.py:282 calibre-plugin/dialog/base.py:283
 msgid "Synchronizing..."
 msgstr "同期中…"
 
-#: calibre-plugin/dialog/base.py:272
+#: calibre-plugin/dialog/base.py:304
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:297
+#: calibre-plugin/dialog/base.py:329
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:299
+#: calibre-plugin/dialog/base.py:331
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:321 calibre-plugin/dialog/base.py:339
-#: calibre-plugin/dialog/base.py:362 calibre-plugin/dialog/base.py:378
+#: calibre-plugin/dialog/base.py:353 calibre-plugin/dialog/base.py:371
+#: calibre-plugin/dialog/base.py:394 calibre-plugin/dialog/base.py:410
 #: calibre-plugin/dialog/search.py:142 calibre-plugin/dialog/search.py:185
 msgid "Borrow"
 msgstr "借りる"
 
-#: calibre-plugin/dialog/base.py:323 calibre-plugin/dialog/base.py:337
-#: calibre-plugin/dialog/base.py:362 calibre-plugin/dialog/base.py:376
+#: calibre-plugin/dialog/base.py:355 calibre-plugin/dialog/base.py:369
+#: calibre-plugin/dialog/base.py:394 calibre-plugin/dialog/base.py:408
 #: calibre-plugin/dialog/search.py:144 calibre-plugin/dialog/search.py:185
 msgid "Borrow and Download"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:329 calibre-plugin/dialog/base.py:365
+#: calibre-plugin/dialog/base.py:361 calibre-plugin/dialog/base.py:397
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:331 calibre-plugin/dialog/base.py:367
+#: calibre-plugin/dialog/base.py:363 calibre-plugin/dialog/base.py:399
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:488
+#: calibre-plugin/dialog/base.py:513
 msgid "Check your connection or retry in a few minutes."
 msgstr "接続を確認するか、数分後に再試行してください。"
 
@@ -536,12 +540,12 @@ msgstr ""
 msgid "Download selected loans"
 msgstr "選択した書籍ローンをダウンロードする"
 
-#: calibre-plugin/dialog/loans.py:232
+#: calibre-plugin/dialog/loans.py:228
 #, python-brace-format
 msgid "Read \"{book}\" with Kindle"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:244 calibre-plugin/dialog/loans.py:552
+#: calibre-plugin/dialog/loans.py:240 calibre-plugin/dialog/loans.py:552
 msgid ""
 "If you choose to Read with Kindle, this loan will be <u>format-locked</u> "
 "and not downloadable."

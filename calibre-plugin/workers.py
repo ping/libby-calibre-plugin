@@ -81,7 +81,9 @@ class OverDriveMediaWorker(QObject):
         try:
             media = self.client.media(self.title_id)
             try:
-                cover_url = OverDriveClient.get_best_cover_url(media, rank=-1)
+                cover_url = OverDriveClient.get_best_cover_url(
+                    media, rank=0 if PREFS[PreferenceKeys.USE_BEST_COVER] else -1
+                )
                 if cover_url:
                     logger.debug(f"Downloading cover: {cover_url}")
                     br = browser()

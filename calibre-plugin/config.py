@@ -79,6 +79,7 @@ class PreferenceKeys:
     CUSTCOL_BORROWED_DATE = "custcol_borrowed_dt"
     CUSTCOL_DUE_DATE = "custcol_due_dt"
     CUSTCOL_LOAN_TYPE = "custcol_loan_type"
+    USE_BEST_COVER = "use_best_cover"
 
 
 class BorrowActions:
@@ -115,6 +116,7 @@ class PreferenceTexts:
     CUSTCOL_BORROWED_DATE = _("Custom column for Borrowed Date")
     CUSTCOL_DUE_DATE = _("Custom column for Due Date")
     CUSTCOL_LOAN_TYPE = _("Custom column for Loan Type")
+    USE_BEST_COVER = _("Use highest-resolution cover for book details")
 
 
 PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
@@ -143,6 +145,7 @@ PREFS.defaults[PreferenceKeys.SEARCH_LIBRARIES] = []
 PREFS.defaults[PreferenceKeys.CUSTCOL_BORROWED_DATE] = ""
 PREFS.defaults[PreferenceKeys.CUSTCOL_DUE_DATE] = ""
 PREFS.defaults[PreferenceKeys.CUSTCOL_LOAN_TYPE] = ""
+PREFS.defaults[PreferenceKeys.USE_BEST_COVER] = False
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
@@ -212,7 +215,6 @@ class ConfigWidget(QWidget):
         loan_layout = QFormLayout()
         loan_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         loans_section.setLayout(loan_layout)
-        self.layout.addWidget(loans_section, 1, 0, 3, 1)
 
         # Hide Ebooks
         self.hide_ebooks_checkbox = QCheckBox(PreferenceTexts.HIDE_EBOOKS, self)
@@ -223,15 +225,6 @@ class ConfigWidget(QWidget):
         self.hide_magazines_checkbox = QCheckBox(PreferenceTexts.HIDE_MAGAZINES, self)
         self.hide_magazines_checkbox.setChecked(PREFS[PreferenceKeys.HIDE_MAGAZINES])
         loan_layout.addRow(self.hide_magazines_checkbox)
-
-        # Include non-downloadables
-        self.incl_nondownloadable_checkbox = QCheckBox(
-            PreferenceTexts.INCL_NONDOWNLOADABLE_TITLES
-        )
-        self.incl_nondownloadable_checkbox.setChecked(
-            PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
-        )
-        loan_layout.addRow(self.incl_nondownloadable_checkbox)
 
         # Hide books already in library
         self.hide_books_already_in_lib_checkbox = QCheckBox(
@@ -433,12 +426,14 @@ class ConfigWidget(QWidget):
                 layout.setStretch(1, 1)
                 loan_layout.addRow(layout)
 
+        loans_sect_row_span = 1
         # ------------------------------------ Holds ------------------------------------
         holds_section = QGroupBox(_("Holds"))
         holds_layout = QFormLayout()
         holds_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         holds_section.setLayout(holds_layout)
-        self.layout.addWidget(holds_section, 1, 1)
+        self.layout.addWidget(holds_section, loans_sect_row_span, 1)
+        loans_sect_row_span += 1
 
         # Hide unavailable holds
         self.hide_holds_unavailable_checkbox = QCheckBox(
@@ -463,7 +458,8 @@ class ConfigWidget(QWidget):
         search_layout = QFormLayout()
         search_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         search_section.setLayout(search_layout)
-        self.layout.addWidget(search_section, 2, 1)
+        self.layout.addWidget(search_section, loans_sect_row_span, 1)
+        loans_sect_row_span += 1
 
         self.search_results_max_txt = QSpinBox(self)
         self.search_results_max_txt.setRange(20, 60)
@@ -490,12 +486,35 @@ class ConfigWidget(QWidget):
         search_libraries_layout.addWidget(self.search_libraries_txt)
         search_layout.addRow(search_libraries_layout)
 
+        # ------------------------------------ General ------------------------------------
+        general_section = QGroupBox(_("General"))
+        general_layout = QFormLayout()
+        general_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        general_section.setLayout(general_layout)
+        self.layout.addWidget(general_section, loans_sect_row_span, 1)
+        loans_sect_row_span += 1
+
+        # Include non-downloadables
+        self.incl_nondownloadable_checkbox = QCheckBox(
+            PreferenceTexts.INCL_NONDOWNLOADABLE_TITLES
+        )
+        self.incl_nondownloadable_checkbox.setChecked(
+            PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+        )
+        general_layout.addRow(self.incl_nondownloadable_checkbox)
+
+        # Use best cover
+        self.use_best_cover_checkbox = QCheckBox(PreferenceTexts.USE_BEST_COVER, self)
+        self.use_best_cover_checkbox.setChecked(PREFS[PreferenceKeys.USE_BEST_COVER])
+        general_layout.addRow(self.use_best_cover_checkbox)
+
         # ------------------------------------ NETWORK ------------------------------------
         network_section = QGroupBox(_("Network"))
         network_layout = QFormLayout()
         network_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         network_section.setLayout(network_layout)
-        self.layout.addWidget(network_section, 3, 1)
+        self.layout.addWidget(network_section, loans_sect_row_span, 1)
+        loans_sect_row_span += 1
 
         self.network_timeout_txt = QSpinBox(self)
         self.network_timeout_txt.setSuffix(_c(" seconds"))
@@ -508,6 +527,9 @@ class ConfigWidget(QWidget):
         self.network_retry_txt.setRange(0, 5)
         self.network_retry_txt.setValue(PREFS[PreferenceKeys.NETWORK_RETRY])
         network_layout.addRow(PreferenceTexts.NETWORK_RETRY, self.network_retry_txt)
+
+        # add this last so we can set rowSpan correctly
+        self.layout.addWidget(loans_section, 1, 0, loans_sect_row_span - 1, 1)
 
         # Help label
         self.help_lbl = QLabel(
@@ -659,6 +681,8 @@ class ConfigWidget(QWidget):
             PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] = borrowed_date_custcol_name
             PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] = due_date_custcol_name
             PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE] = loan_type_custcol_name
+
+        PREFS[PreferenceKeys.USE_BEST_COVER] = self.use_best_cover_checkbox.isChecked()
 
         setup_code = self.libby_setup_code_txt.text().strip()
         if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:

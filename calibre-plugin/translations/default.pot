@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-13 10:06+0800\n"
+"POT-Creation-Date: 2023-08-13 16:28+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:52 calibre-plugin/config.py:171
+#: calibre-plugin/action.py:52 calibre-plugin/config.py:174
 msgid "Libby"
 msgstr ""
 
@@ -38,154 +38,162 @@ msgstr ""
 msgid "Borrowing"
 msgstr ""
 
-#: calibre-plugin/config.py:90 calibre-plugin/config.py:672
+#: calibre-plugin/config.py:91 calibre-plugin/config.py:696
 msgid "Libby Setup Code"
 msgstr ""
 
-#: calibre-plugin/config.py:91
+#: calibre-plugin/config.py:92
 msgid "8-digit setup code"
 msgstr ""
 
-#: calibre-plugin/config.py:92
+#: calibre-plugin/config.py:93
 msgid "Hide Magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:93
+#: calibre-plugin/config.py:94
 msgid "Hide Ebooks"
 msgstr ""
 
-#: calibre-plugin/config.py:94
+#: calibre-plugin/config.py:95
 msgid "Include titles without downloadable formats"
 msgstr ""
 
-#: calibre-plugin/config.py:95
+#: calibre-plugin/config.py:96
 msgid "Hide titles already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:96
+#: calibre-plugin/config.py:97
 msgid "Exclude empty books when hiding titles already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:97
+#: calibre-plugin/config.py:98
 msgid "Hide unavailable holds"
 msgstr ""
 
-#: calibre-plugin/config.py:98
+#: calibre-plugin/config.py:99
 msgid "Prefer Open Formats"
 msgstr ""
 
-#: calibre-plugin/config.py:99
+#: calibre-plugin/config.py:100
 msgid "Tag downloaded ebooks with"
 msgstr ""
 
-#: calibre-plugin/config.py:100
+#: calibre-plugin/config.py:101
 msgid "Example: library,books"
 msgstr ""
 
-#: calibre-plugin/config.py:101
+#: calibre-plugin/config.py:102
 msgid "Tag downloaded magazines with"
 msgstr ""
 
-#: calibre-plugin/config.py:102
+#: calibre-plugin/config.py:103
 msgid "Example: library,magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:103
+#: calibre-plugin/config.py:104
 msgid "Always confirm returns"
 msgstr ""
 
-#: calibre-plugin/config.py:104
+#: calibre-plugin/config.py:105
 msgid "Always confirm holds cancellation"
 msgstr ""
 
-#: calibre-plugin/config.py:105
+#: calibre-plugin/config.py:106
 msgid "Always confirm Read with Kindle"
 msgstr ""
 
-#: calibre-plugin/config.py:106
+#: calibre-plugin/config.py:107
 msgid "Enable OverDrive Link Plugin integration"
 msgstr ""
 
-#: calibre-plugin/config.py:107
+#: calibre-plugin/config.py:108
 msgid "Mark updated books"
 msgstr ""
 
-#: calibre-plugin/config.py:108
+#: calibre-plugin/config.py:109
 msgid "Always download as a new book"
 msgstr ""
 
-#: calibre-plugin/config.py:109
+#: calibre-plugin/config.py:110
 msgid "Connection timeout"
 msgstr ""
 
-#: calibre-plugin/config.py:111
+#: calibre-plugin/config.py:112
 msgid "Maximum search results"
 msgstr ""
 
-#: calibre-plugin/config.py:112
+#: calibre-plugin/config.py:113
 #, python-brace-format
 msgid "Library Keys (comma-separated, max: {n})"
 msgstr ""
 
-#: calibre-plugin/config.py:115
+#: calibre-plugin/config.py:116
 msgid "Custom column for Borrowed Date"
 msgstr ""
 
-#: calibre-plugin/config.py:116
+#: calibre-plugin/config.py:117
 msgid "Custom column for Due Date"
 msgstr ""
 
-#: calibre-plugin/config.py:117
+#: calibre-plugin/config.py:118
 msgid "Custom column for Loan Type"
 msgstr ""
 
-#: calibre-plugin/config.py:178
+#: calibre-plugin/config.py:119
+msgid "Use highest-resolution cover for book details"
+msgstr ""
+
+#: calibre-plugin/config.py:181
 msgid "Libby is configured."
 msgstr ""
 
-#: calibre-plugin/config.py:180 calibre-plugin/dialog/base.py:279
+#: calibre-plugin/config.py:183 calibre-plugin/dialog/base.py:279
 msgid "Libby is not configured yet."
 msgstr ""
 
-#: calibre-plugin/config.py:211 calibre-plugin/dialog/cards.py:159
+#: calibre-plugin/config.py:214 calibre-plugin/dialog/cards.py:159
 #: calibre-plugin/dialog/cards.py:211 calibre-plugin/dialog/loans.py:160
 msgid "Loans"
 msgstr ""
 
-#: calibre-plugin/config.py:387
+#: calibre-plugin/config.py:380
 msgid "Loan's borrowed/checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:399
+#: calibre-plugin/config.py:392
 msgid "Loan's due/expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:413
+#: calibre-plugin/config.py:406
 msgid "Loan type, e.g. ebook, audiobook, magazine"
 msgstr ""
 
-#: calibre-plugin/config.py:437 calibre-plugin/dialog/cards.py:181
+#: calibre-plugin/config.py:431 calibre-plugin/dialog/cards.py:181
 #: calibre-plugin/dialog/cards.py:222 calibre-plugin/dialog/holds.py:155
 #: calibre-plugin/dialog/holds.py:184
 msgid "Holds"
 msgstr ""
 
-#: calibre-plugin/config.py:462
+#: calibre-plugin/config.py:457
 msgid "Search"
 msgstr ""
 
-#: calibre-plugin/config.py:479
+#: calibre-plugin/config.py:475
 #, python-brace-format
 msgid ""
 "Up to {n} libraries, comma-separated. View your library key codes from the "
 "Cards tab. Example: lapl,sno-isle,livebrary,kcls"
 msgstr ""
 
-#: calibre-plugin/config.py:494
+#: calibre-plugin/config.py:490
+msgid "General"
+msgstr ""
+
+#: calibre-plugin/config.py:512
 msgid "Network"
 msgstr ""
 
-#: calibre-plugin/config.py:673
+#: calibre-plugin/config.py:697
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""

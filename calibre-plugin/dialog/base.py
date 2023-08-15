@@ -312,7 +312,7 @@ class BaseDialogMixin(QDialog):
                     )
                     if not DEMO_MODE
                     else "",
-                    5000,
+                    8000,
                 )
             except RuntimeError as err:
                 # most likely because the UI has been closed before syncing was completed
@@ -671,8 +671,10 @@ class BookPreviewDialog(QDialog):
                             + f'</b>: {media["publisher"]["name"]}'
                         )
                     )
-                publish_date_txt = self.media.get("publishDate") or media.get(
-                    "publishDate"
+                publish_date_txt = (
+                    self.media.get("publishDate")
+                    or media.get("publishDate")
+                    or media.get("estimatedReleaseDate")
                 )
                 if publish_date_txt:
                     pub_date = dt_as_local(LibbyClient.parse_datetime(publish_date_txt))

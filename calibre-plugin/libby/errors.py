@@ -113,18 +113,20 @@ class ErrorHandler(object):
             error = json.loads(error_response)
             if error.get("result", "") == "upstream_failure":
                 upstream = error.get("upstream", {})
-                if upstream:
-                    raise ClientBadRequestError(
-                        msg=f'{upstream.get("userExplanation", "")} [errorcode: {upstream.get("errorCode", "")}]',
-                        http_status=http_err.code,
-                        error_response=error_response,
-                    ) from http_err
+                for error_info in ErrorHandler.ERRORS_MAP:
+                    if http_err.code in error_info["code"]:
+                        if upstream:
+                            raise error_info["error"](
+                                msg=f'{upstream.get("userExplanation", "")} [errorcode: {upstream.get("errorCode", "")}]',
+                                http_status=http_err.code,
+                                error_response=error_response,
+                            ) from http_err
 
-                raise ClientBadRequestError(
-                    msg=str(http_err),
-                    http_status=http_err.code,
-                    error_response=error_response,
-                ) from http_err
+                        raise ClientBadRequestError(
+                            msg=str(http_err),
+                            http_status=http_err.code,
+                            error_response=error_response,
+                        ) from http_err
 
             elif error.get("result", "") == "not_found":
                 raise ClientNotFoundError(

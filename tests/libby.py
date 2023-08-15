@@ -7,14 +7,23 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
 import os
 from pathlib import Path
+from unittest.mock import patch
+from urllib.error import URLError
 
 from libby import LibbyClient, LibbyFormats
-from libby.errors import ClientNotFoundError, ClientForbiddenError
-
-from .base import BaseTests
+from libby.errors import (
+    ClientBadRequestError,
+    ClientConnectionError,
+    ClientError,
+    ClientForbiddenError,
+    ClientNotFoundError,
+    ClientThrottledError,
+    ClientUnauthorisedError,
+    InternalServerError,
+)
+from .base import BaseTests, MockHTTPError
 
 
 class LibbyClientTests(BaseTests):
@@ -275,3 +284,58 @@ class LibbyClientTests(BaseTests):
 
         with self.assertRaises(ValueError):
             LibbyClient.parse_datetime("2023/05/30 23:01:14")
+
+    @patch("urllib.request.OpenerDirector.open")
+    def test_client_error_handling(self, open_mock):
+        client = LibbyClient(
+            identity_token=".",
+            max_retries=0,
+            timeout=15,
+            logger=self.logger,
+        )
+
+        open_mock.side_effect = [
+            MockHTTPError(400, {}),
+            MockHTTPError(401, {"result": "unauthorized"}),
+            MockHTTPError(403, {"result": "missing_chip"}),
+            MockHTTPError(404, {}),
+            MockHTTPError(405, {}),
+            MockHTTPError(429, {}),
+            MockHTTPError(
+                500,
+                {
+                    "result": "upstream_failure",
+                    "upstream": {
+                        "errorCode": "InternalError",
+                        "service": "THUNDER",
+                        "httpStatus": 500,
+                        "userExplanation": "An unexpected error has occurred.",
+                        "correlationId": "e3294b2a637e6139e388f360847bf239",
+                    },
+                },
+            ),
+            URLError("No route to host"),
+        ]
+        with self.assertRaises(ClientBadRequestError):
+            client.borrow_title(title_id="123456", title_format="x", card_id="9")
+
+        with self.assertRaises(ClientUnauthorisedError):
+            client.borrow_title(title_id="123456", title_format="x", card_id="9")
+
+        with self.assertRaises(ClientForbiddenError):
+            client.sync()
+
+        with self.assertRaises(ClientNotFoundError):
+            client.borrow_title(title_id="123456", title_format="x", card_id="9")
+
+        with self.assertRaises(ClientError):
+            client.borrow_title(title_id="123456", title_format="x", card_id="9")
+
+        with self.assertRaises(ClientThrottledError):
+            client.borrow_title(title_id="123456", title_format="x", card_id="9")
+
+        with self.assertRaises(InternalServerError) as context:
+            client.borrow_title(title_id="123456", title_format="x", card_id="9")
+
+        with self.assertRaises(ClientConnectionError):
+            client.sync()

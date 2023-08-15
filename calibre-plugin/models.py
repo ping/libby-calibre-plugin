@@ -687,9 +687,7 @@ class LibbyMagazinesModel(LibbyModel):
         if col == 0:
             return get_media_title(subscription)
         if col == 1:
-            dt_value = datetime.strptime(
-                subscription["estimatedReleaseDate"], "%Y-%m-%dT%H:%M:%SZ"
-            )
+            dt_value = LibbyClient.parse_datetime(subscription["estimatedReleaseDate"])
             if role == LibbyModel.DisplaySortRole:
                 return dt_value.isoformat()
             return format_date(dt_value, tweaks["gui_timestamp_display_format"])
@@ -836,8 +834,9 @@ class LibbySearchModel(LibbyModel):
                 return creator_name
             return truncate_for_display(creator_name, text_length=20)
         if col == 2:
-            if media.get("publishDate"):
-                dt_value = datetime.strptime(media["publishDate"], "%Y-%m-%dT%H:%M:%SZ")
+            publish_date = media.get("publishDate") or media.get("estimatedReleaseDate")
+            if publish_date:
+                dt_value = LibbyClient.parse_datetime(publish_date)
                 if role == LibbyModel.DisplaySortRole:
                     return dt_value.isoformat()
                 return dt_value.year

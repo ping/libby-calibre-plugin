@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-13 17:28+0800\n"
+"POT-Creation-Date: 2023-08-17 15:56+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -327,144 +327,157 @@ msgstr ""
 msgid "Returning"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:422
+#: calibre-plugin/magazine_download.py:412
+#, python-brace-format
+msgid "Unable to download magazine: {err}"
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:416
+msgid "Downloading as an empty book instead."
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:468
 msgid "Getting loan details"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:462
+#: calibre-plugin/magazine_download.py:502
 msgid "Getting book details"
 msgstr ""
 
-#: calibre-plugin/models.py:74
+#: calibre-plugin/magazine_download.py:515
+msgid "Magazine has unsupported fixed-layout (pre-paginated) format."
+msgstr ""
+
+#: calibre-plugin/models.py:73
 msgid "Book"
 msgstr "책"
 
-#: calibre-plugin/models.py:75
+#: calibre-plugin/models.py:74
 msgid "Magazine"
 msgstr "매거진"
 
-#: calibre-plugin/models.py:76
+#: calibre-plugin/models.py:75
 msgid "Audiobook"
 msgstr "오디오북"
 
-#: calibre-plugin/models.py:79
+#: calibre-plugin/models.py:78
 msgid "Libby Book"
 msgstr "Libby 책"
 
-#: calibre-plugin/models.py:80
+#: calibre-plugin/models.py:79
 msgid "Libby Audiobook"
 msgstr "Libby 오디오북"
 
-#: calibre-plugin/models.py:81
+#: calibre-plugin/models.py:80
 msgid "MP3 Audiobook"
 msgstr ""
 
-#: calibre-plugin/models.py:82
+#: calibre-plugin/models.py:81
 msgid "Libby Magazine"
 msgstr "Libby 잡지"
 
-#: calibre-plugin/models.py:83
+#: calibre-plugin/models.py:82
 msgid "Libby Video"
 msgstr "Libby 동영상"
 
-#: calibre-plugin/models.py:84
+#: calibre-plugin/models.py:83
 msgid "Streaming Video"
 msgstr "스트리밍 동영상"
 
-#: calibre-plugin/models.py:85
+#: calibre-plugin/models.py:84
 msgid "Kindle"
 msgstr ""
 
-#: calibre-plugin/models.py:86
+#: calibre-plugin/models.py:85
 msgid "Media Do"
 msgstr ""
 
-#: calibre-plugin/models.py:87
+#: calibre-plugin/models.py:86
 msgid "EPUB"
 msgstr ""
 
-#: calibre-plugin/models.py:88
+#: calibre-plugin/models.py:87
 msgid "EPUB (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:89
+#: calibre-plugin/models.py:88
 msgid "PDF"
 msgstr ""
 
-#: calibre-plugin/models.py:90
+#: calibre-plugin/models.py:89
 msgid "PDF (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:175
+#: calibre-plugin/models.py:174
 msgid "Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:176 calibre-plugin/models.py:383
-#: calibre-plugin/models.py:722 calibre-plugin/dialog/cards.py:200
+#: calibre-plugin/models.py:175 calibre-plugin/models.py:382
+#: calibre-plugin/models.py:719 calibre-plugin/dialog/cards.py:200
 msgid "Library"
 msgstr "도서관"
 
-#: calibre-plugin/models.py:303
+#: calibre-plugin/models.py:302
 msgid "A skip-the-line loan"
 msgstr "대기 없는 인기 자료 대출."
 
-#: calibre-plugin/models.py:310
+#: calibre-plugin/models.py:309
 msgid "This loan is not format-locked."
 msgstr ""
 
-#: calibre-plugin/models.py:312
+#: calibre-plugin/models.py:311
 msgid "This loan is format-locked."
 msgstr ""
 
-#: calibre-plugin/models.py:332
+#: calibre-plugin/models.py:331
 msgid "This loan will be downloaded as an empty book."
 msgstr ""
 
-#: calibre-plugin/models.py:382
+#: calibre-plugin/models.py:381
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:385
+#: calibre-plugin/models.py:384
 msgid "Available"
 msgstr "이용 가능"
 
-#: calibre-plugin/models.py:481
+#: calibre-plugin/models.py:480
 #, python-brace-format
 msgid "Expires {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:486
+#: calibre-plugin/models.py:485
 #, python-brace-format
 msgid "Placed on {dt}"
 msgstr "예약일: {dt}"
 
-#: calibre-plugin/models.py:502
+#: calibre-plugin/models.py:501
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr "{dt} 이후 전송"
 
-#: calibre-plugin/models.py:508
+#: calibre-plugin/models.py:507
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:555
+#: calibre-plugin/models.py:554
 msgid "Delivering Later"
 msgstr "나중에 전송 예정"
 
-#: calibre-plugin/models.py:556
+#: calibre-plugin/models.py:555
 msgid "Suspended Hold"
 msgstr "보류된 예약"
 
-#: calibre-plugin/models.py:604
+#: calibre-plugin/models.py:603
 msgid "Release Date"
 msgstr "발행일"
 
-#: calibre-plugin/models.py:604
+#: calibre-plugin/models.py:603
 msgid "Library Card"
 msgstr "도서관 카드"
 
-#: calibre-plugin/models.py:604
+#: calibre-plugin/models.py:603
 msgid "Borrowed"
 msgstr "대출됨"
 
@@ -670,7 +683,7 @@ msgstr "선택한 도서 대출 다운로드"
 msgid "Read \"{book}\" with Kindle"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:240 calibre-plugin/dialog/loans.py:552
+#: calibre-plugin/dialog/loans.py:240 calibre-plugin/dialog/loans.py:568
 msgid ""
 "If you choose to Read with Kindle, this loan will be <u>format-locked</u> "
 "and not downloadable."
@@ -687,35 +700,35 @@ msgstr[0] "{n} 도서 대출 반환"
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:452
+#: calibre-plugin/dialog/loans.py:468
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "이 도서 대출을 반환하시겠습니까?"
 
-#: calibre-plugin/dialog/loans.py:464
+#: calibre-plugin/dialog/loans.py:480
 msgid "Return Loans"
 msgstr "도서 대출 반환"
 
-#: calibre-plugin/dialog/loans.py:475
+#: calibre-plugin/dialog/loans.py:491
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "{book}를 반환하는 중"
 
-#: calibre-plugin/dialog/loans.py:496
+#: calibre-plugin/dialog/loans.py:512
 msgid "Failed to return loan"
 msgstr "도서 대출 반환 실패"
 
-#: calibre-plugin/dialog/loans.py:516
+#: calibre-plugin/dialog/loans.py:532
 #, python-brace-format
 msgid "Downloading empty book for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:556
+#: calibre-plugin/dialog/loans.py:572
 msgid "Do you wish to continue?"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:560
+#: calibre-plugin/dialog/loans.py:576
 msgid "Read with Kindle"
 msgstr ""
 

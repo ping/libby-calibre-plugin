@@ -93,7 +93,9 @@ class LibbyDownload:
         )
         if pub_date and not metadata.pubdate:
             metadata.pubdate = pub_date
-        publisher_name = loan.get("publisherAccount", {}).get("name", "")
+        publisher_name = loan.get("publisher", {}).get("name", "") or loan.get(
+            "publisherAccount", {}
+        ).get("name", "")
         if publisher_name and not metadata.publisher:
             metadata.publisher = publisher_name
         series_info = loan.get("detailedSeries")

@@ -428,6 +428,10 @@ class LoansDialogMixin(BaseDialogMixin):
         # Heavily referenced from
         # https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L127-L152
 
+        book_id, mi = self.match_existing_book(loan, library, format_id)
+        if mi and book_id:
+            self.logger.debug("Matched existing empty book: %s", mi.title)
+
         description = _c("Downloading %s") % as_unicode(
             get_media_title(loan), errors="replace"
         )
@@ -437,7 +441,19 @@ class LoansDialogMixin(BaseDialogMixin):
             "overdrive_libby_download_magazine",
             description,
             gui_magazine_download,
-            (self.gui, self.client, loan, card, library, format_id, filename, tags),
+            (
+                self.gui,
+                self.client,
+                self.overdrive_client,
+                loan,
+                card,
+                library,
+                format_id,
+                book_id,
+                mi,
+                filename,
+                tags,
+            ),
             {},
             callback,
             max_concurrent_count=2,

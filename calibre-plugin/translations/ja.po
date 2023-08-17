@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-13 17:28+0800\n"
+"POT-Creation-Date: 2023-08-17 15:56+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -327,144 +327,157 @@ msgstr ""
 msgid "Returning"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:422
+#: calibre-plugin/magazine_download.py:412
+#, python-brace-format
+msgid "Unable to download magazine: {err}"
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:416
+msgid "Downloading as an empty book instead."
+msgstr ""
+
+#: calibre-plugin/magazine_download.py:468
 msgid "Getting loan details"
 msgstr ""
 
-#: calibre-plugin/magazine_download.py:462
+#: calibre-plugin/magazine_download.py:502
 msgid "Getting book details"
 msgstr ""
 
-#: calibre-plugin/models.py:74
+#: calibre-plugin/magazine_download.py:515
+msgid "Magazine has unsupported fixed-layout (pre-paginated) format."
+msgstr ""
+
+#: calibre-plugin/models.py:73
 msgid "Book"
 msgstr "本"
 
-#: calibre-plugin/models.py:75
+#: calibre-plugin/models.py:74
 msgid "Magazine"
 msgstr "雑誌"
 
-#: calibre-plugin/models.py:76
+#: calibre-plugin/models.py:75
 msgid "Audiobook"
 msgstr "オーディオブック"
 
-#: calibre-plugin/models.py:79
+#: calibre-plugin/models.py:78
 msgid "Libby Book"
 msgstr "Libbyの本"
 
-#: calibre-plugin/models.py:80
+#: calibre-plugin/models.py:79
 msgid "Libby Audiobook"
 msgstr "Libbyのオーディオブック"
 
-#: calibre-plugin/models.py:81
+#: calibre-plugin/models.py:80
 msgid "MP3 Audiobook"
 msgstr ""
 
-#: calibre-plugin/models.py:82
+#: calibre-plugin/models.py:81
 msgid "Libby Magazine"
 msgstr "Libbyの雑誌"
 
-#: calibre-plugin/models.py:83
+#: calibre-plugin/models.py:82
 msgid "Libby Video"
 msgstr "Libbyのビデオ"
 
-#: calibre-plugin/models.py:84
+#: calibre-plugin/models.py:83
 msgid "Streaming Video"
 msgstr "ビデオのストリーミング中"
 
-#: calibre-plugin/models.py:85
+#: calibre-plugin/models.py:84
 msgid "Kindle"
 msgstr ""
 
-#: calibre-plugin/models.py:86
+#: calibre-plugin/models.py:85
 msgid "Media Do"
 msgstr ""
 
-#: calibre-plugin/models.py:87
+#: calibre-plugin/models.py:86
 msgid "EPUB"
 msgstr ""
 
-#: calibre-plugin/models.py:88
+#: calibre-plugin/models.py:87
 msgid "EPUB (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:89
+#: calibre-plugin/models.py:88
 msgid "PDF"
 msgstr ""
 
-#: calibre-plugin/models.py:90
+#: calibre-plugin/models.py:89
 msgid "PDF (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:175
+#: calibre-plugin/models.py:174
 msgid "Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:176 calibre-plugin/models.py:383
-#: calibre-plugin/models.py:722 calibre-plugin/dialog/cards.py:200
+#: calibre-plugin/models.py:175 calibre-plugin/models.py:382
+#: calibre-plugin/models.py:719 calibre-plugin/dialog/cards.py:200
 msgid "Library"
 msgstr "ライブラリー"
 
-#: calibre-plugin/models.py:303
+#: calibre-plugin/models.py:302
 msgid "A skip-the-line loan"
 msgstr "優先貸出作品。"
 
-#: calibre-plugin/models.py:310
+#: calibre-plugin/models.py:309
 msgid "This loan is not format-locked."
 msgstr ""
 
-#: calibre-plugin/models.py:312
+#: calibre-plugin/models.py:311
 msgid "This loan is format-locked."
 msgstr ""
 
-#: calibre-plugin/models.py:332
+#: calibre-plugin/models.py:331
 msgid "This loan will be downloaded as an empty book."
 msgstr ""
 
-#: calibre-plugin/models.py:382
+#: calibre-plugin/models.py:381
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:385
+#: calibre-plugin/models.py:384
 msgid "Available"
 msgstr "貸出可能"
 
-#: calibre-plugin/models.py:481
+#: calibre-plugin/models.py:480
 #, python-brace-format
 msgid "Expires {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:486
+#: calibre-plugin/models.py:485
 #, python-brace-format
 msgid "Placed on {dt}"
 msgstr "予約した日：{dt}"
 
-#: calibre-plugin/models.py:502
+#: calibre-plugin/models.py:501
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr "{dt}以降に借りられます"
 
-#: calibre-plugin/models.py:508
+#: calibre-plugin/models.py:507
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:555
+#: calibre-plugin/models.py:554
 msgid "Delivering Later"
 msgstr "後で借りる"
 
-#: calibre-plugin/models.py:556
+#: calibre-plugin/models.py:555
 msgid "Suspended Hold"
 msgstr "保留期間を変更する"
 
-#: calibre-plugin/models.py:604
+#: calibre-plugin/models.py:603
 msgid "Release Date"
 msgstr "公開日"
 
-#: calibre-plugin/models.py:604
+#: calibre-plugin/models.py:603
 msgid "Library Card"
 msgstr "図書カード"
 
-#: calibre-plugin/models.py:604
+#: calibre-plugin/models.py:603
 msgid "Borrowed"
 msgstr "借り"
 
@@ -670,7 +683,7 @@ msgstr "選択した書籍ローンをダウンロードする"
 msgid "Read \"{book}\" with Kindle"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:240 calibre-plugin/dialog/loans.py:552
+#: calibre-plugin/dialog/loans.py:240 calibre-plugin/dialog/loans.py:568
 msgid ""
 "If you choose to Read with Kindle, this loan will be <u>format-locked</u> "
 "and not downloadable."
@@ -687,35 +700,35 @@ msgstr[0] "借りた本を{n}冊返却する"
 msgid "Downloading {format} for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:452
+#: calibre-plugin/dialog/loans.py:468
 #, python-brace-format
 msgid "Return this loan?"
 msgid_plural "Return these {n} loans?"
 msgstr[0] "この本のローンを返しますか？"
 
-#: calibre-plugin/dialog/loans.py:464
+#: calibre-plugin/dialog/loans.py:480
 msgid "Return Loans"
 msgstr "図書貸出返還"
 
-#: calibre-plugin/dialog/loans.py:475
+#: calibre-plugin/dialog/loans.py:491
 #, python-brace-format
 msgid "Returning {book}"
 msgstr "{book}を返却中"
 
-#: calibre-plugin/dialog/loans.py:496
+#: calibre-plugin/dialog/loans.py:512
 msgid "Failed to return loan"
 msgstr "図書貸出返還失敗"
 
-#: calibre-plugin/dialog/loans.py:516
+#: calibre-plugin/dialog/loans.py:532
 #, python-brace-format
 msgid "Downloading empty book for {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:556
+#: calibre-plugin/dialog/loans.py:572
 msgid "Do you wish to continue?"
 msgstr ""
 
-#: calibre-plugin/dialog/loans.py:560
+#: calibre-plugin/dialog/loans.py:576
 msgid "Read with Kindle"
 msgstr ""
 

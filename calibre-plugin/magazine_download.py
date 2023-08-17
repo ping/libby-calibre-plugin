@@ -25,6 +25,7 @@ from calibre.ptempfile import PersistentTemporaryDirectory
 
 from .compat import _c
 from .download import LibbyDownload
+from .empty_download import EmptyBookDownload
 from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
 from .magazine_download_utils import (
@@ -58,6 +59,12 @@ if False:
     load_translations = _ = lambda x=None: x
 
 load_translations()
+
+
+class UnsupportedException(Exception):
+    def __init__(self, msg, media: Optional[Dict] = None):
+        super().__init__(msg)
+        self.media = media or {}
 
 
 def _sort_toc(toc: Dict) -> List:
@@ -359,10 +366,13 @@ class CustomMagazineDownload(LibbyDownload):
         self,
         gui,
         libby_client: LibbyClient,
+        overdrive_client: OverDriveClient,
         loan: Dict,
         card: Dict,
         library: Dict,
         format_id: str,
+        book_id=None,
+        metadata=None,
         filename="",
         tags=None,
         log=None,
@@ -375,7 +385,14 @@ class CustomMagazineDownload(LibbyDownload):
         downloaded_filepath: Optional[Path] = None
         try:
             downloaded_filepath = self._custom_download(
-                libby_client, loan, format_id, filename, log, abort, notifications
+                libby_client,
+                overdrive_client,
+                loan,
+                format_id,
+                filename,
+                log,
+                abort,
+                notifications,
             )
             self.add(
                 gui,
@@ -389,6 +406,34 @@ class CustomMagazineDownload(LibbyDownload):
                 None,
                 log=log,
             )
+        except UnsupportedException as unsupported_err:
+            if log:
+                log.warning(
+                    _("Unable to download magazine: {err}").format(
+                        err=str(unsupported_err)
+                    )
+                )
+                log.warning(_("Downloading as an empty book instead."))
+
+            # download as empty book
+            download_empty_book = EmptyBookDownload()
+            # patch in publisher name for magazines
+            if not loan.get("publisher") and unsupported_err.media.get("publisher"):
+                loan["publisher"] = unsupported_err.media["publisher"]
+            download_empty_book(
+                gui,
+                overdrive_client,
+                loan,
+                card,
+                library,
+                format_id,
+                book_id,
+                metadata,
+                tags,
+                log,
+                abort,
+                notifications,
+            )
 
         finally:
             try:
@@ -400,6 +445,7 @@ class CustomMagazineDownload(LibbyDownload):
     def _custom_download(
         self,
         libby_client: LibbyClient,
+        overdrive_client: OverDriveClient,
         loan: Dict,
         format_id: str,
         filename: str,
@@ -450,19 +496,13 @@ class CustomMagazineDownload(LibbyDownload):
             if not d.exists():
                 d.mkdir(parents=True, exist_ok=True)
 
-        od_client = OverDriveClient(
-            user_agent=libby_client.user_agent,
-            timeout=libby_client.timeout,
-            max_retries=libby_client.max_retries,
-            logger=libby_client.logger,
-        )
         notifications.put(
             (
                 (3 / meta_tasks) * meta_progress_fraction,
                 _("Getting book details"),
             )
         )
-        media_info = od_client.media(loan["id"])
+        media_info = overdrive_client.media(loan["id"])
         title_contents: Dict = next(
             iter([r for r in rosters if r["group"] == "title-content"]), {}
         )
@@ -472,9 +512,9 @@ class CustomMagazineDownload(LibbyDownload):
 
         openbook_toc = openbook["nav"]["toc"]
         if len(openbook_toc) <= 1 and loan["type"]["id"] == LibbyMediaTypes.Magazine:
-            msg = "Magazine has unsupported fixed-layout (pre-paginated) format."
+            msg = _("Magazine has unsupported fixed-layout (pre-paginated) format.")
             logger.error(msg)
-            raise Exception(msg)
+            raise UnsupportedException(msg, media_info)
 
         # for finding cover image for magazines
         cover_toc_item = next(
@@ -626,9 +666,7 @@ class CustomMagazineDownload(LibbyDownload):
                             )
                             if not asset_font_path.exists():
                                 css_content = css_content.replace(src_match, "")
-                    except (
-                        Exception  # noqa, pylint: disable=broad-exception-caught
-                    ) as patch_err:
+                    except Exception as patch_err:
                         logger.warning(
                             "Error while patching font sources: %s" % patch_err
                         )

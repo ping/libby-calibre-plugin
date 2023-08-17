@@ -12,7 +12,7 @@ from collections import OrderedDict
 from typing import Dict, List, Optional
 
 from calibre.constants import DEBUG
-from calibre.gui2 import error_dialog, info_dialog
+from calibre.gui2 import error_dialog, info_dialog, rating_font
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
 from calibre.utils.config import tweaks
@@ -26,7 +26,9 @@ from qt.core import (
     QFont,
     QFrame,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
+    QLayout,
     QMenu,
     QMouseEvent,
     QPalette,
@@ -53,7 +55,7 @@ from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LOAN_TYPE_TRANSLATION, LibbyModel, get_media_title
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
-from ..utils import OD_IDENTIFIER, PluginImages, svg_to_pixmap
+from ..utils import OD_IDENTIFIER, PluginImages, rating_to_stars, svg_to_pixmap
 from ..workers import OverDriveMediaWorker, SyncDataWorker
 
 # noinspection PyUnreachableCode
@@ -685,6 +687,20 @@ class BookPreviewDialog(QDialog):
                             + f'</b>: {format_date(pub_date, tweaks["gui_timestamp_display_format"])}'
                         )
                     )
+                if media.get("starRating") and media.get("starRatingCount"):
+                    ratings_layout = QHBoxLayout()
+                    ratings_layout.addWidget(QLabel("<b>" + _("Rating") + "</b>: "))
+                    ratings_lbl = QLabel(
+                        f'{rating_to_stars(media["starRating"])}'
+                        f'{rating_to_stars(media["starRating"], inverse=True)}'
+                    )
+                    ratings_lbl.setToolTip(
+                        f'{media["starRating"]} ({media["starRatingCount"]})'
+                    )
+                    ratings_lbl.setFont(QFont(rating_font()))
+                    ratings_layout.addWidget(ratings_lbl)
+                    ratings_layout.addWidget(QLabel(f'({media["starRatingCount"]})'), 1)
+                    detail_labels.append(ratings_layout)
 
                 description = (
                     media.get("description")
@@ -696,9 +712,12 @@ class BookPreviewDialog(QDialog):
                     description_lbl.setTextFormat(Qt.RichText)
                     detail_labels.append(description_lbl)
 
-                for lbl in detail_labels:
-                    lbl.setWordWrap(True)
-                    det_layout.addWidget(lbl, alignment=Qt.AlignTop)
+                for widget in detail_labels:
+                    if isinstance(widget, QLabel):
+                        widget.setWordWrap(True)
+                        det_layout.addWidget(widget, alignment=Qt.AlignTop)
+                    elif isinstance(widget, QLayout):
+                        det_layout.addLayout(widget)
 
                 self.layout.addWidget(det_scroll_area, self.widget_row_pos, 1, 2, 1)
             except RuntimeError as runtime_err:

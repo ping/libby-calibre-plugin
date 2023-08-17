@@ -83,9 +83,10 @@ class EmptyBookDownload(LibbyDownload):
         if not tags:
             tags = []
         db = gui.current_db.new_api
+        media = overdrive_client.media(loan["id"])
         if metadata and book_id:
             metadata = self.update_metadata(
-                gui, loan, library, format_id, metadata, tags
+                gui, loan, library, format_id, metadata, tags, media
             )
             db.set_metadata(book_id, metadata)
             if not metadata.cover_data:
@@ -102,7 +103,7 @@ class EmptyBookDownload(LibbyDownload):
                 else [],
             )
             metadata = self.update_metadata(
-                gui, loan, library, format_id, metadata, tags
+                gui, loan, library, format_id, metadata, tags, media
             )
             metadata.cover_data = self._download_cover(loan, log)
 

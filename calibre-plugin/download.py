@@ -31,6 +31,7 @@ class LibbyDownload:
         format_id: str,
         metadata,
         tags: Optional[List[str]] = None,
+        media: Optional[Dict] = None,
     ):
         """
         Update identifiers in book metadata.
@@ -41,10 +42,13 @@ class LibbyDownload:
         :param format_id:
         :param metadata:
         :param tags:
+        :param media:
         :return:
         """
         if not tags:
             tags = []
+        if not media:
+            media = {}
         metadata.tags.extend(tags)
 
         isbn = OverDriveClient.extract_isbn(
@@ -98,6 +102,13 @@ class LibbyDownload:
         ).get("name", "")
         if publisher_name and not metadata.publisher:
             metadata.publisher = publisher_name
+        description = (
+            media.get("fullDescription")
+            or media.get("description")
+            or media.get("shortDescription")
+        )
+        if description and not metadata.comments:
+            metadata.comments = description
         series_info = loan.get("detailedSeries")
         if series_info:
             series_name = series_info.get("seriesName")

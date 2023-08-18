@@ -422,6 +422,7 @@ class CustomMagazineDownload(LibbyDownload):
                 loan["publisher"] = unsupported_err.media["publisher"]
             download_empty_book(
                 gui,
+                libby_client,
                 overdrive_client,
                 loan,
                 card,

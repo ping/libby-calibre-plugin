@@ -540,6 +540,7 @@ class LoansDialogMixin(BaseDialogMixin):
             guid_empty_download,
             (
                 self.gui,
+                self.client,
                 self.overdrive_client,
                 loan,
                 card,

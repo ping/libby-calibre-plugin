@@ -161,6 +161,7 @@ class PluginImages(str, Enum):
     Unlock = "unlock"
     CoverPlaceholder = "cover-placeholder"
     Information = "information"
+    Renew = "renew"
 
     def __str__(self):
         return str(self.value)
@@ -218,5 +219,8 @@ ICON_MAP = {
     ),
     PluginImages.Information: IconDefinition(
         file="images/information-line.svg", color=PluginColors.Blue
+    ),
+    PluginImages.Renew: IconDefinition(
+        file="images/arrow-go-forward-line.svg", color=PluginColors.Green
     ),
 }

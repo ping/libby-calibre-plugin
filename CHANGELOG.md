@@ -7,6 +7,7 @@ Unreleased
 - New: View book details by double-clicking on the row
 - New: Cards tab that gives an overview of your linked cards
 - New: Custom columns to store borrowed/due dates, and loan type (calibre>=5.35.0)
+- New: Renew/place hold for an expiring loan
 - New: Display number of available holds in the Holds tab text
 - New: Last used tab will be opened by default
 - New: Disable borrow button if limits for the card has been reached

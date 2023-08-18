@@ -12,9 +12,6 @@ from functools import cmp_to_key
 from typing import List
 
 from calibre.constants import DEBUG
-from calibre.gui2 import Dispatcher
-from calibre.gui2.threaded_jobs import ThreadedJob
-from polyglot.builtins import as_unicode
 from qt.core import (
     QAbstractItemView,
     QCursor,
@@ -40,7 +37,6 @@ from ..compat import (
     _c,
 )
 from ..config import BorrowActions, MAX_SEARCH_LIBRARIES, PREFS, PreferenceKeys
-from ..hold_actions import LibbyHoldCreate
 from ..libby import LibbyClient, LibbyFormats
 from ..models import LibbyModel, LibbySearchModel, get_media_title, truncate_for_display
 from ..overdrive import OverDriveClient
@@ -52,8 +48,6 @@ if False:
     load_translations = _ = ngettext = lambda x=None, y=None: x
 
 load_translations()
-
-gui_create_hold = LibbyHoldCreate()
 
 
 class SearchDialogMixin(BaseDialogMixin):
@@ -460,34 +454,6 @@ class SearchDialogMixin(BaseDialogMixin):
         self.add_find_library_match_menu_action(menu, selected_search)
 
         menu.exec(QCursor.pos())
-
-    def create_hold(self, media, card):
-        # create the hold
-        description = _("Placing hold on {book}").format(
-            book=as_unicode(get_media_title(media), errors="replace")
-        )
-        callback = Dispatcher(self.hold_created)
-        job = ThreadedJob(
-            "overdrive_libby_create_hold",
-            description,
-            gui_create_hold,
-            (self.gui, self.client, media, card),
-            {},
-            callback,
-            max_concurrent_count=2,
-            killable=False,
-        )
-        self.gui.job_manager.run_threaded_job(job)
-        self.gui.status_bar.show_message(description, 3000)
-
-    def hold_created(self, job):
-        # callback after hold is created
-        if job.failed:
-            return self.unhandled_exception(
-                job.exception, msg=_("Failed to create hold")
-            )
-
-        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def _reset_borrow_hold_buttons(self):
         self.search_borrow_btn.borrow_menu = None

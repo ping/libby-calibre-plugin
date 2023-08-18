@@ -186,6 +186,7 @@ class LibbyLoansModel(LibbyModel):
         self.filter_hide_books_already_in_library = PREFS[
             PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
         ]
+        self._holds = []
         self.sync(synced_state)
 
     def sync(self, synced_state: Optional[Dict] = None):
@@ -197,7 +198,19 @@ class LibbyLoansModel(LibbyModel):
             key=lambda ln: ln["checkoutDate"],
             reverse=True,
         )
+        self._holds = synced_state.get("holds", [])
         self.filter_rows()
+
+    def has_hold(self, loan: Dict) -> bool:
+        # used to check that we don't offer to create a new hold for
+        # an expiring loan when a hold already exists
+        return bool(
+            [
+                h
+                for h in self._holds
+                if h["id"] == loan["id"] and h["cardId"] == loan["cardId"]
+            ]
+        )
 
     def filter_rows(self):
         self.beginResetModel()

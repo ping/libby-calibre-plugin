@@ -34,3 +34,20 @@ class LibbyLoanReturn:
         notifications.put((0.5, _("Returning")))
         libby_client.return_loan(loan)
         logger.info("Returned %s successfully." % get_media_title(loan))
+
+
+class LibbyLoanRenew:
+    def __call__(
+        self,
+        gui,
+        libby_client: LibbyClient,
+        loan: Dict,
+        log=None,
+        abort=None,
+        notifications=None,
+    ):
+        logger = log
+        notifications.put((0.5, _("Renewing")))
+        new_loan = libby_client.renew_loan(loan)
+        logger.info("Renewed %s successfully." % get_media_title(loan))
+        return new_loan

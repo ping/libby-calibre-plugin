@@ -39,7 +39,7 @@ from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..empty_download import EmptyBookDownload
 from ..libby import LibbyClient, LibbyFormats
-from ..loan_actions import LibbyLoanReturn
+from ..loan_actions import LibbyLoanReturn, LibbyLoanRenew
 from ..magazine_download import CustomMagazineDownload
 from ..models import LibbyLoansModel, LibbyModel, get_media_title, truncate_for_display
 from ..overdrive import OverDriveClient
@@ -56,6 +56,7 @@ gui_ebook_download = CustomEbookDownload()
 gui_magazine_download = CustomMagazineDownload()
 guid_empty_download = EmptyBookDownload()
 gui_libby_return = LibbyLoanReturn()
+gui_renew_loan = LibbyLoanRenew()
 
 
 class LoansDialogMixin(BaseDialogMixin):
@@ -275,7 +276,42 @@ class LoansDialogMixin(BaseDialogMixin):
         )
         return_action.setIcon(self.resources[PluginImages.Return])
         return_action.triggered.connect(lambda: self.return_action_triggered(indices))
+
+        if LibbyClient.is_renewable(selected_loan):
+            if selected_loan.get("availableCopies") or not selected_loan.get(
+                "holdsCount"
+            ):
+                renew_action = menu.addAction(
+                    _('Renew "{book}"').format(book=get_media_title(selected_loan))
+                )
+                renew_action.setIcon(self.resources[PluginImages.Renew])
+                renew_action.triggered.connect(
+                    lambda: self.renew_action_triggered(selected_loan)
+                )
+
+            else:
+                hold_action = menu.addAction(
+                    _('Place hold on "{book}"').format(
+                        book=get_media_title(selected_loan)
+                    )
+                )
+                hold_action.setIcon(self.resources[PluginImages.Add])
+                if not self.loans_model.has_hold(selected_loan):
+                    hold_action.triggered.connect(
+                        lambda: self.hold_action_triggered(selected_loan)
+                    )
+                else:
+                    hold_action.setEnabled(False)
+                    hold_action.setToolTip(_("An existing hold already exists."))
+
         menu.exec(QCursor.pos())
+
+    def renew_action_triggered(self, loan):
+        self.renew_loan(loan)
+
+    def hold_action_triggered(self, loan):
+        card = self.loans_model.get_card(loan["cardId"])
+        self.create_hold(loan, card)
 
     def download_btn_clicked(self):
         selection_model = self.loans_view.selectionModel()
@@ -608,3 +644,42 @@ class LoansDialogMixin(BaseDialogMixin):
         worker.errored.connect(lambda err: errored_out(err))
 
         return thread
+
+    def renew_loan(self, loan):
+        # create the hold
+        description = _("Renewing loan on {book}").format(
+            book=as_unicode(get_media_title(loan), errors="replace")
+        )
+        callback = Dispatcher(self.loan_renewed)
+        job = ThreadedJob(
+            "overdrive_libby_renew_loan",
+            description,
+            gui_renew_loan,
+            (self.gui, self.client, loan),
+            {},
+            callback,
+            max_concurrent_count=2,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+
+    def loan_renewed(self, job):
+        # callback after loan is renewed
+        if job.failed:
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to renew loan")
+            )
+
+        updated_loan = job.result
+        for r in range(self.loans_model.rowCount()):
+            index = self.loans_model.index(r, 0)
+            loan = index.data(Qt.UserRole)
+            if (
+                loan["id"] == updated_loan["id"]
+                and loan["cardId"] == updated_loan["cardId"]
+            ):
+                self.loans_model.setData(index, updated_loan)
+                break
+
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)

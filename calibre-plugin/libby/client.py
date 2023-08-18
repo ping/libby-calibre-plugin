@@ -971,3 +971,36 @@ class LibbyClient(object):
             method="POST",
             is_form=False,
         )
+
+    def renew_title(
+        self, title_id: str, title_format: str, card_id: str, days: int = 21
+    ) -> Dict:
+        """
+        Return a title.
+
+        :param title_id:
+        :param title_format: Type ID
+        :param card_id:
+        :param days:
+        :return:
+        """
+        data = {
+            "period": days,
+            "units": "days",
+            "lucky_day": None,
+            "title_format": title_format,
+        }
+
+        res: Dict = self.send_request(
+            f"card/{card_id}/loan/{title_id}", params=data, is_form=False, method="PUT"
+        )
+        return res
+
+    def renew_loan(self, loan: Dict) -> Dict:
+        """
+        Renew a loan.
+
+        :param loan:
+        :return:
+        """
+        return self.renew_title(loan["id"], loan["type"]["id"], loan["cardId"])

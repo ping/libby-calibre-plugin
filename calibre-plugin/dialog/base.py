@@ -12,12 +12,14 @@ from collections import OrderedDict
 from typing import Dict, List, Optional
 
 from calibre.constants import DEBUG
-from calibre.gui2 import error_dialog, info_dialog, rating_font
+from calibre.gui2 import error_dialog, info_dialog, rating_font, Dispatcher
+from calibre.gui2.threaded_jobs import ThreadedJob
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
 from lxml import etree
+from polyglot.builtins import as_unicode
 from polyglot.io import PolyglotStringIO
 from qt.core import (
     QApplication,
@@ -50,6 +52,7 @@ from qt.core import (
 from .. import DEMO_MODE, __version__, logger
 from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
 from ..config import BorrowActions, PREFS, PreferenceKeys
+from ..hold_actions import LibbyHoldCreate
 from ..libby import LibbyClient
 from ..libby.errors import ClientConnectionError as LibbyConnectionError
 from ..models import LOAN_TYPE_TRANSLATION, LibbyModel, get_media_title
@@ -63,6 +66,8 @@ if False:
     load_translations = _ = lambda x=None: x
 
 load_translations()
+
+gui_create_hold = LibbyHoldCreate()
 
 
 class BorrowAndDownloadButton(CenteredToolButton):
@@ -521,6 +526,34 @@ class BaseDialogMixin(QDialog):
             )
         except Exception as err:
             logger.exception(err)
+
+    def create_hold(self, media, card):
+        # create the hold
+        description = _("Placing hold on {book}").format(
+            book=as_unicode(get_media_title(media), errors="replace")
+        )
+        callback = Dispatcher(self.hold_created)
+        job = ThreadedJob(
+            "overdrive_libby_create_hold",
+            description,
+            gui_create_hold,
+            (self.gui, self.client, media, card),
+            {},
+            callback,
+            max_concurrent_count=2,
+            killable=False,
+        )
+        self.gui.job_manager.run_threaded_job(job)
+        self.gui.status_bar.show_message(description, 3000)
+
+    def hold_created(self, job):
+        # callback after hold is created
+        if job.failed:
+            return self.unhandled_exception(
+                job.exception, msg=_("Failed to create hold")
+            )
+
+        self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
 
 class CustomLoadingOverlay(LoadingOverlay):

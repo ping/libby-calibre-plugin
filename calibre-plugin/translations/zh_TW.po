@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.6\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-19 14:59+0800\n"
+"POT-Creation-Date: 2023-08-19 15:50+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "What's New"
 msgstr ""
 
-#: calibre-plugin/action.py:122 calibre-plugin/dialog/base.py:164
+#: calibre-plugin/action.py:122 calibre-plugin/dialog/base.py:169
 msgid "MobileRead"
 msgstr ""
 
@@ -147,7 +147,7 @@ msgstr ""
 msgid "Libby is configured."
 msgstr "Libby已配置。"
 
-#: calibre-plugin/config.py:183 calibre-plugin/dialog/base.py:290
+#: calibre-plugin/config.py:183 calibre-plugin/dialog/base.py:295
 msgid "Libby is not configured yet."
 msgstr "Libby未配置。"
 
@@ -412,144 +412,180 @@ msgstr ""
 msgid "PDF (DRM)"
 msgstr ""
 
-#: calibre-plugin/models.py:174
+#: calibre-plugin/models.py:92
+msgid "Cast Member"
+msgstr "劇組成員"
+
+#: calibre-plugin/models.py:93
+msgid "Contributor"
+msgstr "貢獻者"
+
+#: calibre-plugin/models.py:94
+msgid "Editor"
+msgstr "編輯者"
+
+#: calibre-plugin/models.py:95
+msgid "Illustrator"
+msgstr "插畫作者"
+
+#: calibre-plugin/models.py:96
+msgid "Narrator"
+msgstr "旁白者"
+
+#: calibre-plugin/models.py:97
+msgid "Performer"
+msgstr "演員"
+
+#: calibre-plugin/models.py:98
+msgid "Photographer"
+msgstr "攝影師"
+
+#: calibre-plugin/models.py:99
+msgid "Translator"
+msgstr "翻譯者"
+
+#: calibre-plugin/models.py:184
 msgid "Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:175 calibre-plugin/models.py:415
-#: calibre-plugin/models.py:778 calibre-plugin/dialog/cards.py:200
+#: calibre-plugin/models.py:185 calibre-plugin/models.py:425
+#: calibre-plugin/models.py:788 calibre-plugin/dialog/cards.py:200
 msgid "Library"
 msgstr "圖書館"
 
-#: calibre-plugin/models.py:335
+#: calibre-plugin/models.py:345
 msgid "A skip-the-line loan"
 msgstr "一本免排隊借書。"
 
-#: calibre-plugin/models.py:342
+#: calibre-plugin/models.py:352
 msgid "This loan is not format-locked."
 msgstr ""
 
-#: calibre-plugin/models.py:344
+#: calibre-plugin/models.py:354
 msgid "This loan is format-locked."
 msgstr ""
 
-#: calibre-plugin/models.py:364
+#: calibre-plugin/models.py:374
 msgid "This loan will be downloaded as an empty book."
 msgstr ""
 
-#: calibre-plugin/models.py:414
+#: calibre-plugin/models.py:424
 msgid "Hold/Expire Date"
 msgstr ""
 
-#: calibre-plugin/models.py:417
+#: calibre-plugin/models.py:427
 msgid "Available"
 msgstr "可看"
 
-#: calibre-plugin/models.py:527
+#: calibre-plugin/models.py:537
 #, python-brace-format
 msgid "Expires {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:532
+#: calibre-plugin/models.py:542
 #, python-brace-format
 msgid "Placed on {dt}"
 msgstr "已在 {dt} 預約"
 
-#: calibre-plugin/models.py:548
+#: calibre-plugin/models.py:558
 #, python-brace-format
 msgid "Deliver after {dt}"
 msgstr "在 {dt} 之後傳遞"
 
-#: calibre-plugin/models.py:554
+#: calibre-plugin/models.py:564
 #, python-brace-format
 msgid "Suspended till {dt}"
 msgstr ""
 
-#: calibre-plugin/models.py:601
+#: calibre-plugin/models.py:611
 msgid "Delivering Later"
 msgstr "稍後傳遞"
 
-#: calibre-plugin/models.py:602
+#: calibre-plugin/models.py:612
 msgid "Suspended Hold"
 msgstr "暫停的預約"
 
-#: calibre-plugin/models.py:650
+#: calibre-plugin/models.py:660
 msgid "Release Date"
 msgstr "發行日期"
 
-#: calibre-plugin/models.py:650
+#: calibre-plugin/models.py:660
 msgid "Library Card"
 msgstr "借書卡"
 
-#: calibre-plugin/models.py:650
+#: calibre-plugin/models.py:660
 msgid "Borrowed"
 msgstr "已借閱"
 
-#: calibre-plugin/dialog/base.py:120
+#: calibre-plugin/dialog/base.py:125
 #, python-brace-format
 msgid "OverDrive Libby v{version}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:269
+#: calibre-plugin/dialog/base.py:274
 msgid "Search in calibre library"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:293 calibre-plugin/dialog/base.py:294
+#: calibre-plugin/dialog/base.py:298 calibre-plugin/dialog/base.py:299
 msgid "Synchronizing..."
 msgstr "同步中..."
 
-#: calibre-plugin/dialog/base.py:315
+#: calibre-plugin/dialog/base.py:320
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:340
+#: calibre-plugin/dialog/base.py:345
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:342
+#: calibre-plugin/dialog/base.py:347
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:364 calibre-plugin/dialog/base.py:382
-#: calibre-plugin/dialog/base.py:405 calibre-plugin/dialog/base.py:421
+#: calibre-plugin/dialog/base.py:369 calibre-plugin/dialog/base.py:387
+#: calibre-plugin/dialog/base.py:410 calibre-plugin/dialog/base.py:426
 #: calibre-plugin/dialog/search.py:136 calibre-plugin/dialog/search.py:199
 msgid "Borrow"
 msgstr "借閱"
 
-#: calibre-plugin/dialog/base.py:366 calibre-plugin/dialog/base.py:380
-#: calibre-plugin/dialog/base.py:405 calibre-plugin/dialog/base.py:419
+#: calibre-plugin/dialog/base.py:371 calibre-plugin/dialog/base.py:385
+#: calibre-plugin/dialog/base.py:410 calibre-plugin/dialog/base.py:424
 #: calibre-plugin/dialog/search.py:138 calibre-plugin/dialog/search.py:199
 msgid "Borrow and Download"
 msgstr "借阅并下载"
 
-#: calibre-plugin/dialog/base.py:372 calibre-plugin/dialog/base.py:408
+#: calibre-plugin/dialog/base.py:377 calibre-plugin/dialog/base.py:413
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:374 calibre-plugin/dialog/base.py:410
+#: calibre-plugin/dialog/base.py:379 calibre-plugin/dialog/base.py:415
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:524
+#: calibre-plugin/dialog/base.py:529
 msgid "Check your connection or retry in a few minutes."
 msgstr "檢查您的連接或在幾分鐘後重試。"
 
-#: calibre-plugin/dialog/base.py:536
+#: calibre-plugin/dialog/base.py:541
 #, python-brace-format
 msgid "Placing hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:557
+#: calibre-plugin/dialog/base.py:562
 msgid "Failed to create hold"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:729
+#: calibre-plugin/dialog/base.py:746
+msgid "Duration"
+msgstr "持續時間"
+
+#: calibre-plugin/dialog/base.py:750
 msgid "Rating"
-msgstr ""
+msgstr "評分"
 
 #: calibre-plugin/dialog/cards.py:87 calibre-plugin/dialog/cards.py:173
 #: calibre-plugin/dialog/cards.py:195

@@ -53,9 +53,14 @@ from .. import DEMO_MODE, __version__, logger
 from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
 from ..config import BorrowActions, PREFS, PreferenceKeys
 from ..hold_actions import LibbyHoldCreate
-from ..libby import LibbyClient
+from ..libby import LibbyClient, LibbyMediaTypes
 from ..libby.errors import ClientConnectionError as LibbyConnectionError
-from ..models import LOAN_TYPE_TRANSLATION, LibbyModel, get_media_title
+from ..models import (
+    CREATOR_ROLE_TRANSLATION,
+    LOAN_TYPE_TRANSLATION,
+    LibbyModel,
+    get_media_title,
+)
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
 from ..utils import OD_IDENTIFIER, PluginImages, rating_to_stars, svg_to_pixmap
@@ -688,7 +693,11 @@ class BookPreviewDialog(QDialog):
                     creators.setdefault(creator["role"], []).append(creator["name"])
                 for role, creator_names in creators.items():
                     detail_labels.append(
-                        QLabel("<b>" + _c(role) + f'</b>: {", ".join(creator_names)}')
+                        QLabel(
+                            "<b>"
+                            + CREATOR_ROLE_TRANSLATION.get(role, _c(role))
+                            + f'</b>: {", ".join(creator_names)}'
+                        )
                     )
                 if media.get("series"):
                     detail_labels.append(
@@ -724,6 +733,18 @@ class BookPreviewDialog(QDialog):
                             + f'</b>: {format_date(pub_date, tweaks["gui_timestamp_display_format"])}'
                         )
                     )
+                if media.get("type", {}).get("id", "") == LibbyMediaTypes.Audiobook:
+                    media_formats = self.media.get("formats") or media.get("formats")
+                    duration = next(
+                        iter(
+                            [f["duration"] for f in media_formats if f.get("duration")]
+                        ),
+                        None,
+                    )
+                    if duration:
+                        detail_labels.append(
+                            QLabel("<b>" + _("Duration") + f"</b>: {duration}")
+                        )
                 if media.get("starRating") and media.get("starRatingCount"):
                     ratings_layout = QHBoxLayout()
                     ratings_layout.addWidget(QLabel("<b>" + _("Rating") + "</b>: "))

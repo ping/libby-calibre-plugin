@@ -88,6 +88,16 @@ LOAN_FORMAT_TRANSLATION = {
     "ebook-pdf-open": _("PDF"),
     "ebook-pdf-adobe": _("PDF (DRM)"),
 }
+CREATOR_ROLE_TRANSLATION = {
+    "Cast Member": _("Cast Member"),
+    "Contributor": _("Contributor"),
+    "Editor": _("Editor"),
+    "Illustrator": _("Illustrator"),
+    "Narrator": _("Narrator"),
+    "Performer": _("Performer"),
+    "Photographer": _("Photographer"),
+    "Translator": _("Translator"),
+}
 
 
 class LibbyModel(QAbstractTableModel):

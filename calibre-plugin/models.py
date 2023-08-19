@@ -193,11 +193,7 @@ class LibbyLoansModel(LibbyModel):
         super().sync(synced_state)
         if not synced_state:
             synced_state = {}
-        self._rows = sorted(
-            synced_state.get("loans", []),
-            key=lambda ln: ln["checkoutDate"],
-            reverse=True,
-        )
+        self._rows = synced_state.get("loans", [])
         self._holds = synced_state.get("holds", [])
         self.filter_rows()
 
@@ -212,9 +208,33 @@ class LibbyLoansModel(LibbyModel):
             ]
         )
 
+    def add_loan(self, loan: Dict):
+        self._rows.append(loan)
+        self.filter_rows()
+
+    def remove_loan(self, loan: Dict):
+        self._rows = [
+            r
+            for r in self._rows
+            if r["id"] != loan["id"] and r["cardId"] != loan["cardId"]
+        ]
+        self.filter_rows()
+
+    def add_hold(self, hold: Dict):
+        self._holds.append(hold)
+
+    def remove_hold(self, hold: Dict):
+        self._holds = [
+            r
+            for r in self._holds
+            if r["id"] != hold["id"] and r["cardId"] != hold["cardId"]
+        ]
+
     def filter_rows(self):
         self.beginResetModel()
         self.filtered_rows = []
+        self._rows = sorted(self._rows, key=lambda ln: ln["checkoutDate"], reverse=True)
+
         for loan in self._rows:
             if not (
                 (
@@ -409,8 +429,26 @@ class LibbyHoldsModel(LibbyModel):
         super().sync(synced_state)
         if not synced_state:
             synced_state = {}
+        self._rows = synced_state.get("holds", [])
+        self.filter_rows()
+
+    def add_hold(self, hold: Dict):
+        self._rows.append(hold)
+        self.filter_rows()
+
+    def remove_hold(self, hold: Dict):
+        self._rows = [
+            r
+            for r in self._rows
+            if r["id"] != hold["id"] and r["cardId"] != hold["cardId"]
+        ]
+        self.filter_rows()
+
+    def filter_rows(self):
+        self.beginResetModel()
+        self.filtered_rows = []
         self._rows = sorted(
-            synced_state.get("holds", []),
+            self._rows,
             key=lambda h: (
                 h["isAvailable"],
                 -h.get("estimatedWaitDays", 9999),
@@ -418,11 +456,7 @@ class LibbyHoldsModel(LibbyModel):
             ),
             reverse=True,
         )
-        self.filter_rows()
 
-    def filter_rows(self):
-        self.beginResetModel()
-        self.filtered_rows = []
         for hold in [
             h
             for h in self._rows
@@ -643,6 +677,18 @@ class LibbyMagazinesModel(LibbyModel):
         self._rows = subscriptions
         self.filter_rows()
 
+    def add_loan(self, loan: Dict):
+        self._loans.append(loan)
+        self.filter_rows()
+
+    def remove_loan(self, loan: Dict):
+        self._loans = [
+            r
+            for r in self._loans
+            if r["id"] != loan["id"] and r["cardId"] != loan["cardId"]
+        ]
+        self.filter_rows()
+
     def filter_rows(self):
         self.beginResetModel()
         self.filtered_rows = []
@@ -800,6 +846,26 @@ class LibbySearchModel(LibbyModel):
             except ValueError:
                 pass
         self.endResetModel()
+
+    def add_hold(self, hold: Dict):
+        self._holds.append(hold)
+
+    def remove_hold(self, hold: Dict):
+        self._holds = [
+            r
+            for r in self._holds
+            if r["id"] != hold["id"] and r["cardId"] != hold["cardId"]
+        ]
+
+    def add_loan(self, loan: Dict):
+        self._loans.append(loan)
+
+    def remove_loan(self, loan: Dict):
+        self._loans = [
+            r
+            for r in self._loans
+            if r["id"] != loan["id"] and r["cardId"] != loan["cardId"]
+        ]
 
     def data(self, index, role):
         row, col = index.row(), index.column()

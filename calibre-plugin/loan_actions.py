@@ -34,6 +34,7 @@ class LibbyLoanReturn:
         notifications.put((0.5, _("Returning")))
         libby_client.return_loan(loan)
         logger.info("Returned %s successfully." % get_media_title(loan))
+        return loan
 
 
 class LibbyLoanRenew:

@@ -34,6 +34,7 @@ class LibbyHoldCancel:
         notifications.put((0.5, _("Cancelling")))
         libby_client.cancel_hold(hold)
         logger.info("Cancelled hold for %s successfully." % get_media_title(hold))
+        return hold
 
 
 class LibbyHoldUpdate:

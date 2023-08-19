@@ -158,6 +158,14 @@ class HoldsDialogMixin(BaseDialogMixin):
         )
         self.sync_starting.connect(self.base_sync_starting_holds)
         self.sync_ended.connect(self.base_sync_ended_holds)
+        self.hold_added.connect(self.hold_added_holds)
+        self.hold_removed.connect(self.hold_removed_holds)
+
+    def hold_added_holds(self, hold: Dict):
+        self.holds_model.add_hold(hold)
+
+    def hold_removed_holds(self, hold: Dict):
+        self.holds_model.remove_hold(hold)
 
     def base_sync_starting_holds(self):
         self.holds_refresh_btn.setEnabled(False)
@@ -198,9 +206,6 @@ class HoldsDialogMixin(BaseDialogMixin):
         for index in reversed(indices):
             hold = index.data(Qt.UserRole)
             self.borrow_hold(hold, do_download=do_download)
-            self.holds_model.removeRow(
-                self.holds_search_proxy_model.mapToSource(index).row()
-            )
 
     def hide_unavailable_holds_checkbox_state_changed(self, __):
         checked = self.hide_unavailable_holds_checkbox.isChecked()
@@ -359,6 +364,7 @@ class HoldsDialogMixin(BaseDialogMixin):
                 job.exception, msg=_("Failed to borrow book")
             )
 
+        self.loan_added.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def borrowed_book_and_download(self, job):
@@ -386,9 +392,6 @@ class HoldsDialogMixin(BaseDialogMixin):
             for index in reversed(indices):
                 hold = index.data(Qt.UserRole)
                 self.cancel_hold(hold)
-                self.holds_model.removeRow(
-                    self.holds_search_proxy_model.mapToSource(index).row()
-                )
 
     def cancel_hold(self, hold: Dict):
         # actual cancelling of the hold
@@ -415,7 +418,7 @@ class HoldsDialogMixin(BaseDialogMixin):
             return self.unhandled_exception(
                 job.exception, msg=_("Failed to cancel hold")
             )
-
+        self.hold_removed.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def updated_hold(self, job):

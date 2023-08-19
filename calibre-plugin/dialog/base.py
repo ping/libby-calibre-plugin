@@ -100,6 +100,10 @@ class BaseDialogMixin(QDialog):
     hide_title_already_in_lib_pref_changed = pyqtSignal(bool)
     sync_starting = pyqtSignal()
     sync_ended = pyqtSignal(dict)
+    loan_added = pyqtSignal(dict)
+    hold_added = pyqtSignal(dict)
+    loan_removed = pyqtSignal(dict)
+    hold_removed = pyqtSignal(dict)
 
     def __init__(self, gui, icon, do_user_config, resources):
         super().__init__(gui)
@@ -552,7 +556,7 @@ class BaseDialogMixin(QDialog):
             return self.unhandled_exception(
                 job.exception, msg=_("Failed to create hold")
             )
-
+        self.hold_added.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
 

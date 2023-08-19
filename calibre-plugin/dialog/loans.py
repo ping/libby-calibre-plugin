@@ -161,9 +161,25 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_tab_index = self.add_tab(widget, _("Loans"))
         self.sync_starting.connect(self.base_sync_starting_loans)
         self.sync_ended.connect(self.base_sync_ended_loans)
+        self.loan_added.connect(self.loan_added_loans)
+        self.hold_added.connect(self.hold_added_loans)
+        self.loan_removed.connect(self.loan_removed_loans)
+        self.hold_removed.connect(self.hold_removed_loans)
         self.hide_title_already_in_lib_pref_changed.connect(
             self.hide_title_already_in_lib_pref_changed_loans
         )
+
+    def loan_added_loans(self, loan: Dict):
+        self.loans_model.add_loan(loan)
+
+    def loan_removed_loans(self, loan: Dict):
+        self.loans_model.remove_loan(loan)
+
+    def hold_added_loans(self, hold: Dict):
+        self.loans_model.add_hold(hold)
+
+    def hold_removed_loans(self, hold: Dict):
+        self.loans_model.remove_hold(hold)
 
     def base_sync_starting_loans(self):
         self.loans_refresh_btn.setEnabled(False)
@@ -519,9 +535,6 @@ class LoansDialogMixin(BaseDialogMixin):
             for index in reversed(indices):
                 loan = index.data(Qt.UserRole)
                 self.return_loan(loan)
-                self.loans_model.removeRow(
-                    self.loans_search_proxy_model.mapToSource(index).row()
-                )
 
     def return_loan(self, loan: Dict):
         description = _("Returning {book}").format(
@@ -548,6 +561,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 job.exception, msg=_("Failed to return loan")
             )
 
+        self.loan_removed.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def downloaded_loan(self, job):

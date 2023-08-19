@@ -211,9 +211,17 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
         self.sync_starting.connect(self.base_sync_starting_magazines)
         self.sync_ended.connect(self.base_sync_ended_magazines)
+        self.loan_added.connect(self.loan_added_magazines)
+        self.loan_removed.connect(self.loan_removed_magazines)
         self.hide_title_already_in_lib_pref_changed.connect(
             self.hide_title_already_in_lib_pref_changed_magazines
         )
+
+    def loan_added_magazines(self, loan: Dict):
+        self.magazines_model.add_loan(loan)
+
+    def loan_removed_magazines(self, loan: Dict):
+        self.magazines_model.remove_loan(loan)
 
     def base_sync_starting_magazines(self):
         self.magazines_refresh_btn.setEnabled(False)

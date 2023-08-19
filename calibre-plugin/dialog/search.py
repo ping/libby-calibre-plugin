@@ -9,7 +9,7 @@
 #
 import copy
 from functools import cmp_to_key
-from typing import List
+from typing import List, Dict
 
 from calibre.constants import DEBUG
 from qt.core import (
@@ -161,6 +161,26 @@ class SearchDialogMixin(BaseDialogMixin):
         self.last_borrow_action_changed.connect(self.rebind_search_borrow_btn)
         self.sync_starting.connect(self.base_sync_starting_search)
         self.sync_ended.connect(self.base_sync_ended_search)
+        self.loan_added.connect(self.loan_added_search)
+        self.loan_removed.connect(self.loan_removed_search)
+        self.hold_added.connect(self.hold_added_search)
+        self.hold_removed.connect(self.hold_removed_search)
+
+    def loan_added_search(self, loan: Dict):
+        self.search_model.add_loan(loan)
+        self.search_results_view.selectionModel().clearSelection()
+
+    def loan_removed_search(self, loan: Dict):
+        self.search_model.remove_loan(loan)
+        self.search_results_view.selectionModel().clearSelection()
+
+    def hold_added_search(self, hold: Dict):
+        self.search_model.add_hold(hold)
+        self.search_results_view.selectionModel().clearSelection()
+
+    def hold_removed_search(self, hold: Dict):
+        self.search_model.remove_hold(hold)
+        self.search_results_view.selectionModel().clearSelection()
 
     def base_sync_starting_search(self):
         self.search_borrow_btn.setEnabled(False)
@@ -263,7 +283,13 @@ class SearchDialogMixin(BaseDialogMixin):
     def search_results_view_selection_model_selectionchanged(self):
         selection_model = self.search_results_view.selectionModel()
         if not selection_model.hasSelection():
+            # selection cleared
+            self.search_borrow_btn.borrow_menu = None
+            self.search_borrow_btn.setMenu(None)
+            self.hold_btn.borrow_menu = None
+            self.hold_btn.setMenu(None)
             return
+
         indices = selection_model.selectedRows()
         media = indices[-1].data(Qt.UserRole)
         self.status_bar.showMessage(get_media_title(media, include_subtitle=True), 3000)

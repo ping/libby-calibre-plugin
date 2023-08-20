@@ -148,8 +148,8 @@ class OverdriveLibbyAction(InterfaceAction):
 
 
 class OverdriveLibbyDialog(
-    SearchDialogMixin,
     CardsDialogMixin,
+    SearchDialogMixin,
     MagazinesDialogMixin,
     HoldsDialogMixin,
     LoansDialogMixin,

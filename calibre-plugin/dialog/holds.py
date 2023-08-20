@@ -365,6 +365,9 @@ class HoldsDialogMixin(BaseDialogMixin):
             )
 
         self.loan_added.emit(job.result)
+        # the loan dict is returned, but it doesn't matter because only title ID and card ID is required
+        # even if the loan was not created from a hold, it shouldn't matter
+        self.hold_removed.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def borrowed_book_and_download(self, job):

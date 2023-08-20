@@ -226,7 +226,7 @@ class LibbyLoansModel(LibbyModel):
         self._rows = [
             r
             for r in self._rows
-            if r["id"] != loan["id"] and r["cardId"] != loan["cardId"]
+            if not (r["id"] == loan["id"] and r["cardId"] == loan["cardId"])
         ]
         self.filter_rows()
 
@@ -237,7 +237,7 @@ class LibbyLoansModel(LibbyModel):
         self._holds = [
             r
             for r in self._holds
-            if r["id"] != hold["id"] and r["cardId"] != hold["cardId"]
+            if not (r["id"] == hold["id"] and r["cardId"] == hold["cardId"])
         ]
 
     def filter_rows(self):
@@ -450,7 +450,7 @@ class LibbyHoldsModel(LibbyModel):
         self._rows = [
             r
             for r in self._rows
-            if r["id"] != hold["id"] and r["cardId"] != hold["cardId"]
+            if not (r["id"] == hold["id"] and r["cardId"] == hold["cardId"])
         ]
         self.filter_rows()
 
@@ -695,7 +695,7 @@ class LibbyMagazinesModel(LibbyModel):
         self._loans = [
             r
             for r in self._loans
-            if r["id"] != loan["id"] and r["cardId"] != loan["cardId"]
+            if not (r["id"] == loan["id"] and r["cardId"] == loan["cardId"])
         ]
         self.filter_rows()
 
@@ -864,7 +864,7 @@ class LibbySearchModel(LibbyModel):
         self._holds = [
             r
             for r in self._holds
-            if r["id"] != hold["id"] and r["cardId"] != hold["cardId"]
+            if not (r["id"] == hold["id"] and r["cardId"] == hold["cardId"])
         ]
 
     def add_loan(self, loan: Dict):
@@ -874,7 +874,7 @@ class LibbySearchModel(LibbyModel):
         self._loans = [
             r
             for r in self._loans
-            if r["id"] != loan["id"] and r["cardId"] != loan["cardId"]
+            if not (r["id"] == loan["id"] and r["cardId"] == loan["cardId"])
         ]
 
     def data(self, index, role):

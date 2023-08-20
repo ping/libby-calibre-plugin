@@ -2,15 +2,17 @@
 
 OverDrive Libby is a plugin that allows you to directly import your Libby loans into [calibre](https://calibre-ebook.com/).
 
-Requires calibre 6.
+Requires calibre 5.34.0 or newer.
 
 ## Main Features
 
 - Import the `.acsm` file for EPUB/PDF(DRM) book loans
-- Import the `.epub` file for EPUB (open) book loans
+- Import the `.epub`/`pdf` file for EPUB/PDF (open) book loans
 - Import the `.epub` file for Magazines loans \[EXPERIMENTAL\]
+- Import Kindle / audiobook loans as empty books
 - View and borrow holds
 - Monitor magazines for new issues
+- Simple search across your linked libraries
 
 This plugin is compatible with the [ACSM Input plugin](https://github.com/Leseratte10/acsm-calibre-plugin/) for converting `.acsm` files into `.epub`.
 
@@ -38,32 +40,68 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 
 ### Help
 
-- Tag downloaded ebooks with
-  - Add specified tags to the ebooks downloaded
-- Tag downloaded magazines with
-  - Add specified tags to the magazines downloaded
+#### Loans
+
 - Hide Ebooks
   - Don't list ebook loans
 - Hide Magazines
   - Don't list magazine loans
-- Prefer Open Formats
-  - Choose DRM-free formats if available
 - Hide books already in library
   - Hide loans that are already in your library
 - Exclude empty books when hiding titles already in library
   - When enabled, empty books are excluded when hiding titles already in your library
-- Hide unavailable holds
-  - Hide holds that are not yet available
 - Always confirm returns
   - Toggle the confirmation prompt before returning loans
-- Always confim holds cancellation
-  - Toggle the confirmation prompt before cancelling a hold
+- Always confirm Read with Kindle
+  - Toggle the confirmation prompt before chosing to Read with Kindle a title that is not format-locked
+- Prefer Open Formats
+  - Choose DRM-free formats if available
 - Enable OverDrive Link Plugin integration
   - Enable or disable the integration. If enabled, the plugin will attempt to find a matching OverDrive-linked book that does not have any formats and add the new download as an EPUB to the book record. Newly downloaded books will also have the `odid` identifier added.
 - Mark updated books
   - This relates to empty books that are updated with a download by the plugin. If enabled, book records that were updated with a new format will be marked.
 - Always download as a new book
   - Never update an existing empty book. Always create a new book entry for a download.
+- Tag downloaded ebooks with
+  - Add specified tags to the ebooks downloaded
+- Tag downloaded magazines with
+  - Add specified tags to the magazines downloaded
+- Custom column for Borrowed Date
+  - If specified, this column will be updated with the loan checkout date
+- Custom column for Due Date
+  - If specified, this column will be updated with the loan expiry date
+- Custom column for Loan Type
+  - If specified, this column will be updated with the loan type, e.g. ebook / magazine / audiobook.
+
+#### Holds
+
+- Hide unavailable holds
+  - Hide holds that are not yet available
+- Always confim holds cancellation
+  - Toggle the confirmation prompt before cancelling a hold
+
+#### Search
+
+- Maximum search results
+  - Limit the number of search results returned
+- Library Keys
+  - This determines the libraries that will be used for search.
+  - Up to 24 of your linked cards will be used. If you have more than 24, you can specify the libraries to use by specifying the library keys in a comma-separated format.
+
+#### General
+
+- Include titles without downloadable formats
+  - When enabled, titles that do not have a downloadable format will be shown
+  - When such titles are chosen for download, an empty book will be created in the calibre library
+- Use highest-resolution cover for book details
+  - Display best-quality cover when viewing book details. May be slower.
+
+#### Network
+
+- Connection timeout
+  - The maximum interval to wait on a connection. You can increase this value if you have a slow connection.
+- Retry attempts
+  - The number of retries upon connection failures
 
 ## Usage
 
@@ -75,9 +113,24 @@ Launch the OverDrive Libby plugin, and click on the "Loans" tab. Select the loan
 
 Each selected loan will then be downloaded in its own calibre job. When the job completes, the loan book file should be in your library.
 
-Only downloadable loans will be listed. If the loan does not have a downloadable format, or has previously been sent to your Kindle, it will not be shown.
+Only downloadable loans will be listed. If the loan does not have a downloadable format, or has previously been sent to your Kindle, it will not be shown unless "Include titles without downloadable formats" is enabled in setup.
 
-To return a loan or to view the title on the Libby/OverDrive site, select and right-click on the row, then select the appropriate action.
+Select a row, right-click and select the appropriate action to:
+- Return a loan
+- View the title on the Libby/OverDrive site
+- Read with Kindle (if available)
+- View book details (also accesible by double-clicking on the row)
+- Search for selected book in your calibre library
+- Search with the selected book title and author
+- Renew/place a hold for an expiring loan
+
+#### Format Locking
+
+Libby does not allow users to read a loan on a Kindle and still download the title as an `.acsm`/`.epub`.
+
+If you chose to read with a Kindle, the loan will not be available for download (the loan is locked to the Kindle format). Similarly, if you chose to download the `.acsm`/`.epub`, the loan becomes locked to the acsm/epub format and will not be available for reading on a Kindle.
+
+Removing a book from the Kindle/ADE/calibre does not "unlock" the loan. To do that, you have to return and borrow the book again.
 
 ### Holds
 
@@ -91,9 +144,9 @@ Alternatively, right-click on the Borrow button to choose the "Borrow and Downlo
 
 To list unavailable holds, uncheck the "Hide unavailable holds" checkbox.
 
-To cancel a hold, select and right-click on the row, then select "Cancel hold".
-
-To suspend a hold, or delay delivery, right-click and select "Edit hold". Use the slider to set the number of days to suspend/delay for, then click on "Update".
+Select a row, right-click and select the appropriate action to:
+- Cancel a hold
+- Suspend/delay delivery for a hold ("Manage hold")
 
 ![Edit Hold](images/edit_hold.png)
 
@@ -109,11 +162,31 @@ The title will then be listed below with its details. To borrow a title, select 
 
 To stop monitoring a title, select and right-click on the row, then select "Cancel".
 
+### Search
+
+![Search](images/search.png)
+
+The "Search" tab provides a basic search function across your libraries. The libraries to search and the number of results returned can be customised in setup. To borrow or place a hold, select a title, then click on the Hold or Borrow button and select the card you wish to use.
+
+### Cards
+
+![Cards](images/cards.png)
+
+The "Cards" tab provides an overview of the linked cards in your Libby account. Right-click on the Library name, Loans, or Holds to view the respective pages on OverDrive or Libby.
+
 ## FAQ
 
 ### `[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed` error on Windows
 
 Download the Let's Encrypt R3 certificate https://letsencrypt.org/certs/lets-encrypt-r3.der. Import it into the Windows certificate store by double-clicking on the file and follow the subsequent prompts.
+
+### Why can't I see my all loans?
+
+If you wish to see loans that are not fully downloadable (e.g. Kindle loans, audibooks), enable the "Include titles without downloadable formats" option in setup.
+
+### Why is a loan downloaded without any formats (acsm/epub)?
+
+This is because the loan does not have a supported downloadable format available. The loan is either not available in epub/pdf, or you have chosen to Read with Kindle (see above for details about [Format Locking](#format-locking)).
 
 
 ## Credit

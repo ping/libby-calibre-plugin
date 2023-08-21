@@ -167,6 +167,16 @@ class LibbyModel(QAbstractTableModel):
             raise ValueError("Library is unknown: websiteId=%s" % website_id)
         return library
 
+    def has_media(self, title_id: str, card_id: str, medias: List[Dict]):
+        return bool(
+            [m for m in medias if m["id"] == title_id and m["cardId"] == card_id]
+        )
+
+    def remove_media(self, title_id: str, card_id: str, medias: List[Dict]):
+        return [
+            m for m in medias if not (m["id"] == title_id and m["cardId"] == card_id)
+        ]
+
 
 LoanMatchCondition = namedtuple(
     "LoanMatchCondition", ["title1", "title2", "isbn", "asin"]
@@ -210,35 +220,21 @@ class LibbyLoansModel(LibbyModel):
     def has_hold(self, loan: Dict) -> bool:
         # used to check that we don't offer to create a new hold for
         # an expiring loan when a hold already exists
-        return bool(
-            [
-                h
-                for h in self._holds
-                if h["id"] == loan["id"] and h["cardId"] == loan["cardId"]
-            ]
-        )
+        return self.has_media(loan["id"], loan["cardId"], self._holds)
 
     def add_loan(self, loan: Dict):
         self._rows.append(loan)
         self.filter_rows()
 
     def remove_loan(self, loan: Dict):
-        self._rows = [
-            r
-            for r in self._rows
-            if not (r["id"] == loan["id"] and r["cardId"] == loan["cardId"])
-        ]
+        self._rows = self.remove_media(loan["id"], loan["cardId"], self._rows)
         self.filter_rows()
 
     def add_hold(self, hold: Dict):
         self._holds.append(hold)
 
     def remove_hold(self, hold: Dict):
-        self._holds = [
-            r
-            for r in self._holds
-            if not (r["id"] == hold["id"] and r["cardId"] == hold["cardId"])
-        ]
+        self._holds = self.remove_media(hold["id"], hold["cardId"], self._holds)
 
     def filter_rows(self):
         self.beginResetModel()
@@ -447,11 +443,7 @@ class LibbyHoldsModel(LibbyModel):
         self.filter_rows()
 
     def remove_hold(self, hold: Dict):
-        self._rows = [
-            r
-            for r in self._rows
-            if not (r["id"] == hold["id"] and r["cardId"] == hold["cardId"])
-        ]
+        self._rows = self.remove_media(hold["id"], hold["cardId"], self._rows)
         self.filter_rows()
 
     def filter_rows(self):
@@ -692,11 +684,7 @@ class LibbyMagazinesModel(LibbyModel):
         self.filter_rows()
 
     def remove_loan(self, loan: Dict):
-        self._loans = [
-            r
-            for r in self._loans
-            if not (r["id"] == loan["id"] and r["cardId"] == loan["cardId"])
-        ]
+        self._loans = self.remove_media(loan["id"], loan["cardId"], self._loans)
         self.filter_rows()
 
     def filter_rows(self):
@@ -796,23 +784,11 @@ class LibbySearchModel(LibbyModel):
         self._holds = []
         self._loans = []
 
-    def has_loan(self, title_id, card_id):
-        return bool(
-            [
-                loan
-                for loan in self._loans
-                if loan["id"] == title_id and loan["cardId"] == card_id
-            ]
-        )
+    def has_loan(self, title_id: str, card_id: str):
+        return self.has_media(title_id, card_id, self._loans)
 
-    def has_hold(self, title_id, card_id):
-        return bool(
-            [
-                hold
-                for hold in self._holds
-                if hold["id"] == title_id and hold["cardId"] == card_id
-            ]
-        )
+    def has_hold(self, title_id: str, card_id: str):
+        return self.has_media(title_id, card_id, self._holds)
 
     def library_keys(self) -> List[str]:
         return list(set([c["advantageKey"] for c in self._cards]))
@@ -861,21 +837,13 @@ class LibbySearchModel(LibbyModel):
         self._holds.append(hold)
 
     def remove_hold(self, hold: Dict):
-        self._holds = [
-            r
-            for r in self._holds
-            if not (r["id"] == hold["id"] and r["cardId"] == hold["cardId"])
-        ]
+        self._holds = self.remove_media(hold["id"], hold["cardId"], self._holds)
 
     def add_loan(self, loan: Dict):
         self._loans.append(loan)
 
     def remove_loan(self, loan: Dict):
-        self._loans = [
-            r
-            for r in self._loans
-            if not (r["id"] == loan["id"] and r["cardId"] == loan["cardId"])
-        ]
+        self._loans = self.remove_media(loan["id"], loan["cardId"], self._loans)
 
     def data(self, index, role):
         row, col = index.row(), index.column()

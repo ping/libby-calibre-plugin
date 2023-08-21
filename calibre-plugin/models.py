@@ -14,7 +14,14 @@ from typing import Dict, List, Optional
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
 from calibre.utils.icu import lower as icu_lower
-from qt.core import QAbstractTableModel, QFont, QModelIndex, Qt
+from qt.core import (
+    QAbstractTableModel,
+    QFont,
+    QModelIndex,
+    QSortFilterProxyModel,
+    Qt,
+    pyqtSignal,
+)
 
 from . import DEMO_MODE
 from .compat import QColor_fromString, _c
@@ -176,6 +183,22 @@ class LibbyModel(QAbstractTableModel):
         return [
             m for m in medias if not (m["id"] == title_id and m["cardId"] == card_id)
         ]
+
+
+class LibbySortFilterModel(QSortFilterProxyModel):
+    filter_text_set = pyqtSignal()
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.setFilterKeyColumn(-1)
+        self.setSortRole(LibbyModel.DisplaySortRole)
+        self.filter_text = ""
+
+    def set_filter_text(self, filter_text_value):
+        self.filter_text = icu_lower(str(filter_text_value).strip())
+        self.invalidateFilter()
+        self.filter_text_set.emit()
 
 
 LoanMatchCondition = namedtuple(
@@ -409,6 +432,23 @@ class LibbyLoansModel(LibbyModel):
         return None
 
 
+class LibbyLoansSortFilterModel(LibbySortFilterModel):
+    def filterAcceptsRow(self, sourceRow, sourceParent):
+        if not self.filter_text:
+            return True
+        index = self.sourceModel().index(sourceRow, 0, sourceParent)
+        loan = self.sourceModel().data(index, Qt.UserRole)
+        card = self.sourceModel().get_card(loan["cardId"])
+        title = icu_lower(get_media_title(loan))
+        creator_name = icu_lower(loan.get("firstCreatorName", ""))
+        library = icu_lower(card["advantageKey"])
+        return (
+            self.filter_text in title
+            or self.filter_text in creator_name
+            or self.filter_text in library
+        )
+
+
 class LibbyHoldsModel(LibbyModel):
     """
     Underlying data model for the Holds table view
@@ -607,6 +647,23 @@ class LibbyHoldsModel(LibbyModel):
         return None
 
 
+class LibbyHoldsSortFilterModel(LibbySortFilterModel):
+    def filterAcceptsRow(self, sourceRow, sourceParent):
+        if not self.filter_text:
+            return True
+        index = self.sourceModel().index(sourceRow, 0, sourceParent)
+        hold = self.sourceModel().data(index, Qt.UserRole)
+        card = self.sourceModel().get_card(hold["cardId"])
+        title = icu_lower(get_media_title(hold))
+        creator_name = icu_lower(hold.get("firstCreatorName", ""))
+        library = icu_lower(card["advantageKey"])
+        return (
+            self.filter_text in title
+            or self.filter_text in creator_name
+            or self.filter_text in library
+        )
+
+
 class LibbyCardsModel(LibbyModel):
     """
     Underlying data model for the Library Cards combobox
@@ -642,6 +699,22 @@ class LibbyCardsModel(LibbyModel):
                 f'{card["advantageKey"]}: {card["cardName"] or ""}'
             )
         return None
+
+
+class LibbyCardsSortFilterModel(LibbySortFilterModel):
+    def filterAcceptsRow(self, sourceRow, sourceParent):
+        if not self.filter_text:
+            return True
+        model = self.sourceModel()
+        index = model.index(sourceRow, 0, sourceParent)
+        card = model.data(index, Qt.UserRole)
+        library = model.get_library(model.get_website_id(card))
+        accept = (
+            self.filter_text in icu_lower(card.get("advantageKey", ""))
+            or self.filter_text in icu_lower(card.get("cardName", ""))
+            or self.filter_text in icu_lower(library["name"])
+        )
+        return accept
 
 
 class LibbyMagazinesModel(LibbyModel):
@@ -760,6 +833,18 @@ class LibbyMagazinesModel(LibbyModel):
                 return int(is_borrowed)
             return _c("Yes") if is_borrowed else _c("No")
         return None
+
+
+class LibbyMagazinesSortFilterModel(LibbySortFilterModel):
+    def filterAcceptsRow(self, sourceRow, sourceParent):
+        if not self.filter_text:
+            return True
+        index = self.sourceModel().index(sourceRow, 0, sourceParent)
+        hold = self.sourceModel().data(index, Qt.UserRole)
+        card = self.sourceModel().get_card(hold["cardId"])
+        title = icu_lower(get_media_title(hold))
+        library = icu_lower(card["advantageKey"])
+        return self.filter_text in title or self.filter_text in library
 
 
 class LibbySearchModel(LibbyModel):

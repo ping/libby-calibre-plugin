@@ -15,13 +15,16 @@ from qt.core import (
     QCursor,
     QFrame,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
+    QLineEdit,
     QMenu,
     QPalette,
     QProgressBar,
     QPushButton,
     QScrollArea,
     QSizePolicy,
+    QVBoxLayout,
     QWidget,
     Qt,
 )
@@ -30,7 +33,7 @@ from .base import BaseDialogMixin, ClickableQLabel
 from .. import DEMO_MODE
 from ..compat import _c
 from ..libby import LibbyClient
-from ..models import LibbyCardsModel
+from ..models import LibbyCardsModel, LibbyCardsSortFilterModel
 from ..utils import (
     PluginImages,
     obfuscate_date,
@@ -263,7 +266,7 @@ class CardsDialogMixin(BaseDialogMixin):
 
         self.card_widgets = []
         self.cards_tab_widget = QWidget()
-        self.cards_tab_widget.layout = QGridLayout()
+        self.cards_tab_widget.layout = QVBoxLayout()
         self.cards_tab_widget.setSizePolicy(
             QSizePolicy.MinimumExpanding, QSizePolicy.Maximum
         )
@@ -274,23 +277,40 @@ class CardsDialogMixin(BaseDialogMixin):
         self.cards_scroll_area.setFrameShape(QFrame.NoFrame)
         self.cards_scroll_area.setWidgetResizable(True)
         self.cards_scroll_area.setWidget(self.cards_tab_widget)
-        widget_row_pos = 0
 
         # Refresh button
+        first_row_layout = QHBoxLayout()
         self.cards_refresh_btn = QPushButton(_c("Refresh"), self)
         self.cards_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
         self.cards_refresh_btn.setAutoDefault(False)
         self.cards_refresh_btn.setToolTip(_("Get latest loans"))
+        self.cards_refresh_btn.setMinimumWidth(self.min_button_width)
         self.cards_refresh_btn.clicked.connect(self.cards_refresh_btn_clicked)
         btn_size = self.cards_refresh_btn.size()
         self.cards_refresh_btn.setMaximumSize(self.min_button_width, btn_size.height())
-        self.cards_tab_widget.layout.addWidget(self.cards_refresh_btn, 0, 0, 1, 3)
-        widget_row_pos += 1
+        first_row_layout.addWidget(self.cards_refresh_btn)
+
+        self.cards_filter_txt = QLineEdit(self)
+        self.cards_filter_txt.setMaximumWidth(self.min_button_width)
+        self.cards_filter_txt.setClearButtonEnabled(True)
+        self.cards_filter_txt.setToolTip(_("Filter by Library, Card"))
+        self.cards_filter_txt.textChanged.connect(self.cards_filter_txt_textchanged)
+        self.cards_filter_lbl = QLabel(_c("Filter"))
+        self.cards_filter_lbl.setBuddy(self.cards_filter_txt)
+        first_row_layout.addWidget(self.cards_filter_lbl, alignment=Qt.AlignRight)
+        first_row_layout.addWidget(self.cards_filter_txt, 1)
+        self.cards_tab_widget.layout.addLayout(first_row_layout)
 
         self.libby_cards_model = LibbyCardsModel(None, [], self.db)  # model
-        self.libby_cards_model.modelReset.connect(
-            lambda: self.libby_cards_model_reset(widget_row_pos)
+        self.libby_cards_search_proxy_model = LibbyCardsSortFilterModel(self)
+        self.libby_cards_search_proxy_model.setSourceModel(self.libby_cards_model)
+        self.libby_cards_search_proxy_model.modelReset.connect(
+            self.libby_cards_search_proxy_model_reset
         )
+        self.libby_cards_search_proxy_model.filter_text_set.connect(
+            self.libby_cards_search_proxy_model_reset, type=Qt.QueuedConnection
+        )
+
         self.cards_tab_index = self.add_tab(self.cards_scroll_area, _("Cards"))
         self.sync_starting.connect(self.base_sync_starting_cards)
         self.sync_ended.connect(self.base_sync_ended_cards)
@@ -303,25 +323,29 @@ class CardsDialogMixin(BaseDialogMixin):
         self.cards_refresh_btn.setEnabled(True)
         self.libby_cards_model.sync(value)
 
+    def cards_filter_txt_textchanged(self, text):
+        self.libby_cards_search_proxy_model.set_filter_text(text)
+
     def cards_refresh_btn_clicked(self):
         self.sync()
 
-    def libby_cards_model_reset(self, widget_row_pos):
+    def libby_cards_search_proxy_model_reset(self):
         for card_widget in self.card_widgets:
             self.cards_tab_widget.layout.removeWidget(card_widget)
             card_widget.setParent(None)
             del card_widget
         self.card_widgets = []
-        for i in range(self.libby_cards_model.rowCount()):
-            card = self.libby_cards_model.data(
-                self.libby_cards_model.index(i, 0), Qt.UserRole
+        widget_row_pos = self.cards_tab_widget.layout.count()
+        for i in range(self.libby_cards_search_proxy_model.rowCount()):
+            card = self.libby_cards_search_proxy_model.data(
+                self.libby_cards_search_proxy_model.index(i, 0), Qt.UserRole
             )
             library = self.libby_cards_model.get_library(
                 self.libby_cards_model.get_website_id(card)
             )
             card_widget = CardWidget(card, library, self, self.cards_tab_widget)
             self.card_widgets.append(card_widget)
-            self.cards_tab_widget.layout.addWidget(card_widget, widget_row_pos, 0)
+            self.cards_tab_widget.layout.addWidget(card_widget)
             widget_row_pos += 1
             if DEMO_MODE:
                 break

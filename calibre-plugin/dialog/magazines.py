@@ -21,11 +21,11 @@ from qt.core import (
     QComboBox,
     QCursor,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
     QLineEdit,
     QMenu,
     QPushButton,
-    QSortFilterProxyModel,
     QTableView,
     QThread,
     QWidget,
@@ -42,7 +42,12 @@ from ..compat import (
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..libby import LibbyClient
 from ..libby.client import LibbyFormats, LibbyMediaTypes
-from ..models import LibbyCardsModel, LibbyMagazinesModel, LibbyModel, get_media_title
+from ..models import (
+    LibbyCardsModel,
+    LibbyMagazinesModel,
+    LibbyMagazinesSortFilterModel,
+    get_media_title,
+)
 from ..overdrive import OverDriveClient
 from ..utils import PluginImages
 from ..workers import OverDriveLibraryMediaWorker
@@ -131,14 +136,25 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_refresh_btn.setToolTip(_("Get latest magazines"))
         self.magazines_refresh_btn.clicked.connect(self.magazines_refresh_btn_clicked)
         magazines_widget.layout.addWidget(self.magazines_refresh_btn, widget_row_pos, 0)
+
+        self.mags_filter_txt = QLineEdit(self)
+        self.mags_filter_txt.setMaximumWidth(self.min_button_width)
+        self.mags_filter_txt.setClearButtonEnabled(True)
+        self.mags_filter_txt.setToolTip(_("Filter by Title, Library"))
+        self.mags_filter_txt.textChanged.connect(self.magazines_filter_txt_textchanged)
+        self.mags_filter_lbl = QLabel(_c("Filter"))
+        self.mags_filter_lbl.setBuddy(self.mags_filter_txt)
+        mags_filter_layout = QHBoxLayout()
+        mags_filter_layout.addWidget(self.mags_filter_lbl, alignment=Qt.AlignRight)
+        mags_filter_layout.addWidget(self.mags_filter_txt, 1)
+        magazines_widget.layout.addLayout(
+            mags_filter_layout, widget_row_pos, self.view_hspan - 2, 1, 2
+        )
         widget_row_pos += 1
 
         self.magazines_model = LibbyMagazinesModel(None, [], self.db)
-        self.magazines_search_proxy_model = QSortFilterProxyModel(self)
-        self.magazines_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.magazines_search_proxy_model.setFilterKeyColumn(-1)
+        self.magazines_search_proxy_model = LibbyMagazinesSortFilterModel(self)
         self.magazines_search_proxy_model.setSourceModel(self.magazines_model)
-        self.magazines_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
 
         # The main magazines list
         self.magazines_view = QTableView(self)
@@ -305,6 +321,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         unsub_action.setIcon(self.resources[PluginImages.CancelMagazine])
         unsub_action.triggered.connect(lambda: self.unsub_action_triggered(indices))
         menu.exec(QCursor.pos())
+
+    def magazines_filter_txt_textchanged(self, text):
+        self.magazines_search_proxy_model.set_filter_text(text)
 
     def magazines_refresh_btn_clicked(self):
         self.sync()

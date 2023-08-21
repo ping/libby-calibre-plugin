@@ -20,9 +20,11 @@ from qt.core import (
     QCheckBox,
     QCursor,
     QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QMenu,
     QPushButton,
-    QSortFilterProxyModel,
     QTableView,
     QThread,
     QWidget,
@@ -39,9 +41,14 @@ from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..ebook_download import CustomEbookDownload
 from ..empty_download import EmptyBookDownload
 from ..libby import LibbyClient, LibbyFormats
-from ..loan_actions import LibbyLoanReturn, LibbyLoanRenew
+from ..loan_actions import LibbyLoanRenew, LibbyLoanReturn
 from ..magazine_download import CustomMagazineDownload
-from ..models import LibbyLoansModel, LibbyModel, get_media_title, truncate_for_display
+from ..models import (
+    LibbyLoansModel,
+    LibbyLoansSortFilterModel,
+    get_media_title,
+    truncate_for_display,
+)
 from ..overdrive import OverDriveClient
 from ..utils import OD_IDENTIFIER, PluginImages, generate_od_identifier
 from ..workers import LibbyFulfillLoanWorker
@@ -80,14 +87,25 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
         widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
+
+        self.loans_filter_txt = QLineEdit(self)
+        self.loans_filter_txt.setMinimumWidth(self.min_button_width)
+        self.loans_filter_txt.setClearButtonEnabled(True)
+        self.loans_filter_txt.setToolTip(_("Filter by Title, Author, Library"))
+        self.loans_filter_txt.textChanged.connect(self.loans_filter_txt_textchanged)
+        self.loans_filter_lbl = QLabel(_c("Filter"))
+        self.loans_filter_lbl.setBuddy(self.loans_filter_txt)
+        loan_filter_layout = QHBoxLayout()
+        loan_filter_layout.addWidget(self.loans_filter_lbl)
+        loan_filter_layout.addWidget(self.loans_filter_txt, 1)
+        widget.layout.addLayout(
+            loan_filter_layout, widget_row_pos, self.view_hspan - 2, 1, 2
+        )
         widget_row_pos += 1
 
         self.loans_model = LibbyLoansModel(None, [], self.db, self.resources)
-        self.loans_search_proxy_model = QSortFilterProxyModel(self)
-        self.loans_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.loans_search_proxy_model.setFilterKeyColumn(-1)
+        self.loans_search_proxy_model = LibbyLoansSortFilterModel(self)
         self.loans_search_proxy_model.setSourceModel(self.loans_model)
-        self.loans_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
 
         # The main loan list
         self.loans_view = QTableView(self)
@@ -204,6 +222,9 @@ class LoansDialogMixin(BaseDialogMixin):
         if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] != checked:
             PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB] = checked
             self.hide_title_already_in_lib_pref_changed.emit(checked)
+
+    def loans_filter_txt_textchanged(self, text):
+        self.loans_search_proxy_model.set_filter_text(text)
 
     def loans_refresh_btn_clicked(self):
         self.sync()

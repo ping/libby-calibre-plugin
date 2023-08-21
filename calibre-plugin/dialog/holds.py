@@ -21,12 +21,13 @@ from qt.core import (
     QCursor,
     QDialog,
     QGridLayout,
+    QHBoxLayout,
     QLabel,
     QLayout,
+    QLineEdit,
     QMenu,
     QPushButton,
     QSlider,
-    QSortFilterProxyModel,
     QTableView,
     QWidget,
     Qt,
@@ -43,7 +44,12 @@ from ..compat import (
 from ..config import PREFS, PreferenceKeys, PreferenceTexts
 from ..hold_actions import LibbyHoldCancel, LibbyHoldUpdate
 from ..libby import LibbyClient
-from ..models import LibbyHoldsModel, LibbyModel, get_media_title, truncate_for_display
+from ..models import (
+    LibbyHoldsModel,
+    LibbyHoldsSortFilterModel,
+    get_media_title,
+    truncate_for_display,
+)
 from ..utils import PluginImages
 
 # noinspection PyUnreachableCode
@@ -76,14 +82,25 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
         widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
+
+        self.holds_filter_txt = QLineEdit(self)
+        self.holds_filter_txt.setMinimumWidth(self.min_button_width)
+        self.holds_filter_txt.setClearButtonEnabled(True)
+        self.holds_filter_txt.setToolTip(_("Filter by Title, Author, Library"))
+        self.holds_filter_txt.textChanged.connect(self.holds_filter_txt_textchanged)
+        self.holds_filter_lbl = QLabel(_c("Filter"))
+        self.holds_filter_lbl.setBuddy(self.holds_filter_txt)
+        holds_filter_layout = QHBoxLayout()
+        holds_filter_layout.addWidget(self.holds_filter_lbl)
+        holds_filter_layout.addWidget(self.holds_filter_txt, 1)
+        widget.layout.addLayout(
+            holds_filter_layout, widget_row_pos, self.view_hspan - 2, 1, 2
+        )
         widget_row_pos += 1
 
         self.holds_model = LibbyHoldsModel(None, [], self.db)
-        self.holds_search_proxy_model = QSortFilterProxyModel(self)
-        self.holds_search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.holds_search_proxy_model.setFilterKeyColumn(-1)
+        self.holds_search_proxy_model = LibbyHoldsSortFilterModel(self)
         self.holds_search_proxy_model.setSourceModel(self.holds_model)
-        self.holds_search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
 
         self.holds_model.modelReset.connect(self.holds_model_changed)
         self.holds_model.rowsRemoved.connect(self.holds_model_changed)
@@ -215,6 +232,9 @@ class HoldsDialogMixin(BaseDialogMixin):
     def hide_unavailable_holds_checkbox_clicked(self, checked):
         if PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] != checked:
             PREFS[PreferenceKeys.HIDE_HOLDS_UNAVAILABLE] = checked
+
+    def holds_filter_txt_textchanged(self, text):
+        self.holds_search_proxy_model.set_filter_text(text)
 
     def holds_refresh_btn_clicked(self):
         self.sync()

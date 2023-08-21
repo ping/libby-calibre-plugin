@@ -48,7 +48,7 @@ from ..utils import PluginImages
 
 # noinspection PyUnreachableCode
 if False:
-    load_translations = _ = ngettext = lambda x=None: x
+    load_translations = _ = ngettext = lambda x=None, y=None: x
 
 load_translations()
 

@@ -173,3 +173,5 @@ class EmptyBookDownload(LibbyDownload):
             )
             gui.library_view.model().books_added(1)
             gui.library_view.model().count_changed()
+
+        return loan

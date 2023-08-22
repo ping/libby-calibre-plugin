@@ -99,7 +99,7 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.holds_model = LibbyHoldsModel(None, [], self.db)
-        self.holds_search_proxy_model = LibbyHoldsSortFilterModel(self)
+        self.holds_search_proxy_model = LibbyHoldsSortFilterModel(self, self.db)
         self.holds_search_proxy_model.setSourceModel(self.holds_model)
 
         self.holds_model.modelReset.connect(self.holds_model_changed)
@@ -226,7 +226,7 @@ class HoldsDialogMixin(BaseDialogMixin):
 
     def hide_unavailable_holds_checkbox_state_changed(self, __):
         checked = self.hide_unavailable_holds_checkbox.isChecked()
-        self.holds_model.set_filter_hide_unavailable_holds(checked)
+        self.holds_search_proxy_model.set_filter_hide_unavailable_holds(checked)
         self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
 
     def hide_unavailable_holds_checkbox_clicked(self, checked):

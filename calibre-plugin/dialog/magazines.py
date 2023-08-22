@@ -153,7 +153,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.magazines_model = LibbyMagazinesModel(None, [], self.db)
-        self.magazines_search_proxy_model = LibbyMagazinesSortFilterModel(self)
+        self.magazines_search_proxy_model = LibbyMagazinesSortFilterModel(self, self.db)
         self.magazines_search_proxy_model.setSourceModel(self.magazines_model)
 
         # The main magazines list
@@ -271,7 +271,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
 
     def hide_mag_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_mag_already_in_lib_checkbox.isChecked()
-        self.magazines_model.set_filter_hide_magazines_already_in_library(checked)
+        self.magazines_search_proxy_model.set_filter_hide_magazines_already_in_library(
+            checked
+        )
         self.magazines_view.sortByColumn(-1, Qt.AscendingOrder)
 
     def hide_mag_already_in_lib_checkbox_clicked(self, checked: bool):
@@ -400,7 +402,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 show=True,
             )
 
-        card = self.cards_model.filtered_rows[self.cards_cbbox.currentIndex()]
+        card = self.cards_model.data(
+            self.cards_model.index(self.cards_cbbox.currentIndex(), 0), Qt.UserRole
+        )
         title_id = mobj.group("title_id")
         if not self._fetch_library_media_thread.isRunning():
             self._fetch_library_media_thread = self._get_fetch_library_media_thread(

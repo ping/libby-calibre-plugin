@@ -117,7 +117,6 @@ class LibbyModel(QAbstractTableModel):
         self._cards = []
         self._libraries = []
         self._rows = []
-        self.filtered_rows = []
 
     def headerData(self, section, orientation, role):
         if role != Qt.DisplayRole:
@@ -132,13 +131,11 @@ class LibbyModel(QAbstractTableModel):
         return len(self.column_headers)
 
     def rowCount(self, parent=None):
-        return len(self.filtered_rows)
+        return len(self._rows)
 
     def removeRows(self, row, count, _):
         self.beginRemoveRows(QModelIndex(), row, row + count - 1)
-        self.filtered_rows = (
-            self.filtered_rows[:row] + self.filtered_rows[row + count :]
-        )
+        self._rows = self._rows[:row] + self._rows[row + count :]
         self.endRemoveRows()
         return True
 
@@ -188,12 +185,19 @@ class LibbyModel(QAbstractTableModel):
 class LibbySortFilterModel(QSortFilterProxyModel):
     filter_text_set = pyqtSignal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, db=None):
         super().__init__(parent)
         self.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.setFilterKeyColumn(-1)
         self.setSortRole(LibbyModel.DisplaySortRole)
         self.filter_text = ""
+        self.db = db
+
+    def headerData(self, section, orientation, role):
+        # if display role of vertical headers (row numbers)
+        if orientation == Qt.Vertical and role == Qt.DisplayRole:
+            return section + 1
+        return super().headerData(section, orientation, role)
 
     def set_filter_text(self, filter_text_value):
         self.filter_text = icu_lower(str(filter_text_value).strip())
@@ -238,7 +242,7 @@ class LibbyLoansModel(LibbyModel):
             synced_state = {}
         self._rows = synced_state.get("loans", [])
         self._holds = synced_state.get("holds", [])
-        self.filter_rows()
+        self.sort_rows()
 
     def has_hold(self, loan: Dict) -> bool:
         # used to check that we don't offer to create a new hold for
@@ -247,11 +251,11 @@ class LibbyLoansModel(LibbyModel):
 
     def add_loan(self, loan: Dict):
         self._rows.append(loan)
-        self.filter_rows()
+        self.sort_rows()
 
     def remove_loan(self, loan: Dict):
         self._rows = self.remove_media(loan["id"], loan["cardId"], self._rows)
-        self.filter_rows()
+        self.sort_rows()
 
     def add_hold(self, hold: Dict):
         self._holds.append(hold)
@@ -259,82 +263,21 @@ class LibbyLoansModel(LibbyModel):
     def remove_hold(self, hold: Dict):
         self._holds = self.remove_media(hold["id"], hold["cardId"], self._holds)
 
-    def filter_rows(self):
+    def sort_rows(self):
         self.beginResetModel()
-        self.filtered_rows = []
         self._rows = sorted(self._rows, key=lambda ln: ln["checkoutDate"], reverse=True)
-
-        for loan in self._rows:
-            if not (
-                (
-                    LibbyClient.is_downloadable_ebook_loan(loan)
-                    and not PREFS[PreferenceKeys.HIDE_EBOOKS]
-                )
-                or (
-                    LibbyClient.is_downloadable_magazine_loan(loan)
-                    and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
-                )
-                or (
-                    PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
-                    and not (
-                        LibbyClient.is_downloadable_magazine_loan(loan)
-                        or LibbyClient.is_downloadable_ebook_loan(loan)
-                    )
-                )
-            ):
-                continue
-
-            loan_format = LibbyClient.get_loan_format(
-                loan,
-                PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
-                raise_if_not_downloadable=False,
-            )
-
-            if not self.filter_hide_books_already_in_library:
-                # hide lib books filter is not enabled
-                self.filtered_rows.append(loan)
-                continue
-
-            # hide lib books filter is enabled
-            book_in_library = False
-            loan_title1 = icu_lower(get_media_title(loan).strip())
-            loan_title2 = icu_lower(
-                get_media_title(loan, include_subtitle=True).strip()
-            )
-            loan_isbn = OverDriveClient.extract_isbn(
-                loan.get("formats", []), [loan_format] if loan_format else []
-            )
-            loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
-            for book_id, title in iter(self.all_book_ids_titles.items()):
-                book_identifiers = self.all_book_ids_identifiers.get(book_id) or {}
-                book_in_library = (
-                    icu_lower(title) in (loan_title1, loan_title2)
-                    or (loan_isbn and loan_isbn == book_identifiers.get("isbn", ""))
-                    or (loan_asin and loan_asin == book_identifiers.get("amazon", ""))
-                    or (loan_asin and loan_asin == book_identifiers.get("asin", ""))
-                )
-                if book_in_library:
-                    if PREFS[
-                        PreferenceKeys.EXCLUDE_EMPTY_BOOKS
-                    ] and not self.all_book_ids_formats.get(book_id):
-                        book_in_library = False
-                    break  # check only first matching book
-
-            if not book_in_library:
-                self.filtered_rows.append(loan)
-
         self.endResetModel()
 
     def set_filter_hide_books_already_in_library(self, value: bool):
         if value != self.filter_hide_books_already_in_library:
             self.filter_hide_books_already_in_library = value
-            self.filter_rows()
+            self.sort_rows()
 
     def data(self, index, role):
         row, col = index.row(), index.column()
         if row >= self.rowCount() or col >= self.columnCount():
             return None
-        loan: Dict = self.filtered_rows[row]
+        loan: Dict = self._rows[row]
         # UserRole
         if role == Qt.UserRole:
             return loan
@@ -433,17 +376,116 @@ class LibbyLoansModel(LibbyModel):
 
 
 class LibbyLoansSortFilterModel(LibbySortFilterModel):
+    def __init__(self, parent, db=None):
+        super().__init__(parent, db)
+        self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
+        self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
+        self.all_book_ids_identifiers = self.db.fields["identifiers"].table.book_col_map
+        self.filter_hide_books_already_in_library = PREFS[
+            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
+        ]
+        self.temporarily_hidden: List[Dict] = []
+
+    def temporarily_hide(self, loan: Dict):
+        if not self.is_temporarily_hidden(loan):
+            self.temporarily_hidden.append(loan)
+            self.invalidateFilter()
+
+    def unhide(self, loan: Dict):
+        self.temporarily_hidden = [
+            h
+            for h in self.temporarily_hidden
+            if not (h["id"] == loan["id"] and h["cardId"] == loan["cardId"])
+        ]
+        self.invalidateFilter()
+
+    def is_temporarily_hidden(self, loan: Dict) -> bool:
+        return bool(
+            [
+                h
+                for h in self.temporarily_hidden
+                if h["id"] == loan["id"] and h["cardId"] == loan["cardId"]
+            ]
+        )
+
+    def set_filter_hide_books_already_in_library(self, value: bool):
+        if value != self.filter_hide_books_already_in_library:
+            self.filter_hide_books_already_in_library = value
+            self.invalidateFilter()
+
     def filterAcceptsRow(self, sourceRow, sourceParent):
+        model: LibbyModel = self.sourceModel()
+        index = model.index(sourceRow, 0, sourceParent)
+        loan = model.data(index, Qt.UserRole)
+        if not (
+            (
+                LibbyClient.is_downloadable_ebook_loan(loan)
+                and not PREFS[PreferenceKeys.HIDE_EBOOKS]
+            )
+            or (
+                LibbyClient.is_downloadable_magazine_loan(loan)
+                and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
+            )
+            or (
+                PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+                and not (
+                    LibbyClient.is_downloadable_magazine_loan(loan)
+                    or LibbyClient.is_downloadable_ebook_loan(loan)
+                )
+            )
+        ):
+            return False
+
+        if not (self.filter_text or self.filter_hide_books_already_in_library):
+            # return early if no filters
+            return True
+
+        loan_format = LibbyClient.get_loan_format(
+            loan,
+            PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
+            raise_if_not_downloadable=False,
+        )
+
+        loan_title1 = icu_lower(get_media_title(loan).strip())
+        if self.filter_hide_books_already_in_library:
+            # hide lib books filter is enabled
+            if self.is_temporarily_hidden(loan):
+                return False
+
+            book_in_library = False
+            loan_title2 = icu_lower(
+                get_media_title(loan, include_subtitle=True).strip()
+            )
+            loan_isbn = OverDriveClient.extract_isbn(
+                loan.get("formats", []), [loan_format] if loan_format else []
+            )
+            loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
+            for book_id, title in iter(self.all_book_ids_titles.items()):
+                book_identifiers = self.all_book_ids_identifiers.get(book_id) or {}
+                book_in_library = (
+                    icu_lower(title) in (loan_title1, loan_title2)
+                    or (loan_isbn and loan_isbn == book_identifiers.get("isbn", ""))
+                    or (loan_asin and loan_asin == book_identifiers.get("amazon", ""))
+                    or (loan_asin and loan_asin == book_identifiers.get("asin", ""))
+                )
+                if book_in_library:
+                    if PREFS[
+                        PreferenceKeys.EXCLUDE_EMPTY_BOOKS
+                    ] and not self.all_book_ids_formats.get(book_id):
+                        book_in_library = False
+                    break  # check only first matching book
+
+            if book_in_library:
+                return False
+
         if not self.filter_text:
             return True
-        index = self.sourceModel().index(sourceRow, 0, sourceParent)
-        loan = self.sourceModel().data(index, Qt.UserRole)
-        card = self.sourceModel().get_card(loan["cardId"])
-        title = icu_lower(get_media_title(loan))
+
+        card = model.get_card(loan["cardId"])
         creator_name = icu_lower(loan.get("firstCreatorName", ""))
         library = icu_lower(card["advantageKey"])
         return (
-            self.filter_text in title
+            self.filter_text in loan_title1
             or self.filter_text in creator_name
             or self.filter_text in library
         )
@@ -476,19 +518,18 @@ class LibbyHoldsModel(LibbyModel):
         if not synced_state:
             synced_state = {}
         self._rows = synced_state.get("holds", [])
-        self.filter_rows()
+        self.sort_rows()
 
     def add_hold(self, hold: Dict):
         self._rows.append(hold)
-        self.filter_rows()
+        self.sort_rows()
 
     def remove_hold(self, hold: Dict):
         self._rows = self.remove_media(hold["id"], hold["cardId"], self._rows)
-        self.filter_rows()
+        self.sort_rows()
 
-    def filter_rows(self):
+    def sort_rows(self):
         self.beginResetModel()
-        self.filtered_rows = []
         self._rows = sorted(
             self._rows,
             key=lambda h: (
@@ -498,38 +539,11 @@ class LibbyHoldsModel(LibbyModel):
             ),
             reverse=True,
         )
-
-        for hold in [
-            h
-            for h in self._rows
-            if (
-                not PREFS[PreferenceKeys.HIDE_EBOOKS]
-                and LibbyClient.is_downloadable_ebook_loan(h)
-            )
-            or (
-                not PREFS[PreferenceKeys.HIDE_MAGAZINES]
-                and LibbyClient.is_downloadable_magazine_loan(h)
-            )
-            or (
-                PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
-                and not (
-                    LibbyClient.is_downloadable_magazine_loan(h)
-                    or LibbyClient.is_downloadable_ebook_loan(h)
-                )
-            )
-        ]:
-            if hold.get("isAvailable", False) or not self.filter_hide_unavailable_holds:
-                self.filtered_rows.append(hold)
         self.endResetModel()
-
-    def set_filter_hide_unavailable_holds(self, value: bool):
-        if value != self.filter_hide_unavailable_holds:
-            self.filter_hide_unavailable_holds = value
-            self.filter_rows()
 
     def setData(self, index, hold, role=Qt.EditRole):
         if role == Qt.EditRole:
-            self.filtered_rows[index.row()] = hold
+            self._rows[index.row()] = hold
             self.dataChanged.emit(index, index)
             return True
 
@@ -537,7 +551,7 @@ class LibbyHoldsModel(LibbyModel):
         row, col = index.row(), index.column()
         if row >= self.rowCount() or col >= self.columnCount():
             return None
-        hold: Dict = self.filtered_rows[row]
+        hold: Dict = self._rows[row]
         is_suspended = bool(
             hold.get("suspensionFlag") and hold.get("suspensionEnd")
         ) and not hold.get("isAvailable")
@@ -648,9 +662,51 @@ class LibbyHoldsModel(LibbyModel):
 
 
 class LibbyHoldsSortFilterModel(LibbySortFilterModel):
+    def __init__(self, parent, db=None):
+        super().__init__(parent, db)
+        self.filter_hide_unavailable_holds = PREFS[
+            PreferenceKeys.HIDE_HOLDS_UNAVAILABLE
+        ]
+
+    def set_filter_hide_unavailable_holds(self, value: bool):
+        if value != self.filter_hide_unavailable_holds:
+            self.filter_hide_unavailable_holds = value
+            self.invalidateFilter()
+
     def filterAcceptsRow(self, sourceRow, sourceParent):
+        model: LibbyModel = self.sourceModel()
+        index = model.index(sourceRow, 0, sourceParent)
+        hold = model.data(index, Qt.UserRole)
+
+        if not (
+            (
+                LibbyClient.is_downloadable_ebook_loan(hold)
+                and not PREFS[PreferenceKeys.HIDE_EBOOKS]
+            )
+            or (
+                LibbyClient.is_downloadable_magazine_loan(hold)
+                and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
+            )
+            or (
+                PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+                and not (
+                    LibbyClient.is_downloadable_magazine_loan(hold)
+                    or LibbyClient.is_downloadable_ebook_loan(hold)
+                )
+            )
+        ):
+            return False
+
+        if not (self.filter_hide_unavailable_holds or self.filter_text):
+            # return early if no filters
+            return True
+
+        if self.filter_hide_unavailable_holds and not hold.get("isAvailable", False):
+            return False
+
         if not self.filter_text:
             return True
+
         index = self.sourceModel().index(sourceRow, 0, sourceParent)
         hold = self.sourceModel().data(index, Qt.UserRole)
         card = self.sourceModel().get_card(hold["cardId"])
@@ -678,18 +734,18 @@ class LibbyCardsModel(LibbyModel):
     def sync(self, synced_state: Optional[Dict] = None):
         super().sync(synced_state)
         self._rows = self._cards
-        self.filter_rows()
+        self.sort_rows()
 
-    def filter_rows(self):
+    def sort_rows(self):
         self.beginResetModel()
-        self.filtered_rows = sorted(self._rows, key=lambda c: c["advantageKey"])
+        self._rows = sorted(self._rows, key=lambda c: c["advantageKey"])
         self.endResetModel()
 
     def data(self, index, role):
         row, col = index.row(), index.column()
         if row >= self.rowCount() or col >= self.columnCount():
             return None
-        card: Dict = self.filtered_rows[row]
+        card: Dict = self._rows[row]
         if role == Qt.UserRole:
             return card
         if role != Qt.DisplayRole:
@@ -727,18 +783,8 @@ class LibbyMagazinesModel(LibbyModel):
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent, synced_state, db)
-        self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
-        self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self._loans: List[Dict] = []
-        self.filter_hide_magazines_already_in_library = PREFS[
-            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
-        ]
         self.sync(synced_state)
-
-    def set_filter_hide_magazines_already_in_library(self, value: bool):
-        if value != self.filter_hide_magazines_already_in_library:
-            self.filter_hide_magazines_already_in_library = value
-            self.filter_rows()
 
     def sync(self, synced_state: Optional[Dict] = None):
         super().sync(synced_state)
@@ -746,55 +792,36 @@ class LibbyMagazinesModel(LibbyModel):
             synced_state = {}
         self._loans = synced_state.get("loans", [])
         self._rows = synced_state.get("__subscriptions", [])
-        self.filter_rows()
+        self.fill_and_sort_rows()
 
     def sync_subscriptions(self, subscriptions: List[Dict]):
         self._rows = subscriptions
-        self.filter_rows()
+        self.fill_and_sort_rows()
 
     def add_loan(self, loan: Dict):
         self._loans.append(loan)
-        self.filter_rows()
+        self.fill_and_sort_rows()
 
     def remove_loan(self, loan: Dict):
         self._loans = self.remove_media(loan["id"], loan["cardId"], self._loans)
-        self.filter_rows()
+        self.fill_and_sort_rows()
 
-    def filter_rows(self):
+    def fill_and_sort_rows(self):
         self.beginResetModel()
-        self.filtered_rows = []
-        for r in sorted(
+        self._rows = sorted(
             self._rows, key=lambda t: t["estimatedReleaseDate"], reverse=True
-        ):
+        )
+        for r in self._rows:
             r["__is_borrowed"] = bool(
                 [loan for loan in self._loans if loan["id"] == r["id"]]
             )
-            if not self.filter_hide_magazines_already_in_library:
-                self.filtered_rows.append(r)
-                continue
-
-            # hide lib books filter is enabled
-            book_in_library = False
-            q1 = icu_lower(get_media_title(r).strip())
-            q2 = icu_lower(get_media_title(r, include_subtitle=True).strip())
-            for book_id, title in iter(self.all_book_ids_titles.items()):
-                if icu_lower(title) not in (q1, q2):
-                    continue
-                if (
-                    not PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
-                ) or self.all_book_ids_formats.get(book_id):
-                    book_in_library = True
-                break  # check only first matching book title
-            if not book_in_library:
-                self.filtered_rows.append(r)
-
         self.endResetModel()
 
     def data(self, index, role):
         row, col = index.row(), index.column()
         if row >= self.rowCount() or col >= self.columnCount():
             return None
-        subscription: Dict = self.filtered_rows[row]
+        subscription: Dict = self._rows[row]
         # UserRole
         if role == Qt.UserRole:
             return subscription
@@ -836,13 +863,49 @@ class LibbyMagazinesModel(LibbyModel):
 
 
 class LibbyMagazinesSortFilterModel(LibbySortFilterModel):
+    def __init__(self, parent, db=None):
+        super().__init__(parent, db)
+        self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
+        self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
+        self.filter_hide_magazines_already_in_library = PREFS[
+            PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB
+        ]
+
+    def set_filter_hide_magazines_already_in_library(self, value: bool):
+        if value != self.filter_hide_magazines_already_in_library:
+            self.filter_hide_magazines_already_in_library = value
+            self.invalidateFilter()
+
     def filterAcceptsRow(self, sourceRow, sourceParent):
+
+        if not (self.filter_hide_magazines_already_in_library or self.filter_text):
+            return True
+
+        model: LibbyModel = self.sourceModel()
+        index = model.index(sourceRow, 0, sourceParent)
+        subscription = model.data(index, Qt.UserRole)
+
+        if self.filter_hide_magazines_already_in_library:
+            # hide lib books filter is enabled
+            book_in_library = False
+            q1 = icu_lower(get_media_title(subscription).strip())
+            q2 = icu_lower(get_media_title(subscription, include_subtitle=True).strip())
+            for book_id, title in iter(self.all_book_ids_titles.items()):
+                if icu_lower(title) not in (q1, q2):
+                    continue
+                if (
+                    not PREFS[PreferenceKeys.EXCLUDE_EMPTY_BOOKS]
+                ) or self.all_book_ids_formats.get(book_id):
+                    book_in_library = True
+                break  # check only first matching book title
+            if book_in_library:
+                return False
+
         if not self.filter_text:
             return True
-        index = self.sourceModel().index(sourceRow, 0, sourceParent)
-        hold = self.sourceModel().data(index, Qt.UserRole)
-        card = self.sourceModel().get_card(hold["cardId"])
-        title = icu_lower(get_media_title(hold))
+
+        card = self.sourceModel().get_card(subscription["cardId"])
+        title = icu_lower(get_media_title(subscription))
         library = icu_lower(card["advantageKey"])
         return self.filter_text in title or self.filter_text in library
 
@@ -899,7 +962,7 @@ class LibbySearchModel(LibbyModel):
         if "search_results" not in synced_state:
             return
         self.beginResetModel()
-        self.filtered_rows = []
+        self._rows = []
         for r in synced_state["search_results"]:
             try:
                 if (
@@ -913,7 +976,7 @@ class LibbySearchModel(LibbyModel):
                         )
                     )
                 ):
-                    self.filtered_rows.append(r)
+                    self._rows.append(r)
             except ValueError:
                 pass
         self.endResetModel()
@@ -934,7 +997,7 @@ class LibbySearchModel(LibbyModel):
         row, col = index.row(), index.column()
         if row >= self.rowCount() or col >= self.columnCount():
             return None
-        media: Dict = self.filtered_rows[row]
+        media: Dict = self._rows[row]
         # UserRole
         if role == Qt.UserRole:
             return media

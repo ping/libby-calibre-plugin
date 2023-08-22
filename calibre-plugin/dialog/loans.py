@@ -104,7 +104,7 @@ class LoansDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.loans_model = LibbyLoansModel(None, [], self.db, self.resources)
-        self.loans_search_proxy_model = LibbyLoansSortFilterModel(self)
+        self.loans_search_proxy_model = LibbyLoansSortFilterModel(self, db=self.db)
         self.loans_search_proxy_model.setSourceModel(self.loans_model)
 
         # The main loan list
@@ -215,7 +215,7 @@ class LoansDialogMixin(BaseDialogMixin):
 
     def hide_book_already_in_lib_checkbox_state_changed(self, __):
         checked = self.hide_book_already_in_lib_checkbox.isChecked()
-        self.loans_model.set_filter_hide_books_already_in_library(checked)
+        self.loans_search_proxy_model.set_filter_hide_books_already_in_library(checked)
         self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
 
     def hide_book_already_in_lib_checkbox_state_clicked(self, checked):
@@ -357,8 +357,8 @@ class LoansDialogMixin(BaseDialogMixin):
             for row in reversed(rows):
                 self.download_loan(row.data(Qt.UserRole))
                 if PREFS[PreferenceKeys.HIDE_BOOKS_ALREADY_IN_LIB]:
-                    self.loans_model.removeRow(
-                        self.loans_search_proxy_model.mapToSource(row).row()
+                    self.loans_search_proxy_model.temporarily_hide(
+                        row.data(Qt.UserRole)
                     )
 
     def download_loan(self, loan: Dict):
@@ -590,6 +590,8 @@ class LoansDialogMixin(BaseDialogMixin):
             # self.gui.job_exception(job, dialog_title=_c("Failed to download e-book"))
             self.unhandled_exception(job.exception, msg=_c("Failed to download e-book"))
 
+        if job.result:
+            self.loans_search_proxy_model.unhide(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def download_empty_book(self, loan, format_id, tags=None):

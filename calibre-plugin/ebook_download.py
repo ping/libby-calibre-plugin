@@ -73,6 +73,7 @@ class CustomEbookDownload(LibbyDownload):
                     downloaded_filepath.unlink(missing_ok=True)
             except:  # noqa
                 pass
+        return loan
 
     def _custom_download(
         self,

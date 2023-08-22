@@ -29,7 +29,8 @@ from qt.core import (
     Qt,
 )
 
-from .base import BaseDialogMixin, ClickableQLabel
+from .base import BaseDialogMixin
+from .widgets import ClickableQLabel
 from .. import DEMO_MODE
 from ..compat import _c
 from ..libby import LibbyClient

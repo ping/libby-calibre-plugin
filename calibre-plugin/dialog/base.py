@@ -14,7 +14,6 @@ from typing import Dict, List, Optional
 from calibre.constants import DEBUG
 from calibre.gui2 import error_dialog, info_dialog, rating_font, Dispatcher
 from calibre.gui2.threaded_jobs import ThreadedJob
-from calibre.gui2.viewer.overlay import LoadingOverlay
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
@@ -32,7 +31,6 @@ from qt.core import (
     QLabel,
     QLayout,
     QMenu,
-    QMouseEvent,
     QPalette,
     QPixmap,
     QPixmapCache,
@@ -49,6 +47,7 @@ from qt.core import (
     pyqtSignal,
 )
 
+from .widgets import ClickableQLabel, CustomLoadingOverlay
 from .. import DEMO_MODE, __version__, logger
 from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
 from ..config import BorrowActions, PREFS, PreferenceKeys
@@ -563,31 +562,6 @@ class BaseDialogMixin(QDialog):
             )
         self.hold_added.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
-
-
-class CustomLoadingOverlay(LoadingOverlay):
-    # Custom https://github.com/kovidgoyal/calibre/blob/a562c1f637cf2756fa8336860543a15951f4fbc0/src/calibre/gui2/viewer/overlay.py#L10
-    def hide(self):
-        try:
-            self.pi.stop()
-            return QWidget.hide(self)
-        except RuntimeError as err:
-            # most likely because the UI has been closed before loading was completed
-            logger.warning("Error hiding loading overlay: %s", err)
-
-
-class ClickableQLabel(QLabel):
-    clicked = pyqtSignal(QMouseEvent)
-    doubleClicked = pyqtSignal(QMouseEvent)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def mousePressEvent(self, ev):
-        self.clicked.emit(ev)
-
-    def mouseDoubleClickEvent(self, ev):
-        self.doubleClicked.emit(ev)
 
 
 class BookPreviewDialog(QDialog):

@@ -18,6 +18,8 @@ This plugin is compatible with the [ACSM Input plugin](https://github.com/Lesera
 
 Also integrates with the [OverDrive Link plugin](https://www.mobileread.com/forums/showthread.php?t=187919). If an existing book has a matching OverDrive link and no formats, the loan download will be added to the book.
 
+[![Buy me a coffee](https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=&slug=ping&button_colour=FFDD00&font_colour=000000&font_family=Bree&outline_colour=000000&coffee_colour=ffffff)](https://www.buymeacoffee.com/ping)
+
 ## Install
 
 Open Preferences > Plugins > Get new plugins, and install the "OverDrive Libby" User interface action plugin.

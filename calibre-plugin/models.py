@@ -273,6 +273,12 @@ class LibbyLoansModel(LibbyModel):
             self.filter_hide_books_already_in_library = value
             self.sort_rows()
 
+    def setData(self, index, loan, role=Qt.EditRole):
+        if role == Qt.EditRole:
+            self._rows[index.row()] = loan
+            self.dataChanged.emit(index, index)
+            return True
+
     def data(self, index, role):
         row, col = index.row(), index.column()
         if row >= self.rowCount() or col >= self.columnCount():

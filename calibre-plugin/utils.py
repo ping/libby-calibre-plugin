@@ -88,7 +88,7 @@ def generate_od_identifier(media: Dict, library: Dict) -> str:
         return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
 
 
-def rating_to_stars(value, inverse=False, star="★"):
+def rating_to_stars(value, star="★"):
     # round() uses banker's rounding, so 4.5 rounds to 4
     # which is non-intuitive
     with localcontext() as ctx:

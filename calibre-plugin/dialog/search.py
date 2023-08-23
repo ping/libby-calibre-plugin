@@ -14,9 +14,7 @@ from typing import Dict, List
 from calibre.constants import DEBUG
 from qt.core import (
     QAbstractItemView,
-    QApplication,
     QCursor,
-    QFont,
     QGridLayout,
     QIcon,
     QLineEdit,

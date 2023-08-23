@@ -103,8 +103,9 @@ class LoansDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.loans_model = LibbyLoansModel(None, [], self.db, self.resources)
-        self.loans_search_proxy_model = LibbyLoansSortFilterModel(self, db=self.db)
-        self.loans_search_proxy_model.setSourceModel(self.loans_model)
+        self.loans_search_proxy_model = LibbyLoansSortFilterModel(
+            self, model=self.loans_model, db=self.db
+        )
 
         # The main loan list
         self.loans_view = DefaultQTableView(

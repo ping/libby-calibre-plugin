@@ -153,8 +153,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.magazines_model = LibbyMagazinesModel(None, [], self.db)
-        self.magazines_search_proxy_model = LibbyMagazinesSortFilterModel(self, self.db)
-        self.magazines_search_proxy_model.setSourceModel(self.magazines_model)
+        self.magazines_search_proxy_model = LibbyMagazinesSortFilterModel(
+            self, model=self.magazines_model, db=self.db
+        )
 
         # The main magazines list
         self.magazines_view = DefaultQTableView(

@@ -99,8 +99,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.holds_model = LibbyHoldsModel(None, [], self.db)
-        self.holds_search_proxy_model = LibbyHoldsSortFilterModel(self, self.db)
-        self.holds_search_proxy_model.setSourceModel(self.holds_model)
+        self.holds_search_proxy_model = LibbyHoldsSortFilterModel(
+            self, model=self.holds_model, db=self.db
+        )
 
         self.holds_model.modelReset.connect(self.holds_model_changed)
         self.holds_model.rowsRemoved.connect(self.holds_model_changed)

@@ -205,13 +205,15 @@ class LibbyModel(QAbstractTableModel):
 class LibbySortFilterModel(QSortFilterProxyModel):
     filter_text_set = pyqtSignal()
 
-    def __init__(self, parent, db=None):
+    def __init__(self, parent, model=None, db=None):
         super().__init__(parent)
         self.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.setFilterKeyColumn(-1)
         self.setSortRole(LibbyModel.DisplaySortRole)
         self.filter_text = ""
         self.db = db
+        if model:
+            self.setSourceModel(model)
 
     def headerData(self, section, orientation, role):
         # if display role of vertical headers (row numbers)
@@ -402,8 +404,8 @@ class LibbyLoansModel(LibbyModel):
 
 
 class LibbyLoansSortFilterModel(LibbySortFilterModel):
-    def __init__(self, parent, db=None):
-        super().__init__(parent, db)
+    def __init__(self, parent, model=None, db=None):
+        super().__init__(parent, model, db)
         self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
         self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self.all_book_ids_identifiers = self.db.fields["identifiers"].table.book_col_map
@@ -673,8 +675,8 @@ class LibbyHoldsModel(LibbyModel):
 
 
 class LibbyHoldsSortFilterModel(LibbySortFilterModel):
-    def __init__(self, parent, db=None):
-        super().__init__(parent, db)
+    def __init__(self, parent, model=None, db=None):
+        super().__init__(parent, model, db)
         self.filter_hide_unavailable_holds = PREFS[
             PreferenceKeys.HIDE_HOLDS_UNAVAILABLE
         ]
@@ -858,8 +860,8 @@ class LibbyMagazinesModel(LibbyModel):
 
 
 class LibbyMagazinesSortFilterModel(LibbySortFilterModel):
-    def __init__(self, parent, db=None):
-        super().__init__(parent, db)
+    def __init__(self, parent, model=None, db=None):
+        super().__init__(parent, model, db)
         self.all_book_ids_titles = self.db.fields["title"].table.book_col_map
         self.all_book_ids_formats = self.db.fields["formats"].table.book_col_map
         self.filter_hide_magazines_already_in_library = PREFS[
@@ -1063,3 +1065,8 @@ class LibbySearchModel(LibbyModel):
                 ", ".join([s["advantageKey"] for s in available_sites]), text_length=15
             )
         return None
+
+
+class LibbySearchSortFilterModel(LibbySortFilterModel):
+    def __init__(self, parent, model=None, db=None):
+        super().__init__(parent, model, db)

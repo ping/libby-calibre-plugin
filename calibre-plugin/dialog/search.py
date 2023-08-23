@@ -22,7 +22,6 @@ from qt.core import (
     QLineEdit,
     QMenu,
     QPushButton,
-    QSortFilterProxyModel,
     QThread,
     QWidget,
     Qt,
@@ -38,7 +37,12 @@ from ..compat import (
 )
 from ..config import BorrowActions, MAX_SEARCH_LIBRARIES, PREFS, PreferenceKeys
 from ..libby import LibbyClient, LibbyFormats
-from ..models import LibbyModel, LibbySearchModel, get_media_title, truncate_for_display
+from ..models import (
+    LibbySearchModel,
+    LibbySearchSortFilterModel,
+    get_media_title,
+    truncate_for_display,
+)
 from ..overdrive import OverDriveClient
 from ..utils import PluginImages, obfuscate_name
 from ..workers import OverDriveMediaSearchWorker
@@ -79,11 +83,10 @@ class SearchDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         self.search_model = LibbySearchModel(None, [], self.db)
-        self.search_proxy_model = QSortFilterProxyModel(self)
-        self.search_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.search_proxy_model.setFilterKeyColumn(-1)
+        self.search_proxy_model = LibbySearchSortFilterModel(
+            self, model=self.search_model
+        )
         self.search_proxy_model.setSourceModel(self.search_model)
-        self.search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
 
         # The main search results list
         self.search_results_view = DefaultQTableView(

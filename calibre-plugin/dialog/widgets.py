@@ -10,9 +10,12 @@
 
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from qt.core import (
+    QAbstractItemView,
     QLabel,
     QMouseEvent,
+    QTableView,
     QWidget,
+    Qt,
     pyqtSignal,
 )
 
@@ -42,3 +45,18 @@ class ClickableQLabel(QLabel):
 
     def mouseDoubleClickEvent(self, ev):
         self.doubleClicked.emit(ev)
+
+
+class DefaultQTableView(QTableView):
+    def __init__(self, parent, model=None, min_width=0):
+        super().__init__(parent)
+        if min_width:
+            self.setMinimumWidth(min_width)
+        if model:
+            self.setModel(model)
+        self.setSortingEnabled(True)
+        self.setAlternatingRowColors(True)
+        self.sortByColumn(-1, Qt.AscendingOrder)
+        self.setTabKeyNavigation(False)  # prevents tab key being stuck in view
+        self.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)

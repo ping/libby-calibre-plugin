@@ -9,27 +9,27 @@
 #
 import copy
 from functools import cmp_to_key
-from typing import List, Dict
+from typing import Dict, List
 
 from calibre.constants import DEBUG
 from qt.core import (
     QAbstractItemView,
+    QApplication,
     QCursor,
+    QFont,
     QGridLayout,
     QIcon,
     QLineEdit,
     QMenu,
     QPushButton,
     QSortFilterProxyModel,
-    QTableView,
     QThread,
     QWidget,
     Qt,
-    QApplication,
-    QFont,
 )
 
 from .base import BaseDialogMixin
+from .widgets import DefaultQTableView
 from .. import DEMO_MODE
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
@@ -86,12 +86,9 @@ class SearchDialogMixin(BaseDialogMixin):
         self.search_proxy_model.setSortRole(LibbyModel.DisplaySortRole)
 
         # The main search results list
-        self.search_results_view = QTableView(self)
-        self.search_results_view.setSortingEnabled(True)
-        self.search_results_view.setAlternatingRowColors(True)
-        self.search_results_view.setMinimumWidth(self.min_view_width)
-        self.search_results_view.setModel(self.search_proxy_model)
-        self.search_results_view.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.search_results_view = DefaultQTableView(
+            self, model=self.search_proxy_model, min_width=self.min_view_width
+        )
         self.search_results_view.setSelectionMode(QAbstractItemView.SingleSelection)
         horizontal_header = self.search_results_view.horizontalHeader()
         for col_index in range(self.search_model.columnCount()):
@@ -101,8 +98,6 @@ class SearchDialogMixin(BaseDialogMixin):
                 if col_index == 0
                 else QHeaderView_ResizeMode_ResizeToContents,
             )
-        self.search_results_view.sortByColumn(-1, Qt.AscendingOrder)
-        self.search_results_view.setContextMenuPolicy(Qt.CustomContextMenu)
         # context menu
         self.search_results_view.customContextMenuRequested.connect(
             self.search_results_view_context_menu_requested

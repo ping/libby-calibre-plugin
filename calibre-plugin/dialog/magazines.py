@@ -26,13 +26,13 @@ from qt.core import (
     QLineEdit,
     QMenu,
     QPushButton,
-    QTableView,
     QThread,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
+from .widgets import DefaultQTableView
 from ..borrow_book import LibbyBorrowMedia
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
@@ -157,11 +157,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         self.magazines_search_proxy_model.setSourceModel(self.magazines_model)
 
         # The main magazines list
-        self.magazines_view = QTableView(self)
-        self.magazines_view.setSortingEnabled(True)
-        self.magazines_view.setAlternatingRowColors(True)
-        self.magazines_view.setMinimumWidth(self.min_view_width)
-        self.magazines_view.setModel(self.magazines_search_proxy_model)
+        self.magazines_view = DefaultQTableView(
+            self, model=self.magazines_search_proxy_model, min_width=self.min_view_width
+        )
         horizontal_header = self.magazines_view.horizontalHeader()
         for col_index in range(self.magazines_model.columnCount()):
             horizontal_header.setSectionResizeMode(
@@ -170,14 +168,8 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 if col_index == 0
                 else QHeaderView_ResizeMode_ResizeToContents,
             )
-        self.magazines_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.magazines_view.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.magazines_view.sortByColumn(-1, Qt.AscendingOrder)
-        self.magazines_view.setTabKeyNavigation(
-            False
-        )  # prevents tab key being stuck in view
         # add context menu
-        self.magazines_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.magazines_view.customContextMenuRequested.connect(
             self.magazines_view_context_menu_requested
         )

@@ -68,6 +68,26 @@ def get_media_title(
     return title
 
 
+def is_valid_type(media: Dict) -> bool:
+    is_downloadable_ebook = LibbyClient.is_downloadable_ebook_loan(media)
+    is_downloadable_magazine = (
+        False
+        if is_downloadable_ebook
+        else LibbyClient.is_downloadable_magazine_loan(media)
+    )
+    if not (
+        (is_downloadable_ebook and not PREFS[PreferenceKeys.HIDE_EBOOKS])
+        or (is_downloadable_magazine and not PREFS[PreferenceKeys.HIDE_MAGAZINES])
+        or (
+            PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
+            and not (is_downloadable_ebook or is_downloadable_magazine)
+        )
+    ):
+        return False
+
+    return True
+
+
 def truncate_for_display(text, text_length=30):
     if len(text) <= text_length:
         return text if not DEMO_MODE else obfuscate_name(text)
@@ -199,7 +219,7 @@ class LibbySortFilterModel(QSortFilterProxyModel):
             return section + 1
         return super().headerData(section, orientation, role)
 
-    def set_filter_text(self, filter_text_value):
+    def set_filter_text(self, filter_text_value: str):
         self.filter_text = icu_lower(str(filter_text_value).strip())
         self.invalidateFilter()
         self.filter_text_set.emit()
@@ -423,23 +443,8 @@ class LibbyLoansSortFilterModel(LibbySortFilterModel):
         model: LibbyModel = self.sourceModel()
         index = model.index(sourceRow, 0, sourceParent)
         loan = model.data(index, Qt.UserRole)
-        if not (
-            (
-                LibbyClient.is_downloadable_ebook_loan(loan)
-                and not PREFS[PreferenceKeys.HIDE_EBOOKS]
-            )
-            or (
-                LibbyClient.is_downloadable_magazine_loan(loan)
-                and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
-            )
-            or (
-                PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
-                and not (
-                    LibbyClient.is_downloadable_magazine_loan(loan)
-                    or LibbyClient.is_downloadable_ebook_loan(loan)
-                )
-            )
-        ):
+
+        if not is_valid_type(loan):
             return False
 
         if not (self.filter_text or self.filter_hide_books_already_in_library):
@@ -684,23 +689,7 @@ class LibbyHoldsSortFilterModel(LibbySortFilterModel):
         index = model.index(sourceRow, 0, sourceParent)
         hold = model.data(index, Qt.UserRole)
 
-        if not (
-            (
-                LibbyClient.is_downloadable_ebook_loan(hold)
-                and not PREFS[PreferenceKeys.HIDE_EBOOKS]
-            )
-            or (
-                LibbyClient.is_downloadable_magazine_loan(hold)
-                and not PREFS[PreferenceKeys.HIDE_MAGAZINES]
-            )
-            or (
-                PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
-                and not (
-                    LibbyClient.is_downloadable_magazine_loan(hold)
-                    or LibbyClient.is_downloadable_ebook_loan(hold)
-                )
-            )
-        ):
+        if not is_valid_type(hold):
             return False
 
         if not (self.filter_hide_unavailable_holds or self.filter_text):
@@ -971,17 +960,7 @@ class LibbySearchModel(LibbyModel):
         self._rows = []
         for r in synced_state["search_results"]:
             try:
-                if (
-                    LibbyClient.is_downloadable_ebook_loan(r)
-                    or LibbyClient.is_downloadable_magazine_loan(r)
-                    or (
-                        PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]
-                        and not (
-                            LibbyClient.is_downloadable_magazine_loan(r)
-                            or LibbyClient.is_downloadable_ebook_loan(r)
-                        )
-                    )
-                ):
+                if is_valid_type(r):
                     self._rows.append(r)
             except ValueError:
                 pass

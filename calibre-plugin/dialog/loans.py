@@ -16,7 +16,6 @@ from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
 from polyglot.builtins import as_unicode
 from qt.core import (
-    QAbstractItemView,
     QCheckBox,
     QCursor,
     QGridLayout,
@@ -25,13 +24,13 @@ from qt.core import (
     QLineEdit,
     QMenu,
     QPushButton,
-    QTableView,
     QThread,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
+from .widgets import DefaultQTableView
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
     QHeaderView_ResizeMode_Stretch,
@@ -108,11 +107,9 @@ class LoansDialogMixin(BaseDialogMixin):
         self.loans_search_proxy_model.setSourceModel(self.loans_model)
 
         # The main loan list
-        self.loans_view = QTableView(self)
-        self.loans_view.setSortingEnabled(True)
-        self.loans_view.setAlternatingRowColors(True)
-        self.loans_view.setMinimumWidth(self.min_view_width)
-        self.loans_view.setModel(self.loans_search_proxy_model)
+        self.loans_view = DefaultQTableView(
+            self, model=self.loans_search_proxy_model, min_width=self.min_view_width
+        )
         horizontal_header = self.loans_view.horizontalHeader()
         for col_index in range(self.loans_model.columnCount()):
             horizontal_header.setSectionResizeMode(
@@ -121,13 +118,7 @@ class LoansDialogMixin(BaseDialogMixin):
                 if col_index == 0
                 else QHeaderView_ResizeMode_ResizeToContents,
             )
-        self.loans_view.setSelectionBehavior(QAbstractItemView.SelectRows)
-        self.loans_view.sortByColumn(-1, Qt.AscendingOrder)
-        self.loans_view.setTabKeyNavigation(
-            False
-        )  # prevents tab key being stuck in view
         # add context menu
-        self.loans_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.loans_view.customContextMenuRequested.connect(
             self.loans_view_context_menu_requested
         )

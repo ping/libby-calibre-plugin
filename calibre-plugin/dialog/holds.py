@@ -28,12 +28,12 @@ from qt.core import (
     QMenu,
     QPushButton,
     QSlider,
-    QTableView,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
+from .widgets import DefaultQTableView
 from ..borrow_book import LibbyBorrowMedia
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
@@ -107,11 +107,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.holds_model.dataChanged.connect(self.holds_model_changed)
 
         # The main holds list
-        self.holds_view = QTableView(self)
-        self.holds_view.setSortingEnabled(True)
-        self.holds_view.setAlternatingRowColors(True)
-        self.holds_view.setMinimumWidth(self.min_view_width)
-        self.holds_view.setModel(self.holds_search_proxy_model)
+        self.holds_view = DefaultQTableView(
+            self, model=self.holds_search_proxy_model, min_width=self.min_view_width
+        )
         horizontal_header = self.holds_view.horizontalHeader()
         for col_index in range(self.holds_model.columnCount()):
             horizontal_header.setSectionResizeMode(
@@ -120,12 +118,7 @@ class HoldsDialogMixin(BaseDialogMixin):
                 if col_index == 0
                 else QHeaderView_ResizeMode_ResizeToContents,
             )
-        self.holds_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.holds_view.setSelectionMode(QAbstractItemView.SingleSelection)
-        self.holds_view.sortByColumn(-1, Qt.AscendingOrder)
-        self.holds_view.setTabKeyNavigation(
-            False
-        )  # prevents tab key being stuck in view
         # add debug trigger
         self.holds_view.doubleClicked.connect(
             lambda mi: self.display_debug("Hold", mi.data(Qt.UserRole))
@@ -133,7 +126,6 @@ class HoldsDialogMixin(BaseDialogMixin):
             else self.show_book_details(mi.data(Qt.UserRole))
         )
         # add context menu
-        self.holds_view.setContextMenuPolicy(Qt.CustomContextMenu)
         self.holds_view.customContextMenuRequested.connect(
             self.holds_view_context_menu_requested
         )

@@ -896,11 +896,10 @@ class LibbyClient(object):
             lending_period_type = {"ebook": "book"}.get(media["type"]["id"]) or media[
                 "type"
             ]["id"]
-            days = (
-                card.get("lendingPeriods", {})
-                .get(lending_period_type, {})
-                .get("preference", [0, "days"])[0]
-            )
+            lending_period = card.get("lendingPeriods", {}).get(lending_period_type, {})
+            days = lending_period.get("preference", [0, "days"])[0]
+            if not days:
+                days = lending_period.get("options", [[0, "days"]])[-1][0]
             return self.borrow_title(
                 media["id"],
                 media["type"]["id"],

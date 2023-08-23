@@ -722,12 +722,9 @@ class BookPreviewDialog(QDialog):
                 if media.get("starRating") and media.get("starRatingCount"):
                     ratings_layout = QHBoxLayout()
                     ratings_layout.addWidget(QLabel("<b>" + _("Rating") + "</b>: "))
-                    ratings_lbl = QLabel(
-                        f'{rating_to_stars(media["starRating"])}'
-                        f'{rating_to_stars(media["starRating"], inverse=True)}'
-                    )
+                    ratings_lbl = QLabel(f'{rating_to_stars(media["starRating"])}')
                     ratings_lbl.setToolTip(
-                        f'{media["starRating"]} ({media["starRatingCount"]})'
+                        f'{media["starRating"]}/5 ({media["starRatingCount"]})'
                     )
                     ratings_lbl.setFont(QFont(rating_font()))
                     ratings_layout.addWidget(ratings_lbl)

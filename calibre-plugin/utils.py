@@ -88,16 +88,14 @@ def generate_od_identifier(media: Dict, library: Dict) -> str:
         return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
 
 
-def rating_to_stars(value, inverse=False, star="⭑", inv_star="⭒"):
+def rating_to_stars(value, inverse=False, star="★"):
     # round() uses banker's rounding, so 4.5 rounds to 4
     # which is non-intuitive
     with localcontext() as ctx:
         ctx.rounding = ROUND_HALF_UP
-        value = Decimal(value).to_integral_value()
-        value = int(5 - value) if inverse else int(value)
-        r = max(0, min(value or 0, 10))
-        ans = (star if not inverse else inv_star) * r
-        return ans
+        value = int(Decimal(value).to_integral_value())
+        r = max(0, min(value or 0, 5))
+        return star * r
 
 
 def svg_to_pixmap(

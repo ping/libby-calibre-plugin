@@ -21,14 +21,13 @@ from qt.core import (
     QIcon,
     QLineEdit,
     QMenu,
-    QPushButton,
     QThread,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
-from .widgets import DefaultQTableView
+from .widgets import DefaultQPushButton, DefaultQTableView
 from .. import DEMO_MODE
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
@@ -73,9 +72,10 @@ class SearchDialogMixin(BaseDialogMixin):
         )
 
         # Search button
-        self.search_btn = QPushButton(_c("Search"), self)
-        self.search_btn.setIcon(self.resources[PluginImages.Search])
-        # self.search_btn.setAutoDefault(False)
+        self.search_btn = DefaultQPushButton(
+            _c("Search"), self.resources[PluginImages.Search], self
+        )
+        self.search_btn.setAutoDefault(True)
         self.search_btn.clicked.connect(self.search_btn_clicked)
         search_widget.layout.addWidget(
             self.search_btn, widget_row_pos, self.view_hspan - 1
@@ -128,23 +128,17 @@ class SearchDialogMixin(BaseDialogMixin):
             PreferenceKeys.LAST_BORROW_ACTION
         ] == BorrowActions.BORROW or not hasattr(self, "download_loan")
 
-        button_font = QFont(QApplication.font())  # make it bigger
-        button_style = "padding: 2px 16px"
-        self.search_borrow_btn = QPushButton(
+        self.search_borrow_btn = DefaultQPushButton(
             _("Borrow")
             if borrow_action_default_is_borrow
             else _("Borrow and Download"),
+            self.resources[PluginImages.Add],
             self,
         )
-        self.search_borrow_btn.setIcon(self.resources[PluginImages.Add])
-        self.search_borrow_btn.setStyleSheet(button_style)
-        self.search_borrow_btn.setFont(button_font)
         search_widget.layout.addWidget(
             self.search_borrow_btn, widget_row_pos, self.view_hspan - 1
         )
-        self.hold_btn = QPushButton(_("Place Hold"), self)
-        self.hold_btn.setStyleSheet(button_style)
-        self.hold_btn.setFont(button_font)
+        self.hold_btn = DefaultQPushButton(_("Place Hold"), None, self)
         search_widget.layout.addWidget(
             self.hold_btn, widget_row_pos, self.view_hspan - 2
         )

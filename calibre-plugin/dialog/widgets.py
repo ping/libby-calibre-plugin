@@ -11,8 +11,11 @@
 from calibre.gui2.viewer.overlay import LoadingOverlay
 from qt.core import (
     QAbstractItemView,
+    QApplication,
+    QFont,
     QLabel,
     QMouseEvent,
+    QPushButton,
     QTableView,
     QWidget,
     Qt,
@@ -60,3 +63,13 @@ class DefaultQTableView(QTableView):
         self.setTabKeyNavigation(False)  # prevents tab key being stuck in view
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
+
+
+class DefaultQPushButton(QPushButton):
+    def __init__(self, text, icon=None, parent=None):
+        super().__init__(text, parent)
+        self.setStyleSheet("padding: 3px 16px")
+        self.setFont(QFont(QApplication.font()))
+        self.setAutoDefault(False)
+        if icon:
+            self.setIcon(icon)

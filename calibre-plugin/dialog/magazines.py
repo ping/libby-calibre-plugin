@@ -25,14 +25,13 @@ from qt.core import (
     QLabel,
     QLineEdit,
     QMenu,
-    QPushButton,
     QThread,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
-from .widgets import DefaultQTableView
+from .widgets import DefaultQPushButton, DefaultQTableView
 from ..borrow_book import LibbyBorrowMedia
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
@@ -119,9 +118,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         )
 
         # Add Magazine button
-        self.add_magazine_btn = QPushButton(_c("Add"), self)
-        self.add_magazine_btn.setIcon(self.resources[PluginImages.AddMagazine])
-        self.add_magazine_btn.setAutoDefault(False)
+        self.add_magazine_btn = DefaultQPushButton(
+            _c("Add"), self.resources[PluginImages.AddMagazine], self
+        )
         self.add_magazine_btn.setToolTip(_("Add to monitor for new issues"))
         self.add_magazine_btn.clicked.connect(self.add_magazine_btn_clicked)
         magazines_widget.layout.addWidget(
@@ -130,9 +129,9 @@ class MagazinesDialogMixin(BaseDialogMixin):
         widget_row_pos += 1
 
         # Refresh button
-        self.magazines_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.magazines_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
-        self.magazines_refresh_btn.setAutoDefault(False)
+        self.magazines_refresh_btn = DefaultQPushButton(
+            _c("Refresh"), self.resources[PluginImages.Refresh], self
+        )
         self.magazines_refresh_btn.setToolTip(_("Get latest magazines"))
         self.magazines_refresh_btn.clicked.connect(self.magazines_refresh_btn_clicked)
         magazines_widget.layout.addWidget(self.magazines_refresh_btn, widget_row_pos, 0)

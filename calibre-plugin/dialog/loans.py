@@ -23,14 +23,13 @@ from qt.core import (
     QLabel,
     QLineEdit,
     QMenu,
-    QPushButton,
     QThread,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
-from .widgets import DefaultQTableView
+from .widgets import DefaultQPushButton, DefaultQTableView
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
     QHeaderView_ResizeMode_Stretch,
@@ -80,9 +79,9 @@ class LoansDialogMixin(BaseDialogMixin):
         widget_row_pos = 0
 
         # Refresh button
-        self.loans_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.loans_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
-        self.loans_refresh_btn.setAutoDefault(False)
+        self.loans_refresh_btn = DefaultQPushButton(
+            _c("Refresh"), self.resources[PluginImages.Refresh], self
+        )
         self.loans_refresh_btn.setToolTip(_("Get latest loans"))
         self.loans_refresh_btn.clicked.connect(self.loans_refresh_btn_clicked)
         widget.layout.addWidget(self.loans_refresh_btn, widget_row_pos, 0)
@@ -155,11 +154,10 @@ class LoansDialogMixin(BaseDialogMixin):
             self.hide_book_already_in_lib_checkbox, widget_row_pos, 0, 1, 2
         )
         # Download button
-        self.download_btn = QPushButton(_c("Download"), self)
-        self.download_btn.setIcon(self.resources[PluginImages.Download])
-        self.download_btn.setAutoDefault(False)
+        self.download_btn = DefaultQPushButton(
+            _c("Download"), self.resources[PluginImages.Download], self
+        )
         self.download_btn.setToolTip(_("Download selected loans"))
-        self.download_btn.setStyleSheet("padding: 4px 16px")
         self.download_btn.clicked.connect(self.download_btn_clicked)
         widget.layout.addWidget(
             self.download_btn,

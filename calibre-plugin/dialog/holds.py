@@ -26,14 +26,13 @@ from qt.core import (
     QLayout,
     QLineEdit,
     QMenu,
-    QPushButton,
     QSlider,
     QWidget,
     Qt,
 )
 
 from .base import BaseDialogMixin
-from .widgets import DefaultQTableView
+from .widgets import DefaultQPushButton, DefaultQTableView
 from ..borrow_book import LibbyBorrowMedia
 from ..compat import (
     QHeaderView_ResizeMode_ResizeToContents,
@@ -76,9 +75,9 @@ class HoldsDialogMixin(BaseDialogMixin):
         widget_row_pos = 0
 
         # Refresh button
-        self.holds_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.holds_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
-        self.holds_refresh_btn.setAutoDefault(False)
+        self.holds_refresh_btn = DefaultQPushButton(
+            _c("Refresh"), self.resources[PluginImages.Refresh], self
+        )
         self.holds_refresh_btn.setToolTip(_("Get latest holds"))
         self.holds_refresh_btn.clicked.connect(self.holds_refresh_btn_clicked)
         widget.layout.addWidget(self.holds_refresh_btn, widget_row_pos, 0)
@@ -523,15 +522,15 @@ class SuspendHoldDialog(QDialog):
                 if suspend_interval.days >= 0:
                     self.days_slider.setValue(suspend_interval.days + 1)
 
-        self.cancel_btn = QPushButton(_c("Cancel"), self)
-        self.cancel_btn.setIcon(self.resources[PluginImages.Cancel])
-        self.cancel_btn.setAutoDefault(False)
+        self.cancel_btn = DefaultQPushButton(
+            _c("Cancel"), self.resources[PluginImages.Cancel], self
+        )
         self.cancel_btn.clicked.connect(lambda: self.reject())
         layout.addWidget(self.cancel_btn, widget_row_pos, 0)
 
-        self.update_btn = QPushButton(_c("OK"), self)
-        self.update_btn.setIcon(self.resources[PluginImages.Okay])
-        self.update_btn.setAutoDefault(False)
+        self.update_btn = DefaultQPushButton(
+            _c("OK"), self.resources[PluginImages.Okay], self
+        )
         self.update_btn.clicked.connect(self.update_btn_clicked)
         layout.addWidget(self.update_btn, widget_row_pos, 1)
         widget_row_pos += 1

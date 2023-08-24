@@ -7,11 +7,10 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
+import math
 import random
 from collections import namedtuple
 from datetime import datetime
-from decimal import localcontext, Decimal, ROUND_HALF_UP
 from enum import Enum
 from typing import Dict, Optional
 
@@ -88,14 +87,12 @@ def generate_od_identifier(media: Dict, library: Dict) -> str:
         return f'{media["id"]}@{library["preferredKey"]}.overdrive.com'
 
 
-def rating_to_stars(value, star="★"):
-    # round() uses banker's rounding, so 4.5 rounds to 4
-    # which is non-intuitive
-    with localcontext() as ctx:
-        ctx.rounding = ROUND_HALF_UP
-        value = int(Decimal(value).to_integral_value())
-        r = max(0, min(value or 0, 5))
-        return star * r
+def rating_to_stars(value, star="★", half="⯨"):
+    r = round(value * 2) / 2  # round to halves
+    t = star * math.floor(r)
+    if r - math.floor(r):
+        t += half
+    return t
 
 
 def svg_to_pixmap(

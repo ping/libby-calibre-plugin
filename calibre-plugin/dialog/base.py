@@ -500,6 +500,8 @@ class BaseDialogMixin(QDialog):
         :param msg:
         :return:
         """
+        if not err:
+            return
         if err is KeyboardInterrupt:
             return
         import traceback

@@ -28,13 +28,9 @@ from .download import LibbyDownload
 from .empty_download import EmptyBookDownload
 from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
-from .magazine_download_utils import (
-    build_opf_package,
-    guess_mimetype,
-    is_windows,
-    slugify,
-)
+from .magazine_download_utils import build_opf_package, guess_mimetype
 from .overdrive import OverDriveClient
+from .utils import is_windows, slugify
 
 NAV_XHTMLTEMPLATE = """
 <!DOCTYPE html>

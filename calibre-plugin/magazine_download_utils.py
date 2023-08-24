@@ -8,10 +8,6 @@
 # information
 #
 
-import os
-import platform
-import re
-import unicodedata
 import xml.etree.ElementTree as ET
 from mimetypes import guess_type
 from pathlib import Path
@@ -50,33 +46,6 @@ def guess_mimetype(url: str) -> Optional[str]:
     if not mime_type:
         mime_type = MIMETYPE_MAP.get(url_path.suffix.lower(), None)
     return mime_type
-
-
-def is_windows() -> bool:
-    """
-    Returns True if running on Windows.
-
-    :return:
-    """
-    return os.name == "nt" or platform.system().lower() == "windows"
-
-
-# From django
-def slugify(value: str, allow_unicode: bool = False) -> str:
-    """
-    Convert to ASCII if 'allow_unicode' is False. Convert spaces to hyphens.
-    Remove characters that aren't alphanumerics, underscores, or hyphens.
-    Convert to lowercase. Also strip leading and trailing whitespace.
-    """
-    if allow_unicode:
-        value = unicodedata.normalize("NFKC", value)
-        value = re.sub(r"[^\w\s-]", "", value, flags=re.U).strip().lower()
-        return re.sub(r"[-\s]+", "-", value, flags=re.U)
-    value = (
-        unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
-    )
-    value = re.sub(r"[^\w\s-]", "", value).strip().lower()
-    return re.sub(r"[-\s]+", "-", value)
 
 
 def build_opf_package(

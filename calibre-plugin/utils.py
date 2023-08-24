@@ -8,7 +8,11 @@
 # information
 #
 import math
+import os
+import platform
 import random
+import re
+import unicodedata
 from collections import namedtuple
 from datetime import datetime
 from enum import Enum
@@ -62,6 +66,33 @@ def obfuscate_int(value: int, offset=5, min_value=0, max_val=30):
             max(min_value, min(value, max_val) - offset), min(max_val, value + offset)
         )
     )
+
+
+def is_windows() -> bool:
+    """
+    Returns True if running on Windows.
+
+    :return:
+    """
+    return os.name == "nt" or platform.system().lower() == "windows"
+
+
+# From django
+def slugify(value: str, allow_unicode: bool = False) -> str:
+    """
+    Convert to ASCII if 'allow_unicode' is False. Convert spaces to hyphens.
+    Remove characters that aren't alphanumerics, underscores, or hyphens.
+    Convert to lowercase. Also strip leading and trailing whitespace.
+    """
+    if allow_unicode:
+        value = unicodedata.normalize("NFKC", value)
+        value = re.sub(r"[^\w\s-]", "", value, flags=re.U).strip().lower()
+        return re.sub(r"[-\s]+", "-", value, flags=re.U)
+    value = (
+        unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+    )
+    value = re.sub(r"[^\w\s-]", "", value).strip().lower()
+    return re.sub(r"[-\s]+", "-", value)
 
 
 def generate_od_identifier(media: Dict, library: Dict) -> str:

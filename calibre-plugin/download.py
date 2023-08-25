@@ -12,6 +12,9 @@ import time
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from calibre.ebooks.metadata.meta import get_metadata
+from calibre.ebooks.metadata.worker import run_import_plugins
+
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .overdrive import OverDriveClient
@@ -200,15 +203,32 @@ class LibbyDownload:
                     ext=ext.upper(), book=metadata.title
                 )
             )
+            # we have to run_import_plugins first so that we can get
+            # the correct metadata for the .acsm
+            new_path = run_import_plugins(
+                (str(downloaded_file),),
+                time.monotonic_ns(),
+                str(downloaded_file.parent),
+            )[0]
+            new_ext = Path(new_path).suffix[1:]
+
             # if book_id is found, it's an empty book, download and add the epub/pdf as a format
             successfully_added = db.add_format(
-                book_id, ext.upper(), str(downloaded_file), replace=False
+                book_id, new_ext.upper(), new_path, replace=False
             )
             if successfully_added:
                 metadata = self.update_metadata(
                     gui, loan, library, format_id, metadata, tags
                 )
-                db.set_metadata(book_id, metadata)
+                # Reference: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L108-L116
+                with open(new_path, "rb") as f:
+                    new_metadata = get_metadata(f, new_ext, force_read_metadata=True)
+                if metadata.pubdate and metadata.pubdate.year < 1000:
+                    # workaround for pubdate not being updated when it's not defined
+                    metadata.pubdate = None
+                # we update new_metadata using old metadata to keep old metadata as precedence
+                new_metadata.smart_update(metadata)
+                db.set_metadata(book_id, new_metadata)
                 self.update_custom_columns(book_id, loan, db, log)
 
                 if PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]:
@@ -216,8 +236,6 @@ class LibbyDownload:
                 gui.library_view.model().refresh_ids([book_id])
         else:
             # add as a new book
-            from calibre.ebooks.metadata.meta import get_metadata
-            from calibre.ebooks.metadata.worker import run_import_plugins
 
             # we have to run_import_plugins first so that we can get
             # the correct metadata for the .acsm

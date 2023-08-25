@@ -483,14 +483,11 @@ class ConfigWidget(QWidget):
                 layout.setStretch(1, 1)
                 loan_layout.addRow(layout)
 
-        loans_sect_row_span = 1
         # ------------------------------------ Holds ------------------------------------
         holds_section = QGroupBox(_("Holds"))
         holds_layout = QFormLayout()
         holds_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         holds_section.setLayout(holds_layout)
-        self.layout.addWidget(holds_section, loans_sect_row_span, 1)
-        loans_sect_row_span += 1
 
         # Hide unavailable holds
         self.hide_holds_unavailable_checkbox = QCheckBox(
@@ -521,8 +518,6 @@ class ConfigWidget(QWidget):
         search_layout = QFormLayout()
         search_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         search_section.setLayout(search_layout)
-        self.layout.addWidget(search_section, loans_sect_row_span, 1)
-        loans_sect_row_span += 1
 
         self.search_results_max_txt = QSpinBox(self)
         self.search_results_max_txt.setToolTip(
@@ -560,8 +555,6 @@ class ConfigWidget(QWidget):
         general_layout = QFormLayout()
         general_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         general_section.setLayout(general_layout)
-        self.layout.addWidget(general_section, loans_sect_row_span, 1)
-        loans_sect_row_span += 1
 
         # Include non-downloadables
         self.incl_nondownloadable_checkbox = QCheckBox(
@@ -591,8 +584,6 @@ class ConfigWidget(QWidget):
         network_layout = QFormLayout()
         network_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         network_section.setLayout(network_layout)
-        self.layout.addWidget(network_section, loans_sect_row_span, 1)
-        loans_sect_row_span += 1
 
         self.network_timeout_txt = QSpinBox(self)
         self.network_timeout_txt.setToolTip(
@@ -614,8 +605,13 @@ class ConfigWidget(QWidget):
         self.network_retry_txt.setValue(PREFS[PreferenceKeys.NETWORK_RETRY])
         network_layout.addRow(PreferenceTexts.NETWORK_RETRY, self.network_retry_txt)
 
-        # add this last so we can set rowSpan correctly
-        self.layout.addWidget(loans_section, 1, 0, loans_sect_row_span - 1, 1)
+        # add it all here to ensure tab order is okay
+        sections = (holds_section, search_section, general_section, network_section)
+        loans_sect_row_span = len(sections)
+        self.layout.addWidget(loans_section, 1, 0, loans_sect_row_span, 1)
+        loans_sect_row_span = 1
+        for i, sect in enumerate(sections, start=1):
+            self.layout.addWidget(sect, i, 1)
 
         # Help label
         self.help_lbl = QLabel(

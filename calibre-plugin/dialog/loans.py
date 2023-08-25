@@ -580,8 +580,12 @@ class LoansDialogMixin(BaseDialogMixin):
             # self.gui.job_exception(job, dialog_title=_c("Failed to download e-book"))
             self.unhandled_exception(job.exception, msg=_c("Failed to download e-book"))
 
-        if job.result:
-            self.loans_search_proxy_model.unhide(job.result)
+        try:
+            if job.result:
+                self.loans_search_proxy_model.unhide(job.result)
+        except RuntimeError as runtime_err:
+            # most likely because the plugin UI was closed before download was completed
+            self.logger.warning("Error displaying media results: %s", runtime_err)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def download_empty_book(self, loan, format_id, tags=None):

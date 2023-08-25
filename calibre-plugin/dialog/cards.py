@@ -26,6 +26,7 @@ from qt.core import (
     QVBoxLayout,
     QWidget,
     Qt,
+    QApplication,
 )
 
 from .base import BaseDialogMixin
@@ -63,7 +64,12 @@ class CardWidget(QWidget):
 
         # Library Card Icon
         library_card_lbl = QLabel(self)
-        library_card_lbl.setPixmap(self.tab.get_card_pixmap(library))
+        card_icon_size = (40, 30)
+        card_pixmap = self.tab.get_card_pixmap(
+            library, size=tuple([int(tab.dpr * s) for s in card_icon_size])
+        )
+        card_pixmap.setDevicePixelRatio(tab.dpr)
+        library_card_lbl.setPixmap(card_pixmap)
         layout.addWidget(library_card_lbl, widget_row_pos, 0)
 
         # Library Name
@@ -263,7 +269,7 @@ class CardWidget(QWidget):
 class CardsDialogMixin(BaseDialogMixin):
     def __init__(self, gui, icon, do_user_config, icons):
         super().__init__(gui, icon, do_user_config, icons)
-
+        self.dpr = QApplication.instance().devicePixelRatio()
         self.card_widgets = []
         self.cards_tab_widget = QWidget()
         self.cards_tab_widget.layout = QVBoxLayout()

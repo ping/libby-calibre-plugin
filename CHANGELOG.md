@@ -5,6 +5,7 @@ Unreleased
 - New: Copy the Libby share link for a book
 - Fix: Borrowing with a card that has no lending period preference
 - Fix: Display of rating in book details
+- Fix: Properly update empty book without any identifiers (ref #8)
 
 Version 0.1.7 - 2023-08-20
 - New: If "Include titles without downloadable formats" is enabled, titles that do not have a downloadable format will be shown. In addition, when the title is chosen for download, the plugin will create an Empty Book

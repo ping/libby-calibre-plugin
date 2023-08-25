@@ -449,15 +449,20 @@ class LibbyLoansSortFilterModel(LibbySortFilterModel):
         if not is_valid_type(loan):
             return False
 
+        try:
+            loan_format = LibbyClient.get_loan_format(
+                loan,
+                PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
+                raise_if_not_downloadable=not PREFS[
+                    PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES
+                ],
+            )
+        except ValueError:
+            return False
+
         if not (self.filter_text or self.filter_hide_books_already_in_library):
             # return early if no filters
             return True
-
-        loan_format = LibbyClient.get_loan_format(
-            loan,
-            PREFS[PreferenceKeys.PREFER_OPEN_FORMATS],
-            raise_if_not_downloadable=False,
-        )
 
         loan_title1 = icu_lower(get_media_title(loan).strip())
         if self.filter_hide_books_already_in_library:

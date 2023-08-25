@@ -388,7 +388,10 @@ class LoansDialogMixin(BaseDialogMixin):
                 # try again without format_id
                 loan_isbn = OverDriveClient.extract_isbn(loan.get("formats", []), [])
             loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
-            identifier_conditions: List[str] = []
+            identifier_conditions: List[str] = [
+                f'title:"""={get_media_title(loan)}"""',
+                f'title:"""={get_media_title(loan, include_subtitle=True)}"""',
+            ]
             if loan_isbn:
                 identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
             if loan_asin:
@@ -410,7 +413,23 @@ class LoansDialogMixin(BaseDialogMixin):
                     search_query,
                 )
                 book_ids = list(self.db.search(search_query, restriction=restriction))
-                book_id = book_ids[0] if book_ids else 0
+                # prioritise match by identifiers
+                for bi in book_ids:
+                    identifiers = self.db.get_metadata(bi).get_identifiers()
+                    if (
+                        loan_isbn
+                        and identifiers.get("isbn")
+                        and loan_isbn == identifiers.get("isbn")
+                    ) or (
+                        loan_asin
+                        and identifiers.get("amazon")
+                        and loan_asin == identifiers.get("amazon")
+                    ):
+                        book_id = bi
+                        break
+                if not book_id:
+                    # we still haven't matched one using identifiers, then just take the first one
+                    book_id = book_ids[0] if book_ids else 0
                 mi = self.db.get_metadata(book_id) if book_id else None
         return book_id, mi
 

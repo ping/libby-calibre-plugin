@@ -317,10 +317,11 @@ class BaseDialogMixin(QDialog):
     def find_library_matches(self, media):
         loan_isbn = OverDriveClient.extract_isbn(media.get("formats", []), [])
         loan_asin = OverDriveClient.extract_asin(media.get("formats", []))
-        search_conditions: List[str] = [
-            f'title:"""={get_media_title(media)}"""',
-            f'title:"""={get_media_title(media, include_subtitle=True)}"""',
-        ]
+        search_conditions: List[str] = [f'title:"""={get_media_title(media)}"""']
+        if media.get("subtitle"):
+            search_conditions.append(
+                f'title:"""={get_media_title(media, include_subtitle=True)}"""'
+            )
         if loan_isbn:
             search_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
         if loan_asin:

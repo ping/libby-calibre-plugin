@@ -388,10 +388,11 @@ class LoansDialogMixin(BaseDialogMixin):
                 # try again without format_id
                 loan_isbn = OverDriveClient.extract_isbn(loan.get("formats", []), [])
             loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
-            identifier_conditions: List[str] = [
-                f'title:"""={get_media_title(loan)}"""',
-                f'title:"""={get_media_title(loan, include_subtitle=True)}"""',
-            ]
+            identifier_conditions: List[str] = [f'title:"""={get_media_title(loan)}"""']
+            if loan.get("subtitle"):
+                identifier_conditions.append(
+                    f'title:"""={get_media_title(loan, include_subtitle=True)}"""'
+                )
             if loan_isbn:
                 identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
             if loan_asin:

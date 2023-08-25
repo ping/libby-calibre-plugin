@@ -47,7 +47,6 @@ from ..models import (
     LibbyHoldsModel,
     LibbyHoldsSortFilterModel,
     get_media_title,
-    truncate_for_display,
 )
 from ..utils import PluginImages
 
@@ -288,16 +287,10 @@ class HoldsDialogMixin(BaseDialogMixin):
             return
         indices = selection_model.selectedRows()
         menu = QMenu(self)
-        view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
-        view_in_libby_action.triggered.connect(
-            lambda: self.view_in_libby_action_triggered(indices, self.holds_model)
-        )
-        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
-        view_in_overdrive_action.triggered.connect(
-            lambda: self.view_in_overdrive_action_triggered(indices, self.holds_model)
-        )
+        menu.setToolTipsVisible(True)
+
+        # add view in OverDrive/Libby menu actions
+        self.add_view_in_menu_actions(menu, indices, self.holds_model)
 
         selected_hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
         # view book details
@@ -306,19 +299,8 @@ class HoldsDialogMixin(BaseDialogMixin):
         self.add_copy_share_link_menu_action(menu, selected_hold)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_hold)
-
-        if hasattr(self, "search_for"):
-            search_action = menu.addAction(
-                _('Search for "{book}"').format(
-                    book=truncate_for_display(get_media_title(selected_hold))
-                )
-            )
-            search_action.setIcon(self.resources[PluginImages.Search])
-            search_action.triggered.connect(
-                lambda: self.search_for(
-                    f'{get_media_title(selected_hold)} {selected_hold.get("firstCreatorName", "")}'
-                )
-            )
+        # search for title
+        self.add_search_for_title_menu_action(menu, selected_hold)
 
         edit_hold_action = menu.addAction(_("Manage hold"))
         edit_hold_action.setIcon(self.resources[PluginImages.Edit])

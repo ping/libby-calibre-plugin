@@ -292,18 +292,10 @@ class MagazinesDialogMixin(BaseDialogMixin):
             return
         indices = selection_model.selectedRows()
         menu = QMenu(self)
-        view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
-        view_in_libby_action.triggered.connect(
-            lambda: self.view_in_libby_action_triggered(indices, self.magazines_model)
-        )
-        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
-        view_in_overdrive_action.triggered.connect(
-            lambda: self.view_in_overdrive_action_triggered(
-                indices, self.magazines_model
-            )
-        )
+        menu.setToolTipsVisible(True)
+
+        # add view in OverDrive/Libby menu actions
+        self.add_view_in_menu_actions(menu, indices, self.magazines_model)
 
         selected_magazine = self.magazines_view.indexAt(pos).data(Qt.UserRole)
         # view book details

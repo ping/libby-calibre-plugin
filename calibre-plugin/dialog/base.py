@@ -58,6 +58,7 @@ from ..models import (
     LOAN_TYPE_TRANSLATION,
     LibbyModel,
     get_media_title,
+    truncate_for_display,
 )
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
@@ -214,6 +215,18 @@ class BaseDialogMixin(QDialog):
     def open_link(self, link):
         QDesktopServices.openUrl(QUrl(link))
 
+    def add_view_in_menu_actions(self, menu, indices, libby_model):
+        view_in_libby_action = menu.addAction(_("View in Libby"))
+        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
+        view_in_libby_action.triggered.connect(
+            lambda: self.view_in_libby_action_triggered(indices, libby_model)
+        )
+        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
+        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
+        view_in_overdrive_action.triggered.connect(
+            lambda: self.view_in_overdrive_action_triggered(indices, libby_model)
+        )
+
     def view_in_libby_action_triggered(
         self, indices, model: LibbyModel, card: Optional[Dict] = None
     ):
@@ -272,6 +285,20 @@ class BaseDialogMixin(QDialog):
         preview_action = menu.addAction(_("Search in calibre library"))
         preview_action.setIcon(self.resources[PluginImages.Search])
         preview_action.triggered.connect(lambda: self.find_library_matches(media))
+
+    def add_search_for_title_menu_action(self, menu, media):
+        if hasattr(self, "search_for"):
+            search_action = menu.addAction(
+                _('Search for "{book}"').format(
+                    book=truncate_for_display(get_media_title(media))
+                )
+            )
+            search_action.setIcon(self.resources[PluginImages.Search])
+            search_action.triggered.connect(
+                lambda: self.search_for(
+                    f'{get_media_title(media)} {media.get("firstCreatorName", "")}'.strip()
+                )
+            )
 
     def add_copy_share_link_menu_action(self, menu, media):
         copy_share_link_action = menu.addAction(_("Copy Libby share link"))

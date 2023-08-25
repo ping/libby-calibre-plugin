@@ -234,13 +234,9 @@ class LoansDialogMixin(BaseDialogMixin):
         indices = selection_model.selectedRows()
         menu = QMenu(self)
         menu.setToolTipsVisible(True)
-        view_in_libby_action = menu.addAction(_("View in Libby"))
-        view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
-        view_in_libby_action.triggered.connect(
-            lambda: self.view_in_libby_action_triggered(indices, self.loans_model)
-        )
-        view_in_overdrive_action = menu.addAction(_("View in OverDrive"))
-        view_in_overdrive_action.setIcon(self.resources[PluginImages.ExternalLink])
+
+        # add view in OverDrive/Libby menu actions
+        self.add_view_in_menu_actions(menu, indices, self.loans_model)
 
         selected_loan = self.loans_view.indexAt(pos).data(Qt.UserRole)
 
@@ -282,22 +278,9 @@ class LoansDialogMixin(BaseDialogMixin):
         self.add_copy_share_link_menu_action(menu, selected_loan)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_loan)
-        if hasattr(self, "search_for"):
-            search_action = menu.addAction(
-                _('Search for "{book}"').format(
-                    book=truncate_for_display(get_media_title(selected_loan))
-                )
-            )
-            search_action.setIcon(self.resources[PluginImages.Search])
-            search_action.triggered.connect(
-                lambda: self.search_for(
-                    f'{get_media_title(selected_loan)} {selected_loan.get("firstCreatorName", "")}'
-                )
-            )
+        # search for title
+        self.add_search_for_title_menu_action(menu, selected_loan)
 
-        view_in_overdrive_action.triggered.connect(
-            lambda: self.view_in_overdrive_action_triggered(indices, self.loans_model)
-        )
         return_action = menu.addAction(
             ngettext("Return {n} loan", "Return {n} loans", len(indices)).format(
                 n=len(indices)

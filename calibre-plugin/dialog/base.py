@@ -9,9 +9,12 @@
 #
 import json
 from collections import OrderedDict
+from functools import partial
 from typing import Dict, List, Optional
 
+from calibre import prepare_string_for_xml
 from calibre.constants import DEBUG
+from calibre.ebooks.metadata.sources.identify import urls_from_identifiers
 from calibre.gui2 import error_dialog, info_dialog, rating_font, Dispatcher
 from calibre.gui2.threaded_jobs import ThreadedJob
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
@@ -723,6 +726,40 @@ class BookPreviewDialog(QDialog):
                             + f'</b>: {media["series"]}'
                         )
                     )
+                media_formats = media.get("formats", []) or self.media.get(
+                    "formats", []
+                )
+                if media_formats:
+                    identifiers = {}
+                    isbn = OverDriveClient.extract_isbn(
+                        media_formats,
+                        [
+                            LibbyClient.get_loan_format(
+                                media, raise_if_not_downloadable=False
+                            )
+                        ],
+                    ) or OverDriveClient.extract_isbn(media_formats, [])
+                    if isbn:
+                        identifiers["isbn"] = isbn
+                    asin = OverDriveClient.extract_asin(media_formats)
+                    if asin:
+                        identifiers["amazon"] = asin
+                    if identifiers:
+                        # ref https://github.com/kovidgoyal/calibre/blob/522b23db12f25b43a2a6cfd76c3143aee5bd4211/src/calibre/utils/formatter_functions.py#L2328-L2347
+                        a = partial(prepare_string_for_xml, attribute=True)
+                        links = [
+                            f'<a href="{a(url)}" title="{a(id_typ)}:{a(id_val)}">{prepare_string_for_xml(name)}</a>'
+                            for name, id_typ, id_val, url in urls_from_identifiers(
+                                identifiers, sort_results=True
+                            )
+                        ]
+                        identifiers_lbl = QLabel(
+                            "<b>" + _c("Ids") + "</b>: " + ", ".join(links)
+                        )
+                        identifiers_lbl.setTextFormat(Qt.RichText)
+                        identifiers_lbl.setOpenExternalLinks(True)
+                        detail_labels.append(identifiers_lbl)
+
                 for lang in media.get("languages", []):
                     detail_labels.append(
                         QLabel("<b>" + _c("Language") + f'</b>: {lang["name"]}')

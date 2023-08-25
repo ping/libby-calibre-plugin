@@ -607,9 +607,7 @@ class ConfigWidget(QWidget):
 
         # add it all here to ensure tab order is okay
         sections = (holds_section, search_section, general_section, network_section)
-        loans_sect_row_span = len(sections)
-        self.layout.addWidget(loans_section, 1, 0, loans_sect_row_span, 1)
-        loans_sect_row_span = 1
+        self.layout.addWidget(loans_section, 1, 0, len(sections), 1)
         for i, sect in enumerate(sections, start=1):
             self.layout.addWidget(sect, i, 1)
 
@@ -622,7 +620,7 @@ class ConfigWidget(QWidget):
         self.help_lbl.setAlignment(Qt.AlignRight)
         self.help_lbl.setTextFormat(Qt.RichText)
         self.help_lbl.setOpenExternalLinks(True)
-        self.layout.addWidget(self.help_lbl, loans_sect_row_span, 0, 1, 2)
+        self.layout.addWidget(self.help_lbl, len(sections) + 1, 0, 1, 2)
 
         self.resize(self.sizeHint())
 

@@ -21,7 +21,6 @@ from qt.core import (
     QMenu,
     QPalette,
     QProgressBar,
-    QPushButton,
     QScrollArea,
     QSizePolicy,
     QVBoxLayout,
@@ -30,7 +29,7 @@ from qt.core import (
 )
 
 from .base import BaseDialogMixin
-from .widgets import ClickableQLabel
+from .widgets import ClickableQLabel, DefaultQPushButton
 from .. import DEMO_MODE
 from ..compat import _c
 from ..libby import LibbyClient
@@ -281,9 +280,9 @@ class CardsDialogMixin(BaseDialogMixin):
 
         # Refresh button
         first_row_layout = QHBoxLayout()
-        self.cards_refresh_btn = QPushButton(_c("Refresh"), self)
-        self.cards_refresh_btn.setIcon(self.resources[PluginImages.Refresh])
-        self.cards_refresh_btn.setAutoDefault(False)
+        self.cards_refresh_btn = DefaultQPushButton(
+            _c("Refresh"), self.resources[PluginImages.Refresh], self
+        )
         self.cards_refresh_btn.setToolTip(_("Get latest loans"))
         self.cards_refresh_btn.setMinimumWidth(self.min_button_width)
         self.cards_refresh_btn.clicked.connect(self.cards_refresh_btn_clicked)

@@ -34,7 +34,6 @@ from qt.core import (
     QPalette,
     QPixmap,
     QPixmapCache,
-    QPushButton,
     QScrollArea,
     QSizePolicy,
     QStatusBar,
@@ -47,7 +46,7 @@ from qt.core import (
     pyqtSignal,
 )
 
-from .widgets import ClickableQLabel, CustomLoadingOverlay
+from .widgets import ClickableQLabel, CustomLoadingOverlay, DefaultQPushButton
 from .. import DEMO_MODE, __version__, logger
 from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
 from ..config import BorrowActions, PREFS, PreferenceKeys
@@ -612,9 +611,9 @@ class BookPreviewDialog(QDialog):
         type_lbl = QLabel(LOAN_TYPE_TRANSLATION.get(media_type, media_type))
         layout.addWidget(type_lbl, self.widget_row_pos + 1, 0, alignment=Qt.AlignTop)
 
-        self.close_btn = QPushButton(_c("Close"), self)
-        self.close_btn.setIcon(self.resources[PluginImages.Cancel])
-        self.close_btn.setAutoDefault(False)
+        self.close_btn = DefaultQPushButton(
+            _c("Close"), self.resources[PluginImages.Cancel], self
+        )
         self.close_btn.setMinimumWidth(parent.min_button_width)
         self.close_btn.clicked.connect(lambda: self.reject())
         layout.addWidget(

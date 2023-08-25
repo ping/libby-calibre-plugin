@@ -278,6 +278,8 @@ class LoansDialogMixin(BaseDialogMixin):
 
         # view book details
         self.add_view_book_details_menu_action(menu, selected_loan)
+        # copy share link
+        self.add_copy_share_link_menu_action(menu, selected_loan)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_loan)
         if hasattr(self, "search_for"):

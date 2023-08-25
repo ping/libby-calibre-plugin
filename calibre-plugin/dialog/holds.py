@@ -302,6 +302,8 @@ class HoldsDialogMixin(BaseDialogMixin):
         selected_hold = self.holds_view.indexAt(pos).data(Qt.UserRole)
         # view book details
         self.add_view_book_details_menu_action(menu, selected_hold)
+        # copy share link
+        self.add_copy_share_link_menu_action(menu, selected_hold)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_hold)
 

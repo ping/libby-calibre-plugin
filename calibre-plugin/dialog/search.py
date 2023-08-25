@@ -466,6 +466,8 @@ class SearchDialogMixin(BaseDialogMixin):
         selected_search = self.search_results_view.indexAt(pos).data(Qt.UserRole)
         # view book details
         self.add_view_book_details_menu_action(menu, selected_search)
+        # copy share link
+        self.add_copy_share_link_menu_action(menu, selected_search)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_search)
 

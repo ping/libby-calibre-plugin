@@ -273,6 +273,17 @@ class BaseDialogMixin(QDialog):
         preview_action.setIcon(self.resources[PluginImages.Search])
         preview_action.triggered.connect(lambda: self.find_library_matches(media))
 
+    def add_copy_share_link_menu_action(self, menu, media):
+        copy_share_link_action = menu.addAction(_("Copy Libby share link"))
+        copy_share_link_action.setIcon(self.resources[PluginImages.Share])
+        copy_share_link_action.triggered.connect(lambda: self.copy_share_link(media))
+
+    def copy_share_link(self, media):
+        clipboard = QApplication.clipboard()
+        link = LibbyClient.libby_title_share_link(media["id"])
+        clipboard.setText(link)
+        self.status_bar.showMessage(_("Copied {link}").format(link=link), 3000)
+
     def find_library_matches(self, media):
         loan_isbn = OverDriveClient.extract_isbn(media.get("formats", []), [])
         loan_asin = OverDriveClient.extract_asin(media.get("formats", []))

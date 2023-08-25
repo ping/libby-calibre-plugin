@@ -308,6 +308,8 @@ class MagazinesDialogMixin(BaseDialogMixin):
         selected_magazine = self.magazines_view.indexAt(pos).data(Qt.UserRole)
         # view book details
         self.add_view_book_details_menu_action(menu, selected_magazine)
+        # copy share link
+        self.add_copy_share_link_menu_action(menu, selected_magazine)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_magazine)
 

@@ -188,6 +188,7 @@ class PluginImages(str, Enum):
     CoverPlaceholder = "cover-placeholder"
     Information = "information"
     Renew = "renew"
+    Share = "share"
 
     def __str__(self):
         return str(self.value)
@@ -248,5 +249,8 @@ ICON_MAP = {
     ),
     PluginImages.Renew: IconDefinition(
         file="images/arrow-go-forward-line.svg", color=PluginColors.Green
+    ),
+    PluginImages.Share: IconDefinition(
+        file="images/share-line.svg", color=PluginColors.ThemeGreen
     ),
 }

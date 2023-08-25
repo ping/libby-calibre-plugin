@@ -47,6 +47,7 @@ from ..models import (
     LibbyHoldsModel,
     LibbyHoldsSortFilterModel,
     get_media_title,
+    is_valid_type,
 )
 from ..utils import PluginImages
 
@@ -189,6 +190,8 @@ class HoldsDialogMixin(BaseDialogMixin):
         available_holds_count = 0
         for r in range(self.holds_model.rowCount()):
             hold = self.holds_model.index(r, 0).data(Qt.UserRole)
+            if not is_valid_type(hold):
+                continue
             if hold.get("isAvailable", False):
                 available_holds_count += 1
         if available_holds_count:

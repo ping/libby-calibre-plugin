@@ -59,7 +59,9 @@ def get_media_title(
     ):
         # sortTitle contains subtitle?
         title = f'{title}: {loan["subtitle"]}'
-    if loan["type"]["id"] == LibbyMediaTypes.Magazine and loan.get("edition", ""):
+    if OverDriveClient.extract_type(loan) == LibbyMediaTypes.Magazine and loan.get(
+        "edition", ""
+    ):
         if not for_sorting:
             title = f'{title} - {loan.get("edition", "")}'
         else:

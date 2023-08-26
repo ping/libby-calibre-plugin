@@ -339,7 +339,10 @@ def _filter_content(entry: Dict, media_info: Dict, toc_pages: List[str]):
     parsed_entry_url = urlparse(entry["url"])
     media_type = guess_mimetype(parsed_entry_url.path[1:])
 
-    if media_info["type"]["id"] == LibbyMediaTypes.Magazine and media_type:
+    if (
+        OverDriveClient.extract_type(media_info) == LibbyMediaTypes.Magazine
+        and media_type
+    ):
         if media_type.startswith("image/") and (
             parsed_entry_url.path.startswith("/pages/")
             or parsed_entry_url.path.startswith("/thumbnails/")
@@ -509,7 +512,10 @@ class CustomMagazineDownload(LibbyDownload):
         contents_re = re.compile(r"parent\.__bif_cfc0\(self,'(?P<base64_text>.+)'\)")
 
         openbook_toc = openbook["nav"]["toc"]
-        if len(openbook_toc) <= 1 and loan["type"]["id"] == LibbyMediaTypes.Magazine:
+        if (
+            len(openbook_toc) <= 1
+            and OverDriveClient.extract_type(loan) == LibbyMediaTypes.Magazine
+        ):
             msg = _("Magazine has unsupported fixed-layout (pre-paginated) format.")
             logger.error(msg)
             raise UnsupportedException(msg, media_info)
@@ -622,7 +628,7 @@ class CustomMagazineDownload(LibbyDownload):
             )
             # patch magazine css to fix various rendering problems
             if (
-                media_info["type"]["id"] == LibbyMediaTypes.Magazine
+                OverDriveClient.extract_type(media_info) == LibbyMediaTypes.Magazine
                 and media_type == "text/css"
             ):
                 css_content = patch_magazine_css_overflow_re.sub(
@@ -839,7 +845,8 @@ class CustomMagazineDownload(LibbyDownload):
                         media_info["formats"],
                         format_types=[
                             LibbyFormats.MagazineOverDrive
-                            if loan["type"]["id"] == LibbyMediaTypes.Magazine
+                            if OverDriveClient.extract_type(loan)
+                            == LibbyMediaTypes.Magazine
                             else LibbyFormats.EBookOverdrive
                         ],
                     )
@@ -877,7 +884,7 @@ class CustomMagazineDownload(LibbyDownload):
             media_info,
             version=epub_version,
             loan_format=LibbyFormats.MagazineOverDrive
-            if loan["type"]["id"] == LibbyMediaTypes.Magazine
+            if OverDriveClient.extract_type(loan) == LibbyMediaTypes.Magazine
             else LibbyFormats.EBookOverdrive,
         )
 
@@ -931,7 +938,7 @@ class CustomMagazineDownload(LibbyDownload):
         spine_entries = list(
             filter(
                 lambda s: not (
-                    media_info["type"]["id"] == LibbyMediaTypes.Magazine
+                    OverDriveClient.extract_type(media_info) == LibbyMediaTypes.Magazine
                     and s["-odread-original-path"] not in toc_pages
                 ),
                 openbook["spine"],
@@ -944,7 +951,7 @@ class CustomMagazineDownload(LibbyDownload):
         )
         for spine_idx, entry in enumerate(spine_entries):
             if (
-                media_info["type"]["id"] == LibbyMediaTypes.Magazine
+                OverDriveClient.extract_type(media_info) == LibbyMediaTypes.Magazine
                 and entry["-odread-original-path"] not in toc_pages
             ):
                 continue

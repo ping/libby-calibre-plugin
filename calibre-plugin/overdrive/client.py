@@ -348,6 +348,10 @@ class OverDriveClient(object):
 
         return ""
 
+    @staticmethod
+    def extract_type(media) -> str:
+        return media.get("type", {}).get("id")
+
     def media(self, title_id: str, **kwargs) -> Dict:
         """
         Retrieve a title.

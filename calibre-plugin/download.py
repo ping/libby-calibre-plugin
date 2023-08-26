@@ -161,7 +161,7 @@ class LibbyDownload:
             ):
                 db.set_field(
                     PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE],
-                    {book_id: loan["type"]["id"]},
+                    {book_id: OverDriveClient.extract_type(loan)},
                 )
         except Exception as err:
             log.exception("Error updating Loan Type: {err}".format(err=err))

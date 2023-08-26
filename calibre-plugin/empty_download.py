@@ -33,10 +33,11 @@ class EmptyBookDownload(LibbyDownload):
     def _download_cover(self, loan, log):
         cover_url = OverDriveClient.get_best_cover_url(loan)
         if not cover_url:
+            log.warning(f'"{get_media_title(loan)}" does not have a cover')
             return None, None
 
         br = browser()
-        if loan.get("type", {}).get("id", "") == LibbyMediaTypes.Audiobook:
+        if OverDriveClient.extract_type(loan) == LibbyMediaTypes.Audiobook:
             square_cover_url_params = {
                 "type": "auto",
                 "width": str(510),
@@ -144,9 +145,10 @@ class EmptyBookDownload(LibbyDownload):
             metadata = self.update_metadata(
                 gui, loan, library, format_id, metadata, tags, media
             )
-            db.set_metadata(book_id, metadata)
-            if not metadata.cover_data:
+            ___, cover_bytes = metadata.cover_data
+            if not cover_bytes:
                 metadata.cover_data = self._download_cover(loan, log)
+            db.set_metadata(book_id, metadata)
             self.update_custom_columns(book_id, loan, db, log)
             self._add_bundled_content(
                 db, client, book_id, loan, log, abort, notifications

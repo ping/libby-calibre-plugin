@@ -98,7 +98,11 @@ class LibbyDownload:
             if loan.get("publishDate")
             else None
         )
-        if pub_date and not metadata.pubdate:
+        if pub_date and (
+            # workaround for pubdate not being updated when it's not defined
+            (metadata.pubdate and metadata.pubdate.year < 1000)
+            or not metadata.pubdate
+        ):
             metadata.pubdate = pub_date
         publisher_name = loan.get("publisher", {}).get("name", "") or loan.get(
             "publisherAccount", {}
@@ -223,9 +227,6 @@ class LibbyDownload:
                 # Reference: https://github.com/kovidgoyal/calibre/blob/58c609fa7db3a8df59981c3bf73823fa1862c392/src/calibre/gui2/ebook_download.py#L108-L116
                 with open(new_path, "rb") as f:
                     new_metadata = get_metadata(f, new_ext, force_read_metadata=True)
-                if metadata.pubdate and metadata.pubdate.year < 1000:
-                    # workaround for pubdate not being updated when it's not defined
-                    metadata.pubdate = None
                 # we update new_metadata using old metadata to keep old metadata as precedence
                 new_metadata.smart_update(metadata)
                 db.set_metadata(book_id, new_metadata)

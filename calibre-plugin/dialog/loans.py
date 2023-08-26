@@ -377,34 +377,16 @@ class LoansDialogMixin(BaseDialogMixin):
 
         return self.download_empty_book(loan, format_id)
 
-    def match_existing_book(self, loan, library, format_id):
+    def match_existing_book(self, loan: Dict, library: Dict, format_id: str):
         book_id = None
         mi = None
         if not PREFS[PreferenceKeys.ALWAYS_DOWNLOAD_AS_NEW]:
-            loan_isbn = OverDriveClient.extract_isbn(
-                loan.get("formats", []), [format_id] if format_id else []
+            search_conditions = self.generate_search_conditions(
+                loan, library, format_id
             )
-            if format_id and not loan_isbn:
-                # try again without format_id
-                loan_isbn = OverDriveClient.extract_isbn(loan.get("formats", []), [])
-            loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
-            identifier_conditions: List[str] = [f'title:"""={get_media_title(loan)}"""']
-            if loan.get("subtitle"):
-                identifier_conditions.append(
-                    f'title:"""={get_media_title(loan, include_subtitle=True)}"""'
-                )
-            if loan_isbn:
-                identifier_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
-            if loan_asin:
-                identifier_conditions.append(f'identifiers:"=asin:{loan_asin}"')
-                identifier_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
-            if PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]:
-                identifier_conditions.append(
-                    f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(loan, library)}"'
-                )
-            if identifier_conditions:
-                # search for existing empty book only if there is at least 1 identifier
-                search_query = " or ".join(identifier_conditions)
+            if search_conditions:
+                # search for existing empty book only if there is at least 1 search condition
+                search_query = " or ".join(search_conditions)
                 restriction = "format:False"
                 # use restriction because it's apparently cached
                 # ref: https://manual.calibre-ebook.com/db_api.html#calibre.db.cache.Cache.search
@@ -415,6 +397,15 @@ class LoansDialogMixin(BaseDialogMixin):
                 )
                 book_ids = list(self.db.search(search_query, restriction=restriction))
                 # prioritise match by identifiers
+                loan_isbn = OverDriveClient.extract_isbn(
+                    loan.get("formats", []), [format_id] if format_id else []
+                )
+                if format_id and not loan_isbn:
+                    # try again without format_id
+                    loan_isbn = OverDriveClient.extract_isbn(
+                        loan.get("formats", []), []
+                    )
+                loan_asin = OverDriveClient.extract_asin(loan.get("formats", []))
                 for bi in book_ids:
                     identifiers = self.db.get_metadata(bi).get_identifiers()
                     if (

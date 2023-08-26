@@ -63,7 +63,13 @@ from ..models import (
 )
 from ..overdrive import OverDriveClient
 from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
-from ..utils import OD_IDENTIFIER, PluginImages, rating_to_stars, svg_to_pixmap
+from ..utils import (
+    OD_IDENTIFIER,
+    PluginImages,
+    rating_to_stars,
+    svg_to_pixmap,
+    generate_od_identifier,
+)
 from ..workers import OverDriveMediaWorker, SyncDataWorker
 
 # noinspection PyUnreachableCode
@@ -309,23 +315,39 @@ class BaseDialogMixin(QDialog):
         clipboard.setText(link)
         self.status_bar.showMessage(_("Copied {link}").format(link=link), 3000)
 
-    def find_library_matches(self, media):
-        loan_isbn = OverDriveClient.extract_isbn(media.get("formats", []), [])
-        loan_asin = OverDriveClient.extract_asin(media.get("formats", []))
+    def generate_search_conditions(
+        self, media, library: Optional[Dict] = None, format_id: Optional[str] = None
+    ) -> List[str]:
+        isbn = OverDriveClient.extract_isbn(
+            media.get("formats", []), [format_id] if format_id else []
+        )
+        if format_id and not isbn:
+            # try again without format_id
+            isbn = OverDriveClient.extract_isbn(media.get("formats", []), [])
+        asin = OverDriveClient.extract_asin(media.get("formats", []))
         search_conditions: List[str] = [f'title:"""={get_media_title(media)}"""']
         if media.get("subtitle"):
             search_conditions.append(
                 f'title:"""={get_media_title(media, include_subtitle=True)}"""'
             )
-        if loan_isbn:
-            search_conditions.append(f'identifiers:"=isbn:{loan_isbn}"')
-        if loan_asin:
-            search_conditions.append(f'identifiers:"=asin:{loan_asin}"')
-            search_conditions.append(f'identifiers:"=amazon:{loan_asin}"')
+        if isbn:
+            search_conditions.append(f'identifiers:"=isbn:{isbn}"')
+        if asin:
+            search_conditions.append(f'identifiers:"=asin:{asin}"')
+            search_conditions.append(f'identifiers:"=amazon:{asin}"')
         if PREFS[PreferenceKeys.OVERDRIVELINK_INTEGRATION]:
-            search_conditions.append(
-                rf'identifiers:"={OD_IDENTIFIER}:~^{media["id"]}\@"'
-            )
+            if library:
+                search_conditions.append(
+                    f'identifiers:"={OD_IDENTIFIER}:{generate_od_identifier(media, library)}"'
+                )
+            else:
+                search_conditions.append(
+                    rf'identifiers:"={OD_IDENTIFIER}:~^{media["id"]}\@"'
+                )
+        return search_conditions
+
+    def find_library_matches(self, media):
+        search_conditions = self.generate_search_conditions(media)
         self.gui.search.set_search_string(" or ".join(search_conditions))
 
     def sync(self):

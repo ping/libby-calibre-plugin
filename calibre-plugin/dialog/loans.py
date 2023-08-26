@@ -10,7 +10,7 @@
 from typing import Dict, List
 
 from calibre.constants import DEBUG
-from calibre.gui2 import Dispatcher
+from calibre.gui2 import Dispatcher, open_url
 from calibre.gui2.dialogs.confirm_delete import confirm
 from calibre.gui2.ebook_download import show_download_info
 from calibre.gui2.threaded_jobs import ThreadedJob
@@ -667,7 +667,7 @@ class LoansDialogMixin(BaseDialogMixin):
         def loaded(fulfilment_details):
             fulfilment_link = fulfilment_details.get("fulfill", {}).get("href")
             if fulfilment_link:
-                self.open_link(fulfilment_link)
+                open_url(fulfilment_link)
             self.unsetCursor()
             thread.quit()
 

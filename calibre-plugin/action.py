@@ -7,16 +7,9 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
+from calibre.gui2 import open_url
 from calibre.gui2.actions import InterfaceAction
-from qt.core import (
-    QDesktopServices,
-    QIcon,
-    QSize,
-    QToolButton,
-    QUrl,
-    QPixmap,
-)
+from qt.core import QIcon, QPixmap, QSize, QToolButton
 
 from . import PLUGIN_ICON, PLUGIN_NAME, logger
 from .compat import QColor_fromString, _c
@@ -29,7 +22,7 @@ from .dialog import (
     MagazinesDialogMixin,
     SearchDialogMixin,
 )
-from .utils import CARD_ICON, ICON_MAP, PluginImages, svg_to_qicon, COVER_PLACEHOLDER
+from .utils import CARD_ICON, COVER_PLACEHOLDER, ICON_MAP, PluginImages, svg_to_qicon
 
 # noinspection PyUnreachableCode
 if False:
@@ -101,8 +94,8 @@ class OverdriveLibbyAction(InterfaceAction):
             "overdrive-libby-help",
             _c("Help"),
             "help.png",
-            triggered=lambda: QDesktopServices.openUrl(
-                QUrl("https://github.com/ping/libby-calibre-plugin#setup")
+            triggered=lambda: open_url(
+                "https://github.com/ping/libby-calibre-plugin#setup"
             ),
         )
         self.create_menu_action(
@@ -110,10 +103,8 @@ class OverdriveLibbyAction(InterfaceAction):
             "overdrive-libby-changelog",
             _("What's New"),
             self.resources[PluginImages.Information],
-            triggered=lambda: QDesktopServices.openUrl(
-                QUrl(
-                    "https://github.com/ping/libby-calibre-plugin/blob/main/CHANGELOG.md"
-                )
+            triggered=lambda: open_url(
+                "https://github.com/ping/libby-calibre-plugin/blob/main/CHANGELOG.md"
             ),
         )
         self.create_menu_action(
@@ -121,8 +112,8 @@ class OverdriveLibbyAction(InterfaceAction):
             "overdrive-libby-mr",
             _("MobileRead"),
             self.resources[PluginImages.ExternalLink],
-            triggered=lambda: QDesktopServices.openUrl(
-                QUrl("https://www.mobileread.com/forums/showthread.php?t=354816")
+            triggered=lambda: open_url(
+                "https://www.mobileread.com/forums/showthread.php?t=354816"
             ),
         )
 

@@ -15,7 +15,7 @@ from typing import Dict, List, Optional
 from calibre import prepare_string_for_xml
 from calibre.constants import DEBUG
 from calibre.ebooks.metadata.sources.identify import urls_from_identifiers
-from calibre.gui2 import error_dialog, info_dialog, rating_font, Dispatcher
+from calibre.gui2 import Dispatcher, error_dialog, info_dialog, open_url, rating_font
 from calibre.gui2.threaded_jobs import ThreadedJob
 from calibre.gui2.widgets2 import CenteredToolButton  # available from calibre 5.33.0
 from calibre.utils.config import tweaks
@@ -25,7 +25,6 @@ from polyglot.builtins import as_unicode
 from polyglot.io import PolyglotStringIO
 from qt.core import (
     QApplication,
-    QDesktopServices,
     QDialog,
     QFont,
     QFrame,
@@ -42,7 +41,6 @@ from qt.core import (
     QStatusBar,
     QTabWidget,
     QThread,
-    QUrl,
     QVBoxLayout,
     QWidget,
     Qt,
@@ -215,9 +213,6 @@ class BaseDialogMixin(QDialog):
         if index > -1:
             PREFS[PreferenceKeys.LAST_SELECTED_TAB] = index
 
-    def open_link(self, link):
-        QDesktopServices.openUrl(QUrl(link))
-
     def add_view_in_menu_actions(self, menu, indices, libby_model):
         view_in_libby_action = menu.addAction(_("View in Libby"))
         view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
@@ -244,7 +239,7 @@ class BaseDialogMixin(QDialog):
         for index in indices:
             data = index.data(Qt.UserRole)
             library_key = (card or model.get_card(data["cardId"]))["advantageKey"]
-            self.open_link(LibbyClient.libby_title_permalink(library_key, data["id"]))
+            open_url(LibbyClient.libby_title_permalink(library_key, data["id"]))
 
     def view_in_overdrive_action_triggered(
         self, indices, model: LibbyModel, card: Optional[Dict] = None
@@ -266,7 +261,7 @@ class BaseDialogMixin(QDialog):
             if not library:
                 continue
 
-            self.open_link(
+            open_url(
                 OverDriveClient.library_title_permalink(
                     library["preferredKey"], data["id"]
                 )

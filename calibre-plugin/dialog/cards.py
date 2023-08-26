@@ -9,6 +9,7 @@
 #
 from urllib.parse import urljoin
 
+from calibre.gui2 import open_url
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
 from qt.core import (
@@ -237,33 +238,30 @@ class CardWidget(QWidget):
         view_in_overdrive_action.triggered.connect(self.open_overdrive_holds)
         menu.exec(QCursor.pos())
 
-    def open_link(self, link):
-        self.tab.open_link(link)
-
     def overdrive_url(self):
         return f'https://{self.library["preferredKey"]}.overdrive.com/'
 
     def open_libby_library(self):
-        self.open_link(f'https://libbyapp.com/library/{self.library["preferredKey"]}')
+        open_url(f'https://libbyapp.com/library/{self.library["preferredKey"]}')
 
     def open_overdrive_library(self):
-        self.open_link(self.overdrive_url())
+        open_url(self.overdrive_url())
 
     def open_libby_loans(self):
-        self.open_link(
+        open_url(
             f'https://libbyapp.com/shelf/loans/default,all,{self.library["websiteId"]}'
         )
 
     def open_libby_holds(self):
-        self.open_link(
+        open_url(
             f'https://libbyapp.com/shelf/holds/default,all,{self.library["websiteId"]}'
         )
 
     def open_overdrive_loans(self):
-        self.open_link(urljoin(self.overdrive_url(), "account/loans"))
+        open_url(urljoin(self.overdrive_url(), "account/loans"))
 
     def open_overdrive_holds(self):
-        self.open_link(urljoin(self.overdrive_url(), "account/holds"))
+        open_url(urljoin(self.overdrive_url(), "account/holds"))
 
 
 class CardsDialogMixin(BaseDialogMixin):

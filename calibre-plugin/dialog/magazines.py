@@ -364,6 +364,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
                 job.exception, msg=_("Failed to borrow magazine")
             )
 
+        self.loan_added.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
 
     def borrowed_magazine_and_download(self, job):

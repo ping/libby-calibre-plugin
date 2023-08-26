@@ -7,6 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+from typing import Tuple
 
 from calibre import confirm_config_name
 from calibre.gui2 import error_dialog, show_restart_warning
@@ -661,6 +662,93 @@ class ConfigWidget(QWidget):
         else:
             return error_dialog(self, str(result[0]), result[1], show=True)
 
+    def get_custom_col_names(self) -> Tuple[str, str, str]:
+        if (
+            self.custom_column_creator
+            and hasattr(self, "borrow_date_col_text")
+            and hasattr(self, "due_date_col_text")
+            and hasattr(self, "loan_type_col_text")
+        ):
+            borrowed_date_custcol_name = (
+                self.borrow_date_col_text.text() or ""
+            ).strip()
+            due_date_custcol_name = (self.due_date_col_text.text() or "").strip()
+            loan_type_custcol_name = (self.loan_type_col_text.text() or "").strip()
+            return (
+                borrowed_date_custcol_name,
+                due_date_custcol_name,
+                loan_type_custcol_name,
+            )
+
+        return "", "", ""
+
+    def get_new_setup_code(self) -> str:
+        setup_code = self.libby_setup_code_txt.text().strip()
+        if setup_code and setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:
+            return setup_code
+        return ""
+
+    def validate(self):
+        if DEMO_MODE:
+            return False
+
+        (
+            borrowed_date_custcol_name,
+            due_date_custcol_name,
+            loan_type_custcol_name,
+        ) = self.get_custom_col_names()
+
+        if (
+            borrowed_date_custcol_name
+            or due_date_custcol_name
+            or loan_type_custcol_name
+        ) and (
+            (
+                borrowed_date_custcol_name
+                and not borrowed_date_custcol_name.startswith(
+                    self.db.field_metadata.custom_field_prefix
+                )
+            )
+            or (
+                due_date_custcol_name
+                and not due_date_custcol_name.startswith(
+                    self.db.field_metadata.custom_field_prefix
+                )
+            )
+            or (
+                loan_type_custcol_name
+                and not loan_type_custcol_name.startswith(
+                    self.db.field_metadata.custom_field_prefix
+                )
+            )
+        ):
+            # We could validate more, but we'll just be replicating more
+            # calibre code. Field updates failures are silently caught
+            # and do not break the download job.
+            error_dialog(
+                self,
+                _c("Custom columns"),
+                _c("The lookup name must begin with a '#'"),
+                show=True,
+            )
+            return False
+
+        setup_code = self.get_new_setup_code()
+        if setup_code:
+            # if libby sync code has changed, do sync and save token
+            from .libby import LibbyClient
+
+            if not LibbyClient.is_valid_sync_code(setup_code):
+                # save a http request for get_chip()
+                error_dialog(
+                    self,
+                    _("Libby Setup Code"),
+                    _("Invalid setup code format: {code}").format(code=setup_code),
+                    show=True,
+                )
+                return False
+        return True
+
     def save_settings(self):
         if DEMO_MODE:
             return
@@ -718,65 +806,22 @@ class ConfigWidget(QWidget):
                 ]
             )
         )[:MAX_SEARCH_LIBRARIES]
-        if (
-            self.custom_column_creator
-            and hasattr(self, "borrow_date_col_text")
-            and hasattr(self, "due_date_col_text")
-            and hasattr(self, "loan_type_col_text")
-        ):
-            borrowed_date_custcol_name = (
-                self.borrow_date_col_text.text() or ""
-            ).strip()
-            due_date_custcol_name = (self.due_date_col_text.text() or "").strip()
-            loan_type_custcol_name = (self.loan_type_col_text.text() or "").strip()
-            if (
-                (
-                    borrowed_date_custcol_name
-                    and not borrowed_date_custcol_name.startswith(
-                        self.db.field_metadata.custom_field_prefix
-                    )
-                )
-                or (
-                    due_date_custcol_name
-                    and not due_date_custcol_name.startswith(
-                        self.db.field_metadata.custom_field_prefix
-                    )
-                )
-                or (
-                    loan_type_custcol_name
-                    and not loan_type_custcol_name.startswith(
-                        self.db.field_metadata.custom_field_prefix
-                    )
-                )
-            ):
-                # We could validate more, but we'll just be replicating more
-                # calibre code. Field updates failures are silently caught
-                # and do not break the download job.
-                return error_dialog(
-                    self,
-                    _c("Custom columns"),
-                    _c("The lookup name must begin with a '#'"),
-                    show=True,
-                )
-            PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] = borrowed_date_custcol_name
-            PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] = due_date_custcol_name
-            PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE] = loan_type_custcol_name
+
+        (
+            borrowed_date_custcol_name,
+            due_date_custcol_name,
+            loan_type_custcol_name,
+        ) = self.get_custom_col_names()
+        PREFS[PreferenceKeys.CUSTCOL_BORROWED_DATE] = borrowed_date_custcol_name
+        PREFS[PreferenceKeys.CUSTCOL_DUE_DATE] = due_date_custcol_name
+        PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE] = loan_type_custcol_name
 
         PREFS[PreferenceKeys.USE_BEST_COVER] = self.use_best_cover_checkbox.isChecked()
 
-        setup_code = self.libby_setup_code_txt.text().strip()
-        if setup_code != PREFS[PreferenceKeys.LIBBY_SETUP_CODE]:
+        setup_code = self.get_new_setup_code()
+        if setup_code:
             # if libby sync code has changed, do sync and save token
             from .libby import LibbyClient
-
-            if not LibbyClient.is_valid_sync_code(setup_code):
-                # save a http request for get_chip()
-                return error_dialog(
-                    self,
-                    _("Libby Setup Code"),
-                    _("Invalid setup code format: {code}").format(code=setup_code),
-                    show=True,
-                )
 
             libby_client = LibbyClient(
                 logger=logger,

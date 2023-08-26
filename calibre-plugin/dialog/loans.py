@@ -7,7 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-from typing import Dict, List
+from typing import Dict
 
 from calibre.constants import DEBUG
 from calibre.gui2 import Dispatcher, open_url
@@ -48,7 +48,7 @@ from ..models import (
     truncate_for_display,
 )
 from ..overdrive import OverDriveClient
-from ..utils import OD_IDENTIFIER, PluginImages, generate_od_identifier
+from ..utils import PluginImages
 from ..workers import LibbyFulfillLoanWorker
 
 # noinspection PyUnreachableCode

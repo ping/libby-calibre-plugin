@@ -769,12 +769,11 @@ class LibbyCardsSortFilterModel(LibbySortFilterModel):
         index = model.index(sourceRow, 0, sourceParent)
         card = model.data(index, Qt.UserRole)
         library = model.get_library(model.get_website_id(card))
-        accept = (
+        return (
             self.filter_text in icu_lower(card.get("advantageKey", ""))
-            or self.filter_text in icu_lower(card.get("cardName", ""))
-            or self.filter_text in icu_lower(library["name"])
+            or self.filter_text in icu_lower(card.get("cardName", "") or "")
+            or self.filter_text in icu_lower(library["name"] or "")
         )
-        return accept
 
 
 class LibbyMagazinesModel(LibbyModel):

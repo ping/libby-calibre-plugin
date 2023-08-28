@@ -1003,3 +1003,35 @@ class LibbyClient(object):
         :return:
         """
         return self.renew_title(loan["id"], loan["type"]["id"], loan["cardId"])
+
+    def auth_form(self, website_id: str) -> Dict:
+        """
+        Returns the details of the auth form required for card verification.
+        Multiple forms may be returned. Use "ilsName" to pick the correct form.
+
+        :param website_id: From card["library"]["websiteId"]
+        :return:
+        """
+        res: Dict = self.send_request(f"auth/forms/{website_id}")
+        return res
+
+    def verify_card(
+        self, website_id: str, ils: str, username: str, password: Optional[str]
+    ) -> Dict:
+        """
+        Verify a card.
+
+        :param website_id:
+        :param ils:
+        :param username:
+        :param password:
+        :return:
+        """
+        data = {"ils": ils, "username": username}
+        if password:
+            data["password"] = password
+
+        res: Dict = self.send_request(
+            f"auth/link/{website_id}", params=data, is_form=False, method="POST"
+        )
+        return res

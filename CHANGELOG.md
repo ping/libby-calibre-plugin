@@ -3,6 +3,7 @@
 Unreleased
 - New: Simple filter for titles and names in the Loans/Holds/Magazines/Cards tabs
 - New: Copy the Libby share link for a book
+- New: Verify a card
 - Improve: Display linked identifiers in Book Details
 - Fix: Borrowing with a card that has no lending period preference
 - Fix: Display of rating in book details

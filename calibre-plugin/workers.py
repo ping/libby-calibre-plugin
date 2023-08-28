@@ -133,6 +133,94 @@ class OverDriveLibraryMediaWorker(QObject):
             self.errored.emit(err)
 
 
+class LibbyAuthFormWorker(QObject):
+    """
+    Fetches the auth form details for a library
+    """
+
+    finished = pyqtSignal(dict)
+    errored = pyqtSignal(Exception)
+
+    def setup(self, libby_client: LibbyClient, card: Dict):
+        self.client = libby_client
+        self.card = card
+
+    def run(self):
+        total_start = timer()
+        try:
+            ils_name = self.card["ilsName"]
+            res = self.client.auth_form(self.card["library"]["websiteId"])
+            form: Dict = next(
+                iter(
+                    [
+                        f
+                        for f in res.get("forms", [])
+                        if f["ilsName"] == ils_name and f["type"] == "Local"
+                    ]
+                ),
+                {},
+            )
+            logger.info(
+                "Total Libby Auth Form Fetch took %f seconds" % (timer() - total_start)
+            )
+            self.finished.emit(form)
+        except Exception as err:
+            logger.info(
+                "Libby Auth Form Fetch failed after %f seconds"
+                % (timer() - total_start)
+            )
+            self.errored.emit(err)
+
+
+class LibbyVerifyCardWorker(QObject):
+    """
+    Verifies a card
+    """
+
+    finished = pyqtSignal(dict)
+    errored = pyqtSignal(Exception)
+
+    def setup(
+        self, libby_client: LibbyClient, card: Dict, username: str, password: str
+    ):
+        self.client = libby_client
+        self.card = card
+        self.username = username
+        self.password = password
+
+    def run(self):
+        total_start = timer()
+        try:
+            ils_name = self.card["ilsName"]
+            res = self.client.verify_card(
+                self.card["library"]["websiteId"],
+                ils_name,
+                self.username,
+                self.password,
+            )
+            updated_card: Dict = next(
+                iter(
+                    [
+                        card
+                        for card in res.get("cards", [])
+                        if card["cardId"] == self.card["cardId"]
+                    ]
+                ),
+                {},
+            )
+            logger.info(
+                "Total Libby Verify Card took %f seconds" % (timer() - total_start)
+            )
+            self.finished.emit(updated_card)
+            self.finished.emit(self.card)
+        except Exception as err:
+            logger.info(
+                "Libby Libby Verify Card failed after %f seconds"
+                % (timer() - total_start)
+            )
+            self.errored.emit(err)
+
+
 class LibbyFulfillLoanWorker(QObject):
     """
     Fetches loan fulfilment detail for a Kindle loan

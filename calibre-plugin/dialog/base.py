@@ -53,7 +53,10 @@ from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_
 from ..config import BorrowActions, PREFS, PreferenceKeys
 from ..hold_actions import LibbyHoldCreate
 from ..libby import LibbyClient, LibbyMediaTypes
-from ..libby.errors import ClientConnectionError as LibbyConnectionError
+from ..libby.errors import (
+    ClientConnectionError as LibbyConnectionError,
+    ClientError as LibbyClientError,
+)
 from ..models import (
     CREATOR_ROLE_TRANSLATION,
     LOAN_TYPE_TRANSLATION,
@@ -591,6 +594,8 @@ class BaseDialogMixin(QDialog):
                     + _("Check your connection or retry in a few minutes.")
                     + "</p>"
                 )
+            elif isinstance(err, LibbyClientError):
+                msg += f"<p>{err.msg}</p>"
 
             return error_dialog(
                 self, _c("Unhandled exception"), msg, det_msg=fe, show=True

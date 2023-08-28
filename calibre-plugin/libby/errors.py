@@ -109,13 +109,16 @@ class ErrorHandler(object):
         :return:
         """
         # json response
+        http_err_msg = str(http_err).strip().strip(":")
         if http_err.headers.get("content-type", "").startswith("application/json"):
             error = json.loads(error_response)
-            if error.get("result", "") == "upstream_failure":
-                upstream = error.get("upstream", {})
+            upstream = error.get("upstream", {})
+            if upstream:
                 for error_info in ErrorHandler.ERRORS_MAP:
                     if http_err.code in error_info["code"]:
-                        if upstream:
+                        if upstream and (
+                            upstream.get("userExplanation") or upstream.get("errorCode")
+                        ):
                             raise error_info["error"](
                                 msg=f'{upstream.get("userExplanation", "")} [errorcode: {upstream.get("errorCode", "")}]',
                                 http_status=http_err.code,
@@ -123,14 +126,14 @@ class ErrorHandler(object):
                             ) from http_err
 
                         raise ClientBadRequestError(
-                            msg=str(http_err),
+                            msg=http_err_msg,
                             http_status=http_err.code,
                             error_response=error_response,
                         ) from http_err
 
             elif error.get("result", "") == "not_found":
                 raise ClientNotFoundError(
-                    msg=str(http_err),
+                    msg=http_err_msg,
                     http_status=http_err.code,
                     error_response=error_response,
                 )
@@ -138,14 +141,14 @@ class ErrorHandler(object):
         for error_info in ErrorHandler.ERRORS_MAP:
             if http_err.code in error_info["code"]:
                 raise error_info["error"](
-                    msg=str(http_err),
+                    msg=http_err_msg,
                     http_status=http_err.code,
                     error_response=error_response,
                 ) from http_err
 
         # final fallback
         raise ClientError(
-            msg=str(http_err),
+            msg=http_err_msg,
             http_status=http_err.code,
             error_response=error_response,
         ) from http_err

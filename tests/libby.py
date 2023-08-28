@@ -297,6 +297,19 @@ class LibbyClientTests(BaseTests):
         open_mock.side_effect = [
             MockHTTPError(400, {}),
             MockHTTPError(401, {"result": "unauthorized"}),
+            MockHTTPError(
+                401,
+                {
+                    "result": "credentials_rejected",
+                    "upstream": {
+                        "errorCode": "UserDenied",
+                        "errorMessage": 'Patron denied by their ILS with message "Your Library Card and PIN could not be validated at this time."',
+                        "service": "X",
+                        "httpStatus": 400,
+                        "userExplanation": "Your Library Card and PIN could not be validated at this time.",
+                    },
+                },
+            ),
             MockHTTPError(403, {"result": "missing_chip"}),
             MockHTTPError(404, {}),
             MockHTTPError(405, {}),
@@ -322,8 +335,21 @@ class LibbyClientTests(BaseTests):
         with self.assertRaises(ClientUnauthorisedError):
             client.borrow_title(title_id="123456", title_format="x", card_id="9")
 
-        with self.assertRaises(ClientForbiddenError):
+        with self.assertRaises(ClientUnauthorisedError) as context:
+            client.verify_card(
+                website_id="999", ils="default", username="x", password=""
+            )
+        self.assertEqual(
+            context.exception.msg,
+            "Your Library Card and PIN could not be validated at this time. [errorcode: UserDenied]",
+        )
+
+        with self.assertRaises(ClientForbiddenError) as context:
             client.sync()
+        self.assertEqual(
+            context.exception.msg,
+            "HTTP Error 403",
+        )
 
         with self.assertRaises(ClientNotFoundError):
             client.borrow_title(title_id="123456", title_format="x", card_id="9")

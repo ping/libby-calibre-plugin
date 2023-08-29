@@ -5,6 +5,7 @@ Unreleased
 - New: Copy the Libby share link for a book
 - New: Verify a card
 - Improve: Display linked identifiers in Book Details
+- Improve: Infrequently changed data like libraries are now cached to give sync a small speed bump
 - Fix: Borrowing with a card that has no lending period preference
 - Fix: Display of rating in book details
 - Fix: Properly update empty book without any identifiers (ref #8)

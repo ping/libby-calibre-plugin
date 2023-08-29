@@ -47,20 +47,26 @@ class SimpleCache:
         self,
         capacity: int = 100,
         persist_to_path: Optional[Path] = None,
-        cache_age_minutes: int = 60 * 24 * 3,
+        cache_age_days: int = 3,
         logger: Optional[logging.Logger] = None,
     ):
         self.cache: OrderedDict = OrderedDict()
         self.capacity = capacity
         self.lock = Lock()
         self.persist_to_path = persist_to_path
-        self.cache_age_minutes = cache_age_minutes
+        self.cache_age_days = cache_age_days
         if not logger:
             logger = logging.getLogger(__name__)
         self.logger = logger
         self.cache_timestamp_key = "__cached_at"
+        self._load_from_file()
 
-        if self.persist_to_path and self.persist_to_path.exists():
+    def _load_from_file(self):
+        if (
+            self.cache_age_days
+            and self.persist_to_path
+            and self.persist_to_path.exists()
+        ):
             with self.persist_to_path.open("r", encoding="utf-8") as fp:
                 cached_items = list(json.load(fp).items())
                 for k, v in cached_items:
@@ -70,7 +76,7 @@ class SimpleCache:
                         v[self.cache_timestamp_key], tz=timezone.utc
                     )
                     cache_age = datetime.now(tz=timezone.utc) - cached_at
-                    if cache_age > timedelta(minutes=self.cache_age_minutes):
+                    if cache_age > timedelta(days=self.cache_age_days):
                         continue
                     self.cache[k] = v
                 self.logger.debug(
@@ -78,6 +84,11 @@ class SimpleCache:
                     len(self.cache),
                     self.persist_to_path,
                 )
+
+    def reload(self):
+        with self.lock:
+            self.cache.clear()
+            self._load_from_file()
 
     def save(self):
         if not self.persist_to_path:
@@ -99,6 +110,8 @@ class SimpleCache:
             self.cache.clear()
 
     def get(self, key: str) -> Optional[Dict]:
+        if not self.cache_age_days:
+            return
         with self.lock:
             if key not in self.cache:
                 return None
@@ -107,6 +120,8 @@ class SimpleCache:
                 return self.cache[key]
 
     def put(self, key: str, value: Dict) -> None:
+        if not self.cache_age_days:
+            return
         with self.lock:
             if not value.get(self.cache_timestamp_key):
                 value[self.cache_timestamp_key] = time.time()

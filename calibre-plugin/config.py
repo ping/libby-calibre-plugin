@@ -584,14 +584,14 @@ class ConfigWidget(QWidget):
         general_layout.addRow(self.use_best_cover_checkbox)
 
         self.cache_age_txt = QSpinBox(self)
+        self.cache_age_txt.setSuffix(_(" day(s)"))
+        self.cache_age_txt.setRange(0, 30)
         self.cache_age_txt.setToolTip(
             _(
-                "How long to retain cacheable data such as library information (max: {n} hours)"
-            ).format(n=24 * 14)
+                "How long to retain cacheable data such as library information (max: {n} days)"
+            ).format(n=self.cache_age_txt.maximum())
         )
-        self.cache_age_txt.setSuffix(_(" day(s)"))
-        self.cache_age_txt.setRange(0, 24 * 14)
-        self.cache_age_txt.setSingleStep(2)
+        self.cache_age_txt.setSingleStep(1)
         self.cache_age_txt.setValue(PREFS[PreferenceKeys.CACHE_AGE_DAYS])
         general_layout.addRow(PreferenceTexts.CACHE_AGE_DAYS, self.cache_age_txt)
 
@@ -832,6 +832,9 @@ class ConfigWidget(QWidget):
         PREFS[PreferenceKeys.CUSTCOL_LOAN_TYPE] = loan_type_custcol_name
 
         PREFS[PreferenceKeys.USE_BEST_COVER] = self.use_best_cover_checkbox.isChecked()
+        PREFS[PreferenceKeys.CACHE_AGE_DAYS] = int(
+            self.cache_age_txt.cleanText().strip()
+        )
 
         setup_code = self.get_new_setup_code()
         if setup_code:

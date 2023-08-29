@@ -164,12 +164,12 @@ class OverdriveLibbyAction(InterfaceAction):
         )
         self.libraries_cache = SimpleCache(
             persist_to_path=PLUGIN_DIR.joinpath(f"{PLUGIN_NAME}.libraries.json"),
-            cache_age_minutes=PREFS[PreferenceKeys.CACHE_AGE_DAYS] * 24 * 60,
+            cache_age_days=PREFS[PreferenceKeys.CACHE_AGE_DAYS],
             logger=logger,
         )
         self.media_cache = SimpleCache(
             persist_to_path=PLUGIN_DIR.joinpath(f"{PLUGIN_NAME}.media.json"),
-            cache_age_minutes=PREFS[PreferenceKeys.CACHE_AGE_DAYS] * 24 * 60,
+            cache_age_days=PREFS[PreferenceKeys.CACHE_AGE_DAYS],
             logger=logger,
         )
 
@@ -209,6 +209,10 @@ class OverdriveLibbyAction(InterfaceAction):
         self.main_dialog.activateWindow()
 
     def apply_settings(self):
+        self.libraries_cache.cache_age_days = PREFS[PreferenceKeys.CACHE_AGE_DAYS]
+        self.media_cache.cache_age_days = PREFS[PreferenceKeys.CACHE_AGE_DAYS]
+        self.libraries_cache.reload()
+        self.media_cache.reload()
         if self.main_dialog:
             # close off main UI to make sure everything is consistent
             self.main_dialog.close()

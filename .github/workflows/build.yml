@@ -6,6 +6,7 @@ on:
       - '**'
     paths:
       - 'calibre-plugin/**'
+      - '.github/workflows/**'
   pull_request:
     branches:
       - '**'

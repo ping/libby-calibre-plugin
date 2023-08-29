@@ -3,7 +3,7 @@ name: Build Zip for Release
 on:
   push:
     tags:
-      - '*'
+      - '**'
 
 jobs:
   tag-zip:

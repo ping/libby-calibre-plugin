@@ -29,7 +29,7 @@ jobs:
         run: sudo apt-get -y install gettext
       - name: Generate commit.txt and build .mo files
         run: |
-          echo "$GITHUB_SHA" > calibre-plugins/commit.txt
+          echo "$GITHUB_SHA" > calibre-plugin/commit.txt
           cd .github/workflows
           sh build_translations.sh
       - name: Shorten GITHUB_SHA

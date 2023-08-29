@@ -10,7 +10,7 @@
 
 import math
 from timeit import default_timer as timer
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from calibre import browser
 from qt.core import QObject, pyqtSignal
@@ -19,6 +19,7 @@ from . import logger
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient, LibbyFormats
 from .overdrive import OverDriveClient
+from .utils import SimpleCache
 
 
 class OverDriveMediaSearchWorker(QObject):
@@ -71,26 +72,36 @@ class OverDriveMediaWorker(QObject):
 
     finished = pyqtSignal(dict)
     errored = pyqtSignal(Exception)
+    cover_data_key = "_cover_data"
 
-    def setup(self, overdrive_client: OverDriveClient, title_id: str):
+    def setup(
+        self, overdrive_client: OverDriveClient, title_id: str, media_cache: SimpleCache
+    ):
         self.client = overdrive_client
         self.title_id = title_id
+        self.media_cache = media_cache
 
     def run(self):
         total_start = timer()
         try:
-            media = self.client.media(self.title_id)
-            try:
-                cover_url = OverDriveClient.get_best_cover_url(
-                    media, rank=0 if PREFS[PreferenceKeys.USE_BEST_COVER] else -1
-                )
-                if cover_url:
-                    logger.debug(f"Downloading cover: {cover_url}")
-                    br = browser()
-                    cover_res = br.open_novisit(cover_url, timeout=self.client.timeout)
-                    media["_cover_data"] = cover_res.read()
-            except Exception as cover_err:
-                logger.warning(f"Error loading cover: {cover_err}")
+            media = self.media_cache.get(self.title_id) or self.client.media(
+                self.title_id
+            )
+            if not media.get(self.cover_data_key):
+                try:
+                    cover_url = OverDriveClient.get_best_cover_url(
+                        media, rank=0 if PREFS[PreferenceKeys.USE_BEST_COVER] else -1
+                    )
+                    if cover_url:
+                        logger.debug(f"Downloading cover: {cover_url}")
+                        br = browser()
+                        cover_res = br.open_novisit(
+                            cover_url, timeout=self.client.timeout
+                        )
+                        media[self.cover_data_key] = cover_res.read()
+                except Exception as cover_err:
+                    logger.warning(f"Error loading cover: {cover_err}")
+            self.media_cache.put(self.title_id, media)
             logger.info(
                 "OverDrive Media Fetch took %f seconds" % (timer() - total_start)
             )
@@ -253,6 +264,29 @@ class LibbyFulfillLoanWorker(QObject):
             self.errored.emit(err)
 
 
+def extract_cached_items(
+    object_ids: List[str], cache: SimpleCache
+) -> Tuple[List[str], List[Dict]]:
+    """
+    Helper method to extract uncached IDs and cached objects
+    for a list of object IDs.
+
+    :param object_ids:
+    :param cache:
+    :return:
+    """
+    uncached_object_ids: List[str] = []
+    cached_objects: List[dict] = []
+    for object_id in object_ids:
+        cached_obj = cache.get(object_id)
+        if cached_obj:
+            cached_objects.append(cached_obj)
+        else:
+            uncached_object_ids.append(object_id)
+
+    return uncached_object_ids, cached_objects
+
+
 class SyncDataWorker(QObject):
     """
     Main sync worker
@@ -263,6 +297,10 @@ class SyncDataWorker(QObject):
 
     def __int__(self):
         super().__init__()
+
+    def setup(self, libraries_cache: SimpleCache, media_cache: SimpleCache):
+        self.libraries_cache = libraries_cache
+        self.media_cache = media_cache
 
     def run(self):
         libby_token: str = PREFS[PreferenceKeys.LIBBY_TOKEN]
@@ -287,25 +325,30 @@ class SyncDataWorker(QObject):
             # Fetch libraries details from OD and patch it onto synced state
             start = timer()
             cards = synced_state.get("cards", [])
-            all_website_ids = [c["library"]["websiteId"] for c in cards]
-
-            logger.info("Fetching %d libraries" % len(all_website_ids))
+            all_website_ids = [str(c["library"]["websiteId"]) for c in cards]
+            uncached_website_ids, libraries = extract_cached_items(
+                all_website_ids, self.libraries_cache
+            )
+            logger.debug("Reusing %d cached libraries" % len(libraries))
+            logger.debug("Fetching %d new libraries" % len(uncached_website_ids))
             od_client = OverDriveClient(
                 max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
                 timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
                 logger=logger,
             )
             max_per_page = 24
-            total_pages = math.ceil(len(all_website_ids) / max_per_page)
-            libraries = []
+            total_pages = math.ceil(len(uncached_website_ids) / max_per_page)
             for page in range(1, 1 + total_pages):
-                website_ids = all_website_ids[
+                website_ids = uncached_website_ids[
                     (page - 1) * max_per_page : page * max_per_page
                 ]
                 results = od_client.libraries(
                     website_ids=website_ids, per_page=max_per_page
                 )
-                libraries.extend(results.get("items", []))
+                found = results.get("items", [])
+                for library in found:
+                    self.libraries_cache.put(str(library["websiteId"]), library)
+                libraries.extend(found)
             logger.info(
                 "OverDrive Libraries requests took %f seconds" % (timer() - start)
             )
@@ -323,6 +366,8 @@ class SyncDataWorker(QObject):
                     len(all_parent_magazine_ids) / OverDriveClient.MAX_PER_PAGE
                 )
                 for page in range(1, 1 + total_pages):
+                    # don't cache parent magazine IDs, only the latest issues
+                    # to make sure that we'll always have the correct latest issue
                     parent_magazine_ids = all_parent_magazine_ids[
                         (page - 1)
                         * OverDriveClient.MAX_PER_PAGE : page
@@ -334,16 +379,26 @@ class SyncDataWorker(QObject):
                     # we re-query with the new title IDs because querying with the parent magazine ID
                     # returns an old estimatedReleaseDate, so if we want to sort by estimatedReleaseDate
                     # we need to re-query
-                    titles = od_client.media_bulk(
-                        title_ids=[
-                            # sometimes t["id"] is not the latest issue (due to misconfig?)
-                            # so use t["recentIssues"] instead
-                            t["recentIssues"][0]["id"]
-                            if t.get("recentIssues")
-                            else t["id"]
-                            for t in parent_magazines
-                        ]
+                    latest_magazine_ids = [
+                        # sometimes t["id"] is not the latest issue (due to misconfig?)
+                        # so use t["recentIssues"] instead
+                        t["recentIssues"][0]["id"] if t.get("recentIssues") else t["id"]
+                        for t in parent_magazines
+                    ]
+                    uncached_latest_magazine_ids, titles = extract_cached_items(
+                        latest_magazine_ids, self.media_cache
                     )
+                    logger.debug("Reusing %d cached media" % len(titles))
+                    logger.debug(
+                        "Fetching %d new media" % len(uncached_latest_magazine_ids)
+                    )
+                    if uncached_latest_magazine_ids:
+                        found = od_client.media_bulk(
+                            title_ids=uncached_latest_magazine_ids
+                        )
+                        for m in found:
+                            self.media_cache.put(m["id"], m)
+                        titles.extend(found)
                     for t in titles:
                         t["cardId"] = next(
                             iter(

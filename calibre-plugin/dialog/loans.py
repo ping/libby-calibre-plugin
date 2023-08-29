@@ -65,8 +65,8 @@ gui_renew_loan = LibbyLoanRenew()
 
 
 class LoansDialogMixin(BaseDialogMixin):
-    def __init__(self, gui, icon, do_user_config, icons):
-        super().__init__(gui, icon, do_user_config, icons)
+    def __init__(self, gui, icon, do_user_config, icons, libraries_cache, media_cache):
+        super().__init__(gui, icon, do_user_config, icons, libraries_cache, media_cache)
         self._readwithkindle_thread = QThread()
 
         widget = QWidget()

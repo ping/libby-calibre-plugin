@@ -72,8 +72,8 @@ gui_libby_borrow_hold = LibbyBorrowMedia()
 
 
 class MagazinesDialogMixin(BaseDialogMixin):
-    def __init__(self, gui, icon, do_user_config, icons):
-        super().__init__(gui, icon, do_user_config, icons)
+    def __init__(self, gui, icon, do_user_config, icons, libraries_cache, media_cache):
+        super().__init__(gui, icon, do_user_config, icons, libraries_cache, media_cache)
         self._fetch_library_media_thread = QThread()
 
         magazines_widget = QWidget()
@@ -282,7 +282,7 @@ class MagazinesDialogMixin(BaseDialogMixin):
         for index in indices:
             magazine = index.data(Qt.UserRole)
             self.magazines_borrow_btn.setEnabled(
-                not magazine.get("__is_borrowed", False)
+                not magazine.get(self.magazines_model.is_borrowed_key, False)
             )
             self.status_bar.showMessage(get_media_title(magazine), 3000)
 

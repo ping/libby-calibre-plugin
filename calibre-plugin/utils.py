@@ -7,15 +7,20 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+import json
+import logging
 import math
 import os
 import platform
 import random
 import re
+import time
 import unicodedata
-from collections import namedtuple
-from datetime import datetime
+from collections import OrderedDict, namedtuple
+from datetime import datetime, timedelta, timezone
 from enum import Enum
+from pathlib import Path
+from threading import Lock
 from typing import Dict, Optional
 
 from calibre.gui2 import is_dark_theme
@@ -35,6 +40,88 @@ except ImportError:
 
 CARD_ICON = "images/card.svg"
 COVER_PLACEHOLDER = "images/placeholder.png"
+
+
+class SimpleCache:
+    def __init__(
+        self,
+        capacity: int = 100,
+        persist_to_path: Optional[Path] = None,
+        cache_age_minutes: int = 60 * 24 * 3,
+        logger: Optional[logging.Logger] = None,
+    ):
+        self.cache: OrderedDict = OrderedDict()
+        self.capacity = capacity
+        self.lock = Lock()
+        self.persist_to_path = persist_to_path
+        self.cache_age_minutes = cache_age_minutes
+        if not logger:
+            logger = logging.getLogger(__name__)
+        self.logger = logger
+        self.cache_timestamp_key = "__cached_at"
+
+        if self.persist_to_path and self.persist_to_path.exists():
+            with self.persist_to_path.open("r", encoding="utf-8") as fp:
+                cached_items = list(json.load(fp).items())
+                for k, v in cached_items:
+                    if not v.get(self.cache_timestamp_key):
+                        continue
+                    cached_at = datetime.fromtimestamp(
+                        v[self.cache_timestamp_key], tz=timezone.utc
+                    )
+                    cache_age = datetime.now(tz=timezone.utc) - cached_at
+                    if cache_age > timedelta(minutes=self.cache_age_minutes):
+                        continue
+                    self.cache[k] = v
+                self.logger.debug(
+                    "Loaded %d items from file cache %s",
+                    len(self.cache),
+                    self.persist_to_path,
+                )
+
+    def save(self):
+        if not self.persist_to_path:
+            return
+        for item in self.cache.values():
+            for k in list(item.keys()):
+                if isinstance(item[k], bytes):  # exclude bytes
+                    del item[k]
+        with self.persist_to_path.open("wt", encoding="utf-8") as fp:
+            json.dump(self.cache, fp)
+            self.logger.debug(
+                "Saved %d items to file cache at %s",
+                len(self.cache),
+                self.persist_to_path,
+            )
+
+    def clear(self):
+        with self.lock:
+            self.cache.clear()
+
+    def get(self, key: str) -> Optional[Dict]:
+        with self.lock:
+            if key not in self.cache:
+                return None
+            else:
+                self.cache.move_to_end(key)
+                return self.cache[key]
+
+    def put(self, key: str, value: Dict) -> None:
+        with self.lock:
+            if not value.get(self.cache_timestamp_key):
+                value[self.cache_timestamp_key] = time.time()
+            self.cache[key] = value
+            self.cache.move_to_end(key)
+            if len(self.cache) > self.capacity:
+                self.cache.popitem(last=False)
+
+    def count(self) -> int:
+        with self.lock:
+            return len(self.cache)
+
+    def items(self):
+        with self.lock:
+            return self.cache.items()
 
 
 def obfuscate_date(dt: datetime, day=None, month=None, year=None):

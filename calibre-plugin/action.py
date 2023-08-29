@@ -7,11 +7,14 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+from pathlib import Path
+
+from calibre.constants import config_dir
 from calibre.gui2 import open_url
 from calibre.gui2.actions import InterfaceAction
 from qt.core import QIcon, QPixmap, QSize, QToolButton
 
-from . import PLUGIN_ICON, PLUGIN_NAME, logger
+from . import PLUGINS_FOLDER_NAME, PLUGIN_ICON, PLUGIN_NAME, logger
 from .compat import QColor_fromString, _c
 from .config import PREFS, PreferenceKeys
 from .dialog import (
@@ -22,8 +25,16 @@ from .dialog import (
     MagazinesDialogMixin,
     SearchDialogMixin,
 )
-from .utils import CARD_ICON, COVER_PLACEHOLDER, ICON_MAP, PluginImages, svg_to_qicon
+from .utils import (
+    CARD_ICON,
+    COVER_PLACEHOLDER,
+    ICON_MAP,
+    PluginImages,
+    SimpleCache,
+    svg_to_qicon,
+)
 
+PLUGIN_DIR = Path(config_dir, PLUGINS_FOLDER_NAME)
 # noinspection PyUnreachableCode
 if False:
     load_translations = _ = get_resources = lambda x=None: x
@@ -79,6 +90,7 @@ class OverdriveLibbyAction(InterfaceAction):
         self.menuless_qaction.setIcon(mini_plugin_icon)
         self.qaction.triggered.connect(self.show_dialog)
         qaction_menu = self.qaction.menu()
+        qaction_menu.setToolTipsVisible(True)
 
         self.create_menu_action(
             qaction_menu,
@@ -91,9 +103,18 @@ class OverdriveLibbyAction(InterfaceAction):
         )
         self.create_menu_action(
             qaction_menu,
+            "overdrive-libby-clear-cache",
+            _("Clear cache"),
+            self.resources[PluginImages.Delete],
+            description=_("Clear cached data, e.g. titles, libraries"),
+            triggered=self.clear_cache,
+        )
+        self.create_menu_action(
+            qaction_menu,
             "overdrive-libby-help",
             _c("Help"),
             "help.png",
+            description=_("View setup and usage help"),
             triggered=lambda: open_url(
                 "https://github.com/ping/libby-calibre-plugin#setup"
             ),
@@ -103,6 +124,7 @@ class OverdriveLibbyAction(InterfaceAction):
             "overdrive-libby-changelog",
             _("What's New"),
             self.resources[PluginImages.Information],
+            description=_("See what's changed in the latest release"),
             triggered=lambda: open_url(
                 "https://github.com/ping/libby-calibre-plugin/blob/main/CHANGELOG.md"
             ),
@@ -112,20 +134,42 @@ class OverdriveLibbyAction(InterfaceAction):
             "overdrive-libby-mr",
             _("MobileRead"),
             self.resources[PluginImages.ExternalLink],
+            description=_("Plugin thread on the MobileRead forums"),
             triggered=lambda: open_url(
                 "https://www.mobileread.com/forums/showthread.php?t=354816"
             ),
         )
+        self.libraries_cache = SimpleCache(
+            persist_to_path=PLUGIN_DIR.joinpath(f"{PLUGIN_NAME}.libraries.json"),
+            cache_age_minutes=PREFS[PreferenceKeys.CACHE_AGE_DAYS] * 24 * 60,
+            logger=logger,
+        )
+        self.media_cache = SimpleCache(
+            persist_to_path=PLUGIN_DIR.joinpath(f"{PLUGIN_NAME}.media.json"),
+            cache_age_minutes=PREFS[PreferenceKeys.CACHE_AGE_DAYS] * 24 * 60,
+            logger=logger,
+        )
 
     def main_dialog_finished(self):
         self.main_dialog = None
+
+    def clear_cache(self):
+        self.libraries_cache.clear()
+        self.libraries_cache.save()
+        self.media_cache.clear()
+        self.media_cache.save()
 
     def show_dialog(self):
         base_plugin_object = self.interface_action_base_plugin
         do_user_config = base_plugin_object.do_user_config
         if not self.main_dialog:
             self.main_dialog = OverdriveLibbyDialog(
-                self.gui, self.qaction.icon(), do_user_config, self.resources
+                self.gui,
+                self.qaction.icon(),
+                do_user_config,
+                self.resources,
+                self.libraries_cache,
+                self.media_cache,
             )
             self.main_dialog.finished.connect(self.main_dialog_finished)
         self.main_dialog.show()
@@ -146,8 +190,8 @@ class OverdriveLibbyDialog(
     LoansDialogMixin,
     BaseDialogMixin,
 ):
-    def __init__(self, gui, icon, do_user_config, icons):
-        super().__init__(gui, icon, do_user_config, icons)
+    def __init__(self, gui, icon, do_user_config, icons, libraries_cache, media_cache):
+        super().__init__(gui, icon, do_user_config, icons, libraries_cache, media_cache)
 
         # this non-intuitive code is because Windows
         size_hint = self.sizeHint()

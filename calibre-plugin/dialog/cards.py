@@ -7,7 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-from typing import Dict
+from typing import Dict, Optional
 from urllib.parse import urljoin
 
 from calibre.gui2 import open_url
@@ -57,8 +57,8 @@ load_translations()
 
 
 class CardsDialogMixin(BaseDialogMixin):
-    def __init__(self, gui, icon, do_user_config, icons):
-        super().__init__(gui, icon, do_user_config, icons)
+    def __init__(self, gui, icon, do_user_config, icons, libraries_cache, media_cache):
+        super().__init__(gui, icon, do_user_config, icons, libraries_cache, media_cache)
         self._fetch_auth_form_thread = QThread()
 
         self.dpr = QApplication.instance().devicePixelRatio()
@@ -441,7 +441,7 @@ class CardVerificationDialog(QDialog):
         parent: CardsDialogMixin,
         gui,
         resources: Dict,
-        client: LibbyClient,
+        client: Optional[LibbyClient],
         form: Dict,
         card: Dict,
         library: Dict,

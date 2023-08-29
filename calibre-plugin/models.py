@@ -783,6 +783,7 @@ class LibbyMagazinesModel(LibbyModel):
 
     column_headers = [_c("Title"), _("Release Date"), _("Library Card"), _("Borrowed")]
     filter_hide_magazines_already_in_library = False
+    is_borrowed_key = "__is_borrowed"
 
     def __init__(self, parent, synced_state=None, db=None):
         super().__init__(parent, synced_state, db)
@@ -815,7 +816,7 @@ class LibbyMagazinesModel(LibbyModel):
             self._rows, key=lambda t: t["estimatedReleaseDate"], reverse=True
         )
         for r in self._rows:
-            r["__is_borrowed"] = bool(
+            r[self.is_borrowed_key] = bool(
                 [loan for loan in self._loans if loan["id"] == r["id"]]
             )
         self.endResetModel()
@@ -858,7 +859,7 @@ class LibbyMagazinesModel(LibbyModel):
                 f'{card["advantageKey"]}: {card["cardName"] or ""}'
             )
         if col == 3:
-            is_borrowed = subscription.get("__is_borrowed")
+            is_borrowed = subscription.get(self.is_borrowed_key)
             if role == LibbyModel.DisplaySortRole:
                 return int(is_borrowed)
             return _c("Yes") if is_borrowed else _c("No")

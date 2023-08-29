@@ -69,9 +69,10 @@ from ..overdrive.errors import ClientConnectionError as OverDriveConnectionError
 from ..utils import (
     OD_IDENTIFIER,
     PluginImages,
+    SimpleCache,
+    generate_od_identifier,
     rating_to_stars,
     svg_to_pixmap,
-    generate_od_identifier,
 )
 from ..workers import OverDriveMediaWorker, SyncDataWorker
 
@@ -119,7 +120,15 @@ class BaseDialogMixin(QDialog):
     loan_removed = pyqtSignal(dict)
     hold_removed = pyqtSignal(dict)
 
-    def __init__(self, gui, icon, do_user_config, resources):
+    def __init__(
+        self,
+        gui,
+        icon,
+        do_user_config,
+        resources: Dict,
+        libraries_cache: SimpleCache,
+        media_cache: SimpleCache,
+    ):
         super().__init__(gui)
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.gui = gui
@@ -129,6 +138,8 @@ class BaseDialogMixin(QDialog):
         self.client = None
         self._sync_thread = QThread()  # main sync thread
         self.logger = logger
+        self.libraries_cache = libraries_cache
+        self.media_cache = media_cache
 
         self.setWindowTitle(
             _("OverDrive Libby v{version}").format(
@@ -202,6 +213,8 @@ class BaseDialogMixin(QDialog):
         if PREFS[PreferenceKeys.MAIN_UI_HEIGHT] != new_height:
             PREFS[PreferenceKeys.MAIN_UI_HEIGHT] = new_height
             logger.debug("Saved new UI height preference: %d", new_height)
+        self.libraries_cache.save()
+        self.media_cache.save()
 
     def add_tab(self, widget, label) -> int:
         """
@@ -367,6 +380,7 @@ class BaseDialogMixin(QDialog):
     def _get_sync_thread(self):
         thread = QThread()
         worker = SyncDataWorker()
+        worker.setup(self.libraries_cache, self.media_cache)
         worker.moveToThread(thread)
         thread.worker = worker
         thread.started.connect(worker.run)
@@ -689,15 +703,15 @@ class BookPreviewDialog(QDialog):
 
         if not self._media_info_thread.isRunning():
             self._media_info_thread = self._get_media_info_thread(
-                self.client, self.media["id"]
+                self.client, self.media["id"], self.parent().media_cache
             )
             self.setCursor(Qt.WaitCursor)
             self._media_info_thread.start()
 
-    def _get_media_info_thread(self, overdrive_client, title_id):
+    def _get_media_info_thread(self, overdrive_client, title_id, media_cache):
         thread = QThread()
         worker = OverDriveMediaWorker()
-        worker.setup(overdrive_client, title_id)
+        worker.setup(overdrive_client, title_id, media_cache)
         worker.moveToThread(thread)
         thread.worker = worker
         thread.started.connect(worker.run)
@@ -705,11 +719,10 @@ class BookPreviewDialog(QDialog):
         def loaded(media):
             try:
                 self.unsetCursor()
-                if media.get("_cover_data"):
+                if media.get(worker.cover_data_key):
                     cover_pixmap = QPixmap()
-                    cover_pixmap.loadFromData(media["_cover_data"])
+                    cover_pixmap.loadFromData(media[worker.cover_data_key])
                     self.image_lbl.setPixmap(cover_pixmap)
-                    del media["_cover_data"]
 
                 self.image_lbl.doubleClicked.connect(
                     lambda: self.parent().display_debug("Media", media)
@@ -754,11 +767,13 @@ class BookPreviewDialog(QDialog):
                 )
                 if media_formats:
                     identifiers = {}
+
                     isbn = OverDriveClient.extract_isbn(
                         media_formats,
                         [
                             LibbyClient.get_loan_format(
-                                media, raise_if_not_downloadable=False
+                                media if media.get("formats") else self.media,
+                                raise_if_not_downloadable=False,
                             )
                         ],
                     ) or OverDriveClient.extract_isbn(media_formats, [])

@@ -377,7 +377,9 @@ class OverDriveClient(object):
         return self.send_request("media/bulk", query=params)
 
     @pageable
-    def libraries(self, website_ids: Optional[List[int]] = None, **kwargs) -> dict:
+    def libraries(
+        self, website_ids: Optional[List[Union[int, str]]] = None, **kwargs
+    ) -> dict:
         """
         Get a list of libraries.
 

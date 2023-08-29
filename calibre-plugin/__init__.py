@@ -24,6 +24,7 @@ load_translations()
 __version__ = (0, 1, 7)
 PLUGIN_NAME = "overdrive_libby"
 PLUGIN_ICON = "images/plugin.svg"
+PLUGINS_FOLDER_NAME = "plugins"
 
 DEMO_MODE = False  # make it easier for screenshots :P
 

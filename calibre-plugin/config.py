@@ -36,7 +36,7 @@ from qt.core import (
     Qt,
 )
 
-from . import DEMO_MODE, PLUGIN_NAME, logger
+from . import DEMO_MODE, PLUGIN_NAME, PLUGINS_FOLDER_NAME, logger
 from .compat import _c
 from .utils import PluginColors
 
@@ -81,6 +81,7 @@ class PreferenceKeys:
     CUSTCOL_DUE_DATE = "custcol_due_dt"
     CUSTCOL_LOAN_TYPE = "custcol_loan_type"
     USE_BEST_COVER = "use_best_cover"
+    CACHE_AGE_DAYS = "cache_age_days"
 
 
 class BorrowActions:
@@ -118,9 +119,10 @@ class PreferenceTexts:
     CUSTCOL_DUE_DATE = _("Custom column for Due Date")
     CUSTCOL_LOAN_TYPE = _("Custom column for Loan Type")
     USE_BEST_COVER = _("Use highest-resolution cover for book details")
+    CACHE_AGE_DAYS = _("Cache data for")
 
 
-PREFS = JSONConfig(f"plugins/{PLUGIN_NAME}")
+PREFS = JSONConfig(f"{PLUGINS_FOLDER_NAME}/{PLUGIN_NAME}")
 
 PREFS.defaults[PreferenceKeys.LIBBY_SETUP_CODE] = ""
 PREFS.defaults[PreferenceKeys.LIBBY_TOKEN] = ""
@@ -147,6 +149,7 @@ PREFS.defaults[PreferenceKeys.CUSTCOL_BORROWED_DATE] = ""
 PREFS.defaults[PreferenceKeys.CUSTCOL_DUE_DATE] = ""
 PREFS.defaults[PreferenceKeys.CUSTCOL_LOAN_TYPE] = ""
 PREFS.defaults[PreferenceKeys.USE_BEST_COVER] = False
+PREFS.defaults[PreferenceKeys.CACHE_AGE_DAYS] = 3
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
@@ -579,6 +582,18 @@ class ConfigWidget(QWidget):
         )
         self.use_best_cover_checkbox.setChecked(PREFS[PreferenceKeys.USE_BEST_COVER])
         general_layout.addRow(self.use_best_cover_checkbox)
+
+        self.cache_age_txt = QSpinBox(self)
+        self.cache_age_txt.setToolTip(
+            _(
+                "How long to retain cacheable data such as library information (max: {n} hours)"
+            ).format(n=24 * 14)
+        )
+        self.cache_age_txt.setSuffix(_(" day(s)"))
+        self.cache_age_txt.setRange(0, 24 * 14)
+        self.cache_age_txt.setSingleStep(2)
+        self.cache_age_txt.setValue(PREFS[PreferenceKeys.CACHE_AGE_DAYS])
+        general_layout.addRow(PreferenceTexts.CACHE_AGE_DAYS, self.cache_age_txt)
 
         # ------------------------------------ NETWORK ------------------------------------
         network_section = QGroupBox(_("Network"))

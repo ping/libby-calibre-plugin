@@ -10,8 +10,9 @@ on:
   pull_request:
     branches:
       - '**'
-    paths-ignore:
+    paths:
       - 'calibre-plugin/**'
+      - '.github/workflows/**'
   workflow_dispatch:
 
 jobs:

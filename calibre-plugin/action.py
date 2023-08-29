@@ -7,14 +7,22 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+import logging
 from pathlib import Path
 
-from calibre.constants import config_dir
+from calibre.constants import DEBUG, config_dir
 from calibre.gui2 import open_url
 from calibre.gui2.actions import InterfaceAction
 from qt.core import QIcon, QPixmap, QSize, QToolButton
 
-from . import PLUGINS_FOLDER_NAME, PLUGIN_ICON, PLUGIN_NAME, logger
+from . import (
+    DEMO_MODE,
+    PLUGINS_FOLDER_NAME,
+    PLUGIN_ICON,
+    PLUGIN_NAME,
+    __version__,
+    logger,
+)
 from .compat import QColor_fromString, _c
 from .config import PREFS, PreferenceKeys
 from .dialog import (
@@ -35,6 +43,8 @@ from .utils import (
 )
 
 PLUGIN_DIR = Path(config_dir, PLUGINS_FOLDER_NAME)
+CI_COMMIT_TXT = "commit.txt"
+
 # noinspection PyUnreachableCode
 if False:
     load_translations = _ = get_resources = lambda x=None: x
@@ -56,6 +66,7 @@ class OverdriveLibbyAction(InterfaceAction):
     action_menu_clone_qaction = _("Libby")
     dont_add_to = frozenset(["context-menu-device"])
     main_dialog = None
+    development_version = None
 
     def genesis(self):
         # This method is called once per plugin, do initial setup here
@@ -63,7 +74,8 @@ class OverdriveLibbyAction(InterfaceAction):
         # extract icons
         image_resources = get_resources(
             [v.file for v in ICON_MAP.values()]
-            + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER]
+            + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER, CI_COMMIT_TXT],
+            print_tracebacks_for_missing_resources=DEBUG,  # noqa
         )
         self.resources = {}
         for k, v in ICON_MAP.items():
@@ -73,6 +85,17 @@ class OverdriveLibbyAction(InterfaceAction):
 
         # card icon
         self.resources[PluginImages.Card] = image_resources.pop(CARD_ICON)
+        if CI_COMMIT_TXT in image_resources:
+            self.development_version = (
+                image_resources.pop(CI_COMMIT_TXT).decode("utf-8").strip()
+            )
+            if logger.handlers:
+                logger.handlers[0].setFormatter(
+                    logging.Formatter(
+                        f'[{PLUGIN_NAME}/{".".join([str(d) for d in __version__])}'
+                        f"*{self.development_version[:7]}] %(message)s"
+                    )
+                )
 
         # book cover placeholder
         cover_pixmap = QPixmap(150, 200)
@@ -172,6 +195,15 @@ class OverdriveLibbyAction(InterfaceAction):
                 self.media_cache,
             )
             self.main_dialog.finished.connect(self.main_dialog_finished)
+            window_title = _("OverDrive Libby v{version}{dev}").format(
+                version=".".join([str(d) for d in __version__]),
+                dev=f"*{self.development_version[:7]}"
+                if self.development_version
+                else "",
+            )
+            if DEMO_MODE:
+                window_title = "OverDrive Libby"
+            self.main_dialog.setWindowTitle(window_title)
         self.main_dialog.show()
         self.main_dialog.raise_()
         self.main_dialog.activateWindow()

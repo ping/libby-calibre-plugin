@@ -1,4 +1,4 @@
-name: Build Zip
+name: Build Zip for Testing
 
 on:
   push:
@@ -27,8 +27,9 @@ jobs:
         run: ruff check calibre-plugin
       - name: Install gtext
         run: sudo apt-get -y install gettext
-      - name: Build .mo files
+      - name: Generate commit.txt and build .mo files
         run: |
+          echo "$GITHUB_SHA" > calibre-plugins/commit.txt
           cd .github/workflows
           sh build_translations.sh
       - name: Shorten GITHUB_SHA

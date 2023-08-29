@@ -1,0 +1,29 @@
+name: Build Zip for Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  tag-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 1
+      - name: Install gtext
+        run: sudo apt-get -y install gettext
+      - name: Build .mo files
+        run: |
+          cd .github/workflows
+          sh build_translations.sh
+      - name: Upload plugin
+        uses: actions/upload-artifact@v3
+        with:
+          name: overdrive-libby-plugin-${{ github.ref_name }}
+          path: |
+            calibre-plugin/
+            !calibre-plugin/translations/*.po
+            !calibre-plugin/translations/*.pot

@@ -48,7 +48,7 @@ from qt.core import (
 )
 
 from .widgets import ClickableQLabel, CustomLoadingOverlay, DefaultQPushButton
-from .. import DEMO_MODE, __version__, logger
+from .. import DEMO_MODE, logger
 from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
 from ..config import BorrowActions, PREFS, PreferenceKeys
 from ..hold_actions import LibbyHoldCreate
@@ -140,14 +140,6 @@ class BaseDialogMixin(QDialog):
         self.logger = logger
         self.libraries_cache = libraries_cache
         self.media_cache = media_cache
-
-        self.setWindowTitle(
-            _("OverDrive Libby v{version}").format(
-                version=".".join([str(d) for d in __version__])
-            )
-            if not DEMO_MODE
-            else "OverDrive Libby"
-        )
         self.setWindowIcon(icon)
         self.view_vspan = 1
         self.view_hspan = 4

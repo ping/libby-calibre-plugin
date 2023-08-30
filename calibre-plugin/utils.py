@@ -111,7 +111,7 @@ class SimpleCache:
 
     def get(self, key: str) -> Optional[Dict]:
         if not self.cache_age_days:
-            return
+            return None
         with self.lock:
             if key not in self.cache:
                 return None

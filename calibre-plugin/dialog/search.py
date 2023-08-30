@@ -470,6 +470,10 @@ class SearchDialogMixin(BaseDialogMixin):
         self.add_copy_share_link_menu_action(menu, selected_search)
         # find calibre matches
         self.add_find_library_match_menu_action(menu, selected_search)
+        # search for author
+        self.add_search_for_title_menu_action(
+            menu, selected_search, search_for_author=True
+        )
 
         menu.exec(QCursor.pos())
 

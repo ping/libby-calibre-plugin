@@ -298,7 +298,7 @@ class BaseDialogMixin(QDialog):
         preview_action.setIcon(self.resources[PluginImages.Search])
         preview_action.triggered.connect(lambda: self.find_library_matches(media))
 
-    def add_search_for_title_menu_action(self, menu, media):
+    def add_search_for_title_menu_action(self, menu, media, search_for_author=False):
         if hasattr(self, "search_for"):
             search_action = menu.addAction(
                 _('Search for "{book}"').format(
@@ -311,6 +311,16 @@ class BaseDialogMixin(QDialog):
                     f'{get_media_title(media)} {media.get("firstCreatorName", "")}'.strip()
                 )
             )
+            if search_for_author and media.get("firstCreatorName"):
+                search_author_action = menu.addAction(
+                    _('Search for "{book}"').format(
+                        book=truncate_for_display(media["firstCreatorName"])
+                    )
+                )
+                search_author_action.setIcon(self.resources[PluginImages.Search])
+                search_author_action.triggered.connect(
+                    lambda: self.search_for(media["firstCreatorName"].strip())
+                )
 
     def add_copy_share_link_menu_action(self, menu, media):
         copy_share_link_action = menu.addAction(_("Copy Libby share link"))

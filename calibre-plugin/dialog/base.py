@@ -849,6 +849,11 @@ class BookPreviewDialog(QDialog):
                         detail_labels.append(
                             QLabel("<b>" + _("Duration") + f"</b>: {duration}")
                         )
+                if media.get("subjects"):
+                    subjects = [s["name"] for s in media["subjects"]]
+                    detail_labels.append(
+                        QLabel("<b>" + _("Subjects") + f'</b>: {", ".join(subjects)}')
+                    )
                 if media.get("starRating") and media.get("starRatingCount"):
                     ratings_layout = QHBoxLayout()
                     ratings_layout.addWidget(QLabel("<b>" + _("Rating") + "</b>: "))

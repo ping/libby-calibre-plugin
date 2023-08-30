@@ -52,8 +52,8 @@ load_translations()
 
 
 class SearchDialogMixin(BaseDialogMixin):
-    def __init__(self, gui, icon, do_user_config, icons, libraries_cache, media_cache):
-        super().__init__(gui, icon, do_user_config, icons, libraries_cache, media_cache)
+    def __init__(self, *args):
+        super().__init__(*args)
         self._search_thread = QThread()
 
         search_widget = QWidget()

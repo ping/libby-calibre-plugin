@@ -57,8 +57,8 @@ load_translations()
 
 
 class CardsDialogMixin(BaseDialogMixin):
-    def __init__(self, gui, icon, do_user_config, icons, libraries_cache, media_cache):
-        super().__init__(gui, icon, do_user_config, icons, libraries_cache, media_cache)
+    def __init__(self, *args):
+        super().__init__(*args)
         self._fetch_auth_form_thread = QThread()
 
         self.dpr = QApplication.instance().devicePixelRatio()

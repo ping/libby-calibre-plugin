@@ -525,11 +525,22 @@ class BaseDialogMixin(QDialog):
         :return:
         """
         if DEBUG:
+            try:
+                data_json = json.dumps(data, indent=2)
+            except TypeError:
+                import copy
+
+                data2 = copy.deepcopy(data)
+                for k in list(data2.keys()):
+                    if isinstance(data2[k], bytes):  # exclude bytes
+                        del data2[k]
+                data_json = json.dumps(data2, indent=2)
+
             return info_dialog(
                 self,
                 _c("Debug"),
                 text,
-                det_msg=json.dumps(data, indent=2),
+                det_msg=data_json,
                 show=True,
             )
 

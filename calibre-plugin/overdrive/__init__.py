@@ -9,4 +9,4 @@
 #
 
 # flake8: noqa
-from .client import OverDriveClient
+from .client import OverDriveClient, LibraryMediaSearchParams

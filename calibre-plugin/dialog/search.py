@@ -8,7 +8,6 @@
 # information
 #
 import copy
-from functools import cmp_to_key
 from typing import Dict, List
 
 from calibre.constants import DEBUG
@@ -32,7 +31,13 @@ from ..compat import (
     QHeaderView_ResizeMode_Stretch,
     _c,
 )
-from ..config import BorrowActions, MAX_SEARCH_LIBRARIES, PREFS, PreferenceKeys
+from ..config import (
+    BorrowActions,
+    MAX_SEARCH_LIBRARIES,
+    PREFS,
+    PreferenceKeys,
+    SearchMode,
+)
 from ..libby import LibbyClient, LibbyFormats
 from ..models import (
     LibbySearchModel,
@@ -40,7 +45,6 @@ from ..models import (
     get_media_title,
     truncate_for_display,
 )
-from ..overdrive import OverDriveClient
 from ..utils import PluginImages, obfuscate_name
 from ..workers import OverDriveMediaSearchWorker
 
@@ -73,7 +77,6 @@ class SearchDialogMixin(BaseDialogMixin):
         self.search_btn = DefaultQPushButton(
             _c("Search"), self.resources[PluginImages.Search], self
         )
-        self.search_btn.setAutoDefault(True)
         self.search_btn.clicked.connect(self.search_btn_clicked)
         search_widget.layout.addWidget(
             self.search_btn, widget_row_pos, self.view_hspan - 1
@@ -122,6 +125,16 @@ class SearchDialogMixin(BaseDialogMixin):
         )
         widget_row_pos += 1
 
+        self.toggle_search_mode_btn = DefaultQPushButton(
+            "", self.resources[PluginImages.SearchToggle], self
+        )
+        self.toggle_search_mode_btn.setToolTip(_("Advanced Search"))
+        self.toggle_search_mode_btn.setMaximumWidth(
+            self.toggle_search_mode_btn.height()
+        )
+        self.toggle_search_mode_btn.clicked.connect(self.toggle_search_mode_btn_clicked)
+        search_widget.layout.addWidget(self.toggle_search_mode_btn, widget_row_pos, 0)
+
         borrow_action_default_is_borrow = PREFS[
             PreferenceKeys.LAST_BORROW_ACTION
         ] == BorrowActions.BORROW or not hasattr(self, "download_loan")
@@ -155,6 +168,12 @@ class SearchDialogMixin(BaseDialogMixin):
         self.loan_removed.connect(self.loan_removed_search)
         self.hold_added.connect(self.hold_added_search)
         self.hold_removed.connect(self.hold_removed_search)
+
+    def toggle_search_mode_btn_clicked(self):
+        if hasattr(self, "adv_search_tab_index"):
+            PREFS[PreferenceKeys.SEARCH_MODE] = SearchMode.ADVANCED
+            self.search_mode_changed.emit(SearchMode.ADVANCED)
+            self.tabs.setCurrentIndex(self.adv_search_tab_index)
 
     def loan_added_search(self, loan: Dict):
         self.search_model.add_loan(loan)
@@ -197,31 +216,6 @@ class SearchDialogMixin(BaseDialogMixin):
         self.query_txt.setText(text)
         self.search_btn.setFocus(Qt.OtherFocusReason)
         self.search_btn.animateClick()
-
-    def _get_available_sites(self, media):
-        available_sites = []
-        for k, site in media.get("siteAvailabilities", {}).items():
-            site["advantageKey"] = k
-            if site.get("ownedCopies") or site.get("isAvailable"):
-                _card = next(
-                    iter(
-                        self.search_model.get_cards_for_library_key(
-                            site["advantageKey"]
-                        )
-                    ),
-                    None,
-                )
-                site["__card"] = _card
-                library = self.search_model.get_library(
-                    self.search_model.get_website_id(_card)
-                )
-                site["__library"] = library
-                available_sites.append(site)
-        return sorted(
-            available_sites,
-            key=cmp_to_key(OverDriveClient.sort_availabilities),
-            reverse=True,
-        )
 
     def _wrap_for_rich_text(self, txt):
         return f"<p>{txt}</p>"
@@ -288,7 +282,7 @@ class SearchDialogMixin(BaseDialogMixin):
             PreferenceKeys.LAST_BORROW_ACTION
         ] == BorrowActions.BORROW or not hasattr(self, "download_loan")
 
-        available_sites = self._get_available_sites(media)
+        available_sites = self.get_available_sites(media, self.search_model)
 
         borrow_sites = [
             s
@@ -423,7 +417,7 @@ class SearchDialogMixin(BaseDialogMixin):
 
         menu = QMenu(self)
         menu.setToolTipsVisible(True)
-        available_sites = self._get_available_sites(media)
+        available_sites = self.get_available_sites(media, self.search_model)
         view_in_libby_menu = QMenu(_("View in Libby"))
         view_in_libby_menu.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_menu.setToolTipsVisible(True)

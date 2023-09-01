@@ -41,6 +41,7 @@ class LibbyFormats(str, Enum):
     EBookKobo = "ebook-kobo"  # not used
     EBookKindle = "ebook-kindle"  # not used
     EBookOverdrive = "ebook-overdrive"
+    EBookOverdriveProvisional = "ebook-overdrive-provisional"
     MagazineOverDrive = "magazine-overdrive"
 
     def __str__(self):
@@ -279,6 +280,8 @@ class LibbyClient(object):
                 return LibbyFormats.EBookKindle
             elif LibbyClient.has_format(loan, LibbyFormats.EBookOverdrive):
                 return LibbyFormats.EBookOverdrive
+            elif LibbyClient.has_format(loan, LibbyFormats.EBookOverdriveProvisional):
+                return LibbyFormats.EBookOverdriveProvisional
             elif LibbyClient.has_format(loan, LibbyFormats.EBookKobo):
                 return LibbyFormats.EBookKobo
 

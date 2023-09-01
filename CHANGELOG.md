@@ -1,6 +1,7 @@
 # Changelog
 
 Unreleased
+- New: Advance search mode
 - New: Simple filter for titles and names in the Loans/Holds/Magazines/Cards tabs
 - New: Copy the Libby share link for a book
 - New: Verify a card

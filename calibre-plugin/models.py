@@ -70,8 +70,12 @@ def get_media_title(
     return title
 
 
-def is_valid_type(media: Dict) -> bool:
-    is_downloadable_ebook = LibbyClient.is_downloadable_ebook_loan(media)
+def is_valid_type(media: Dict, include_provisional=False) -> bool:
+    is_downloadable_ebook = LibbyClient.is_downloadable_ebook_loan(media) or (
+        # this is for search which may return upcoming books that aren't fully setup
+        include_provisional
+        and LibbyClient.has_format(media, LibbyFormats.EBookOverdriveProvisional)
+    )
     is_downloadable_magazine = (
         False
         if is_downloadable_ebook
@@ -105,6 +109,7 @@ LOAN_TYPE_TRANSLATION = {
 }
 LOAN_FORMAT_TRANSLATION = {
     "ebook-overdrive": _("Libby Book"),
+    "ebook-overdrive-provisional": _("Libby Book (Provisional)"),
     "audiobook-overdrive": _("Libby Audiobook"),
     "audiobook-mp3": _("MP3 Audiobook"),
     "magazine-overdrive": _("Libby Magazine"),
@@ -116,6 +121,7 @@ LOAN_FORMAT_TRANSLATION = {
     "ebook-epub-adobe": _("EPUB (DRM)"),
     "ebook-pdf-open": _("PDF"),
     "ebook-pdf-adobe": _("PDF (DRM)"),
+    "ebook-kobo": _("Kobo"),
 }
 CREATOR_ROLE_TRANSLATION = {
     "Cast Member": _("Cast Member"),
@@ -969,7 +975,7 @@ class LibbySearchModel(LibbyModel):
         self._rows = []
         for r in synced_state["search_results"]:
             try:
-                if is_valid_type(r):
+                if is_valid_type(r, include_provisional=True):
                     self._rows.append(r)
             except ValueError:
                 pass

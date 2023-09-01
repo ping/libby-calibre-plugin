@@ -18,7 +18,7 @@ from qt.core import QObject, pyqtSignal
 from . import logger
 from .config import PREFS, PreferenceKeys
 from .libby import LibbyClient, LibbyFormats
-from .overdrive import OverDriveClient
+from .overdrive import OverDriveClient, LibraryMediaSearchParams
 from .utils import SimpleCache
 
 
@@ -63,6 +63,41 @@ class OverDriveMediaSearchWorker(QObject):
                 % (timer() - total_start)
             )
             self.errored.emit(err)
+
+
+class OverDriveLibraryMediaSearchWorker(QObject):
+    """
+    Search library media
+    """
+
+    finished = pyqtSignal(str, dict)
+    errored = pyqtSignal(str, Exception)
+
+    def setup(
+        self,
+        overdrive_client: OverDriveClient,
+        library_key: str,
+        query: LibraryMediaSearchParams,
+    ):
+        self.client = overdrive_client
+        self.library_key = library_key
+        self.query = query
+
+    def run(self):
+        total_start = timer()
+        try:
+            results = self.client.library_medias(self.library_key, self.query)
+            logger.info(
+                "OverDrive Library Media Search (%s) took %f seconds"
+                % (self.library_key, timer() - total_start)
+            )
+            self.finished.emit(self.library_key, results)
+        except Exception as err:
+            logger.info(
+                "OverDrive Library Media Search (%s) failed after %f seconds"
+                % (self.library_key, timer() - total_start)
+            )
+            self.errored.emit(self.library_key, err)
 
 
 class OverDriveMediaWorker(QObject):

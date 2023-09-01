@@ -291,6 +291,8 @@ class PluginImages(str, Enum):
     Information = "information"
     Renew = "renew"
     Share = "share"
+    SearchToggle = "search-toggle"
+    Switch = "switch"
 
     def __str__(self):
         return str(self.value)
@@ -354,5 +356,11 @@ ICON_MAP = {
     ),
     PluginImages.Share: IconDefinition(
         file="images/share-line.svg", color=PluginColors.ThemeGreen
+    ),
+    PluginImages.SearchToggle: IconDefinition(
+        file="images/menu-search-line.svg", color=PluginColors.Turquoise
+    ),
+    PluginImages.Switch: IconDefinition(
+        file="images/arrow-left-right-line.svg", color=PluginColors.Turquoise
     ),
 }

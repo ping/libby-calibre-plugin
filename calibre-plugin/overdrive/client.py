@@ -11,6 +11,7 @@
 import gzip
 import json
 import logging
+from dataclasses import dataclass, field
 from http.client import HTTPException
 from io import BytesIO
 from socket import error as SocketError, timeout as SocketTimeout
@@ -30,6 +31,58 @@ USER_AGENT = (
 SITE_URL = "https://libbyapp.com"
 THUNDER_API_URL = "https://thunder.api.overdrive.com/v2/"
 CLIENT_ID = "dewey"
+
+
+class SearchSortBy:
+    RELEVANCE = "relevance"
+    GLOBAL_POPULARITY = "mostpopular"
+    RELEASE_DATE = "releasedate"
+    DATE_ADDED = "newlyadded"
+
+
+@dataclass
+class LibraryMediaSearchParams:
+    query: str = ""
+    title: str = ""
+    creator: str = ""
+    identifier: str = ""
+    formats: List[str] = field(default_factory=list)
+    per_page: int = 20
+    sort_by: str = SearchSortBy.RELEVANCE
+    show_only_available: bool = False
+    show_only_prelease: bool = False
+
+    def is_empty(self) -> bool:
+        return not (
+            self.query.strip()
+            or self.title.strip()
+            or self.creator.strip()
+            or self.identifier.strip()
+            or self.show_only_available
+            or self.show_only_prelease
+        )
+
+    def convert_bool(self, value: bool):
+        return str(value).lower()
+
+    def convert_to_csv(self, values: List):
+        return ",".join([str(v).strip() for v in values])
+
+    def to_dict(self) -> Dict:
+        result = {"page": 1, "perPage": max(1, self.per_page or 0)}
+        if self.sort_by:
+            result["sortBy"] = self.sort_by
+        if self.formats:
+            result["format"] = self.convert_to_csv(self.formats)
+        if self.show_only_available:
+            result["showOnlyAvailable"] = self.convert_bool(self.show_only_available)
+        elif self.show_only_prelease:
+            result["showOnlyPrerelease"] = self.convert_bool(self.show_only_prelease)
+        for a in ("query", "title", "creator", "identifier"):
+            v = getattr(self, a)
+            if v:
+                result[a] = str(v).strip()
+        return result
 
 
 class OverDriveClient(object):
@@ -450,3 +503,15 @@ class OverDriveClient(object):
         params.update({"libraryKey": library_keys, "query": query})
         params.update(kwargs)
         return self.send_request("media/search/", query=params)
+
+    def library_medias(self, library_key: str, query: LibraryMediaSearchParams) -> dict:
+        """
+        Get titles.
+
+        :param library_key: A unique key that identifies the library
+        :param query:
+        :return:
+        """
+        params = self.default_query()
+        params.update(query.to_dict())
+        return self.send_request(f"libraries/{library_key}/media/", query=params)

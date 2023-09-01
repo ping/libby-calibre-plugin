@@ -82,11 +82,17 @@ class PreferenceKeys:
     CUSTCOL_LOAN_TYPE = "custcol_loan_type"
     USE_BEST_COVER = "use_best_cover"
     CACHE_AGE_DAYS = "cache_age_days"
+    SEARCH_MODE = "search_mode"
 
 
 class BorrowActions:
     BORROW = "borrow"
     BORROW_AND_DOWNLOAD = "borrow_and_download"
+
+
+class SearchMode:
+    BASIC = "basic"
+    ADVANCED = "advance"
 
 
 class PreferenceTexts:
@@ -155,6 +161,7 @@ PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
 PREFS.defaults[PreferenceKeys.LAST_BORROW_ACTION] = BorrowActions.BORROW
 PREFS.defaults[PreferenceKeys.LAST_SELECTED_TAB] = 0
+PREFS.defaults[PreferenceKeys.SEARCH_MODE] = SearchMode.BASIC
 
 
 class ConfigWidget(QWidget):

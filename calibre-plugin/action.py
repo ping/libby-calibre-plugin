@@ -24,7 +24,7 @@ from . import (
     logger,
 )
 from .compat import QColor_fromString, _c
-from .config import PREFS, PreferenceKeys
+from .config import PREFS, PreferenceKeys, SearchMode
 from .dialog import (
     BaseDialogMixin,
     CardsDialogMixin,
@@ -32,6 +32,7 @@ from .dialog import (
     LoansDialogMixin,
     MagazinesDialogMixin,
     SearchDialogMixin,
+    AdvancedSearchDialogMixin,
 )
 from .utils import (
     CARD_ICON,
@@ -220,6 +221,7 @@ class OverdriveLibbyAction(InterfaceAction):
 
 class OverdriveLibbyDialog(
     CardsDialogMixin,
+    AdvancedSearchDialogMixin,
     SearchDialogMixin,
     MagazinesDialogMixin,
     HoldsDialogMixin,
@@ -255,4 +257,35 @@ class OverdriveLibbyDialog(
         ):
             self.tabs.setCurrentIndex(PREFS[PreferenceKeys.LAST_SELECTED_TAB])
 
+        self.search_mode_changed.connect(lambda s: self.toggle_search_mode(s))
+        self.search_mode_changed.emit(PREFS[PreferenceKeys.SEARCH_MODE])
+
         self.sync()
+
+    def toggle_search_mode(self, search_mode: str):
+        # this doesn't seem to work when toggling between basic and advance
+        if search_mode == SearchMode.BASIC:
+            if hasattr(self, "adv_search_btn"):
+                self.adv_search_btn.setAutoDefault(False)
+            if hasattr(self, "search_btn"):
+                self.search_btn.setAutoDefault(True)
+        elif search_mode == SearchMode.ADVANCED:
+            if hasattr(self, "search_btn"):
+                self.search_btn.setAutoDefault(False)
+            if hasattr(self, "adv_search_btn"):
+                self.adv_search_btn.setAutoDefault(True)
+
+        if (
+            search_mode == SearchMode.ADVANCED
+            and hasattr(self, "search_tab_index")
+            and hasattr(self, "adv_search_tab_index")
+        ):
+            self.tabs.setTabVisible(self.search_tab_index, False)
+            self.tabs.setTabVisible(self.adv_search_tab_index, True)
+        elif (
+            search_mode == SearchMode.BASIC
+            and hasattr(self, "search_tab_index")
+            and hasattr(self, "adv_search_tab_index")
+        ):
+            self.tabs.setTabVisible(self.adv_search_tab_index, False)
+            self.tabs.setTabVisible(self.search_tab_index, True)

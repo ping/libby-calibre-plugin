@@ -15,3 +15,4 @@ from .holds import HoldsDialogMixin
 from .loans import LoansDialogMixin
 from .magazines import MagazinesDialogMixin
 from .search import SearchDialogMixin
+from .advanced_search import AdvancedSearchDialogMixin

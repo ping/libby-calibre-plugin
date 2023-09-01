@@ -9,7 +9,7 @@
 #
 import json
 from collections import OrderedDict
-from functools import partial
+from functools import cmp_to_key, partial
 from typing import Dict, List, Optional
 
 from calibre import prepare_string_for_xml
@@ -50,7 +50,7 @@ from qt.core import (
 from .widgets import ClickableQLabel, CustomLoadingOverlay, DefaultQPushButton
 from .. import DEMO_MODE, logger
 from ..compat import QToolButton_ToolButtonPopupMode_DelayedPopup, _c, ngettext_c
-from ..config import BorrowActions, PREFS, PreferenceKeys
+from ..config import BorrowActions, PREFS, PreferenceKeys, SearchMode
 from ..hold_actions import LibbyHoldCreate
 from ..libby import LibbyClient, LibbyMediaTypes
 from ..libby.errors import (
@@ -112,6 +112,7 @@ class BaseDialogMixin(QDialog):
     """
 
     last_borrow_action_changed = pyqtSignal(str)
+    search_mode_changed = pyqtSignal(str)
     hide_title_already_in_lib_pref_changed = pyqtSignal(bool)
     sync_starting = pyqtSignal()
     sync_ended = pyqtSignal(dict)
@@ -299,7 +300,10 @@ class BaseDialogMixin(QDialog):
         preview_action.triggered.connect(lambda: self.find_library_matches(media))
 
     def add_search_for_title_menu_action(self, menu, media, search_for_author=False):
-        if hasattr(self, "search_for"):
+        if (
+            hasattr(self, "search_for")
+            and PREFS[PreferenceKeys.SEARCH_MODE] == SearchMode.BASIC
+        ):
             search_action = menu.addAction(
                 _('Search for "{book}"').format(
                     book=truncate_for_display(get_media_title(media))
@@ -320,6 +324,34 @@ class BaseDialogMixin(QDialog):
                 search_author_action.setIcon(self.resources[PluginImages.Search])
                 search_author_action.triggered.connect(
                     lambda: self.search_for(media["firstCreatorName"].strip())
+                )
+        if (
+            hasattr(self, "adv_search_for")
+            and PREFS[PreferenceKeys.SEARCH_MODE] == SearchMode.ADVANCED
+        ):
+            search_action = menu.addAction(
+                _('Search for "{book}"').format(
+                    book=truncate_for_display(get_media_title(media))
+                )
+            )
+            search_action.setIcon(self.resources[PluginImages.Search])
+            search_action.triggered.connect(
+                lambda: self.adv_search_for(
+                    f"{get_media_title(media)}".strip(),
+                    f'{media.get("firstCreatorName", "")}'.strip(),
+                )
+            )
+            if search_for_author and media.get("firstCreatorName"):
+                search_author_action = menu.addAction(
+                    _('Search for "{book}"').format(
+                        book=truncate_for_display(media["firstCreatorName"])
+                    )
+                )
+                search_author_action.setIcon(self.resources[PluginImages.Search])
+                search_author_action.triggered.connect(
+                    lambda: self.adv_search_for(
+                        "", f'{media.get("firstCreatorName", "")}'.strip()
+                    )
                 )
 
     def add_copy_share_link_menu_action(self, menu, media):
@@ -657,6 +689,26 @@ class BaseDialogMixin(QDialog):
             )
         self.hold_added.emit(job.result)
         self.gui.status_bar.show_message(job.description + " " + _c("finished"), 5000)
+
+    def get_available_sites(self, media, model: LibbyModel):
+        # Use by search
+        available_sites = []
+        for k, site in media.get("siteAvailabilities", {}).items():
+            site["advantageKey"] = k
+            if site.get("ownedCopies") or site.get("isAvailable"):
+                _card = next(
+                    iter(model.get_cards_for_library_key(site["advantageKey"])),
+                    None,
+                )
+                site["__card"] = _card
+                library = model.get_library(model.get_website_id(_card))
+                site["__library"] = library
+                available_sites.append(site)
+        return sorted(
+            available_sites,
+            key=cmp_to_key(OverDriveClient.sort_availabilities),
+            reverse=True,
+        )
 
 
 class BookPreviewDialog(QDialog):

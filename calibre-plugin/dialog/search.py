@@ -535,17 +535,23 @@ class SearchDialogMixin(BaseDialogMixin):
         thread.started.connect(worker.run)
 
         def done(results):
+            thread.quit()
             self.search_btn.setText(_c("Search"))
             self.search_btn.setEnabled(True)
             self.unsetCursor()
             self.search_model.sync({"search_results": results})
-            thread.quit()
+            self.status_bar.showMessage(
+                ngettext("{n} result found", "{n} results found", len(results)).format(
+                    n=len(results)
+                ),
+                5000,
+            )
 
         def errored_out(err: Exception):
+            thread.quit()
             self.search_btn.setText(_c("Search"))
             self.search_btn.setEnabled(True)
             self.unsetCursor()
-            thread.quit()
             raise err
 
         worker.finished.connect(lambda results: done(results))

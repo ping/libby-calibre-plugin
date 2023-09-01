@@ -6,9 +6,11 @@ Unreleased
 - New: Verify a card
 - Improve: Display linked identifiers, subjects in Book Details
 - Improve: Infrequently changed data like libraries are now cached to give sync a small speed bump
+- Improve: Card image in cards tab is not fuzzy anymore
 - Fix: Borrowing with a card that has no lending period preference
 - Fix: Display of rating in book details
 - Fix: Properly update empty book without any identifiers (ref #8)
+- Fix: Duplicate condition when finding a book in calibre library
 
 Version 0.1.7 - 2023-08-20
 - New: If "Include titles without downloadable formats" is enabled, titles that do not have a downloadable format will be shown. In addition, when the title is chosen for download, the plugin will create an Empty Book

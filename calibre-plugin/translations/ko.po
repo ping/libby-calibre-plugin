@@ -765,7 +765,7 @@ msgstr ""
 
 #: calibre-plugin/dialog/cards.py:255 calibre-plugin/dialog/cards.py:460
 msgid "Verify Card"
-msgstr ""
+msgstr "카드 확인"
 
 #: calibre-plugin/dialog/cards.py:274
 msgid "Card name"
@@ -785,11 +785,11 @@ msgstr ""
 
 #: calibre-plugin/dialog/cards.py:487
 msgid "Password"
-msgstr ""
+msgstr "암호"
 
 #: calibre-plugin/dialog/cards.py:497
 msgid "Sign In"
-msgstr ""
+msgstr "로그인"
 
 #: calibre-plugin/dialog/cards.py:541
 #, python-brace-format

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.7\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-08-29 18:10+0800\n"
+"POT-Creation-Date: 2023-09-01 11:58+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -176,7 +176,7 @@ msgstr ""
 msgid "Libby is configured."
 msgstr ""
 
-#: calibre-plugin/config.py:187 calibre-plugin/dialog/base.py:363
+#: calibre-plugin/config.py:187 calibre-plugin/dialog/base.py:373
 msgid "Libby is not configured yet."
 msgstr ""
 
@@ -572,78 +572,82 @@ msgstr ""
 msgid "Search in calibre library"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:304
+#: calibre-plugin/dialog/base.py:304 calibre-plugin/dialog/base.py:316
 #, python-brace-format
 msgid "Search for \"{book}\""
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:316
+#: calibre-plugin/dialog/base.py:326
 msgid "Copy Libby share link"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:324
+#: calibre-plugin/dialog/base.py:334
 #, python-brace-format
 msgid "Copied {link}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:366 calibre-plugin/dialog/base.py:367
+#: calibre-plugin/dialog/base.py:376 calibre-plugin/dialog/base.py:377
 msgid "Synchronizing..."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:389
+#: calibre-plugin/dialog/base.py:399
 #, python-brace-format
 msgid ""
 "Synced {loans} loans, {holds} holds ({unique_holds} unique), {cards} cards, "
 "and {magazines} magazines."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:414
+#: calibre-plugin/dialog/base.py:424
 #, python-brace-format
 msgid "An error occured during sync: {err}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:416
+#: calibre-plugin/dialog/base.py:426
 msgid "Error synchronizing data"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:438 calibre-plugin/dialog/base.py:456
-#: calibre-plugin/dialog/base.py:479 calibre-plugin/dialog/base.py:495
+#: calibre-plugin/dialog/base.py:448 calibre-plugin/dialog/base.py:466
+#: calibre-plugin/dialog/base.py:489 calibre-plugin/dialog/base.py:505
 #: calibre-plugin/dialog/search.py:130 calibre-plugin/dialog/search.py:189
 msgid "Borrow"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:440 calibre-plugin/dialog/base.py:454
-#: calibre-plugin/dialog/base.py:479 calibre-plugin/dialog/base.py:493
+#: calibre-plugin/dialog/base.py:450 calibre-plugin/dialog/base.py:464
+#: calibre-plugin/dialog/base.py:489 calibre-plugin/dialog/base.py:503
 #: calibre-plugin/dialog/search.py:132 calibre-plugin/dialog/search.py:189
 msgid "Borrow and Download"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:446 calibre-plugin/dialog/base.py:482
+#: calibre-plugin/dialog/base.py:456 calibre-plugin/dialog/base.py:492
 msgid "Borrow selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:448 calibre-plugin/dialog/base.py:484
+#: calibre-plugin/dialog/base.py:458 calibre-plugin/dialog/base.py:494
 msgid "Borrow and download selected title"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:600
+#: calibre-plugin/dialog/base.py:621
 msgid "Check your connection or retry in a few minutes."
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:614
+#: calibre-plugin/dialog/base.py:635
 #, python-brace-format
 msgid "Placing hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:635
+#: calibre-plugin/dialog/base.py:656
 msgid "Failed to create hold"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:829
+#: calibre-plugin/dialog/base.py:850
 msgid "Duration"
 msgstr ""
 
-#: calibre-plugin/dialog/base.py:833
+#: calibre-plugin/dialog/base.py:855
+msgid "Subjects"
+msgstr ""
+
+#: calibre-plugin/dialog/base.py:859
 msgid "Rating"
 msgstr ""
 
@@ -993,3 +997,10 @@ msgstr ""
 #: calibre-plugin/dialog/search.py:397
 msgid "You already have a hold for this title."
 msgstr ""
+
+#: calibre-plugin/dialog/search.py:544
+#, python-brace-format
+msgid "{n} result found"
+msgid_plural "{n} results found"
+msgstr[0] ""
+msgstr[1] ""

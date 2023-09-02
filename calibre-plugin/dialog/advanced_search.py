@@ -76,6 +76,7 @@ class AdvancedSearchDialogMixin(BaseDialogMixin):
 
         form_fields_layout = QFormLayout()
         form_fields_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        form_fields_layout.setHorizontalSpacing(20)
         adv_search_widget.layout.addLayout(
             form_fields_layout, widget_row_pos, 0, 1, self.view_hspan - 1
         )

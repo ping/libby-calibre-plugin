@@ -311,7 +311,7 @@ def extract_cached_items(
     :return:
     """
     uncached_object_ids: List[str] = []
-    cached_objects: List[dict] = []
+    cached_objects: List[Dict] = []
     for object_id in object_ids:
         cached_obj = cache.get(object_id)
         if cached_obj:

@@ -10,7 +10,7 @@
 
 import json
 from http import HTTPStatus
-from typing import List
+from typing import Dict, List
 from urllib.error import HTTPError
 
 
@@ -85,7 +85,7 @@ class InternalServerError(ClientError):
 
 
 class ErrorHandler(object):
-    ERRORS_MAP: List[dict] = [
+    ERRORS_MAP: List[Dict] = [
         # Generic errors based on HTTP status code
         {"code": [HTTPStatus.BAD_REQUEST], "error": ClientBadRequestError},  # 400
         {"code": [HTTPStatus.UNAUTHORIZED], "error": ClientUnauthorisedError},  # 401

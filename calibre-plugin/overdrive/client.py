@@ -417,7 +417,7 @@ class OverDriveClient(object):
         params.update(kwargs)
         return self.send_request(f"media/{title_id}", query=params)
 
-    def media_bulk(self, title_ids: List[str], **kwargs) -> List[dict]:
+    def media_bulk(self, title_ids: List[str], **kwargs) -> List[Dict]:
         """
         Retrieve a list of titles.
 
@@ -432,7 +432,7 @@ class OverDriveClient(object):
     @pageable
     def libraries(
         self, website_ids: Optional[List[Union[int, str]]] = None, **kwargs
-    ) -> dict:
+    ) -> Dict:
         """
         Get a list of libraries.
 
@@ -452,7 +452,7 @@ class OverDriveClient(object):
         params.update(kwargs)
         return self.send_request("libraries/", query=params)
 
-    def library_media(self, library_key: str, title_id: str, **kwargs) -> dict:
+    def library_media(self, library_key: str, title_id: str, **kwargs) -> Dict:
         """
         Get title.
 
@@ -487,7 +487,7 @@ class OverDriveClient(object):
                 return -1
         return 0
 
-    def media_search(self, library_keys: List[str], query: str, **kwargs) -> List[dict]:
+    def media_search(self, library_keys: List[str], query: str, **kwargs) -> List[Dict]:
         """
         Search multiple libraries for a query.
 
@@ -504,7 +504,7 @@ class OverDriveClient(object):
         params.update(kwargs)
         return self.send_request("media/search/", query=params)
 
-    def library_medias(self, library_key: str, query: LibraryMediaSearchParams) -> dict:
+    def library_medias(self, library_key: str, query: LibraryMediaSearchParams) -> Dict:
         """
         Get titles.
 

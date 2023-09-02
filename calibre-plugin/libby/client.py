@@ -73,7 +73,7 @@ DOWNLOADABLE_FORMATS = (
     LibbyFormats.EBookPDFAdobe,
     LibbyFormats.EBookPDFOpen,
     LibbyFormats.MagazineOverDrive,
-    LibbyFormats.AudioBookMP3,
+    # LibbyFormats.AudioBookMP3,
 )
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1) AppleWebKit/605.1.15 (KHTML, like Gecko) "

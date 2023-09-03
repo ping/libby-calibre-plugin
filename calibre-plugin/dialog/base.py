@@ -601,12 +601,18 @@ class BaseDialogMixin(QDialog):
         if not QPixmapCache.find(card_pixmap_cache_id):
             svg_root = etree.fromstring(self.resources[PluginImages.Card])
             if not DEMO_MODE:
-                stop1 = svg_root.find('.//stop[@class="stop1"]', svg_root.nsmap)
-                stop1.attrib["stop-color"] = library["settings"]["primaryColor"]["hex"]
-                stop2 = svg_root.find('.//stop[@class="stop2"]', svg_root.nsmap)
-                stop2.attrib["stop-color"] = library["settings"]["secondaryColor"][
-                    "hex"
-                ]
+                primary_colour = (
+                    library["settings"].get("primaryColor", {}).get("hex", "")
+                )
+                secondary_colour = (
+                    library["settings"].get("secondaryColor", {}).get("hex", "")
+                )
+                if primary_colour:
+                    stop1 = svg_root.find('.//stop[@class="stop1"]', svg_root.nsmap)
+                    stop1.attrib["stop-color"] = primary_colour
+                if secondary_colour:
+                    stop2 = svg_root.find('.//stop[@class="stop2"]', svg_root.nsmap)
+                    stop2.attrib["stop-color"] = secondary_colour
             card_pixmap = svg_to_pixmap(etree.tostring(svg_root), size=size)
             QPixmapCache.insert(card_pixmap_cache_id, card_pixmap)
         return card_pixmap

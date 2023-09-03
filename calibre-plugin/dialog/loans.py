@@ -225,7 +225,22 @@ class LoansDialogMixin(BaseDialogMixin):
             return
         indices = selection_model.selectedRows()
         loan = indices[-1].data(Qt.UserRole)
-        self.status_bar.showMessage(get_media_title(loan), 3000)
+        status_bar_msg = get_media_title(loan)
+        hold_count = loan.get("holdsCount", 0)
+        owned_copies = loan.get("ownedCopies", 0)
+        if loan.get("holdsCount") and not loan.get("availableCopies"):
+            status_bar_msg += (
+                " ("
+                + ngettext(
+                    "{n} copy in use.", "{n} copies in use.", owned_copies
+                ).format(n=owned_copies)
+                + " "
+                + ngettext(
+                    "{n} person waiting.", "{n} people waiting.", hold_count
+                ).format(n=hold_count)
+                + ")"
+            )
+        self.status_bar.showMessage(status_bar_msg, 3000)
 
     def loans_view_context_menu_requested(self, pos):
         selection_model = self.loans_view.selectionModel()

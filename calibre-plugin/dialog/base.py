@@ -56,6 +56,7 @@ from ..libby import LibbyClient, LibbyMediaTypes
 from ..libby.errors import (
     ClientConnectionError as LibbyConnectionError,
     ClientError as LibbyClientError,
+    ClientUnauthorisedError,
 )
 from ..models import (
     CREATOR_ROLE_TRANSLATION,
@@ -657,6 +658,14 @@ class BaseDialogMixin(QDialog):
                 msg += (
                     "<p>"
                     + _("Check your connection or retry in a few minutes.")
+                    + "</p>"
+                )
+            elif isinstance(err, ClientUnauthorisedError):
+                msg += (
+                    "<p>"
+                    + _(
+                        "You may be making too many requests or your card may require verification."
+                    )
                     + "</p>"
                 )
             elif isinstance(err, LibbyClientError):

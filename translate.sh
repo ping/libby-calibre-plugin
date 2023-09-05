@@ -1,3 +1,4 @@
+# Helper bash script to update and build translations files - macOS
 if [[ -z "$1" ]]; then
   version='0.1.8'
 else

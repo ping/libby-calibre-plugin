@@ -1,6 +1,6 @@
 # Changelog
 
-Unreleased
+Version 0.1.8 - 2023-09-05
 - New: Advance search mode
 - New: Simple filter for titles and names in the Loans/Holds/Magazines/Cards tabs
 - New: Copy the Libby share link for a book

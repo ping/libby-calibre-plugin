@@ -23,10 +23,12 @@ jobs:
         with:
           submodules: true
           fetch-depth: 1
-      - name: Install ruff for linting
-        run: pip install ruff
+      - name: Install requirements for linting
+        run: pip install -r requirements-dev.txt
       - name: Lint
-        run: ruff check calibre-plugin
+        run: sh lint.sh
+      # - name: Run tests
+      # run: python -m unittest -v tests
       - name: Install gtext
         run: sudo apt-get -y install gettext
       - name: Generate commit.txt and build .mo files

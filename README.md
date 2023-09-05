@@ -97,6 +97,8 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
   - When such titles are chosen for download, an empty book will be created in the calibre library
 - Use highest-resolution cover for book details
   - Display best-quality cover when viewing book details. May be slower.
+- Cache data for
+  - Infrequently changed data like libraries information are cached by the plugin. Use this to change how long cached data is used.
 
 #### Network
 
@@ -122,6 +124,7 @@ Select a row, right-click and select the appropriate action to:
 - View the title on the Libby/OverDrive site
 - Read with Kindle (if available)
 - View book details (also accesible by double-clicking on the row)
+- Copy the Libby share link
 - Search for selected book in your calibre library
 - Search with the selected book title and author
 - Renew/place a hold for an expiring loan

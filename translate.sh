@@ -1,5 +1,5 @@
 if [[ -z "$1" ]]; then
-  version='0.1.7'
+  version='0.1.8'
 else
   version="$1"
 fi

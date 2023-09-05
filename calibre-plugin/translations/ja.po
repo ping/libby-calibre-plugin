@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: libby-calibre-plugin 0.1.7\n"
+"Project-Id-Version: libby-calibre-plugin 0.1.8\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
 "POT-Creation-Date: 2023-09-05 13:22+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"

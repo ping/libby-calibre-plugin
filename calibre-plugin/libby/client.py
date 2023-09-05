@@ -608,6 +608,15 @@ class LibbyClient(object):
         res: Dict = self.send_request("chip/clone/code", params={"code": code})
         return res
 
+    def generate_clone_code(self):
+        """
+        Get a clone code for setting up another device
+
+        :return:
+        """
+        res: Dict = self.send_request("chip/clone/code")
+        return res
+
     def sync(self) -> Dict:
         """
         Get the user account state, which includes loans, holds, etc.

@@ -7,6 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
+import time
 from typing import Tuple
 
 from calibre import confirm_config_name
@@ -34,6 +35,7 @@ from qt.core import (
     QVBoxLayout,
     QWidget,
     Qt,
+    QTimer,
 )
 
 from . import DEMO_MODE, PLUGIN_NAME, PLUGINS_FOLDER_NAME, logger
@@ -42,7 +44,7 @@ from .utils import PluginColors
 
 # noinspection PyUnreachableCode
 if False:
-    load_translations = _ = lambda x=None: x
+    load_translations = _ = ngettext = lambda x=None, y=None, z=None: x
 
 load_translations()
 
@@ -223,6 +225,24 @@ class ConfigWidget(QWidget):
         if not DEMO_MODE:
             self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
         libby_layout.addRow(self.libby_setup_code_lbl, self.libby_setup_code_txt)
+
+        if is_configured:
+            generate_code_layout = QHBoxLayout()
+            self.generate_code_btn = QPushButton(_("Generate Setup Code"), self)
+            self.generate_code_btn.setToolTip(
+                _("Generate setup code for another device")
+            )
+            self.generate_code_btn.setMinimumWidth(150)
+            self.generate_code_btn.clicked.connect(self.generate_code_btn_clicked)
+            generate_code_layout.addWidget(self.generate_code_btn)
+            self.generated_code_lbl = QLabel(self)
+            self.generated_code_lbl.setTextInteractionFlags(
+                Qt.TextSelectableByKeyboard | Qt.TextSelectableByMouse
+            )
+            generate_code_layout.addWidget(self.generated_code_lbl)
+            self.time_remaining_lbl = QLabel(self)
+            generate_code_layout.addWidget(self.time_remaining_lbl, stretch=1)
+            libby_layout.addRow(generate_code_layout)
 
         # ------------------------------------ LOANS ------------------------------------
         loans_section = QGroupBox(_("Loans"))
@@ -646,6 +666,46 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.help_lbl, len(sections) + 1, 0, 1, 2)
 
         self.resize(self.sizeHint())
+
+    def generate_code_btn_clicked(self):
+        from .libby import LibbyClient
+
+        client = LibbyClient(
+            identity_token=PREFS[PreferenceKeys.LIBBY_TOKEN],
+            max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
+            timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
+            logger=logger,
+        )
+        res = client.generate_clone_code()
+        generated_code = res.get("code", "")
+        expiry: int = res.get("expiry", 0)
+        if generated_code and expiry:
+            self.code_expiry = expiry
+            self.generated_code = generated_code
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.timer_update)
+            self.generate_code_btn.setEnabled(False)
+            self.generated_code_lbl.setText(f"<b>{self.generated_code}</b>")
+            self.timer_update()
+            self.timer.start(1000)
+
+    def timer_update(self):
+        remaining_seconds = self.code_expiry - int(time.time())
+        if remaining_seconds <= 0:
+            self.timer.stop()
+            self.generate_code_btn.setEnabled(True)
+            self.generated_code_lbl.setText("")
+            self.time_remaining_lbl.setText("")
+            self.generated_code = ""
+            self.code_expiry = 0
+        else:
+            self.time_remaining_lbl.setText(
+                ngettext(
+                    "{remaining} second remaining",
+                    "{remaining} seconds remaining",
+                    remaining_seconds,
+                ).format(remaining=remaining_seconds)
+            )
 
     def custom_column_name(self, col_type: str):
         for c in (" ",):

@@ -5,6 +5,7 @@ Unreleased
 - New: Simple filter for titles and names in the Loans/Holds/Magazines/Cards tabs
 - New: Copy the Libby share link for a book
 - New: Verify a card
+- New: Generate a setup code (for another device)
 - Improve: Display linked identifiers, subjects in Book Details
 - Improve: Infrequently changed data like libraries are now cached to give sync a small speed bump
 - Improve: Card image in cards tab is not fuzzy anymore

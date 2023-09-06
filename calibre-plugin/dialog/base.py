@@ -307,7 +307,7 @@ class BaseDialogMixin(QDialog):
         ):
             search_action = menu.addAction(
                 _('Search for "{book}"').format(
-                    book=truncate_for_display(get_media_title(media))
+                    book=truncate_for_display(get_media_title(media), font=menu.font())
                 )
             )
             search_action.setIcon(self.resources[PluginImages.Search])
@@ -319,7 +319,9 @@ class BaseDialogMixin(QDialog):
             if search_for_author and media.get("firstCreatorName"):
                 search_author_action = menu.addAction(
                     _('Search for "{book}"').format(
-                        book=truncate_for_display(media["firstCreatorName"])
+                        book=truncate_for_display(
+                            media["firstCreatorName"], font=menu.font()
+                        )
                     )
                 )
                 search_author_action.setIcon(self.resources[PluginImages.Search])
@@ -332,7 +334,7 @@ class BaseDialogMixin(QDialog):
         ):
             search_action = menu.addAction(
                 _('Search for "{book}"').format(
-                    book=truncate_for_display(get_media_title(media))
+                    book=truncate_for_display(get_media_title(media), font=menu.font())
                 )
             )
             search_action.setIcon(self.resources[PluginImages.Search])
@@ -345,7 +347,9 @@ class BaseDialogMixin(QDialog):
             if search_for_author and media.get("firstCreatorName"):
                 search_author_action = menu.addAction(
                     _('Search for "{book}"').format(
-                        book=truncate_for_display(media["firstCreatorName"])
+                        book=truncate_for_display(
+                            media["firstCreatorName"], font=menu.font()
+                        )
                     )
                 )
                 search_author_action.setIcon(self.resources[PluginImages.Search])

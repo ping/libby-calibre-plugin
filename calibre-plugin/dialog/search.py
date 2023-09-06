@@ -305,7 +305,8 @@ class SearchDialogMixin(BaseDialogMixin):
                     card_action = borrow_menu.addAction(
                         QIcon(self.get_card_pixmap(site["__library"])),
                         truncate_for_display(
-                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
+                            f'{card["advantageKey"]}: {card["cardName"] or ""}',
+                            font=borrow_menu.font(),
                         ),
                     )
                     if not LibbyClient.can_borrow(card):
@@ -366,7 +367,8 @@ class SearchDialogMixin(BaseDialogMixin):
                     card_action = hold_menu.addAction(
                         QIcon(self.get_card_pixmap(site["__library"])),
                         truncate_for_display(
-                            f'{card["advantageKey"]}: {card["cardName"] or ""}'
+                            f'{card["advantageKey"]}: {card["cardName"] or ""}',
+                            font=hold_menu.font(),
                         ),
                     )
                     if not LibbyClient.can_place_hold(card):

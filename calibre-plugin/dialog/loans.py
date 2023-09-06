@@ -265,7 +265,9 @@ class LoansDialogMixin(BaseDialogMixin):
             ):
                 read_with_kindle_action = menu.addAction(
                     _('Read "{book}" with Kindle').format(
-                        book=truncate_for_display(get_media_title(selected_loan))
+                        book=truncate_for_display(
+                            get_media_title(selected_loan), font=menu.font()
+                        )
                     )
                 )
                 read_with_kindle_action.setIcon(self.resources[PluginImages.Amazon])

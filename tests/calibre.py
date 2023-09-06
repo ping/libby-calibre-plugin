@@ -42,6 +42,30 @@ class CalibreTests(unittest.TestCase):
         cache.clear()
         self.assertEqual(cache.count(), 0)
 
+    def test_truncate_for_display(self):
+        from calibre_plugins.overdrive_libby.models import truncate_for_display
+
+        self.assertEqual(
+            "Ipsum debitis dignissimo…",
+            truncate_for_display("Ipsum debitis dignissimos aspernatur."),
+        )
+        self.assertEqual(
+            "Ipsum debitis dignissimo…",
+            truncate_for_display("Ipsum debitis dignissimos aspernatur.", width=-100),
+        )
+        self.assertEqual(
+            "Ipsum debitis dignissimo…",
+            truncate_for_display(
+                "Ipsum debitis dignissimos aspernatur.", text_length=-1
+            ),
+        )
+        self.assertEqual(
+            "Ipsum debitis d…",
+            truncate_for_display(
+                "Ipsum debitis dignissimos aspernatur.", text_length=20
+            ),
+        )
+
 
 # Run with:
 # calibre-customize -b calibre-plugin && calibre-debug -e tests/calibre.py

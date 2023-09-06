@@ -11,6 +11,7 @@ from collections import namedtuple
 from functools import cmp_to_key
 from typing import Dict, List, Optional
 
+from calibre.gui2 import elided_text
 from calibre.utils.config import tweaks
 from calibre.utils.date import dt_as_local, format_date
 from calibre.utils.icu import lower as icu_lower
@@ -94,12 +95,13 @@ def is_valid_type(media: Dict, include_provisional=False) -> bool:
     return True
 
 
-def truncate_for_display(text, text_length=30):
-    if len(text) <= text_length:
-        return text if not DEMO_MODE else obfuscate_name(text)
-    return (
-        text[:text_length] if not DEMO_MODE else obfuscate_name(text[:text_length])
-    ) + "…"
+def truncate_for_display(text: str, text_length: int = 30, width: int = 0, font=None):
+    if not width:
+        width = text_length * 7
+    if not max(0, width or 0):
+        width = 200
+    txt = elided_text(text, font=font, width=width, pos="right")
+    return txt if not DEMO_MODE else obfuscate_name(txt)
 
 
 LOAN_TYPE_TRANSLATION = {

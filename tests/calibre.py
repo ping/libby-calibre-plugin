@@ -1,32 +1,29 @@
 import sys
 import unittest
 
-from qt.core import QApplication
-
-# To avoid "AttributeError: 'NoneType' object has no attribute 'palette'"
-# from importing is_dark_theme in utils.py
-app = QApplication([])
-from calibre_plugins.overdrive_libby.utils import (
-    rating_to_stars,
-    generate_od_identifier,
-    SimpleCache,
-)
+from calibre.gui2 import ensure_app, destroy_app
 
 
 class CalibreTests(unittest.TestCase):
     def test_rating_to_stars(self):
+        from calibre_plugins.overdrive_libby.utils import rating_to_stars
+
         self.assertEqual("★★★", rating_to_stars(3))
         self.assertEqual("★★★", rating_to_stars(3.2))
         self.assertEqual("★★★⯨", rating_to_stars(3.4))
         self.assertEqual("★★★⯨", rating_to_stars(3.6))
 
     def test_generate_od_identifier(self):
+        from calibre_plugins.overdrive_libby.utils import generate_od_identifier
+
         self.assertEqual(
             "1234@abc.overdrive.com",
             generate_od_identifier({"id": "1234"}, {"preferredKey": "abc"}),
         )
 
     def test_simplecache(self):
+        from calibre_plugins.overdrive_libby.utils import SimpleCache
+
         cache = SimpleCache(capacity=2)
         a = {"a": 1}
         b = {"b": 1}
@@ -49,8 +46,11 @@ class CalibreTests(unittest.TestCase):
 # Run with:
 # calibre-customize -b calibre-plugin && calibre-debug -e tests/calibre.py
 if __name__ == "__main__":
-    suite = unittest.TestSuite(unittest.makeSuite(CalibreTests))
-    result = unittest.TextTestRunner(verbosity=2).run(suite)
-    del app
-    if not result.wasSuccessful():
-        sys.exit(1)
+    try:
+        ensure_app()
+        suite = unittest.TestSuite(unittest.makeSuite(CalibreTests))
+        result = unittest.TextTestRunner(verbosity=2).run(suite)
+        if not result.wasSuccessful():
+            sys.exit(1)
+    finally:
+        destroy_app()

@@ -7,7 +7,7 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-
+import base64
 import gzip
 import json
 import logging
@@ -19,7 +19,7 @@ from io import BytesIO
 from socket import error as SocketError, timeout as SocketTimeout
 from ssl import SSLError
 from typing import Dict, List, Optional, Tuple, Union
-from urllib import request
+from urllib import parse, request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urljoin
 from urllib.request import HTTPCookieProcessor, Request, build_opener
@@ -1045,5 +1045,64 @@ class LibbyClient(object):
 
         res: Dict = self.send_request(
             f"auth/link/{website_id}", params=data, is_form=False, method="POST"
+        )
+        return res
+
+    def tags(self) -> Dict:
+        """
+        Get user tags.
+
+        :return:
+        """
+        res: Dict = self.send_request("https://vandal.svc.overdrive.com/tags")
+        return res
+
+    def tag(
+        self, tag_id: str, tag_name: str, paging_range: Tuple[int, int] = (0, 12)
+    ) -> Dict:
+        """
+        Details of a tag, including titles ("taggings").
+
+        :param tag_id: UUID string
+        :param tag_name: string
+        :param paging_range: tuple(start, end) for paging titles ("taggings"). 0-indexed. Defaults to a page size of 12.
+        :return:
+        """
+        query = {
+            "enc": "1",  # ??
+            "sort": "newest",
+            "range": f"{paging_range[0]}...{paging_range[1]}",
+        }
+        b64encoded_tag_name = base64.b64encode(tag_name.encode("utf-8")).decode("ascii")
+        res: Dict = self.send_request(
+            f"https://vandal.svc.overdrive.com/tag/{tag_id}/{b64encoded_tag_name}",
+            query=query,
+        )
+        return res
+
+    def tag_paged(
+        self, tag_id: str, tag_name: str, page: int = 0, per_page: int = 12
+    ) -> Dict:
+        """
+        Helper method to get details of a tag with more standardised paging parameters
+
+        :param tag_id:
+        :param tag_name:
+        :param page: 0-indexed. For paging titles ("taggings").
+        :param per_page: Default 12. Does not appear to be constrained. Tested up to 400.
+        :return:
+        """
+        paging_range = (page * per_page, (page + 1) * per_page)
+        return self.tag(tag_id, tag_name, paging_range)
+
+    def taggings(self, title_ids: List[str]) -> Dict:
+        """
+        Get tagging information for title IDs
+
+        :param title_ids:
+        :return:
+        """
+        res: Dict = self.send_request(
+            f'https://vandal.svc.overdrive.com/taggings/{parse.quote(",".join(title_ids))}'
         )
         return res

@@ -365,3 +365,108 @@ class LibbyClientTests(BaseTests):
 
         with self.assertRaises(ClientConnectionError):
             client.sync()
+
+    def test_tags(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        res = self.client.tags()
+        for k in ("tags", "totalTags", "totalTaggings"):
+            with self.subTest("response", k=k):
+                self.assertIn(k, res, msg=f'"{k}" not found')
+        for tag in res.get("tags"):
+            for k in (
+                "name",
+                "uuid",
+                "description",
+                "behaviors",
+                "createTime",
+                "totalTaggings",
+                "taggings",
+            ):
+                with self.subTest("tag", k=k):
+                    self.assertIn(k, tag, msg=f'"{k}" not found')
+
+    def test_tag(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        res = self.client.tags()
+        per_page = 12
+        for tag in res.get("tags"):
+            if tag.get("totalTaggings", 0) <= per_page:
+                # get a tag that requires paging
+                continue
+            total_titles_expected = tag["totalTaggings"]
+            curr_page = 0
+            tagged_titles = []
+            while True:
+                res = self.client.tag_paged(
+                    tag["uuid"], tag["name"], page=curr_page, per_page=per_page
+                )
+                curr_page += 1
+                tag_found = res.get("tag")
+                self.assertTrue(tag_found)
+                for k2 in (
+                    "name",
+                    "uuid",
+                    "description",
+                    "behaviors",
+                    "createTime",
+                    "facetCounts",
+                    "totalTaggings",
+                    "taggings",
+                ):
+                    with self.subTest("tag_found", k2=k2):
+                        self.assertIn(k2, tag_found, msg=f'"{k2}" not found')
+                for title in tag_found["taggings"]:
+                    for k3 in (
+                        "titleId",
+                        "websiteId",
+                        "cardId",
+                        "createTime",
+                        "titleFormat",
+                        "titleSubjects",
+                        "sortTitle",
+                        "sortAuthor",
+                    ):
+                        with self.subTest("title", k3=k3):
+                            self.assertIn(k3, title, msg=f'"{k3}" not found')
+                    self.assertNotIn(title["titleId"], tagged_titles)
+                    tagged_titles.append(title["titleId"])
+
+                if len(tag_found["taggings"]) < per_page:
+                    # last page
+                    break
+
+            self.assertEqual(total_titles_expected, len(tagged_titles))
+            break
+
+    def test_taggings(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        title_ids = ["784353", "36635"]
+        res = self.client.taggings(title_ids)
+        self.assertEqual(len(title_ids), len(res.items()))
+        for title_id in title_ids:
+            self.assertIn(title_id, res)
+            if not res[title_id]:
+                # title has not been tagged
+                continue
+            for tag in res[title_id]:
+                for k in (
+                    "titleId",
+                    "websiteId",
+                    "cardId",
+                    "createTime",
+                    "titleFormat",
+                    "titleSubjects",
+                    "sortTitle",
+                    "sortAuthor",
+                    "properties",
+                    "tagUUID",
+                    "tagName",
+                ):
+                    with self.subTest("title", k=k):
+                        self.assertIn(k, tag, msg=f'"{k}" not found')

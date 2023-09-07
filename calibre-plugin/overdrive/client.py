@@ -515,3 +515,34 @@ class OverDriveClient(object):
         params = self.default_query()
         params.update(query.to_dict())
         return self.send_request(f"libraries/{library_key}/media/", query=params)
+
+    def library_media_availability(self, library_key: str, title_id: str) -> Dict:
+        """
+        Get title availability at a library
+
+        :param library_key: A unique key that identifies the library
+        :param title_id:
+        :return:
+        """
+        return self.send_request(
+            f"libraries/{library_key}/media/{title_id}/availability",
+            query=self.default_query(),
+        )
+
+    def library_media_availability_bulk(
+        self, library_key: str, title_ids: List[str]
+    ) -> Dict:
+        """
+        Check availability for list of title IDs at the library specified
+
+        :param library_key:
+        :param title_ids:
+        :return:
+        """
+        params = {"ids": title_ids}
+        return self.send_request(
+            f"libraries/{library_key}/media/availability",
+            query=self.default_query(),
+            params=params,
+            is_form=False,
+        )

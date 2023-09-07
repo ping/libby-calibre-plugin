@@ -318,3 +318,53 @@ class OverDriveClientTests(BaseTests):
             }
         ]
         self.assertEqual(OverDriveClient.extract_asin(formats), "B123456789")
+
+    def test_library_media_availability(self):
+        item = self.client.library_media_availability("lapl", "784353")
+        for k in (
+            "id",
+            "isAvailable",
+            "availabilityType",
+            "holdsCount",
+            "formats",
+        ):
+            with self.subTest("item", k=k):
+                self.assertIn(k, item, msg=f'"{k}" not found')
+        if item["availabilityType"] == "normal":
+            for k in (
+                "ownedCopies",
+                "availableCopies",
+                "luckyDayOwnedCopies",
+                "luckyDayAvailableCopies",
+                "holdsRatio",
+                "estimatedWaitDays",
+            ):
+                with self.subTest("item", k=k):
+                    self.assertIn(k, item, msg=f'"{k}" not found')
+
+    def test_library_media_availability_bulk(self):
+        res = self.client.library_media_availability_bulk("lapl", ["784353", "36635"])
+        self.assertTrue(res.get("items"))
+        for item in res["items"] or []:
+            if not item:
+                continue
+            for k in (
+                "id",
+                "isAvailable",
+                "availabilityType",
+                "holdsCount",
+                "formats",
+            ):
+                with self.subTest("item", k=k):
+                    self.assertIn(k, item, msg=f'"{k}" not found')
+            if item["availabilityType"] == "normal":
+                for k in (
+                    "ownedCopies",
+                    "availableCopies",
+                    "luckyDayOwnedCopies",
+                    "luckyDayAvailableCopies",
+                    "holdsRatio",
+                    "estimatedWaitDays",
+                ):
+                    with self.subTest("item", k=k):
+                        self.assertIn(k, item, msg=f'"{k}" not found')

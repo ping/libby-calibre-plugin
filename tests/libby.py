@@ -442,6 +442,66 @@ class LibbyClientTests(BaseTests):
             self.assertEqual(total_titles_expected, len(tagged_titles))
             break
 
+    def test_tag_sort(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        res = self.client.tags()
+        for tag in res.get("tags"):
+            # test sort by oldest
+            res = self.client.tag_paged(
+                tag["uuid"],
+                tag["name"],
+                sort="newest",
+            )
+            tag_found = res.get("tag")
+            self.assertTrue(tag_found)
+            taggings = tag_found["taggings"]
+            for i, title in enumerate(taggings):
+                if i > 0:
+                    # sorted by oldest,
+                    previous_title = taggings[i - 1]
+                    self.assertTrue(title["createTime"] < previous_title["createTime"])
+
+            # test sort by oldest
+            res = self.client.tag_paged(
+                tag["uuid"],
+                tag["name"],
+                sort="oldest",
+            )
+            tag_found = res.get("tag")
+            self.assertTrue(tag_found)
+            taggings = tag_found["taggings"]
+            for i, title in enumerate(taggings):
+                if i > 0:
+                    # sorted by oldest,
+                    previous_title = taggings[i - 1]
+                    self.assertTrue(title["createTime"] > previous_title["createTime"])
+
+            # test sort by title
+            res = self.client.tag_paged(tag["uuid"], tag["name"], sort="title")
+            tag_found = res.get("tag")
+            self.assertTrue(tag_found)
+            taggings = tag_found["taggings"]
+            for i, title in enumerate(taggings):
+                if i > 0:
+                    # sorted by title,
+                    previous_title = taggings[i - 1]
+                    self.assertTrue(title["sortTitle"] > previous_title["sortTitle"])
+
+            # test sort by author
+            res = self.client.tag_paged(tag["uuid"], tag["name"], sort="author")
+            tag_found = res.get("tag")
+            self.assertTrue(tag_found)
+            taggings = tag_found["taggings"]
+            for i, title in enumerate(taggings):
+                if i > 0:
+                    # sorted by title,
+                    previous_title = taggings[i - 1]
+                    self.assertTrue(title["sortAuthor"] >= previous_title["sortAuthor"])
+
+            break
+
     def test_taggings(self):
         if not self.client.identity_token:
             self.skipTest("Client not authorised")

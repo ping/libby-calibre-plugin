@@ -425,6 +425,15 @@ class BaseDialogMixin(QDialog):
         thread.started.connect(worker.run)
 
         def loaded(value: Dict):
+            new_identity_token = value.get("identity", "")
+            if (
+                new_identity_token
+                and PREFS[PreferenceKeys.LIBBY_TOKEN] != new_identity_token
+            ):
+                # identity token has changed
+                PREFS[PreferenceKeys.LIBBY_TOKEN] = new_identity_token
+                if self.client:
+                    self.client.identity_token = new_identity_token
             self.sync_ended.emit(value)
             self.loading_overlay.hide()
             try:

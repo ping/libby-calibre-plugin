@@ -448,7 +448,7 @@ class LibbyClientTests(BaseTests):
 
         res = self.client.tags()
         for tag in res.get("tags"):
-            # test sort by oldest
+            # test sort by newest
             res = self.client.tag_paged(
                 tag["uuid"],
                 tag["name"],
@@ -459,7 +459,7 @@ class LibbyClientTests(BaseTests):
             taggings = tag_found["taggings"]
             for i, title in enumerate(taggings):
                 if i > 0:
-                    # sorted by oldest,
+                    # sorted by newest,
                     previous_title = taggings[i - 1]
                     self.assertTrue(title["createTime"] < previous_title["createTime"])
 
@@ -474,7 +474,7 @@ class LibbyClientTests(BaseTests):
             taggings = tag_found["taggings"]
             for i, title in enumerate(taggings):
                 if i > 0:
-                    # sorted by oldest,
+                    # sorted by oldest
                     previous_title = taggings[i - 1]
                     self.assertTrue(title["createTime"] > previous_title["createTime"])
 
@@ -485,7 +485,7 @@ class LibbyClientTests(BaseTests):
             taggings = tag_found["taggings"]
             for i, title in enumerate(taggings):
                 if i > 0:
-                    # sorted by title,
+                    # sorted by title
                     previous_title = taggings[i - 1]
                     self.assertTrue(title["sortTitle"] > previous_title["sortTitle"])
 
@@ -496,7 +496,7 @@ class LibbyClientTests(BaseTests):
             taggings = tag_found["taggings"]
             for i, title in enumerate(taggings):
                 if i > 0:
-                    # sorted by title,
+                    # sorted by author
                     previous_title = taggings[i - 1]
                     self.assertTrue(title["sortAuthor"] >= previous_title["sortAuthor"])
 

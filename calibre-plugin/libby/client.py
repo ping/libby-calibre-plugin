@@ -448,7 +448,7 @@ class LibbyClient(object):
         if authenticated and self.identity_token:
             headers["Authorization"] = f"Bearer {self.identity_token}"
         if query:
-            endpoint_url += "?" if "?" not in endpoint else "&" + urlencode(query)
+            endpoint_url += ("?" if "?" not in endpoint else "&") + urlencode(query)
         if not method:
             # try to set an HTTP method
             if params is None:

@@ -12,7 +12,6 @@ import gzip
 import json
 import logging
 from datetime import datetime, timezone
-from enum import Enum
 from http.client import HTTPException
 from http.cookiejar import CookieJar
 from io import BytesIO
@@ -25,9 +24,31 @@ from urllib.parse import urlencode, urljoin
 from urllib.request import HTTPCookieProcessor, Request, build_opener
 
 from .errors import ClientConnectionError, ErrorHandler
+from .utils import StringEnum
 
 
-class LibbyFormats(str, Enum):
+class LibbyTagTypes(StringEnum):
+    """
+    Document tag behavior "types". Not currently used.
+    """
+
+    Autonomous = "autonomous"  # for sampled, borrowed
+    Subscription = "subscription"  # for notifyme
+    Coordination = "coordination"  # for wishlist
+
+
+class LibbyTagBehaviors(StringEnum):
+    """
+    Document tag "behaviors" keys. Not currently used.
+    """
+
+    Borrowed = "borrowed"  # type autonomous
+    Sampled = "sampled"  # type autonomous
+    NotifyMe = "notify-me"  # type subscription
+    WishlistSync = "wish-list-sync"  # type coordination
+
+
+class LibbyFormats(StringEnum):
     """
     Format strings
     """
@@ -44,11 +65,8 @@ class LibbyFormats(str, Enum):
     EBookOverdriveProvisional = "ebook-overdrive-provisional"
     MagazineOverDrive = "magazine-overdrive"
 
-    def __str__(self):
-        return str(self.value)
 
-
-class LibbyMediaTypes(str, Enum):
+class LibbyMediaTypes(StringEnum):
     """
     Loan type strings
     """
@@ -56,9 +74,6 @@ class LibbyMediaTypes(str, Enum):
     Audiobook = "audiobook"
     EBook = "ebook"
     Magazine = "magazine"
-
-    def __str__(self):
-        return str(self.value)
 
 
 EBOOK_DOWNLOADABLE_FORMATS = (
@@ -1070,7 +1085,7 @@ class LibbyClient(object):
         """
         query = {
             "enc": "1",  # ??
-            "sort": "newest",
+            "sort": "newest",  # oldest / author
             "range": f"{paging_range[0]}...{paging_range[1]}",
         }
         b64encoded_tag_name = base64.b64encode(tag_name.encode("utf-8")).decode("ascii")

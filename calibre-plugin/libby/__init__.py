@@ -9,4 +9,10 @@
 #
 
 # flake8: noqa
-from .client import LibbyClient, LibbyFormats, LibbyMediaTypes
+from .client import (
+    LibbyClient,
+    LibbyFormats,
+    LibbyMediaTypes,
+    LibbyTagTypes,
+    LibbyTagBehaviors,
+)

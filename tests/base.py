@@ -33,6 +33,9 @@ class BaseTests(unittest.TestCase):
             HTTPConnection.debuglevel = 1
             logging.basicConfig(stream=sys.stdout)
 
+    def pprint(self, obj: Dict, indent: int = 2):
+        print(json.dumps(obj, indent=indent))
+
 
 class MockHTTPError(HTTPError):
     def __init__(

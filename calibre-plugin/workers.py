@@ -258,11 +258,9 @@ class LibbyVerifyCardWorker(QObject):
                 "Total Libby Verify Card took %f seconds" % (timer() - total_start)
             )
             self.finished.emit(updated_card)
-            self.finished.emit(self.card)
         except Exception as err:
             logger.info(
-                "Libby Libby Verify Card failed after %f seconds"
-                % (timer() - total_start)
+                "Libby Verify Card failed after %f seconds" % (timer() - total_start)
             )
             self.errored.emit(err)
 

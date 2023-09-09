@@ -8,6 +8,8 @@
 # information
 #
 import os
+import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 from urllib.error import URLError
@@ -530,3 +532,76 @@ class LibbyClientTests(BaseTests):
                 ):
                     with self.subTest("title", k=k):
                         self.assertIn(k, tag, msg=f'"{k}" not found')
+
+    @unittest.skip("Modifies data")
+    def test_update_tag(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        tags = self.client.tags().get("tags", [])
+        tag = next(
+            iter([t for t in tags if t["name"] == "test" and not t["behaviors"]]), {}
+        )
+        if not tag:
+            self.skipTest("No test tag found")
+            return
+
+        if "taggings" in tag:
+            del tag["taggings"]
+
+        tag["description"] = f"Updated description {datetime.now()}"
+        tag["name"] = "test"
+        res = self.client.update_tag(tag)
+
+        self.assertIn("result", res)
+        self.assertEqual(res.get("result"), "updated")
+        self.pprint(res)
+
+    @unittest.skip("Modifies data")
+    def test_create_delete_tag(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        res_created = self.client.create_tag("test_1234567890", "Test description")
+        self.assertIn("result", res_created)
+        self.assertIn("tag", res_created)
+        self.assertEqual(res_created.get("result"), "created")
+
+        tag_created = res_created["tag"]
+        res_deleted = self.client.delete_tag(tag_created)
+
+        self.assertIn("result", res_deleted)
+        self.assertIn("tag", res_deleted)
+        self.assertEqual(res_deleted.get("result"), "tag_destroyed")
+
+    @unittest.skip("Modifies data")
+    def test_add_delete_title_tag(self):
+        if not self.client.identity_token:
+            self.skipTest("Client not authorised")
+
+        tags = self.client.tags().get("tags", [])
+        tag = next(
+            iter([t for t in tags if t["name"] == "test" and not t["behaviors"]]), {}
+        )
+        if not tag:
+            self.skipTest("No test tag found")
+            return
+
+        if "taggings" in tag:
+            del tag["taggings"]
+
+        # ***** Modify this *****
+        title = {"titleId": "999999", "websiteId": "99", "cardId": "9999999"}
+        res_added = self.client.add_title_tag(
+            tag,
+            title["titleId"],
+            website_id=title["websiteId"],
+            card_id=title["cardId"],
+        )
+        self.assertIn("result", res_added)
+        self.assertEqual(res_added.get("result"), "created")
+
+        res_deleted = self.client.delete_title_tag(tag, title["titleId"])
+        self.assertIn("result", res_deleted)
+        self.assertIn("count", res_deleted)
+        self.assertEqual(res_deleted.get("result"), "taggings_destroyed")

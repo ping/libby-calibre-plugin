@@ -11,6 +11,8 @@ import base64
 import gzip
 import json
 import logging
+import time
+import uuid
 from datetime import datetime, timezone
 from http.client import HTTPException
 from http.cookiejar import CookieJar
@@ -130,6 +132,7 @@ class LibbyClient(object):
         self.max_retries = max_retries
         self.user_agent = kwargs.pop("user_agent", USER_AGENT)
         self.api_base = "https://sentry-read.svc.overdrive.com/"
+        self.tags_api_base = "https://vandal.svc.overdrive.com/"
 
         cookie_jar = CookieJar()
         handlers = [
@@ -1069,8 +1072,14 @@ class LibbyClient(object):
 
         :return:
         """
-        res: Dict = self.send_request("https://vandal.svc.overdrive.com/tags")
+        res: Dict = self.send_request(urljoin(self.tags_api_base, "tags"))
         return res
+
+    def get_tag_base_url(self, tag_id: str, tag_name: str) -> str:
+        encoded_tag_name = parse.quote(
+            base64.b64encode(tag_name.encode("utf-8")).decode("ascii")
+        )
+        return urljoin(self.tags_api_base, f"tag/{tag_id}/{encoded_tag_name}")
 
     def tag(
         self,
@@ -1096,9 +1105,8 @@ class LibbyClient(object):
         }
         if kwargs:
             query.update(kwargs)
-        b64encoded_tag_name = base64.b64encode(tag_name.encode("utf-8")).decode("ascii")
         res: Dict = self.send_request(
-            f"https://vandal.svc.overdrive.com/tag/{tag_id}/{b64encoded_tag_name}",
+            self.get_tag_base_url(tag_id, tag_name),
             query=query,
         )
         return res
@@ -1128,6 +1136,199 @@ class LibbyClient(object):
         :return:
         """
         res: Dict = self.send_request(
-            f'https://vandal.svc.overdrive.com/taggings/{parse.quote(",".join(title_ids))}'
+            urljoin(self.tags_api_base, f'taggings/{parse.quote(",".join(title_ids))}')
         )
         return res
+
+    def create_tag(
+        self,
+        tag_name: str,
+        description: str,
+        tag_behaviour: str = "",
+        tag_type: str = "",
+    ) -> Dict:
+        """
+        Create a new tag.
+
+        :param tag_name:
+        :param description:
+        :param tag_behaviour:
+        :param tag_type:
+        :return:
+        """
+        tag_id = str(uuid.uuid4())
+        behaviors = {}
+        if tag_behaviour:
+            behaviors[tag_behaviour] = {}
+            if tag_type:
+                behaviors[tag_behaviour]["type"] = tag_type
+        tag = {
+            "name": tag_name,
+            "description": description,
+            "uuid": tag_id,
+            "createTime": int(time.time() * 1000),
+            "totalTaggings": 0,
+            "behaviors": behaviors,
+        }
+
+        res: Dict = self.send_request(
+            self.get_tag_base_url(tag_id, tag_name),
+            query={"enc": "1"},
+            params={"tag": tag},
+            is_form=False,
+        )
+        if "tag" not in res:
+            # patch tag information into response so that caller has details about tag
+            res["tag"] = tag
+        return res
+
+    def create_notifyme_tag(self, name: str, description: str):
+        """
+        Create a Notify Me "smart" tag.
+
+        :param name:
+        :param description:
+        :return:
+        """
+        return self.create_tag(
+            name,
+            description,
+            tag_behaviour=LibbyTagBehaviors.NotifyMe,
+            tag_type=LibbyTagTypes.Subscription,
+        )
+
+    def delete_tag_by_id(self, tag_id: str, tag_name: str) -> Dict:
+        """
+        Delete tag.
+
+        :param tag_id:
+        :param tag_name:
+        :return:
+        """
+        res = self.send_request(
+            self.get_tag_base_url(tag_id, tag_name),
+            query={"enc": "1"},
+            params="",
+            is_form=False,
+            method="DELETE",
+        )
+        if "tag" not in res:
+            # patch tag information into response so that caller has details about tag
+            res["tag"] = {"uuid": tag_id, "name": tag_name}
+        return res
+
+    def delete_tag(self, tag: Dict) -> Dict:
+        """
+        Delete tag.
+
+        :param tag:
+        :return:
+        """
+        return self.delete_tag_by_id(tag["uuid"], tag["name"])
+
+    def update_tag(self, tag: Dict) -> Dict:
+        """
+        Update a tag.
+
+        :param tag:
+        :return:
+        """
+        tag_copy = dict(tag)  # use a copy
+        if "taggings" in tag_copy:
+            del tag_copy["taggings"]
+        params = {"tag": tag_copy}
+
+        tag_name = tag_copy["name"]
+        tag_id = tag_copy["uuid"]
+
+        res: Dict = self.send_request(
+            self.get_tag_base_url(tag_id, tag_name),
+            query={"enc": "1"},
+            params=params,
+            is_form=False,
+        )
+        if "tag" not in res:
+            res["tag"] = tag_copy
+        return res
+
+    def delete_title_tag_by_id(self, tag_id: str, tag_name: str, title_id: str) -> Dict:
+        """
+        Remove title from tag.
+
+        :param tag_id:
+        :param tag_name:
+        :param title_id:
+        :return:
+        """
+        res: Dict = self.send_request(
+            f"{self.get_tag_base_url(tag_id, tag_name)}/tagging/{title_id}",
+            query={"enc": "1"},
+            params="",
+            is_form=False,
+            method="DELETE",
+        )
+        if "tag" not in res:
+            res["tag"] = {"uuid": tag_id, "name": tag_name}
+        if "tagging" not in res:
+            res["tagging"] = {"titleId": title_id}
+        return res
+
+    def delete_title_tag(self, tag: Dict, title_id) -> Dict:
+        """
+        Remove title from tag.
+
+        :param tag:
+        :param title_id:
+        :return:
+        """
+        return self.delete_title_tag_by_id(tag["uuid"], tag["name"], title_id)
+
+    def add_title_tag_by_id(
+        self, tag_id: str, tag_name: str, title_id: str, website_id: str, card_id: str
+    ) -> Dict:
+        """
+        Add title to tag.
+
+        :param tag_id:
+        :param tag_name:
+        :param title_id:
+        :param website_id:
+        :param card_id:
+        :return:
+        """
+
+        # Notes: tagging is still successful without website_id, card_id, but it differs
+        # from how the app behaves and may cause problems elsewhere
+        tagging = {
+            "titleId": title_id,
+            "websiteId": website_id,
+            "cardId": card_id,
+            "createTime": int(time.time() * 1000),
+        }
+        res: Dict = self.send_request(
+            f"{self.get_tag_base_url(tag_id, tag_name)}/tagging/{title_id}",
+            query={"enc": "1"},
+            params={"tagging": tagging},
+            is_form=False,
+        )
+        if "tag" not in res:
+            res["tag"] = {"uuid": tag_id, "name": tag_name}
+        if "tagging" not in res:
+            res["tagging"] = tagging
+        return res
+
+    def add_title_tag(
+        self, tag: Dict, title_id: str, website_id: str, card_id: str
+    ) -> Dict:
+        """
+        Add title to tag.
+
+        :param tag:
+        :param title_id:
+        :param website_id:
+        :param card_id:
+        :return:
+        """
+        return self.add_title_tag_by_id(
+            tag["uuid"], tag["name"], title_id, website_id, card_id
+        )

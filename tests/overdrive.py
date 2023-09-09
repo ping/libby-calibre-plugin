@@ -7,12 +7,10 @@
 # See https://github.com/ping/libby-calibre-plugin for more
 # information
 #
-import json
 import math
 from functools import cmp_to_key
 
-from overdrive import OverDriveClient
-
+from overdrive import LibraryMediaSearchParams, OverDriveClient
 from .base import BaseTests
 
 
@@ -368,3 +366,10 @@ class OverDriveClientTests(BaseTests):
                 ):
                     with self.subTest("item", k=k):
                         self.assertIn(k, item, msg=f'"{k}" not found')
+
+    def test_library_medias(self):
+        query = LibraryMediaSearchParams(title_ids=["784353", "36635", "000000"])
+        res = self.client.library_medias("lapl", query)
+        self.assertEqual(len(res.get("items", [])), 2)  # one of the IDs is invalid
+        for item in res.get("items", []):
+            self.assertIn(item["id"], query.title_ids)

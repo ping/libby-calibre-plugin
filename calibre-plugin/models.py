@@ -26,7 +26,7 @@ from qt.core import (
 
 from . import DEMO_MODE
 from .compat import QColor_fromString, _c
-from .config import PREFS, PreferenceKeys
+from .config import MAX_SEARCH_LIBRARIES, PREFS, PreferenceKeys
 from .libby import LibbyClient
 from .libby.client import LibbyFormats, LibbyMediaTypes
 from .overdrive import OverDriveClient
@@ -168,6 +168,21 @@ class LibbyModel(QAbstractTableModel):
         self._rows = self._rows[:row] + self._rows[row + count :]
         self.endRemoveRows()
         return True
+
+    def library_keys(self) -> List[str]:
+        return list(set([c["advantageKey"] for c in self._cards]))
+
+    def limited_library_keys(self) -> List[str]:
+        all_library_keys = self.library_keys()
+        library_keys = [
+            lib
+            for lib in all_library_keys
+            if lib in PREFS[PreferenceKeys.SEARCH_LIBRARIES]
+        ]
+        if not library_keys:
+            library_keys = all_library_keys
+
+        return library_keys[:MAX_SEARCH_LIBRARIES]
 
     def sync(self, synced_state: Optional[Dict] = None):
         if not synced_state:

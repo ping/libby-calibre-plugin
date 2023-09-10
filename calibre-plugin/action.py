@@ -251,6 +251,9 @@ class OverdriveLibbyDialog(
         logger.debug("Resizing window to: (%d, %d)", w, h)
         self.resize(QSize(w, h))
 
+        if PREFS[PreferenceKeys.DISABLE_TAB_MAGAZINES]:
+            self.tabs.setTabVisible(self.magazines_tab_index, False)
+
         if (
             PREFS[PreferenceKeys.LAST_SELECTED_TAB]
             and self.tabs.count() > PREFS[PreferenceKeys.LAST_SELECTED_TAB]

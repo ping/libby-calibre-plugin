@@ -85,6 +85,7 @@ class PreferenceKeys:
     USE_BEST_COVER = "use_best_cover"
     CACHE_AGE_DAYS = "cache_age_days"
     SEARCH_MODE = "search_mode"
+    DISABLE_TAB_MAGAZINES = "disable_tab_magazines"
 
 
 class BorrowActions:
@@ -128,6 +129,7 @@ class PreferenceTexts:
     CUSTCOL_LOAN_TYPE = _("Custom column for Loan Type")
     USE_BEST_COVER = _("Use highest-resolution cover for book details")
     CACHE_AGE_DAYS = _("Cache data for")
+    DISABLE_TAB_MAGAZINES = _("Disable Magazines tab")
 
 
 PREFS = JSONConfig(f"{PLUGINS_FOLDER_NAME}/{PLUGIN_NAME}")
@@ -158,6 +160,7 @@ PREFS.defaults[PreferenceKeys.CUSTCOL_DUE_DATE] = ""
 PREFS.defaults[PreferenceKeys.CUSTCOL_LOAN_TYPE] = ""
 PREFS.defaults[PreferenceKeys.USE_BEST_COVER] = False
 PREFS.defaults[PreferenceKeys.CACHE_AGE_DAYS] = 3
+PREFS.defaults[PreferenceKeys.DISABLE_TAB_MAGAZINES] = False
 PREFS.defaults[PreferenceKeys.MAIN_UI_WIDTH] = 0
 PREFS.defaults[PreferenceKeys.MAIN_UI_HEIGHT] = 0
 PREFS.defaults[PreferenceKeys.MAGAZINE_SUBSCRIPTIONS] = []
@@ -586,6 +589,16 @@ class ConfigWidget(QWidget):
         general_layout = QFormLayout()
         general_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         general_section.setLayout(general_layout)
+
+        # Disable Magazines tab
+        self.disable_tab_magazines_checkbox = QCheckBox(
+            PreferenceTexts.DISABLE_TAB_MAGAZINES
+        )
+        self.disable_tab_magazines_checkbox.setToolTip(_("Disable the Magazines tab"))
+        self.disable_tab_magazines_checkbox.setChecked(
+            PREFS[PreferenceKeys.DISABLE_TAB_MAGAZINES]
+        )
+        general_layout.addRow(self.disable_tab_magazines_checkbox)
 
         # Include non-downloadables
         self.incl_nondownloadable_checkbox = QCheckBox(

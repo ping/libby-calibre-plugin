@@ -390,6 +390,8 @@ class AdvancedSearchDialogMixin(SearchBaseDialog):
                         "holdsRatio",
                         "isAdvantageFiltered",
                         "isAvailable",
+                        "isOwned",
+                        "isRecommendableToLibrary",
                         "isFastlane",
                         "isHoldable",
                         "juvenileEligible",

@@ -48,6 +48,7 @@ class LibraryMediaSearchParams:
     identifier: str = ""
     formats: List[str] = field(default_factory=list)
     per_page: int = 20
+    page: int = 1
     sort_by: str = SearchSortBy.RELEVANCE
     show_only_available: bool = False
     show_only_prelease: bool = False
@@ -71,7 +72,7 @@ class LibraryMediaSearchParams:
         return ",".join([str(v).strip() for v in values])
 
     def to_dict(self) -> Dict:
-        result = {"page": 1, "perPage": max(1, self.per_page or 0)}
+        result = {"page": max(1, self.page or 0), "perPage": max(1, self.per_page or 0)}
         if self.sort_by:
             result["sortBy"] = self.sort_by
         if self.formats:

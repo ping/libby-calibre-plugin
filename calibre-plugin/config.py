@@ -23,7 +23,6 @@ except:  # noqa
 from qt.core import (
     QCheckBox,
     QFormLayout,
-    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QIcon,
@@ -31,6 +30,7 @@ from qt.core import (
     QLineEdit,
     QPushButton,
     QSpinBox,
+    QTabWidget,
     QTextEdit,
     QVBoxLayout,
     QWidget,
@@ -172,7 +172,7 @@ PREFS.defaults[PreferenceKeys.SEARCH_MODE] = SearchMode.BASIC
 class ConfigWidget(QWidget):
     def __init__(self, plugin_action):
         super().__init__()
-        self.layout = QGridLayout()
+        self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
         self.plugin_action = plugin_action
@@ -186,12 +186,15 @@ class ConfigWidget(QWidget):
             CreateNewCustomColumn(self.gui) if CreateNewCustomColumn else None
         )
 
-        # ------------------------------------ LIBBY ------------------------------------
-        libby_section = QGroupBox(_("Libby"))
+        self.tabs = QTabWidget(self)
+        self.layout.addWidget(self.tabs)
+
+        # ------------------------------------ LIBBY TAB ------------------------------------
         libby_layout = QFormLayout()
         libby_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        libby_section.setLayout(libby_layout)
-        self.layout.addWidget(libby_section, 0, 0, 1, 2)
+        libby_widget = QWidget()
+        libby_widget.setLayout(libby_layout)
+        self.tabs.addTab(libby_widget, _("Libby"))
 
         self.libby_setup_status_lbl = QLabel(
             _("Libby is configured.")
@@ -247,11 +250,23 @@ class ConfigWidget(QWidget):
             generate_code_layout.addWidget(self.time_remaining_lbl, stretch=1)
             libby_layout.addRow(generate_code_layout)
 
-        # ------------------------------------ LOANS ------------------------------------
-        loans_section = QGroupBox(_("Loans"))
+        # Help label
+        self.help_lbl = QLabel(
+            '<a style="padding: 0 4px;" href="https://github.com/ping/libby-calibre-plugin#setup">'
+            + _c("Help")
+            + "</a>"
+        )
+        self.help_lbl.setAlignment(Qt.AlignRight)
+        self.help_lbl.setTextFormat(Qt.RichText)
+        self.help_lbl.setOpenExternalLinks(True)
+        libby_layout.addRow(self.help_lbl)
+
+        # ------------------------------------ LOANS TAB ------------------------------------
         loan_layout = QFormLayout()
         loan_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
-        loans_section.setLayout(loan_layout)
+        loans_widget = QWidget()
+        loans_widget.setLayout(loan_layout)
+        self.tabs.addTab(loans_widget, _("Loans"))
 
         # Hide Ebooks
         self.hide_ebooks_checkbox = QCheckBox(PreferenceTexts.HIDE_EBOOKS, self)
@@ -517,11 +532,18 @@ class ConfigWidget(QWidget):
                 layout.setStretch(1, 1)
                 loan_layout.addRow(layout)
 
+        # ------------------------------------ HOLDS / SEARCH TAB ------------------------------------
         # ------------------------------------ Holds ------------------------------------
+        hold_search_layout = QVBoxLayout()
+        holds_search_widget = QWidget()
+        holds_search_widget.setLayout(hold_search_layout)
+        self.tabs.addTab(holds_search_widget, _("Holds") + " / " + _c("Search"))
+
         holds_section = QGroupBox(_("Holds"))
         holds_layout = QFormLayout()
         holds_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         holds_section.setLayout(holds_layout)
+        hold_search_layout.addWidget(holds_section)
 
         # Hide unavailable holds
         self.hide_holds_unavailable_checkbox = QCheckBox(
@@ -547,11 +569,12 @@ class ConfigWidget(QWidget):
         )
         holds_layout.addRow(self.confirm_cancel_hold_checkbox)
 
-        # ------------------------------------ SEARCH ------------------------------------
-        search_section = QGroupBox(_("Search"))
+        # ------------------------------------ Search ------------------------------------
+        search_section = QGroupBox(_c("Search"))
         search_layout = QFormLayout()
         search_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         search_section.setLayout(search_layout)
+        hold_search_layout.addWidget(search_section)
 
         self.search_results_max_txt = QSpinBox(self)
         self.search_results_max_txt.setToolTip(
@@ -584,11 +607,18 @@ class ConfigWidget(QWidget):
         search_libraries_layout.addWidget(self.search_libraries_txt)
         search_layout.addRow(search_libraries_layout)
 
+        # ------------------------------------ GENERAL / NETWORK TAB ------------------------------------
         # ------------------------------------ General ------------------------------------
+        general_network_layout = QVBoxLayout()
+        general_network_widget = QWidget()
+        general_network_widget.setLayout(general_network_layout)
+        self.tabs.addTab(general_network_widget, _("General") + " / " + _("Network"))
+
         general_section = QGroupBox(_("General"))
         general_layout = QFormLayout()
         general_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         general_section.setLayout(general_layout)
+        general_network_layout.addWidget(general_section)
 
         # Disable Magazines tab
         self.disable_tab_magazines_checkbox = QCheckBox(
@@ -635,11 +665,12 @@ class ConfigWidget(QWidget):
         self.cache_age_txt.setValue(PREFS[PreferenceKeys.CACHE_AGE_DAYS])
         general_layout.addRow(PreferenceTexts.CACHE_AGE_DAYS, self.cache_age_txt)
 
-        # ------------------------------------ NETWORK ------------------------------------
+        # ------------------------------------ Network ------------------------------------
         network_section = QGroupBox(_("Network"))
         network_layout = QFormLayout()
         network_layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         network_section.setLayout(network_layout)
+        general_network_layout.addWidget(network_section)
 
         self.network_timeout_txt = QSpinBox(self)
         self.network_timeout_txt.setToolTip(
@@ -660,23 +691,6 @@ class ConfigWidget(QWidget):
         self.network_retry_txt.setRange(0, 5)
         self.network_retry_txt.setValue(PREFS[PreferenceKeys.NETWORK_RETRY])
         network_layout.addRow(PreferenceTexts.NETWORK_RETRY, self.network_retry_txt)
-
-        # add it all here to ensure tab order is okay
-        sections = (holds_section, search_section, general_section, network_section)
-        self.layout.addWidget(loans_section, 1, 0, len(sections), 1)
-        for i, sect in enumerate(sections, start=1):
-            self.layout.addWidget(sect, i, 1)
-
-        # Help label
-        self.help_lbl = QLabel(
-            '<a style="padding: 0 4px;" href="https://github.com/ping/libby-calibre-plugin#setup">'
-            + _c("Help")
-            + "</a>"
-        )
-        self.help_lbl.setAlignment(Qt.AlignRight)
-        self.help_lbl.setTextFormat(Qt.RichText)
-        self.help_lbl.setOpenExternalLinks(True)
-        self.layout.addWidget(self.help_lbl, len(sections) + 1, 0, 1, 2)
 
         self.resize(self.sizeHint())
 

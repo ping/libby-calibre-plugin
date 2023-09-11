@@ -916,6 +916,10 @@ class ConfigWidget(QWidget):
             )
         )[:MAX_SEARCH_LIBRARIES]
 
+        PREFS[
+            PreferenceKeys.DISABLE_TAB_MAGAZINES
+        ] = self.disable_tab_magazines_checkbox.isChecked()
+
         (
             borrowed_date_custcol_name,
             due_date_custcol_name,

@@ -993,6 +993,23 @@ class LibbySearchModel(LibbyModel):
         for r in synced_state["search_results"]:
             try:
                 if is_valid_type(r, include_provisional=True):
+                    # Patch missing formats: Sometimes search returns no "formats"
+                    # even if siteAvailabilities does contain formats. Maybe a setup problem.
+                    # We'll manually patch these cases here. These "patched" formats are not
+                    # full formats, just a dict("id, "name"), no ISBN etc.
+                    if r.get("siteAvailabilities") and not r.get("formats"):
+                        formats: List[Dict] = []
+                        for sa in r["siteAvailabilities"].values():
+                            for site_format in sa.get("formats", []):
+                                if [
+                                    f
+                                    for f in formats
+                                    if f.get("id", "") == site_format.get("id", "")
+                                ]:
+                                    continue
+                                formats.append(site_format)
+                        if formats:
+                            r["formats"] = formats
                     self._rows.append(r)
             except ValueError:
                 pass

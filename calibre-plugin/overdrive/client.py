@@ -157,7 +157,7 @@ class OverDriveClient(object):
             return res
 
         decoded_res = res.decode("utf8")
-        self.logger.debug("RES BODY: {0:s}".format(decoded_res))
+        self.logger.debug("RES BODY: %s", decoded_res)
         return decoded_res
 
     def send_request(
@@ -221,32 +221,26 @@ class OverDriveClient(object):
 
         for attempt in range(0, self.max_retries + 1):
             try:
+                self.logger.debug("REQUEST: %s %s", req.get_method(), endpoint_url)
                 self.logger.debug(
-                    "REQUEST: {0!s} {1!s}".format(req.get_method(), endpoint_url)
-                )
-                self.logger.debug(
-                    "REQ HEADERS: \n{0!s}".format(
-                        "\n".join(
-                            ["{}: {}".format(k, v) for k, v in req.headers.items()]
-                        )
-                    )
+                    "REQ HEADERS: \n%s",
+                    "\n".join(["{}: {}".format(k, v) for k, v in req.headers.items()]),
                 )
                 if data:
-                    self.logger.debug("REQ BODY: \n{0!s}".format(data))
+                    self.logger.debug("REQ BODY: \n%s", data)
                 response = self.opener.open(req, timeout=self.timeout)
             except HTTPError as e:
-                self.logger.debug("RESPONSE: {0:d} {1:s}".format(e.code, e.url))
+                self.logger.debug("RESPONSE: %d %s", e.code, e.url)
                 self.logger.debug(
-                    "RES HEADERS: \n{0!s}".format(
-                        "\n".join(["{}: {}".format(k, v) for k, v in e.info().items()])
-                    )
+                    "RES HEADERS: \n%s",
+                    "\n".join(["{}: {}".format(k, v) for k, v in e.info().items()]),
                 )
                 if (
                     attempt < self.max_retries and e.code >= 500
                 ):  # retry for server 5XX errors
                     # do nothing, try
                     self.logger.warning(
-                        "Retrying due to {}: {}".format(e.__class__.__name__, str(e))
+                        "Retrying due to %s: %s", e.__class__.__name__, str(e)
                     )
                     self.logger.debug(self._read_response(e))
                     continue
@@ -263,9 +257,9 @@ class OverDriveClient(object):
                 if attempt < self.max_retries:
                     # do nothing, try
                     self.logger.warning(
-                        "Retrying due to {}: {}".format(
-                            connection_error.__class__.__name__, str(connection_error)
-                        )
+                        "Retrying due to %s: %s",
+                        connection_error.__class__.__name__,
+                        str(connection_error),
                     )
                     continue
                 raise ClientConnectionError(
@@ -274,15 +268,10 @@ class OverDriveClient(object):
                     )
                 ) from connection_error
 
+            self.logger.debug("RESPONSE: %d %s", response.code, response.url)
             self.logger.debug(
-                "RESPONSE: {0:d} {1:s}".format(response.code, response.url)
-            )
-            self.logger.debug(
-                "RES HEADERS: \n{0!s}".format(
-                    "\n".join(
-                        ["{}: {}".format(k, v) for k, v in response.info().items()]
-                    )
-                )
+                "RES HEADERS: \n%s",
+                "\n".join(["{}: {}".format(k, v) for k, v in response.info().items()]),
             )
             if not decode_response:
                 return self._read_response(response, decode_response)

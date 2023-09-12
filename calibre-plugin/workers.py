@@ -53,14 +53,12 @@ class OverDriveMediaSearchWorker(QObject):
                 maxItems=self.max_items,
                 format=self.formats,
             )
-            logger.info(
-                "OverDrive Media Search took %f seconds" % (timer() - total_start)
-            )
+            logger.info("OverDrive Media Search took %f seconds", timer() - total_start)
             self.finished.emit(results)
         except Exception as err:
             logger.info(
-                "OverDrive Media Search failed after %f seconds"
-                % (timer() - total_start)
+                "OverDrive Media Search failed after %f seconds",
+                timer() - total_start,
             )
             self.errored.emit(err)
 
@@ -88,14 +86,16 @@ class OverDriveLibraryMediaSearchWorker(QObject):
         try:
             results = self.client.library_medias(self.library_key, self.query)
             logger.info(
-                "OverDrive Library Media Search (%s) took %f seconds"
-                % (self.library_key, timer() - total_start)
+                "OverDrive Library Media Search (%s) took %f seconds",
+                self.library_key,
+                timer() - total_start,
             )
             self.finished.emit(self.library_key, results)
         except Exception as err:
             logger.info(
-                "OverDrive Library Media Search (%s) failed after %f seconds"
-                % (self.library_key, timer() - total_start)
+                "OverDrive Library Media Search (%s) failed after %f seconds",
+                self.library_key,
+                timer() - total_start,
             )
             self.errored.emit(self.library_key, err)
 
@@ -128,23 +128,20 @@ class OverDriveMediaWorker(QObject):
                         media, rank=0 if PREFS[PreferenceKeys.USE_BEST_COVER] else -1
                     )
                     if cover_url:
-                        logger.debug(f"Downloading cover: {cover_url}")
+                        logger.debug("Downloading cover: %s", cover_url)
                         br = browser()
                         cover_res = br.open_novisit(
                             cover_url, timeout=self.client.timeout
                         )
                         media[self.cover_data_key] = cover_res.read()
                 except Exception as cover_err:
-                    logger.warning(f"Error loading cover: {cover_err}")
+                    logger.warning("Error loading cover: %s", cover_err)
             self.media_cache.put(self.title_id, media)
-            logger.info(
-                "OverDrive Media Fetch took %f seconds" % (timer() - total_start)
-            )
+            logger.info("OverDrive Media Fetch took %f seconds", timer() - total_start)
             self.finished.emit(media)
         except Exception as err:
             logger.info(
-                "OverDrive Media Fetch failed after %f seconds"
-                % (timer() - total_start)
+                "OverDrive Media Fetch failed after %f seconds", timer() - total_start
             )
             self.errored.emit(err)
 
@@ -167,14 +164,14 @@ class OverDriveLibraryMediaWorker(QObject):
         try:
             media = self.client.library_media(self.card["advantageKey"], self.title_id)
             logger.info(
-                "Total OverDrive Library Media Fetch took %f seconds"
-                % (timer() - total_start)
+                "Total OverDrive Library Media Fetch took %f seconds",
+                timer() - total_start,
             )
             self.finished.emit(media)
         except Exception as err:
             logger.info(
-                "OverDrive Library Media Fetch failed after %f seconds"
-                % (timer() - total_start)
+                "OverDrive Library Media Fetch failed after %f seconds",
+                timer() - total_start,
             )
             self.errored.emit(err)
 
@@ -207,13 +204,12 @@ class LibbyAuthFormWorker(QObject):
                 {},
             )
             logger.info(
-                "Total Libby Auth Form Fetch took %f seconds" % (timer() - total_start)
+                "Total Libby Auth Form Fetch took %f seconds", timer() - total_start
             )
             self.finished.emit(form)
         except Exception as err:
             logger.info(
-                "Libby Auth Form Fetch failed after %f seconds"
-                % (timer() - total_start)
+                "Libby Auth Form Fetch failed after %f seconds", timer() - total_start
             )
             self.errored.emit(err)
 
@@ -255,12 +251,12 @@ class LibbyVerifyCardWorker(QObject):
                 {},
             )
             logger.info(
-                "Total Libby Verify Card took %f seconds" % (timer() - total_start)
+                "Total Libby Verify Card took %f seconds", timer() - total_start
             )
             self.finished.emit(updated_card)
         except Exception as err:
             logger.info(
-                "Libby Verify Card failed after %f seconds" % (timer() - total_start)
+                "Libby Verify Card failed after %f seconds", timer() - total_start
             )
             self.errored.emit(err)
 
@@ -285,14 +281,14 @@ class LibbyFulfillLoanWorker(QObject):
                 self.loan["id"], self.loan["cardId"], self.format_id
             )
             logger.info(
-                "Total Libby Fulfilment Details Fetch took %f seconds"
-                % (timer() - total_start)
+                "Total Libby Fulfilment Details Fetch took %f seconds",
+                timer() - total_start,
             )
             self.finished.emit(fulfilment_details)
         except Exception as err:
             logger.info(
-                "Libby Fulfilment Details Fetch failed after %f seconds"
-                % (timer() - total_start)
+                "Libby Fulfilment Details Fetch failed after %f seconds",
+                timer() - total_start,
             )
             self.errored.emit(err)
 
@@ -353,7 +349,7 @@ class SyncDataWorker(QObject):
                 logger=logger,
             )
             synced_state = libby_client.sync()
-            logger.info("Libby Sync request took %f seconds" % (timer() - start))
+            logger.info("Libby Sync request took %f seconds", timer() - start)
 
             # Fetch libraries details from OD and patch it onto synced state
             start = timer()
@@ -362,8 +358,8 @@ class SyncDataWorker(QObject):
             uncached_website_ids, libraries = extract_cached_items(
                 all_website_ids, self.libraries_cache
             )
-            logger.debug("Reusing %d cached libraries" % len(libraries))
-            logger.debug("Fetching %d new libraries" % len(uncached_website_ids))
+            logger.debug("Reusing %d cached libraries", len(libraries))
+            logger.debug("Fetching %d new libraries", len(uncached_website_ids))
             od_client = OverDriveClient(
                 max_retries=PREFS[PreferenceKeys.NETWORK_RETRY],
                 timeout=PREFS[PreferenceKeys.NETWORK_TIMEOUT],
@@ -382,14 +378,12 @@ class SyncDataWorker(QObject):
                 for library in found:
                     self.libraries_cache.put(str(library["websiteId"]), library)
                 libraries.extend(found)
-            logger.info(
-                "OverDrive Libraries requests took %f seconds" % (timer() - start)
-            )
+            logger.info("OverDrive Libraries requests took %f seconds", timer() - start)
             synced_state["__libraries"] = libraries
 
             subbed_magazines = []
             if subscriptions:
-                logger.info("Checking %d magazines" % len(subscriptions))
+                logger.info("Checking %d magazines", len(subscriptions))
                 # Fetch magazine details from OD
                 start = timer()
                 all_parent_magazine_ids = [
@@ -421,9 +415,9 @@ class SyncDataWorker(QObject):
                     uncached_latest_magazine_ids, titles = extract_cached_items(
                         latest_magazine_ids, self.media_cache
                     )
-                    logger.debug("Reusing %d cached media" % len(titles))
+                    logger.debug("Reusing %d cached media", len(titles))
                     logger.debug(
-                        "Fetching %d new media" % len(uncached_latest_magazine_ids)
+                        "Fetching %d new media", len(uncached_latest_magazine_ids)
                     )
                     if uncached_latest_magazine_ids:
                         found = od_client.media_bulk(
@@ -446,13 +440,13 @@ class SyncDataWorker(QObject):
                         )
                     subbed_magazines.extend(titles)
                 logger.info(
-                    "OverDrive Magazines requests took %f seconds" % (timer() - start)
+                    "OverDrive Magazines requests took %f seconds", timer() - start
                 )
             synced_state["__subscriptions"] = subbed_magazines
-            logger.info("Total Sync Time took %f seconds" % (timer() - total_start))
+            logger.info("Total Sync Time took %f seconds", timer() - total_start)
 
             self.finished.emit(synced_state)
         except Exception as err:
-            logger.info("Sync failed after %f seconds" % (timer() - total_start))
+            logger.info("Sync failed after %f seconds", timer() - total_start)
 
             self.errored.emit(err)

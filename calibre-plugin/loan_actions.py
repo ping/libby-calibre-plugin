@@ -30,10 +30,9 @@ class LibbyLoanReturn:
         abort=None,
         notifications=None,
     ):
-        logger = log
         notifications.put((0.5, _("Returning")))
         libby_client.return_loan(loan)
-        logger.info("Returned %s successfully." % get_media_title(loan))
+        log.info("Returned %s successfully." % get_media_title(loan))
         return loan
 
 
@@ -47,8 +46,7 @@ class LibbyLoanRenew:
         abort=None,
         notifications=None,
     ):
-        logger = log
         notifications.put((0.5, _("Renewing")))
         new_loan = libby_client.renew_loan(loan)
-        logger.info("Renewed %s successfully." % get_media_title(loan))
+        log.info("Renewed %s successfully." % get_media_title(loan))
         return new_loan

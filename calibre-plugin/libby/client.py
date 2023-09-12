@@ -419,13 +419,13 @@ class LibbyClient(object):
                 if "identity" in res_obj:
                     res_obj["identity"] = "*" * int(len(res_obj["identity"]) / 10)
                 self.logger.debug(
-                    "RES BODY: {0:s}".format(json.dumps(res_obj, separators=(",", ":")))
+                    "RES BODY: %s", json.dumps(res_obj, separators=(",", ":"))
                 )
             except:  # noqa
                 # do nothing
                 pass
         else:
-            self.logger.debug("RES BODY: {0:s}".format(decoded_res))
+            self.logger.debug("RES BODY: %s", decoded_res)
         return decoded_res
 
     def send_request(
@@ -495,41 +495,35 @@ class LibbyClient(object):
 
         for attempt in range(0, self.max_retries + 1):
             try:
-                self.logger.debug(
-                    "REQUEST: {0!s} {1!s}".format(req.get_method(), endpoint_url)
-                )
+                self.logger.debug("REQUEST: %s %s", req.get_method(), endpoint_url)
                 bearer_token = req.headers.get("Authorization", "")
                 if _scrub_sensitive_data and bearer_token:
                     bearer_token = bearer_token[: len("Bearer ")] + "*" * int(
                         len(bearer_token[len("Bearer ") :]) / 10
                     )
                 self.logger.debug(
-                    "REQ HEADERS: \n{0!s}".format(
-                        "\n".join(
-                            [
-                                "{}: {}".format(
-                                    k, v if k != "Authorization" else bearer_token
-                                )
-                                for k, v in req.headers.items()
-                            ]
-                        )
-                    )
+                    "REQ HEADERS: \n%s",
+                    "\n".join(
+                        [
+                            "{}: {}".format(
+                                k, v if k != "Authorization" else bearer_token
+                            )
+                            for k, v in req.headers.items()
+                        ]
+                    ),
                 )
                 if data:
-                    self.logger.debug("REQ BODY: \n{0!s}".format(data))
+                    self.logger.debug("REQ BODY: \n%s", data)
                 req_opener = self.opener if not no_redirect else self.opener_noredirect
                 response = req_opener.open(req, timeout=self.timeout)
             except HTTPError as e:
                 if e.code in (301, 302) and no_redirect:
                     response = e
                 else:
-                    self.logger.debug("RESPONSE: {0:d} {1:s}".format(e.code, e.url))
+                    self.logger.debug("RESPONSE: %d %s", e.code, e.url)
                     self.logger.debug(
-                        "RES HEADERS: \n{0!s}".format(
-                            "\n".join(
-                                ["{}: {}".format(k, v) for k, v in e.info().items()]
-                            )
-                        )
+                        "RES HEADERS: \n%s",
+                        "\n".join(["{}: {}".format(k, v) for k, v in e.info().items()]),
                     )
                     error_response = self._read_response(e)
                     if (
@@ -537,9 +531,7 @@ class LibbyClient(object):
                     ):  # retry for server 5XX errors
                         # do nothing, try
                         self.logger.warning(
-                            "Retrying due to {}: {}".format(
-                                e.__class__.__name__, str(e)
-                            )
+                            "Retrying due to %s: %s", e.__class__.__name__, str(e)
                         )
                         self.logger.debug(error_response)
                         continue
@@ -555,9 +547,9 @@ class LibbyClient(object):
             ) as connection_error:
                 if attempt < self.max_retries:
                     self.logger.warning(
-                        "Retrying due to {}: {}".format(
-                            connection_error.__class__.__name__, str(connection_error)
-                        )
+                        "Retrying due to %s: %s",
+                        connection_error.__class__.__name__,
+                        str(connection_error),
                     )
                     # do nothing, try
                     continue
@@ -567,15 +559,10 @@ class LibbyClient(object):
                     )
                 ) from connection_error
 
+            self.logger.debug("RESPONSE: %d %s", response.code, response.url)
             self.logger.debug(
-                "RESPONSE: {0:d} {1:s}".format(response.code, response.url)
-            )
-            self.logger.debug(
-                "RES HEADERS: \n{0!s}".format(
-                    "\n".join(
-                        ["{}: {}".format(k, v) for k, v in response.info().items()]
-                    )
-                )
+                "RES HEADERS: \n%s",
+                "\n".join(["{}: {}".format(k, v) for k, v in response.info().items()]),
             )
             if return_response:
                 return response

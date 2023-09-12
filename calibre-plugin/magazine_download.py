@@ -454,7 +454,6 @@ class CustomMagazineDownload(LibbyDownload):
         abort=None,
         notifications=None,
     ) -> Path:
-        logger = log
         download_progress_fraction = 0.97
         meta_progress_fraction = 1.0 - download_progress_fraction
         meta_tasks = 3
@@ -517,7 +516,7 @@ class CustomMagazineDownload(LibbyDownload):
             and OverDriveClient.extract_type(loan) == LibbyMediaTypes.Magazine
         ):
             msg = _("Magazine has unsupported fixed-layout (pre-paginated) format.")
-            logger.error(msg)
+            log.error(msg)
             raise UnsupportedException(msg, media_info)
 
         # for finding cover image for magazines
@@ -585,17 +584,17 @@ class CustomMagazineDownload(LibbyDownload):
         for i, entry in enumerate(title_content_entries, start=1):
             if abort.is_set():
                 msg = "Abort signal received."
-                logger.info(msg)
+                log.info(msg)
                 raise RuntimeError(msg)
             entry_url = entry["url"]
             parsed_entry_url = urlparse(entry_url)
             title_content_path = Path(parsed_entry_url.path[1:])
-            logger.info(
+            log.info(
                 "Proccesing %d/%d : %s" % (i, total_downloads, title_content_path.name)
             )
             media_type = guess_mimetype(title_content_path.name)
             if not media_type:
-                logger.warning("Skipped roster entry: %s" % title_content_path.name)
+                log.warning("Skipped roster entry: %s" % title_content_path.name)
                 continue
             asset_folder = book_content_folder.joinpath(title_content_path.parent)
             if media_type == "application/x-dtbncx+xml":
@@ -671,9 +670,7 @@ class CustomMagazineDownload(LibbyDownload):
                             if not asset_font_path.exists():
                                 css_content = css_content.replace(src_match, "")
                     except Exception as patch_err:
-                        logger.warning(
-                            "Error while patching font sources: %s" % patch_err
-                        )
+                        log.warning("Error while patching font sources: %s" % patch_err)
                 with open(asset_file_path, "w", encoding="utf-8") as f_out:
                     f_out.write(css_content)
             elif media_type in ("application/xhtml+xml", "text/html"):
@@ -682,7 +679,7 @@ class CustomMagazineDownload(LibbyDownload):
                 if script_ele and hasattr(script_ele, "string"):
                     mobj = contents_re.search(script_ele.string or "")
                     if not mobj:
-                        logger.warning(
+                        log.warning(
                             "Unable to extract content string for %s"
                             % parsed_entry_url.path,
                         )
@@ -863,7 +860,7 @@ class CustomMagazineDownload(LibbyDownload):
                         and meta_id.get("content")
                         and meta_id["content"] != expected_book_identifier
                     ):
-                        logger.debug(
+                        log.debug(
                             'Replacing identifier in %s: "%s" -> "%s"'
                             % (
                                 ncx_path.name,
@@ -998,7 +995,7 @@ class CustomMagazineDownload(LibbyDownload):
         )
         tree = ET.ElementTree(container)
         tree.write(container_file_path, xml_declaration=True, encoding="utf-8")
-        logger.debug('Saved "%s"' % container_file_path)
+        log.debug('Saved "%s"' % container_file_path)
 
         # create epub zip
         with zipfile.ZipFile(
@@ -1017,8 +1014,8 @@ class CustomMagazineDownload(LibbyDownload):
                     zip_archive_name = zip_archive_file.as_posix()
                     zip_target_file = book_folder.joinpath(zip_archive_file)
                     epub_zip.write(zip_target_file, zip_archive_name)
-                    logger.debug(
+                    log.debug(
                         'epub: Added "%s" as "%s"' % (zip_target_file, zip_archive_name)
                     )
-        logger.info('Saved "%s"' % epub_file_path)
+        log.info('Saved "%s"' % epub_file_path)
         return epub_file_path

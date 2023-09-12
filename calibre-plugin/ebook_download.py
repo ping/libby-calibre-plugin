@@ -16,6 +16,7 @@ from calibre.ptempfile import PersistentTemporaryDirectory
 from .compat import _c
 from .download import LibbyDownload
 from .libby import LibbyClient
+from .utils import create_job_logger
 
 # noinspection PyUnreachableCode
 if False:
@@ -41,6 +42,7 @@ class CustomEbookDownload(LibbyDownload):
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         if not tags:
             tags = []
         downloaded_filepath: Optional[Path] = None
@@ -50,7 +52,7 @@ class CustomEbookDownload(LibbyDownload):
                 loan,
                 format_id,
                 filename,
-                log=log,
+                logger=logger,
                 abort=abort,
                 notifications=notifications,
             )
@@ -64,7 +66,7 @@ class CustomEbookDownload(LibbyDownload):
                 book_id,
                 tags,
                 metadata,
-                log=log,
+                logger=logger,
             )
 
         finally:
@@ -81,7 +83,7 @@ class CustomEbookDownload(LibbyDownload):
         loan: Dict,
         format_id: str,
         filename: str,
-        log=None,
+        logger=None,
         abort=None,
         notifications=None,
     ) -> Path:

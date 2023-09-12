@@ -12,6 +12,7 @@ from typing import Dict
 
 from .libby import LibbyClient
 from .models import get_media_title
+from .utils import create_job_logger
 
 # noinspection PyUnreachableCode
 if False:
@@ -32,12 +33,13 @@ class LibbyBorrowMedia:
         abort=None,
         notifications=None,
     ):
-        logger = log
+        logger = create_job_logger(log)
         notifications.put((0.5, _("Borrowing")))
         loan = libby_client.borrow_media(media, card, is_lucky_day_loan)
         logger.info(
-            "Borrowed %s successfully from %s."
-            % (get_media_title(loan), card["advantageKey"])
+            "Borrowed %s successfully from %s.",
+            get_media_title(loan),
+            card["advantageKey"],
         )
         if "cardId" not in loan:
             logger.warning("Loan info returned does not have cardId")

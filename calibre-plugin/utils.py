@@ -23,9 +23,12 @@ from pathlib import Path
 from threading import Lock
 from typing import Dict, Optional
 
+from calibre.constants import DEBUG as CALIBRE_DEBUG
 from calibre.gui2 import is_dark_theme
+from calibre.utils.logging import DEBUG, ERROR, INFO, WARN
 from qt.core import QColor, QIcon, QPainter, QPixmap, QSvgRenderer, QXmlStreamReader
 
+from . import PLUGIN_NAME
 from .compat import (
     QPainter_CompositionMode_CompositionMode_SourceIn,
     Qt_GlobalColor_transparent,
@@ -40,6 +43,61 @@ except ImportError:
 
 CARD_ICON = "images/card.svg"
 COVER_PLACEHOLDER = "images/placeholder.png"
+
+
+class CalibreLogHandler(logging.Handler):
+    """
+    Simple wrapper around the calibre job Log to support standard logging calls
+    """
+
+    def __init__(self, logger):
+        if not logger:
+            super().__init__()
+            self.log = None
+            return
+        if isinstance(logger, CalibreLogHandler):
+            self.log = logger.log
+        else:
+            self.log = logger
+        calibre_log_level = self.log.filter_level
+        level = logging.NOTSET
+        if calibre_log_level <= DEBUG:
+            level = logging.DEBUG
+        elif calibre_log_level == INFO:
+            level = logging.INFO
+        elif calibre_log_level == WARN:
+            level = logging.WARNING
+        elif calibre_log_level >= ERROR:
+            level = logging.ERROR
+        super().__init__(level)
+
+    def emit(self, record):
+        if not self.log:
+            return
+        msg = self.format(record)
+        if record.levelno <= logging.DEBUG:
+            self.log.debug(msg)
+        elif record.levelno == logging.INFO:
+            self.log.info(msg)
+        elif record.levelno == logging.WARNING:
+            self.log.warning(msg)
+        elif record.levelno >= logging.ERROR:
+            self.log.error(msg)
+
+
+def create_job_logger(log):
+    """
+    Convert calibre's logger into a more standardised logger
+
+    :param log:
+    :return:
+    """
+    logger = logging.getLogger(f"{PLUGIN_NAME}.jobs")
+    ch = CalibreLogHandler(log)
+    ch.setFormatter(logging.Formatter("%(message)s"))
+    logger.addHandler(ch)
+    logger.setLevel(logging.INFO if not CALIBRE_DEBUG else logging.DEBUG)
+    return logger
 
 
 class SimpleCache:

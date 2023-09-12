@@ -12,6 +12,7 @@ from typing import Dict
 
 from .libby import LibbyClient
 from .models import get_media_title
+from .utils import create_job_logger
 
 # noinspection PyUnreachableCode
 if False:
@@ -30,9 +31,10 @@ class LibbyHoldCancel:
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         notifications.put((0.5, _("Cancelling")))
         libby_client.cancel_hold(hold)
-        log.info("Cancelled hold for %s successfully." % get_media_title(hold))
+        logger.info("Cancelled hold for %s successfully.", get_media_title(hold))
         return hold
 
 
@@ -47,9 +49,10 @@ class LibbyHoldUpdate:
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         notifications.put((0.5, _("Updating hold")))
         hold = libby_client.suspend_hold(hold, days_to_suspend)
-        log.info("Updated hold for %s successfully." % get_media_title(hold))
+        logger.info("Updated hold for %s successfully.", get_media_title(hold))
         return hold
 
 
@@ -64,10 +67,12 @@ class LibbyHoldCreate:
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         notifications.put((0.5, _("Creating hold")))
         hold = libby_client.create_hold(media["id"], card["cardId"])
-        log.info(
-            "Created hold for %s at %s successfully."
-            % (get_media_title(hold), card["advantageKey"])
+        logger.info(
+            "Created hold for %s at %s successfully.",
+            get_media_title(hold),
+            card["advantageKey"],
         )
         return hold

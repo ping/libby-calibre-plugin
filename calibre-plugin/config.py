@@ -965,4 +965,4 @@ class ConfigWidget(QWidget):
         try:
             self.plugin_action.apply_settings()
         except Exception as err:
-            logger.warning(f"Error applying settings: %s", err)
+            logger.warning("Error applying settings: %s", err)

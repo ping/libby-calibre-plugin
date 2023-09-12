@@ -21,6 +21,7 @@ from .download import LibbyDownload
 from .libby import LibbyClient, LibbyMediaTypes
 from .models import get_media_title
 from .overdrive import OverDriveClient
+from .utils import create_job_logger
 
 # noinspection PyUnreachableCode
 if False:
@@ -30,10 +31,10 @@ load_translations()
 
 
 class EmptyBookDownload(LibbyDownload):
-    def _download_cover(self, loan, log):
+    def _download_cover(self, loan, logger):
         cover_url = OverDriveClient.get_best_cover_url(loan)
         if not cover_url:
-            log.warning(f'"{get_media_title(loan)}" does not have a cover')
+            logger.warning('"%s" does not have a cover', get_media_title(loan))
             return None, None
 
         br = browser()
@@ -56,7 +57,7 @@ class EmptyBookDownload(LibbyDownload):
                 return "jpeg", resize_cover_res.read()
             except Exception as err:
                 # fallback to original cover_url
-                log.warning("Unable to download resized cover: %s" % str(err))
+                logger.warning("Unable to download resized cover: %s", err)
 
         try:
             cover_res = br.open(
@@ -64,7 +65,7 @@ class EmptyBookDownload(LibbyDownload):
             )
             return "jpeg", cover_res.read()
         except Exception as err:
-            log.warning("Unable to download cover: %s" % str(err))
+            logger.warning("Unable to download cover: %s", err)
 
         return None, None
 
@@ -72,7 +73,7 @@ class EmptyBookDownload(LibbyDownload):
         self,
         libby_client: LibbyClient,
         loan: Dict,
-        log=None,
+        logger=None,
         abort=None,
         notifications=None,
     ) -> List[Path]:
@@ -108,14 +109,14 @@ class EmptyBookDownload(LibbyDownload):
         return book_file_paths
 
     def _add_bundled_content(
-        self, db, client, book_id, loan, log, abort, notifications
+        self, db, client, book_id, loan, logger, abort, notifications
     ):
         # download bundled content for audiobooks
         if loan.get("type", {}).get("id", "") == LibbyMediaTypes.Audiobook and loan.get(
             "bundledContent"
         ):
             book_file_paths = self._download_attachments(
-                client, loan, log, abort, notifications
+                client, loan, logger, abort, notifications
             )
             for book_file_path in book_file_paths:
                 ext = book_file_path.suffix[1:]  # remove the "." in suffix
@@ -137,6 +138,7 @@ class EmptyBookDownload(LibbyDownload):
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         if not tags:
             tags = []
         db = gui.current_db.new_api
@@ -147,11 +149,11 @@ class EmptyBookDownload(LibbyDownload):
             )
             ___, cover_bytes = metadata.cover_data
             if not cover_bytes:
-                metadata.cover_data = self._download_cover(loan, log)
+                metadata.cover_data = self._download_cover(loan, logger)
             db.set_metadata(book_id, metadata)
-            self.update_custom_columns(book_id, loan, db, log)
+            self.update_custom_columns(book_id, loan, db, logger)
             self._add_bundled_content(
-                db, client, book_id, loan, log, abort, notifications
+                db, client, book_id, loan, logger, abort, notifications
             )
             if PREFS[PreferenceKeys.MARK_UPDATED_BOOKS]:
                 gui.current_db.set_marked_ids([book_id])  # mark updated book
@@ -166,12 +168,12 @@ class EmptyBookDownload(LibbyDownload):
             metadata = self.update_metadata(
                 gui, loan, library, format_id, metadata, tags, media
             )
-            metadata.cover_data = self._download_cover(loan, log)
+            metadata.cover_data = self._download_cover(loan, logger)
 
             book_id = gui.library_view.model().db.create_book_entry(metadata)
-            self.update_custom_columns(book_id, loan, db, log)
+            self.update_custom_columns(book_id, loan, db, logger)
             self._add_bundled_content(
-                db, client, book_id, loan, log, abort, notifications
+                db, client, book_id, loan, logger, abort, notifications
             )
             gui.library_view.model().books_added(1)
             gui.library_view.model().count_changed()

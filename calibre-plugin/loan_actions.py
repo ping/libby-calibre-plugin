@@ -12,6 +12,7 @@ from typing import Dict
 
 from .libby import LibbyClient
 from .models import get_media_title
+from .utils import create_job_logger
 
 # noinspection PyUnreachableCode
 if False:
@@ -30,9 +31,10 @@ class LibbyLoanReturn:
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         notifications.put((0.5, _("Returning")))
         libby_client.return_loan(loan)
-        log.info("Returned %s successfully." % get_media_title(loan))
+        logger.info("Returned %s successfully.", get_media_title(loan))
         return loan
 
 
@@ -46,7 +48,8 @@ class LibbyLoanRenew:
         abort=None,
         notifications=None,
     ):
+        logger = create_job_logger(log)
         notifications.put((0.5, _("Renewing")))
         new_loan = libby_client.renew_loan(loan)
-        log.info("Renewed %s successfully." % get_media_title(loan))
+        logger.info("Renewed %s successfully.", get_media_title(loan))
         return new_loan

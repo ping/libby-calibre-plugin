@@ -73,11 +73,20 @@ class OverdriveLibbyAction(InterfaceAction):
         # This method is called once per plugin, do initial setup here
 
         # extract icons
-        image_resources = get_resources(
-            [v.file for v in ICON_MAP.values()]
-            + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER, CI_COMMIT_TXT],
-            print_tracebacks_for_missing_resources=DEBUG,  # noqa
-        )
+        try:
+            image_resources = get_resources(
+                [v.file for v in ICON_MAP.values()]
+                + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER, CI_COMMIT_TXT],
+                print_tracebacks_for_missing_resources=DEBUG,  # noqa
+            )
+        except TypeError:
+            # older than 6.2.0
+            # ref: https://github.com/kovidgoyal/calibre/commit/ef6c2b439f3870c9b87184a63441ede054db0e34
+            image_resources = get_resources(
+                [v.file for v in ICON_MAP.values()]
+                + [PLUGIN_ICON, CARD_ICON, COVER_PLACEHOLDER, CI_COMMIT_TXT],
+            )
+
         self.resources = {}
         for k, v in ICON_MAP.items():
             self.resources[k] = svg_to_qicon(

@@ -1,5 +1,10 @@
 # Changelog
 
+Unreleased
+- Fix: Error on launch for calibre <6.2.0
+- New: Option to disable the Magazines tab
+- Improve: Convert configuration UI to use tabs so that there is more room for future additions
+
 Version 0.1.8 - 2023-09-05
 - New: Advance search mode
 - New: Simple filter for titles and names in the Loans/Holds/Magazines/Cards tabs

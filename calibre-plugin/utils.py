@@ -51,15 +51,17 @@ class CalibreLogHandler(logging.Handler):
     """
 
     def __init__(self, logger):
+        self.calibre_log = None
         if not logger:
             super().__init__()
-            self.log = None
             return
+
         if isinstance(logger, CalibreLogHandler):
-            self.log = logger.log
+            # just in case we accidentally pass in a wrapped log
+            self.calibre_log = logger.calibre_log
         else:
-            self.log = logger
-        calibre_log_level = self.log.filter_level
+            self.calibre_log = logger
+        calibre_log_level = self.calibre_log.filter_level
         level = logging.NOTSET
         if calibre_log_level <= DEBUG:
             level = logging.DEBUG
@@ -72,20 +74,22 @@ class CalibreLogHandler(logging.Handler):
         super().__init__(level)
 
     def emit(self, record):
-        if not self.log:
+        if not self.calibre_log:
             return
         msg = self.format(record)
         if record.levelno <= logging.DEBUG:
-            self.log.debug(msg)
+            self.calibre_log.debug(msg)
         elif record.levelno == logging.INFO:
-            self.log.info(msg)
+            self.calibre_log.info(msg)
         elif record.levelno == logging.WARNING:
-            self.log.warning(msg)
+            self.calibre_log.warning(msg)
         elif record.levelno >= logging.ERROR:
-            self.log.error(msg)
+            self.calibre_log.error(msg)
+        else:
+            self.calibre_log.info(msg)
 
 
-def create_job_logger(log):
+def create_job_logger(log) -> logging.Logger:
     """
     Convert calibre's logger into a more standardised logger
 

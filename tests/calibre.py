@@ -1,3 +1,4 @@
+import logging
 import sys
 import unittest
 
@@ -65,6 +66,22 @@ class CalibreTests(unittest.TestCase):
                 "Ipsum debitis dignissimos aspernatur.", text_length=20
             ),
         )
+
+    def test_log_handler(self):
+        from calibre.utils.logging import Log, DEBUG
+        from calibre_plugins.overdrive_libby.utils import create_job_logger
+
+        logger: logging.Logger = create_job_logger(Log(DEBUG))
+        msg = "Level %s"
+        logger.debug(msg, logging.DEBUG)
+        logger.info(msg, logging.INFO)
+        logger.warning(msg, logging.WARNING)
+        logger.error(msg, logging.ERROR)
+        logger.critical(msg, logging.CRITICAL)
+        try:
+            1 / 0
+        except:  # noqa
+            logger.exception("Test Exception")
 
 
 # Run with:

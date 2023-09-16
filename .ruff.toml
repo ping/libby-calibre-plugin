@@ -1,6 +1,6 @@
 # Never enforce `E501` (line length violations).
 # E203: https://github.com/psf/black/issues/1437
-ignore = ["E501", "E203"]
+ignore = ["E501"]
 
 # Assume Python 3.8 because calibre
 target-version = "py38"

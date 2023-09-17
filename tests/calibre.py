@@ -85,11 +85,22 @@ class CalibreTests(unittest.TestCase):
 
 
 # Run with:
-# calibre-customize -b calibre-plugin && calibre-debug -e tests/calibre.py
+# All tests: calibre-customize -b calibre-plugin && calibre-debug -e tests/calibre.py
+# Specific test: calibre-customize -b calibre-plugin && calibre-debug -e tests/calibre.py -- --method test_log_handler
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--methods", nargs="*")
+    args = parser.parse_args()
     try:
         ensure_app()
-        suite = unittest.TestSuite(unittest.makeSuite(CalibreTests))
+        tests = [
+            test
+            for test in unittest.makeSuite(CalibreTests)
+            if not args.methods or test.id().split(".")[-1] in args.methods
+        ]
+        suite = unittest.TestSuite(tests)
         result = unittest.TextTestRunner(verbosity=2).run(suite)
         if not result.wasSuccessful():
             sys.exit(1)

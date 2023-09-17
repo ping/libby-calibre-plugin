@@ -3,7 +3,7 @@
 Unreleased
 - Fix: Error on launch for calibre <6.2.0
 - New: Option to disable the Magazines tab
-- Improve: Convert configuration UI to use tabs so that there is more room for future additions
+- Improve: Convert configuration UI to use tabs so that there is room for more settings in the future
 
 Version 0.1.8 - 2023-09-05
 - New: Advance search mode

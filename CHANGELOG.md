@@ -1,6 +1,6 @@
 # Changelog
 
-Unreleased
+Version 0.1.9 - 2023-09-19
 - Fix: Error on launch for calibre <6.2.0
 - New: Option to disable the Magazines tab
 - Improve: Convert configuration UI to use tabs so that there is room for more settings in the future

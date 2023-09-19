@@ -34,7 +34,7 @@ To configure this plugin, you must already be using Libby on a [compatible](http
 
 Open the plugin customization settings (Preferences > Advanced: Plugins > Search for "overdrive libby" and then click on the "Customize plugin" button).
 
-![settings](images/settings.png)
+![settings](images/settings.gif)
 
 Get a Libby setup code by following the instructions [here](https://help.libbyapp.com/en-us/6070.htm). Enter the 8-digit code into the plugin settings and click "OK". If you encounter an error, the code may have expired. Get a new one and try again.
 
@@ -92,6 +92,8 @@ You should only need to do this setup once. Then add the plugin to the toolbar/m
 
 #### General
 
+- Disable Magazines tab
+  - Don't display the Magazines tab in the plugin window
 - Include titles without downloadable formats
   - When enabled, titles that do not have a downloadable format will be shown
   - When such titles are chosen for download, an empty book will be created in the calibre library

@@ -46,7 +46,7 @@ from ..utils import (
     obfuscate_int,
     obfuscate_name,
 )
-from ..workers import LibbyAuthFormWorker, LibbyVerifyCardWorker
+from ..workers import LibbyAuthFormWorker, LibbyRenameCardWorker, LibbyVerifyCardWorker
 
 # noinspection PyUnreachableCode
 if False:
@@ -204,6 +204,19 @@ class CardsDialogMixin(BaseDialogMixin):
 
         return thread
 
+    def rename_card_btn_clicked(self, card: Dict, library: Dict, widget):
+        d = CardRenameDialog(
+            self,
+            self.gui,
+            self.resources,
+            self.client,
+            card,
+            library,
+            widget,
+        )
+        d.setModal(True)
+        d.open()
+
 
 class CardWidget(QWidget):
     def __init__(self, card, library, tab: CardsDialogMixin, *args, **kwargs):
@@ -251,6 +264,16 @@ class CardWidget(QWidget):
         library_lbl.setToolTip(_("Right-click for shortcuts"))
         layout.addWidget(library_lbl, widget_row_pos, 1, 1, 2)
 
+        buttons_layout = QHBoxLayout()
+        self.rename_card_btn = DefaultQPushButton(
+            "", icon=self.tab.resources[PluginImages.Edit], parent=self
+        )
+        self.rename_card_btn.setToolTip(_("Rename Card"))
+        self.rename_card_btn.setMaximumWidth(self.rename_card_btn.size().height())
+        self.rename_card_btn.clicked.connect(
+            lambda: self.tab.rename_card_btn_clicked(self.card, self.library, self)
+        )
+        buttons_layout.addWidget(self.rename_card_btn)
         self.verify_card_btn = DefaultQPushButton(
             _("Verify Card"),
             icon=self.tab.resources[PluginImages.Okay],
@@ -260,9 +283,8 @@ class CardWidget(QWidget):
         self.verify_card_btn.clicked.connect(
             lambda: self.tab.verify_card_btn_clicked(self.card, self.library, self)
         )
-        layout.addWidget(
-            self.verify_card_btn, widget_row_pos, 2, alignment=Qt.AlignRight
-        )
+        buttons_layout.addWidget(self.verify_card_btn)
+        layout.addLayout(buttons_layout, widget_row_pos, 2, alignment=Qt.AlignRight)
         widget_row_pos += 1
 
         # Card Name
@@ -271,12 +293,12 @@ class CardWidget(QWidget):
             if not DEMO_MODE
             else obfuscate_name(card["cardName"] or "")
         ) or ""
-        card_lbl = ClickableQLabel("<b>" + _("Card name") + "</b>: " + card_name)
-        card_lbl.setTextFormat(Qt.RichText)
-        card_lbl.doubleClicked.connect(
+        self.card_lbl = ClickableQLabel(self.format_card_name(card_name))
+        self.card_lbl.setTextFormat(Qt.RichText)
+        self.card_lbl.doubleClicked.connect(
             lambda: self.tab.display_debug("Card", self.card)
         )
-        layout.addWidget(card_lbl, widget_row_pos, 0, 1, 2)
+        layout.addWidget(self.card_lbl, widget_row_pos, 0, 1, 2)
 
         # Card Number
         if card.get("username"):
@@ -376,6 +398,9 @@ class CardWidget(QWidget):
             )
         )
 
+    def format_card_name(self, card_name):
+        return "<b>" + _("Card name") + "</b>: " + card_name
+
     def library_lbl_context_menu_requested(self):
         menu = QMenu(self)
         menu.addSection(_("Library"))
@@ -456,6 +481,7 @@ class CardVerificationDialog(QDialog):
         self.library = library
         self.card_widget = card_widget
         layout = QFormLayout()
+        layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
         self.setLayout(layout)
         self.setWindowTitle(_("Verify Card"))
         self._verify_card_thread = QThread()
@@ -463,7 +489,7 @@ class CardVerificationDialog(QDialog):
         username_field = form.get("local", {}).get("username", {})
         password_field = form.get("local", {}).get("password", {})
 
-        name_lbl = ClickableQLabel(library["name"])
+        name_lbl = QLabel(library["name"])
         name_lbl.setAlignment(Qt.AlignCenter)
         curr_font = name_lbl.font()
         curr_font.setPointSizeF(curr_font.pointSizeF() * 1.1)
@@ -539,6 +565,107 @@ class CardVerificationDialog(QDialog):
                 )
                 self.parent().status_bar.showMessage(
                     _('Verified "{library}" card').format(
+                        library=updated_card["advantageKey"]
+                    ),
+                    5000,
+                )
+            self.accept()
+
+        def errored_out(err: Exception):
+            self.unsetCursor()
+            self.update_btn.setEnabled(True)
+            thread.quit()
+            return self.parent().unhandled_exception(err, msg=_("Error verifying card"))
+
+        worker.finished.connect(lambda updated_card: loaded(updated_card))
+        worker.errored.connect(lambda err: errored_out(err))
+
+        return thread
+
+
+class CardRenameDialog(QDialog):
+    def __init__(
+        self,
+        parent: CardsDialogMixin,
+        gui,
+        resources: Dict,
+        client: Optional[LibbyClient],
+        card: Dict,
+        library: Dict,
+        card_widget: CardWidget,
+    ):
+        super().__init__(parent)
+        self.gui = gui
+        self.resources = resources
+        self.client = client
+        self.card = card
+        self.library = library
+        self.card_widget = card_widget
+        layout = QFormLayout()
+        layout.setFieldGrowthPolicy(QFormLayout.ExpandingFieldsGrow)
+        self.setLayout(layout)
+        self.setWindowTitle(_("Rename Card"))
+        self._rename_card_thread = QThread()
+
+        name_lbl = QLabel(library["name"])
+        name_lbl.setAlignment(Qt.AlignCenter)
+        curr_font = name_lbl.font()
+        curr_font.setPointSizeF(curr_font.pointSizeF() * 1.1)
+        name_lbl.setFont(curr_font)
+        name_lbl.setStyleSheet("font-weight: bold;")
+        layout.addRow(name_lbl)
+
+        self.card_name_txt = QLineEdit(self)
+        self.card_name_txt.setMinimumWidth(int(self.parent().min_button_width * 1.5))
+        self.card_name_txt.setText(card.get("cardName", "") or "")
+        layout.addRow(_("Card name"), self.card_name_txt)
+
+        buttons_layout = QHBoxLayout()
+        self.cancel_btn = DefaultQPushButton(
+            _c("Cancel"), self.resources[PluginImages.Cancel], self
+        )
+        self.cancel_btn.clicked.connect(lambda: self.reject())
+        buttons_layout.addWidget(self.cancel_btn)
+
+        self.update_btn = DefaultQPushButton(
+            _c("Save"), self.resources[PluginImages.Okay], self
+        )
+        self.update_btn.clicked.connect(self.update_btn_clicked)
+        buttons_layout.addWidget(self.update_btn)
+        layout.addRow(buttons_layout)
+
+    def update_btn_clicked(self):
+        if not self.card_name_txt.text().strip():
+            return
+
+        if not self._rename_card_thread.isRunning():
+            self._rename_card_thread = self._get_rename_card_thread(
+                self.client, self.card, self.card_name_txt.text().strip()
+            )
+            self.update_btn.setEnabled(False)
+            self.setCursor(Qt.WaitCursor)
+            self._rename_card_thread.start()
+
+    def _get_rename_card_thread(
+        self, client: LibbyClient, card: Dict, new_name: str
+    ) -> QThread:
+        thread = QThread()
+        worker = LibbyRenameCardWorker()
+        worker.setup(client, card, new_name)
+        worker.moveToThread(thread)
+        thread.worker = worker
+        thread.started.connect(worker.run)
+
+        def loaded(updated_card: Dict):
+            thread.quit()
+            self.unsetCursor()
+            self.update_btn.setEnabled(True)
+            if updated_card and updated_card.get("cardName"):
+                self.card_widget.card_lbl.setText(
+                    self.card_widget.format_card_name(updated_card["cardName"])
+                )
+                self.parent().status_bar.showMessage(
+                    _('Updated "{library}" card name').format(
                         library=updated_card["advantageKey"]
                     ),
                     5000,

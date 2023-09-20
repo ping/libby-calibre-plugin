@@ -261,6 +261,36 @@ class LibbyVerifyCardWorker(QObject):
             self.errored.emit(err)
 
 
+class LibbyRenameCardWorker(QObject):
+    """
+    Renames a card
+    """
+
+    finished = pyqtSignal(dict)
+    errored = pyqtSignal(Exception)
+
+    def setup(self, libby_client: LibbyClient, card: Dict, new_name: str):
+        self.client = libby_client
+        self.card = card
+        self.new_name = new_name
+
+    def run(self):
+        total_start = timer()
+        try:
+            res = self.client.update_card_name(self.card["cardId"], self.new_name)
+            self.card["cardName"] = res.get("message") or ""
+            logger.info(
+                "Total Libby Rename Card took %f seconds", timer() - total_start
+            )
+            self.finished.emit(self.card)
+        except Exception as err:
+
+            logger.info(
+                "Libby Rename Card failed after %f seconds", timer() - total_start
+            )
+            self.errored.emit(err)
+
+
 class LibbyFulfillLoanWorker(QObject):
     """
     Fetches loan fulfilment detail for a Kindle loan

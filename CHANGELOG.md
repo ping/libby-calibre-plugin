@@ -1,5 +1,8 @@
 # Changelog
 
+Unreleased
+- New: Rename a card
+
 Version 0.1.9 - 2023-09-19
 - Fix: Error on launch for calibre <6.2.0
 - New: Option to disable the Magazines tab

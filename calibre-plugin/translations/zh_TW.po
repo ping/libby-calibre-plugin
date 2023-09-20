@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.9\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-09-12 19:01+0800\n"
+"POT-Creation-Date: 2023-09-20 17:03+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -196,8 +196,8 @@ msgstr ""
 msgid "Generate setup code for another device"
 msgstr ""
 
-#: calibre-plugin/config.py:269 calibre-plugin/dialog/cards.py:326
-#: calibre-plugin/dialog/cards.py:392 calibre-plugin/dialog/loans.py:169
+#: calibre-plugin/config.py:269 calibre-plugin/dialog/cards.py:348
+#: calibre-plugin/dialog/cards.py:417 calibre-plugin/dialog/loans.py:169
 msgid "Loans"
 msgstr "借書"
 
@@ -287,7 +287,7 @@ msgid "Loan type, e.g. ebook, audiobook, magazine"
 msgstr ""
 
 #: calibre-plugin/config.py:540 calibre-plugin/config.py:542
-#: calibre-plugin/dialog/cards.py:348 calibre-plugin/dialog/cards.py:403
+#: calibre-plugin/dialog/cards.py:370 calibre-plugin/dialog/cards.py:428
 #: calibre-plugin/dialog/holds.py:164 calibre-plugin/dialog/holds.py:203
 msgid "Holds"
 msgstr "預約"
@@ -514,7 +514,7 @@ msgid "Expire Date"
 msgstr ""
 
 #: calibre-plugin/models.py:269 calibre-plugin/models.py:546
-#: calibre-plugin/models.py:951 calibre-plugin/dialog/cards.py:381
+#: calibre-plugin/models.py:951 calibre-plugin/dialog/cards.py:406
 msgid "Library"
 msgstr "圖書館"
 
@@ -660,14 +660,14 @@ msgid "Error encountered during search ({library}): {error}"
 msgstr ""
 
 #: calibre-plugin/dialog/base.py:233 calibre-plugin/dialog/base_search.py:232
-#: calibre-plugin/dialog/cards.py:382 calibre-plugin/dialog/cards.py:393
-#: calibre-plugin/dialog/cards.py:404
+#: calibre-plugin/dialog/cards.py:407 calibre-plugin/dialog/cards.py:418
+#: calibre-plugin/dialog/cards.py:429
 msgid "View in Libby"
 msgstr "在Libby中查看"
 
 #: calibre-plugin/dialog/base.py:238 calibre-plugin/dialog/base_search.py:251
-#: calibre-plugin/dialog/cards.py:385 calibre-plugin/dialog/cards.py:396
-#: calibre-plugin/dialog/cards.py:407
+#: calibre-plugin/dialog/cards.py:410 calibre-plugin/dialog/cards.py:421
+#: calibre-plugin/dialog/cards.py:432
 msgid "View in OverDrive"
 msgstr "在OverDrive中查看"
 
@@ -811,46 +811,55 @@ msgstr ""
 msgid "Cards"
 msgstr "借書證"
 
-#: calibre-plugin/dialog/cards.py:251 calibre-plugin/dialog/cards.py:340
-#: calibre-plugin/dialog/cards.py:362
+#: calibre-plugin/dialog/cards.py:264 calibre-plugin/dialog/cards.py:362
+#: calibre-plugin/dialog/cards.py:384
 msgid "Right-click for shortcuts"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:255 calibre-plugin/dialog/cards.py:460
+#: calibre-plugin/dialog/cards.py:271 calibre-plugin/dialog/cards.py:607
+msgid "Rename Card"
+msgstr "重新命名借書證"
+
+#: calibre-plugin/dialog/cards.py:278 calibre-plugin/dialog/cards.py:486
 msgid "Verify Card"
 msgstr "驗證借書證"
 
-#: calibre-plugin/dialog/cards.py:274
-msgid "Card name"
-msgstr "借書證名稱"
-
-#: calibre-plugin/dialog/cards.py:287 calibre-plugin/dialog/cards.py:480
+#: calibre-plugin/dialog/cards.py:309 calibre-plugin/dialog/cards.py:506
 msgid "Username/Card number"
 msgstr "使用者名稱/借書證號"
 
-#: calibre-plugin/dialog/cards.py:300
+#: calibre-plugin/dialog/cards.py:322
 msgid "Created date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:369
+#: calibre-plugin/dialog/cards.py:391
 msgid "Verified date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:487
+#: calibre-plugin/dialog/cards.py:402 calibre-plugin/dialog/cards.py:621
+msgid "Card name"
+msgstr "借書證名稱"
+
+#: calibre-plugin/dialog/cards.py:513
 msgid "Password"
 msgstr "密碼"
 
-#: calibre-plugin/dialog/cards.py:497
+#: calibre-plugin/dialog/cards.py:523
 msgid "Sign In"
 msgstr "登入"
 
-#: calibre-plugin/dialog/cards.py:541
+#: calibre-plugin/dialog/cards.py:567
 #, python-brace-format
 msgid "Verified \"{library}\" card"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:552
+#: calibre-plugin/dialog/cards.py:578 calibre-plugin/dialog/cards.py:679
 msgid "Error verifying card"
+msgstr ""
+
+#: calibre-plugin/dialog/cards.py:668
+#, python-brace-format
+msgid "Updated \"{library}\" card name"
 msgstr ""
 
 #: calibre-plugin/dialog/holds.py:81

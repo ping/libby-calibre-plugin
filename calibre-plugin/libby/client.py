@@ -1319,3 +1319,19 @@ class LibbyClient(object):
         return self.add_title_tag_by_id(
             tag["uuid"], tag["name"], title_id, website_id, card_id
         )
+
+    def update_card_name(self, card_id: str, card_name: str) -> Dict:
+        """
+        Update card name.
+
+        :param card_id:
+        :param card_name:
+        :return:
+        """
+        res: Dict = self.send_request(
+            f"card/{card_id}",
+            query={"card_name": card_name},
+            method="PUT",
+            is_form=False,
+        )
+        return res

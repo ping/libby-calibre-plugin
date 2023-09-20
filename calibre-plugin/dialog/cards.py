@@ -404,6 +404,15 @@ class CardWidget(QWidget):
     def library_lbl_context_menu_requested(self):
         menu = QMenu(self)
         menu.addSection(_("Library"))
+        library_homepage_url = (
+            self.library.get("links", {}).get("libraryHome", {}).get("href")
+        )
+        if library_homepage_url:
+            library_home_action = menu.addAction(_("Library Homepage"))
+            library_home_action.setIcon(self.resources[PluginImages.ExternalLink])
+            library_home_action.triggered.connect(
+                lambda: open_url(library_homepage_url)
+            )
         view_in_libby_action = menu.addAction(_("View in Libby"))
         view_in_libby_action.setIcon(self.resources[PluginImages.ExternalLink])
         view_in_libby_action.triggered.connect(self.open_libby_library)

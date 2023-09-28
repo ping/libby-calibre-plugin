@@ -52,6 +52,8 @@ class LibraryMediaSearchParams:
     sort_by: str = SearchSortBy.RELEVANCE
     show_only_available: bool = False
     show_only_prelease: bool = False
+    media_type: str = ""
+    subject_id: str = ""
     title_ids: List[str] = field(default_factory=list)
 
     def is_empty(self) -> bool:
@@ -63,6 +65,8 @@ class LibraryMediaSearchParams:
             or self.show_only_available
             or self.show_only_prelease
             or self.title_ids
+            or self.media_type
+            or self.subject_id
         )
 
     def convert_bool(self, value: bool):
@@ -87,6 +91,10 @@ class LibraryMediaSearchParams:
                 result[a] = str(v).strip()
         if self.title_ids:
             result["titleIds"] = ",".join(self.title_ids)
+        if self.media_type:
+            result["mediaTypes"] = self.media_type
+        if self.subject_id:
+            result["subject"] = self.subject_id
         return result
 
 

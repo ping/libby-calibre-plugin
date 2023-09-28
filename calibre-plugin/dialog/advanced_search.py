@@ -93,6 +93,7 @@ class AdvancedSearchDialogMixin(SearchBaseDialog):
         self.identifier_txt.setClearButtonEnabled(True)
         form_fields_layout.addRow(_("ISBN"), self.identifier_txt)
 
+        rb_layout_spacing = 10
         self.availability_btn_group = QButtonGroup(self)
         self.availability_all_rb = QRadioButton(_("All"), self)
         self.availability_only_available_rb = QRadioButton(_("Available now"), self)
@@ -103,10 +104,46 @@ class AdvancedSearchDialogMixin(SearchBaseDialog):
             self.availability_only_prelease_rb,
         )
         self.availability_rb_layout = QHBoxLayout()
+        self.availability_rb_layout.setSpacing(rb_layout_spacing)
         for rb in availability_rb:
             self.availability_btn_group.addButton(rb)
             self.availability_rb_layout.addWidget(rb)
         form_fields_layout.addRow(_("Availability"), self.availability_rb_layout)
+
+        if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
+            self.media_type_btn_group = QButtonGroup(self)
+            self.media_all_rb = QRadioButton(_("Any"), self)
+            self.media_ebook_rb = QRadioButton(_("Book"), self)
+            self.media_audiobook_rb = QRadioButton(_("Audiobook"), self)
+            self.media_magazine_rb = QRadioButton(_("Magazine"), self)
+            media_type_rb = (
+                self.media_all_rb,
+                self.media_ebook_rb,
+                self.media_audiobook_rb,
+                self.media_magazine_rb,
+            )
+            self.media_rb_layout = QHBoxLayout()
+            self.media_rb_layout.setSpacing(rb_layout_spacing)
+            for rb in media_type_rb:
+                self.media_type_btn_group.addButton(rb)
+                self.media_rb_layout.addWidget(rb)
+            form_fields_layout.addRow(_("Media"), self.media_rb_layout)
+
+        self.subject_btn_group = QButtonGroup(self)
+        self.subject_all_rb = QRadioButton(_("Any"), self)
+        self.subject_fiction_rb = QRadioButton(_("Fiction"), self)
+        self.subject_nonfiction_rb = QRadioButton(_("Nonfiction"), self)
+        subject_rb = (
+            self.subject_all_rb,
+            self.subject_fiction_rb,
+            self.subject_nonfiction_rb,
+        )
+        self.subject_rb_layout = QHBoxLayout()
+        self.subject_rb_layout.setSpacing(rb_layout_spacing)
+        for rb in subject_rb:
+            self.subject_btn_group.addButton(rb)
+            self.subject_rb_layout.addWidget(rb)
+        form_fields_layout.addRow(_("Subject"), self.subject_rb_layout)
 
         # Search button
         self.adv_search_btn = DefaultQPushButton(
@@ -312,6 +349,22 @@ class AdvancedSearchDialogMixin(SearchBaseDialog):
                 LibbyFormats.AudioBookMP3,
                 LibbyFormats.AudioBookOverDrive,
             ]
+
+        media_type = ""
+        if PREFS[PreferenceKeys.INCL_NONDOWNLOADABLE_TITLES]:
+            if self.media_ebook_rb.isChecked():
+                media_type = "ebook"
+            elif self.media_audiobook_rb.isChecked():
+                media_type = "audiobook"
+            elif self.media_magazine_rb.isChecked():
+                media_type = "magazine"
+
+        subject_id = ""
+        if self.subject_nonfiction_rb.isChecked():
+            subject_id = "111"
+        elif self.subject_fiction_rb.isChecked():
+            subject_id = "26"
+
         query = LibraryMediaSearchParams(
             query=self.adv_query_txt.text(),
             title=self.title_txt.text(),
@@ -320,6 +373,8 @@ class AdvancedSearchDialogMixin(SearchBaseDialog):
             show_only_available=self.availability_only_available_rb.isChecked(),
             show_only_prelease=self.availability_only_prelease_rb.isChecked(),
             formats=formats,
+            media_type=media_type,
+            subject_id=subject_id,
             per_page=PREFS[PreferenceKeys.SEARCH_RESULTS_MAX],
         )
         if query.is_empty():

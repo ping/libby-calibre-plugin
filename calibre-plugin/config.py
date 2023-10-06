@@ -36,6 +36,8 @@ from qt.core import (
     QWidget,
     Qt,
     QTimer,
+    QRegularExpressionValidator,
+    QRegularExpression,
 )
 
 from . import DEMO_MODE, PLUGIN_NAME, PLUGINS_FOLDER_NAME, logger
@@ -227,7 +229,10 @@ class ConfigWidget(QWidget):
         self.libby_setup_code_txt.setPlaceholderText(
             PreferenceTexts.LIBBY_SETUP_CODE_DESC
         )
-        self.libby_setup_code_txt.setInputMask("99999999")
+        self.libby_setup_code_txt.setValidator(
+            QRegularExpressionValidator(QRegularExpression(r"\d{8}"))
+        )
+
         if not DEMO_MODE:
             self.libby_setup_code_txt.setText(PREFS[PreferenceKeys.LIBBY_SETUP_CODE])
         libby_layout.addRow(self.libby_setup_code_lbl, self.libby_setup_code_txt)

@@ -2,6 +2,7 @@
 
 Unreleased
 - New: Rename a card
+- Fix: Use a regex validator instead of input mask for Libby setup code due to wonkiness, ref #14
 
 Version 0.1.9 - 2023-09-19
 - Fix: Error on launch for calibre <6.2.0

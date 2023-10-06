@@ -53,7 +53,7 @@ from ..utils import PluginImages
 
 # noinspection PyUnreachableCode
 if False:
-    load_translations = _ = ngettext = lambda x=None, y=None: x
+    load_translations = _ = ngettext = lambda x=None, y=None, z=None: x
 
 load_translations()
 
@@ -243,8 +243,8 @@ class HoldsDialogMixin(BaseDialogMixin):
             hold = index.data(Qt.UserRole)
             card = self.holds_model.get_card(hold["cardId"])
             self.holds_borrow_btn.setEnabled(hold.get("isAvailable", False))
+            owned_copies = hold.get("ownedCopies", 0)
             if hold.get("estimatedWaitDays") and not hold.get("isAvailable", False):
-                owned_copies = hold.get("ownedCopies", 0)
                 self.status_bar.showMessage(
                     " ".join(
                         [
@@ -280,7 +280,33 @@ class HoldsDialogMixin(BaseDialogMixin):
                         ),
                         3000,
                     )
-                    continue
+                else:
+                    holds_count = hold.get("holdsCount", 0)
+                    self.status_bar.showMessage(
+                        " ".join(
+                            [
+                                f'{get_media_title(hold)} @{card.get("advantageKey")}:',
+                                ngettext(
+                                    "{n} hold placed.",
+                                    "{n} holds placed.",
+                                    holds_count,
+                                ).format(n=holds_count),
+                                ngettext(
+                                    "{n} copy ordered.",
+                                    "{n} copies ordered.",
+                                    owned_copies,
+                                ).format(n=owned_copies)
+                                if hold.get("isPreReleaseTitle", False)
+                                else ngettext(
+                                    "{n} copy in use.",
+                                    "{n} copies in use.",
+                                    owned_copies,
+                                ).format(n=owned_copies),
+                            ]
+                        ),
+                        3000,
+                    )
+                continue
             self.status_bar.showMessage(get_media_title(hold), 3000)
 
     def holds_view_context_menu_requested(self, pos):

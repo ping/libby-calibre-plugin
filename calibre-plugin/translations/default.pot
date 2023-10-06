@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.9\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-09-20 17:07+0800\n"
+"POT-Creation-Date: 2023-10-06 13:45+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "Import loans from your OverDrive Libby account"
 msgstr ""
 
-#: calibre-plugin/action.py:67 calibre-plugin/config.py:197
+#: calibre-plugin/action.py:67 calibre-plugin/config.py:199
 msgid "Libby"
 msgstr ""
 
@@ -63,177 +63,177 @@ msgstr ""
 msgid "Borrowing"
 msgstr ""
 
-#: calibre-plugin/config.py:102 calibre-plugin/config.py:854
+#: calibre-plugin/config.py:104 calibre-plugin/config.py:859
 msgid "Libby Setup Code"
 msgstr ""
 
-#: calibre-plugin/config.py:103
+#: calibre-plugin/config.py:105
 msgid "8-digit setup code"
 msgstr ""
 
-#: calibre-plugin/config.py:104
+#: calibre-plugin/config.py:106
 msgid "Hide Magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:105
+#: calibre-plugin/config.py:107
 msgid "Hide Ebooks"
 msgstr ""
 
-#: calibre-plugin/config.py:106
+#: calibre-plugin/config.py:108
 msgid "Include titles without downloadable formats"
 msgstr ""
 
-#: calibre-plugin/config.py:107
+#: calibre-plugin/config.py:109
 msgid "Hide titles already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:108
+#: calibre-plugin/config.py:110
 msgid "Exclude empty books when hiding titles already in library"
 msgstr ""
 
-#: calibre-plugin/config.py:109
+#: calibre-plugin/config.py:111
 msgid "Hide unavailable holds"
 msgstr ""
 
-#: calibre-plugin/config.py:110
+#: calibre-plugin/config.py:112
 msgid "Prefer Open Formats"
 msgstr ""
 
-#: calibre-plugin/config.py:111
+#: calibre-plugin/config.py:113
 msgid "Tag downloaded ebooks with"
 msgstr ""
 
-#: calibre-plugin/config.py:112
+#: calibre-plugin/config.py:114
 msgid "Example: library,books"
 msgstr ""
 
-#: calibre-plugin/config.py:113
+#: calibre-plugin/config.py:115
 msgid "Tag downloaded magazines with"
 msgstr ""
 
-#: calibre-plugin/config.py:114
+#: calibre-plugin/config.py:116
 msgid "Example: library,magazines"
 msgstr ""
 
-#: calibre-plugin/config.py:115
+#: calibre-plugin/config.py:117
 msgid "Always confirm returns"
 msgstr ""
 
-#: calibre-plugin/config.py:116
+#: calibre-plugin/config.py:118
 msgid "Always confirm holds cancellation"
 msgstr ""
 
-#: calibre-plugin/config.py:117
+#: calibre-plugin/config.py:119
 msgid "Always confirm Read with Kindle"
 msgstr ""
 
-#: calibre-plugin/config.py:118
+#: calibre-plugin/config.py:120
 msgid "Enable OverDrive Link Plugin integration"
 msgstr ""
 
-#: calibre-plugin/config.py:119
+#: calibre-plugin/config.py:121
 msgid "Mark updated books"
 msgstr ""
 
-#: calibre-plugin/config.py:120
+#: calibre-plugin/config.py:122
 msgid "Always download as a new book"
 msgstr ""
 
-#: calibre-plugin/config.py:121
+#: calibre-plugin/config.py:123
 msgid "Connection timeout"
 msgstr ""
 
-#: calibre-plugin/config.py:123
+#: calibre-plugin/config.py:125
 msgid "Maximum search results"
 msgstr ""
 
-#: calibre-plugin/config.py:124
+#: calibre-plugin/config.py:126
 #, python-brace-format
 msgid "Library Keys (comma-separated, max: {n})"
 msgstr ""
 
-#: calibre-plugin/config.py:127
+#: calibre-plugin/config.py:129
 msgid "Custom column for Borrowed Date"
 msgstr ""
 
-#: calibre-plugin/config.py:128
+#: calibre-plugin/config.py:130
 msgid "Custom column for Due Date"
 msgstr ""
 
-#: calibre-plugin/config.py:129
+#: calibre-plugin/config.py:131
 msgid "Custom column for Loan Type"
 msgstr ""
 
-#: calibre-plugin/config.py:130
+#: calibre-plugin/config.py:132
 msgid "Use highest-resolution cover for book details"
 msgstr ""
 
-#: calibre-plugin/config.py:131
+#: calibre-plugin/config.py:133
 msgid "Cache data for"
 msgstr ""
 
-#: calibre-plugin/config.py:132
+#: calibre-plugin/config.py:134
 msgid "Disable Magazines tab"
 msgstr ""
 
-#: calibre-plugin/config.py:200
+#: calibre-plugin/config.py:202
 msgid "Libby is configured."
 msgstr ""
 
-#: calibre-plugin/config.py:202 calibre-plugin/dialog/base.py:410
+#: calibre-plugin/config.py:204 calibre-plugin/dialog/base.py:410
 msgid "Libby is not configured yet."
 msgstr ""
 
-#: calibre-plugin/config.py:225
+#: calibre-plugin/config.py:227
 msgid "Enter the 8-digit Libby setup code generated from another device"
 msgstr ""
 
-#: calibre-plugin/config.py:237
+#: calibre-plugin/config.py:242
 msgid "Generate Setup Code"
 msgstr ""
 
-#: calibre-plugin/config.py:239
+#: calibre-plugin/config.py:244
 msgid "Generate setup code for another device"
 msgstr ""
 
-#: calibre-plugin/config.py:269 calibre-plugin/dialog/cards.py:348
-#: calibre-plugin/dialog/cards.py:417 calibre-plugin/dialog/loans.py:169
+#: calibre-plugin/config.py:274 calibre-plugin/dialog/cards.py:348
+#: calibre-plugin/dialog/cards.py:426 calibre-plugin/dialog/loans.py:169
 msgid "Loans"
 msgstr ""
 
-#: calibre-plugin/config.py:273
+#: calibre-plugin/config.py:278
 msgid "Don't list ebook loans"
 msgstr ""
 
-#: calibre-plugin/config.py:279
+#: calibre-plugin/config.py:284
 msgid "Don't list magazine loans"
 msgstr ""
 
-#: calibre-plugin/config.py:288
+#: calibre-plugin/config.py:293
 msgid "Hide loans that are already in your calibre library"
 msgstr ""
 
-#: calibre-plugin/config.py:301
+#: calibre-plugin/config.py:306
 msgid ""
 "When enabled, empty books are excluded when hiding titles already in your "
 "library"
 msgstr ""
 
-#: calibre-plugin/config.py:312
+#: calibre-plugin/config.py:317
 msgid "Toggle the confirmation prompt before returning loans"
 msgstr ""
 
-#: calibre-plugin/config.py:325
+#: calibre-plugin/config.py:330
 msgid ""
 "Toggle the confirmation prompt before chosing to Read with Kindle a title "
 "that is not format-locked"
 msgstr ""
 
-#: calibre-plugin/config.py:338
+#: calibre-plugin/config.py:343
 msgid "Choose DRM-free formats if available"
 msgstr ""
 
-#: calibre-plugin/config.py:351
+#: calibre-plugin/config.py:356
 msgid ""
 "If enabled, the plugin will attempt to find a matching OverDrive-linked book "
 "that does not have any formats and add the new download as an EPUB to the "
@@ -241,130 +241,130 @@ msgid ""
 "added."
 msgstr ""
 
-#: calibre-plugin/config.py:366
+#: calibre-plugin/config.py:371
 msgid ""
 "If enabled, book records that were updated with a new format will be marked."
 msgstr ""
 
-#: calibre-plugin/config.py:380
+#: calibre-plugin/config.py:385
 msgid ""
 "Never update an existing empty book. Always create a new book entry for a "
 "download."
 msgstr ""
 
-#: calibre-plugin/config.py:390
+#: calibre-plugin/config.py:395
 msgid "Add specified tags to the ebooks downloaded"
 msgstr ""
 
-#: calibre-plugin/config.py:399
+#: calibre-plugin/config.py:404
 msgid "Add specified tags to the magazines downloaded"
 msgstr ""
 
-#: calibre-plugin/config.py:418
+#: calibre-plugin/config.py:423
 msgid "If specified, this column will be updated with the loan checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:437
+#: calibre-plugin/config.py:442
 msgid "If specified, this column will be updated with the loan expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:454
+#: calibre-plugin/config.py:459
 msgid ""
 "If specified, this column will be updated with the loan type, e.g. ebook / "
 "magazine / audiobook."
 msgstr ""
 
-#: calibre-plugin/config.py:486
+#: calibre-plugin/config.py:491
 msgid "Loan's borrowed/checkout date"
 msgstr ""
 
-#: calibre-plugin/config.py:498
+#: calibre-plugin/config.py:503
 msgid "Loan's due/expiry date"
 msgstr ""
 
-#: calibre-plugin/config.py:512
+#: calibre-plugin/config.py:517
 msgid "Loan type, e.g. ebook, audiobook, magazine"
 msgstr ""
 
-#: calibre-plugin/config.py:540 calibre-plugin/config.py:542
-#: calibre-plugin/dialog/cards.py:370 calibre-plugin/dialog/cards.py:428
+#: calibre-plugin/config.py:545 calibre-plugin/config.py:547
+#: calibre-plugin/dialog/cards.py:370 calibre-plugin/dialog/cards.py:437
 #: calibre-plugin/dialog/holds.py:164 calibre-plugin/dialog/holds.py:203
 msgid "Holds"
 msgstr ""
 
-#: calibre-plugin/config.py:553
+#: calibre-plugin/config.py:558
 msgid "Hide holds that are not yet available"
 msgstr ""
 
-#: calibre-plugin/config.py:565
+#: calibre-plugin/config.py:570
 msgid "Toggle the confirmation prompt before cancelling a hold"
 msgstr ""
 
-#: calibre-plugin/config.py:581
+#: calibre-plugin/config.py:586
 msgid "Limit the number of search results returned"
 msgstr ""
 
-#: calibre-plugin/config.py:591
+#: calibre-plugin/config.py:596
 msgid "This determines the libraries that will be used for search."
 msgstr ""
 
-#: calibre-plugin/config.py:596
+#: calibre-plugin/config.py:601
 #, python-brace-format
 msgid ""
 "Up to {n} libraries, comma-separated. View your library key codes from the "
 "Cards tab. Example: lapl,sno-isle,livebrary,kcls"
 msgstr ""
 
-#: calibre-plugin/config.py:615 calibre-plugin/config.py:617
+#: calibre-plugin/config.py:620 calibre-plugin/config.py:622
 msgid "General"
 msgstr ""
 
-#: calibre-plugin/config.py:615 calibre-plugin/config.py:669
+#: calibre-plugin/config.py:620 calibre-plugin/config.py:674
 msgid "Network"
 msgstr ""
 
-#: calibre-plugin/config.py:627
+#: calibre-plugin/config.py:632
 msgid "Disable the Magazines tab"
 msgstr ""
 
-#: calibre-plugin/config.py:639
+#: calibre-plugin/config.py:644
 msgid ""
 "Include titles that do not have a supported downloadable format, e.g. "
 "Kindle, audiobook loans"
 msgstr ""
 
-#: calibre-plugin/config.py:651
+#: calibre-plugin/config.py:656
 msgid "Use the best quality cover in book details. Maybe slower."
 msgstr ""
 
-#: calibre-plugin/config.py:657
+#: calibre-plugin/config.py:662
 msgid " day(s)"
 msgstr ""
 
-#: calibre-plugin/config.py:661
+#: calibre-plugin/config.py:666
 #, python-brace-format
 msgid ""
 "How long to retain cacheable data such as library information (max: {n} days)"
 msgstr ""
 
-#: calibre-plugin/config.py:678
+#: calibre-plugin/config.py:683
 msgid ""
 "The maximum interval to wait on a connection. You can increase this value if "
 "you have a slow connection."
 msgstr ""
 
-#: calibre-plugin/config.py:689
+#: calibre-plugin/config.py:694
 msgid "The number of retries upon connection failures"
 msgstr ""
 
-#: calibre-plugin/config.py:731
+#: calibre-plugin/config.py:736
 #, python-brace-format
 msgid "{remaining} second remaining"
 msgid_plural "{remaining} seconds remaining"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/config.py:855
+#: calibre-plugin/config.py:860
 #, python-brace-format
 msgid "Invalid setup code format: {code}"
 msgstr ""
@@ -410,15 +410,15 @@ msgstr ""
 msgid "Magazine has unsupported fixed-layout (pre-paginated) format."
 msgstr ""
 
-#: calibre-plugin/models.py:108
+#: calibre-plugin/models.py:108 calibre-plugin/dialog/advanced_search.py:116
 msgid "Book"
 msgstr ""
 
-#: calibre-plugin/models.py:109
+#: calibre-plugin/models.py:109 calibre-plugin/dialog/advanced_search.py:118
 msgid "Magazine"
 msgstr ""
 
-#: calibre-plugin/models.py:110
+#: calibre-plugin/models.py:110 calibre-plugin/dialog/advanced_search.py:117
 msgid "Audiobook"
 msgstr ""
 
@@ -591,65 +591,86 @@ msgstr ""
 msgid "ISBN"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:97
+#: calibre-plugin/dialog/advanced_search.py:98
 msgid "All"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:98
+#: calibre-plugin/dialog/advanced_search.py:99
 msgid "Available now"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:99
+#: calibre-plugin/dialog/advanced_search.py:100
 msgid "Coming soon"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:109
+#: calibre-plugin/dialog/advanced_search.py:111
 msgid "Availability"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:170
+#: calibre-plugin/dialog/advanced_search.py:115
+#: calibre-plugin/dialog/advanced_search.py:133
+msgid "Any"
+msgstr ""
+
+#: calibre-plugin/dialog/advanced_search.py:130
+msgid "Media"
+msgstr ""
+
+#: calibre-plugin/dialog/advanced_search.py:134
+msgid "Fiction"
+msgstr ""
+
+#: calibre-plugin/dialog/advanced_search.py:135
+msgid "Nonfiction"
+msgstr ""
+
+#: calibre-plugin/dialog/advanced_search.py:146
+msgid "Subject"
+msgstr ""
+
+#: calibre-plugin/dialog/advanced_search.py:207
 msgid "Basic Search"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:186
-#: calibre-plugin/dialog/advanced_search.py:238
+#: calibre-plugin/dialog/advanced_search.py:223
+#: calibre-plugin/dialog/advanced_search.py:275
 #: calibre-plugin/dialog/base.py:494 calibre-plugin/dialog/base.py:512
 #: calibre-plugin/dialog/base.py:535 calibre-plugin/dialog/base.py:551
 #: calibre-plugin/dialog/search.py:135 calibre-plugin/dialog/search.py:200
 msgid "Borrow"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:188
-#: calibre-plugin/dialog/advanced_search.py:238
+#: calibre-plugin/dialog/advanced_search.py:225
+#: calibre-plugin/dialog/advanced_search.py:275
 #: calibre-plugin/dialog/base.py:496 calibre-plugin/dialog/base.py:510
 #: calibre-plugin/dialog/base.py:535 calibre-plugin/dialog/base.py:549
 #: calibre-plugin/dialog/search.py:137 calibre-plugin/dialog/search.py:200
 msgid "Borrow and Download"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:195
+#: calibre-plugin/dialog/advanced_search.py:232
 #: calibre-plugin/dialog/search.py:144
 msgid "Place Hold"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:208
+#: calibre-plugin/dialog/advanced_search.py:245
 #: calibre-plugin/dialog/search.py:123
 msgid "Advanced Search"
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:334
+#: calibre-plugin/dialog/advanced_search.py:389
 #, python-brace-format
 msgid "Searching across {n} library..."
 msgid_plural "Searching across {n} libraries..."
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/advanced_search.py:369
+#: calibre-plugin/dialog/advanced_search.py:424
 #, python-brace-format
 msgid "Waiting for {libraries}..."
 msgstr ""
 
-#: calibre-plugin/dialog/advanced_search.py:436
+#: calibre-plugin/dialog/advanced_search.py:491
 #: calibre-plugin/dialog/search.py:280
 #, python-brace-format
 msgid "{n} result found"
@@ -657,20 +678,20 @@ msgid_plural "{n} results found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/advanced_search.py:465
+#: calibre-plugin/dialog/advanced_search.py:520
 #, python-brace-format
 msgid "Error encountered during search ({library}): {error}"
 msgstr ""
 
 #: calibre-plugin/dialog/base.py:233 calibre-plugin/dialog/base_search.py:232
-#: calibre-plugin/dialog/cards.py:407 calibre-plugin/dialog/cards.py:418
-#: calibre-plugin/dialog/cards.py:429
+#: calibre-plugin/dialog/cards.py:416 calibre-plugin/dialog/cards.py:427
+#: calibre-plugin/dialog/cards.py:438
 msgid "View in Libby"
 msgstr ""
 
 #: calibre-plugin/dialog/base.py:238 calibre-plugin/dialog/base_search.py:251
-#: calibre-plugin/dialog/cards.py:410 calibre-plugin/dialog/cards.py:421
-#: calibre-plugin/dialog/cards.py:432
+#: calibre-plugin/dialog/cards.py:419 calibre-plugin/dialog/cards.py:430
+#: calibre-plugin/dialog/cards.py:441
 msgid "View in OverDrive"
 msgstr ""
 
@@ -776,6 +797,7 @@ msgid "You will be number {n} in line."
 msgstr ""
 
 #: calibre-plugin/dialog/base_search.py:70 calibre-plugin/dialog/holds.py:259
+#: calibre-plugin/dialog/holds.py:295
 #, python-brace-format
 msgid "{n} copy ordered."
 msgid_plural "{n} copies ordered."
@@ -783,7 +805,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: calibre-plugin/dialog/base_search.py:75 calibre-plugin/dialog/holds.py:263
-#: calibre-plugin/dialog/loans.py:235
+#: calibre-plugin/dialog/holds.py:301 calibre-plugin/dialog/loans.py:235
 #, python-brace-format
 msgid "{n} copy in use."
 msgid_plural "{n} copies in use."
@@ -823,15 +845,15 @@ msgstr ""
 msgid "Right-click for shortcuts"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:271 calibre-plugin/dialog/cards.py:607
+#: calibre-plugin/dialog/cards.py:271 calibre-plugin/dialog/cards.py:616
 msgid "Rename Card"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:278 calibre-plugin/dialog/cards.py:486
+#: calibre-plugin/dialog/cards.py:278 calibre-plugin/dialog/cards.py:495
 msgid "Verify Card"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:309 calibre-plugin/dialog/cards.py:506
+#: calibre-plugin/dialog/cards.py:309 calibre-plugin/dialog/cards.py:515
 msgid "Username/Card number"
 msgstr ""
 
@@ -843,28 +865,32 @@ msgstr ""
 msgid "Verified date"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:402 calibre-plugin/dialog/cards.py:621
+#: calibre-plugin/dialog/cards.py:402 calibre-plugin/dialog/cards.py:630
 msgid "Card name"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:513
+#: calibre-plugin/dialog/cards.py:411
+msgid "Library Homepage"
+msgstr ""
+
+#: calibre-plugin/dialog/cards.py:522
 msgid "Password"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:523
+#: calibre-plugin/dialog/cards.py:532
 msgid "Sign In"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:567
+#: calibre-plugin/dialog/cards.py:576
 #, python-brace-format
 msgid "Verified \"{library}\" card"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:578 calibre-plugin/dialog/cards.py:679
+#: calibre-plugin/dialog/cards.py:587 calibre-plugin/dialog/cards.py:688
 msgid "Error verifying card"
 msgstr ""
 
-#: calibre-plugin/dialog/cards.py:668
+#: calibre-plugin/dialog/cards.py:677
 #, python-brace-format
 msgid "Updated \"{library}\" card name"
 msgstr ""
@@ -898,59 +924,66 @@ msgid ""
 "Refresh."
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:308
+#: calibre-plugin/dialog/holds.py:290
+#, python-brace-format
+msgid "{n} hold placed."
+msgid_plural "{n} holds placed."
+msgstr[0] ""
+msgstr[1] ""
+
+#: calibre-plugin/dialog/holds.py:334
 msgid "Manage hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:314
+#: calibre-plugin/dialog/holds.py:340
 msgid "Cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:340 calibre-plugin/dialog/magazines.py:339
+#: calibre-plugin/dialog/holds.py:366 calibre-plugin/dialog/magazines.py:339
 #, python-brace-format
 msgid "Borrowing {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:363
+#: calibre-plugin/dialog/holds.py:389
 msgid "Failed to borrow book"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:381
+#: calibre-plugin/dialog/holds.py:407
 msgid "Cancel this hold?"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:391
+#: calibre-plugin/dialog/holds.py:417
 msgid "Cancel Holds"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:400
+#: calibre-plugin/dialog/holds.py:426
 #, python-brace-format
 msgid "Cancelling hold on {book}"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:421
+#: calibre-plugin/dialog/holds.py:447
 msgid "Failed to cancel hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:430
+#: calibre-plugin/dialog/holds.py:456
 msgid "Failed to update hold"
 msgstr ""
 
-#: calibre-plugin/dialog/holds.py:478 calibre-plugin/dialog/holds.py:495
+#: calibre-plugin/dialog/holds.py:504 calibre-plugin/dialog/holds.py:521
 #, python-brace-format
 msgid "Deliver after {n} day"
 msgid_plural "Deliver after {n} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:480 calibre-plugin/dialog/holds.py:499
+#: calibre-plugin/dialog/holds.py:506 calibre-plugin/dialog/holds.py:525
 #, python-brace-format
 msgid "Suspend for {n} day"
 msgid_plural "Suspend for {n} days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: calibre-plugin/dialog/holds.py:541
+#: calibre-plugin/dialog/holds.py:567
 #, python-brace-format
 msgid "Updating hold on {book}"
 msgstr ""

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.9\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-10-06 13:45+0800\n"
+"POT-Creation-Date: 2023-10-11 16:56+0800\n"
 "PO-Revision-Date: 2023-07-04 07:26+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -591,6 +591,7 @@ msgid "ISBN"
 msgstr ""
 
 #: calibre-plugin/dialog/advanced_search.py:98
+#: calibre-plugin/dialog/advanced_search.py:133
 msgid "All"
 msgstr "すべて"
 
@@ -607,25 +608,24 @@ msgid "Availability"
 msgstr "利用可能性"
 
 #: calibre-plugin/dialog/advanced_search.py:115
-#: calibre-plugin/dialog/advanced_search.py:133
 msgid "Any"
-msgstr ""
+msgstr "すべて"
 
 #: calibre-plugin/dialog/advanced_search.py:130
 msgid "Media"
-msgstr ""
+msgstr "フォーマット"
 
 #: calibre-plugin/dialog/advanced_search.py:134
 msgid "Fiction"
-msgstr ""
+msgstr "フィクション"
 
 #: calibre-plugin/dialog/advanced_search.py:135
 msgid "Nonfiction"
-msgstr ""
+msgstr "ノンフィクション"
 
 #: calibre-plugin/dialog/advanced_search.py:146
 msgid "Subject"
-msgstr ""
+msgstr "ジャンル"
 
 #: calibre-plugin/dialog/advanced_search.py:207
 msgid "Basic Search"
@@ -763,7 +763,7 @@ msgstr "再生時間"
 
 #: calibre-plugin/dialog/base.py:935
 msgid "Subjects"
-msgstr ""
+msgstr "ジャンル"
 
 #: calibre-plugin/dialog/base.py:939
 msgid "Rating"

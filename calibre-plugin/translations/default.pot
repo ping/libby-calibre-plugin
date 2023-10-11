@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.9\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-10-06 13:45+0800\n"
+"POT-Creation-Date: 2023-10-11 17:15+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -592,6 +592,7 @@ msgid "ISBN"
 msgstr ""
 
 #: calibre-plugin/dialog/advanced_search.py:98
+#: calibre-plugin/dialog/advanced_search.py:133
 msgid "All"
 msgstr ""
 
@@ -608,7 +609,6 @@ msgid "Availability"
 msgstr ""
 
 #: calibre-plugin/dialog/advanced_search.py:115
-#: calibre-plugin/dialog/advanced_search.py:133
 msgid "Any"
 msgstr ""
 

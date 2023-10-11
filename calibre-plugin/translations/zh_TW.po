@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libby-calibre-plugin 0.1.9\n"
 "Report-Msgid-Bugs-To: https://github.com/ping/libby-calibre-plugin/\n"
-"POT-Creation-Date: 2023-10-06 13:45+0800\n"
+"POT-Creation-Date: 2023-10-11 16:56+0800\n"
 "PO-Revision-Date: 2023-07-04 07:25+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -591,8 +591,9 @@ msgid "ISBN"
 msgstr ""
 
 #: calibre-plugin/dialog/advanced_search.py:98
+#: calibre-plugin/dialog/advanced_search.py:133
 msgid "All"
-msgstr "任何書籍"
+msgstr "全部"
 
 #: calibre-plugin/dialog/advanced_search.py:99
 msgid "Available now"
@@ -607,25 +608,24 @@ msgid "Availability"
 msgstr "可用性"
 
 #: calibre-plugin/dialog/advanced_search.py:115
-#: calibre-plugin/dialog/advanced_search.py:133
 msgid "Any"
-msgstr ""
+msgstr "任何"
 
 #: calibre-plugin/dialog/advanced_search.py:130
 msgid "Media"
-msgstr ""
+msgstr "格式"
 
 #: calibre-plugin/dialog/advanced_search.py:134
 msgid "Fiction"
-msgstr ""
+msgstr "小說"
 
 #: calibre-plugin/dialog/advanced_search.py:135
 msgid "Nonfiction"
-msgstr ""
+msgstr "非小說類作品"
 
 #: calibre-plugin/dialog/advanced_search.py:146
 msgid "Subject"
-msgstr ""
+msgstr "主題"
 
 #: calibre-plugin/dialog/advanced_search.py:207
 msgid "Basic Search"
@@ -763,7 +763,7 @@ msgstr "持續時間"
 
 #: calibre-plugin/dialog/base.py:935
 msgid "Subjects"
-msgstr ""
+msgstr "主題"
 
 #: calibre-plugin/dialog/base.py:939
 msgid "Rating"

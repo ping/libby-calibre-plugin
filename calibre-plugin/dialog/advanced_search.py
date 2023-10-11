@@ -130,7 +130,7 @@ class AdvancedSearchDialogMixin(SearchBaseDialog):
             form_fields_layout.addRow(_("Media"), self.media_rb_layout)
 
         self.subject_btn_group = QButtonGroup(self)
-        self.subject_all_rb = QRadioButton(_("Any"), self)
+        self.subject_all_rb = QRadioButton(_("All"), self)
         self.subject_fiction_rb = QRadioButton(_("Fiction"), self)
         self.subject_nonfiction_rb = QRadioButton(_("Nonfiction"), self)
         subject_rb = (

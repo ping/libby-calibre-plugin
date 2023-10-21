@@ -161,8 +161,6 @@ Select a row, right-click and select the appropriate action to:
 
 ![Magazines](images/magazines.png)
 
-Not all magazines are downloadable. Only magazines that have [readable individual articles](https://help.libbyapp.com/en-us/6215.htm) can be downloaded.
-
 Select the "Magazines" tab. From this tab, you can add magazines to monitor for new issues.
 
 From the Libby/OverDrive site, copy the URL of the magazine you want to monitor. Paste the URL into the textbox, and select the Card to use for future borrowing. Then click on the "Add" button.
@@ -197,6 +195,9 @@ If you wish to see loans that are not fully downloadable (e.g. Kindle loans, aud
 
 This is because the loan does not have a supported downloadable format available. The loan is either not available in epub/pdf, or you have chosen to Read with Kindle (see above for details about [Format Locking](#format-locking)).
 
+### Why can't I download a particular magazine?
+
+Not all magazines are downloadable. Only magazines that have [readable individual articles](https://help.libbyapp.com/en-us/6215.htm) can be downloaded.
 
 ## Credit
 
